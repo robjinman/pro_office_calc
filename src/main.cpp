@@ -11,6 +11,9 @@
 
 #ifdef __APPLE__
 
+//===========================================
+// changeWorkingDir
+//===========================================
 void changeWorkingDir() {
   CFBundleRef mainBundle = CFBundleGetMainBundle();
   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);

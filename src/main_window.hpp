@@ -2,6 +2,7 @@
 #define __PROCALC_MAIN_WINDOW_HPP__
 
 
+#include <memory>
 #include <QMainWindow>
 
 
@@ -28,11 +29,11 @@ class MainWindow : public QMainWindow {
     const AppConfig& m_appConfig;
     AppState& m_appState;
 
-    QMenu* m_mnuFile;
-    QMenu* m_mnuHelp;
-    QAction* m_actAbout;
-    QAction* m_actQuit;
-    QWidget* m_wgtCentral;
+    std::unique_ptr<QMenu> m_mnuFile;
+    std::unique_ptr<QMenu> m_mnuHelp;
+    std::unique_ptr<QAction> m_actAbout;
+    std::unique_ptr<QAction> m_actQuit;
+    std::unique_ptr<QWidget> m_wgtCentral;
 };
 
 

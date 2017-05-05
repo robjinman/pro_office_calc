@@ -7,7 +7,7 @@ using namespace std;
 
 
 //===========================================
-// Application::Application
+// Application::notify
 //===========================================
 bool Application::notify(QObject* receiver, QEvent* event) {
   try {
