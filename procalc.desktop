@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Pro Office Calculator
+Comment=A professional office calculator
+GenericName=Pro Office Calculator
+Exec=procalc
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=procalc.svg
+Categories=Office;
+StartupWMClass=ProOfficeCalc
+StartupNotify=true
+
