@@ -14,13 +14,13 @@
 
 class FileException : public Exception {
   public:
-    FileException(const utf8string_t& msg)
+    FileException(const std::string& msg)
       : Exception(msg) {}
 
-    FileException(const utf8string_t& msg, const char* file, int line)
+    FileException(const std::string& msg, const char* file, int line)
       : Exception(msg, file, line) {}
 
-    FileException(const utf8string_t& msg, const utf8string_t& path, const char* file, int line)
+    FileException(const std::string& msg, const std::string& path, const char* file, int line)
       : Exception(msg, file, line), m_file(path) {
 
       append(" (path: ");
@@ -28,14 +28,14 @@ class FileException : public Exception {
       append(")");
     }
 
-    utf8string_t getFilePath() const throw() {
+    std::string getFilePath() const throw() {
       return m_file;
     }
 
     virtual ~FileException() throw() {}
 
   private:
-    utf8string_t m_file;
+    std::string m_file;
 };
 
 

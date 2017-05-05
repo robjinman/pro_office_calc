@@ -2,6 +2,8 @@
 #include "application.hpp"
 #include "main_window.hpp"
 #include "exception.hpp"
+#include "app_config.hpp"
+#include "app_state.hpp"
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -36,8 +38,13 @@ int main(int argc, char** argv) {
 #endif
 
   try {
+    AppConfig appConfig;
+
+    AppState appState;
+    appState.load(appConfig);
+
     Application app(argc, argv);
-    MainWindow window;
+    MainWindow window(appConfig, appState);
     window.show();
 
     return app.exec();

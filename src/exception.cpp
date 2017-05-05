@@ -3,17 +3,18 @@
 
 
 using std::runtime_error;
+using std::string;
 using std::stringstream;
 
 
-Exception::Exception(const utf8string_t& msg)
+Exception::Exception(const string& msg)
   : runtime_error(msg), m_msg(msg) {}
 
-Exception::Exception(const utf8string_t& msg, const char* file, int line)
+Exception::Exception(const string& msg, const char* file, int line)
   : runtime_error(msg), m_msg(msg), m_file(file), m_line(line) {}
 
 const char* Exception::what() const throw() {
-  static utf8string_t msg;
+  static string msg;
   stringstream ss;
 
   ss << m_msg << " (FILE: " << m_file << ", LINE: " << m_line << ")";
@@ -22,11 +23,11 @@ const char* Exception::what() const throw() {
   return msg.data();
 }
 
-void Exception::append(const utf8string_t& text) throw() {
+void Exception::append(const string& text) throw() {
   m_msg.append(text);
 }
 
-void Exception::prepend(const utf8string_t& text) throw() {
+void Exception::prepend(const string& text) throw() {
   m_msg.insert(0, text);
 }
 

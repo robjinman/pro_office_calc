@@ -3,7 +3,7 @@
 
 
 #include <stdexcept>
-#include "strings.hpp"
+#include "types.hpp"
 
 
 #define EXCEPTION(x) { \
@@ -15,19 +15,19 @@
 
 class Exception : public std::runtime_error {
   public:
-    Exception(const utf8string_t& msg);
-    Exception(const utf8string_t& msg, const char* file, int line);
+    Exception(const std::string& msg);
+    Exception(const std::string& msg, const char* file, int line);
 
     virtual const char* what() const throw();
 
-    void append(const utf8string_t& text) throw();
-    void prepend(const utf8string_t& text) throw();
+    void append(const std::string& text) throw();
+    void prepend(const std::string& text) throw();
 
     virtual ~Exception() throw();
 
   private:
-    utf8string_t m_msg;
-    utf8string_t m_file;
+    std::string m_msg;
+    std::string m_file;
     int m_line;
 };
 

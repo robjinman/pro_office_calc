@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 
 set(projectName procalc)
 
+if (CMAKE_BUILD_TYPE EQUAL "Release")
+  # ...
+else()
+  message("Debug mode")
+  add_compile_options(-DDEBUG)
+endif()
+
 project(${projectName})
 add_subdirectory(tools)
 
