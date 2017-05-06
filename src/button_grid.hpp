@@ -7,6 +7,27 @@
 #include <QWidget>
 
 
+enum buttonId_t {
+  BTN_ZERO = 0,
+  BTN_ONE = 1,
+  BTN_TWO = 2,
+  BTN_THREE = 3,
+  BTN_FOUR = 4,
+  BTN_FIVE = 5,
+  BTN_SIX = 6,
+  BTN_SEVEN = 7,
+  BTN_EIGHT = 8,
+  BTN_NINE = 9,
+  BTN_PLUS,
+  BTN_MINUS,
+  BTN_TIMES,
+  BTN_DIVIDE,
+  BTN_POINT,
+  BTN_CLEAR,
+  BTN_EQUALS
+};
+
+
 class QGridLayout;
 class QButtonGroup;
 class QPushButton;

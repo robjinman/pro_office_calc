@@ -10,6 +10,9 @@ using std::unique_ptr;
 using std::string;
 
 
+//===========================================
+// makeButton
+//===========================================
 static QPushButton* makeButton(QWidget* parent, const QString& text) {
   QPushButton* btn = new QPushButton(text, parent);
 
@@ -26,7 +29,7 @@ ButtonGrid::ButtonGrid(QWidget* parent)
   : QWidget(parent) {
 
   QGridLayout* grid = new QGridLayout;
-  grid->setSpacing(2);
+  grid->setSpacing(1);
 
   setLayout(grid);
 
@@ -40,19 +43,6 @@ ButtonGrid::ButtonGrid(QWidget* parent)
   unique_ptr<QPushButton> btn7(makeButton(this, "7"));
   unique_ptr<QPushButton> btn8(makeButton(this, "8"));
   unique_ptr<QPushButton> btn9(makeButton(this, "9"));
-
-  m_grpButtons.reset(new QButtonGroup);
-  m_grpButtons->addButton(btn0.get(), 0);
-  m_grpButtons->addButton(btn1.get(), 1);
-  m_grpButtons->addButton(btn2.get(), 2);
-  m_grpButtons->addButton(btn3.get(), 3);
-  m_grpButtons->addButton(btn4.get(), 4);
-  m_grpButtons->addButton(btn5.get(), 5);
-  m_grpButtons->addButton(btn6.get(), 6);
-  m_grpButtons->addButton(btn7.get(), 7);
-  m_grpButtons->addButton(btn8.get(), 8);
-  m_grpButtons->addButton(btn9.get(), 9);
-
   unique_ptr<QPushButton> btnPlus(makeButton(this, "+"));
   unique_ptr<QPushButton> btnMinus(makeButton(this, "-"));
   unique_ptr<QPushButton> btnTimes(makeButton(this, "*"));
@@ -60,6 +50,25 @@ ButtonGrid::ButtonGrid(QWidget* parent)
   unique_ptr<QPushButton> btnPoint(makeButton(this, "."));
   unique_ptr<QPushButton> btnClear(makeButton(this, "C"));
   unique_ptr<QPushButton> btnEquals(makeButton(this, "="));
+
+  m_grpButtons.reset(new QButtonGroup);
+  m_grpButtons->addButton(btn0.get(), BTN_ZERO);
+  m_grpButtons->addButton(btn1.get(), BTN_ONE);
+  m_grpButtons->addButton(btn2.get(), BTN_TWO);
+  m_grpButtons->addButton(btn3.get(), BTN_THREE);
+  m_grpButtons->addButton(btn4.get(), BTN_FOUR);
+  m_grpButtons->addButton(btn5.get(), BTN_FIVE);
+  m_grpButtons->addButton(btn6.get(), BTN_SIX);
+  m_grpButtons->addButton(btn7.get(), BTN_SEVEN);
+  m_grpButtons->addButton(btn8.get(), BTN_EIGHT);
+  m_grpButtons->addButton(btn9.get(), BTN_NINE);
+  m_grpButtons->addButton(btnPlus.get(), BTN_PLUS);
+  m_grpButtons->addButton(btnMinus.get(), BTN_MINUS);
+  m_grpButtons->addButton(btnTimes.get(), BTN_TIMES);
+  m_grpButtons->addButton(btnDivide.get(), BTN_DIVIDE);
+  m_grpButtons->addButton(btnPoint.get(), BTN_POINT);
+  m_grpButtons->addButton(btnClear.get(), BTN_CLEAR);
+  m_grpButtons->addButton(btnEquals.get(), BTN_EQUALS);
 
   grid->addWidget(btnClear.get(), 0, 0);
   grid->addWidget(btn0.get(), 4, 0);

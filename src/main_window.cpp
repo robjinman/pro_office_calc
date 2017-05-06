@@ -1,20 +1,37 @@
+#include <sstream>
+#include <iomanip>
 #include <QMenuBar>
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QMessageBox>
-#include <QTextEdit>
+#include <QLineEdit>
 #include "main_window.hpp"
 #include "button_grid.hpp"
 #include "utils.hpp"
 #include "types.hpp"
 #include "app_config.hpp"
 #include "app_state.hpp"
+#include "calculator.hpp"
+#include "exception.hpp"
 
 
 using std::string;
+using std::stringstream;
 using std::unique_ptr;
-using std::to_string;
 
+
+//===========================================
+// idToOp
+//===========================================
+static operator_t idToOp(int id) {
+  switch (id) {
+    case BTN_PLUS: return OP_PLUS;
+    case BTN_MINUS: return OP_MINUS;
+    case BTN_TIMES: return OP_TIMES;
+    case BTN_DIVIDE: return OP_DIVIDE;
+    default: EXCEPTION("No operator corresponding to button id " << id);
+  }
+}
 
 //===========================================
 // numberToWord
@@ -33,6 +50,28 @@ static QString numberToWord(int n) {
     case 10: return "ten";
     default: return "?";
   }
+}
+
+//===========================================
+// formatNumber
+//===========================================
+static string formatNumber(float num) {
+  stringstream ss;
+  ss << std::fixed << std::setprecision(8) << num;
+  string str = ss.str();
+
+  std::size_t i = str.find('.');
+  if (i != string::npos) {
+    while (str.back() == '0') {
+      str.pop_back();
+    }
+
+    if (str.back() == '.') {
+      str.pop_back();
+    }
+  }
+
+  return str;
 }
 
 //===========================================
@@ -59,8 +98,10 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   m_wgtCentral.reset(new QWidget(this));
   setCentralWidget(m_wgtCentral.get());
 
-  m_wgtDigitDisplay.reset(new QTextEdit(m_wgtCentral.get()));
+  m_wgtDigitDisplay.reset(new QLineEdit(m_wgtCentral.get()));
   m_wgtDigitDisplay->setMaximumHeight(40);
+  m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
+  m_wgtDigitDisplay->setReadOnly(true);
 
   m_wgtButtonGrid.reset(new ButtonGrid(m_wgtCentral.get()));
 
@@ -79,6 +120,34 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
 //===========================================
 void MainWindow::buttonClicked(int id) {
   DBG_PRINT("Button " << id << " clicked\n");
+
+  static Calculator calculator;
+
+  if (id <= 9) {
+    calculator.putDigit(id);
+  }
+
+  switch (id) {
+    case BTN_PLUS:
+    case BTN_MINUS:
+    case BTN_TIMES:
+    case BTN_DIVIDE:
+      calculator.putOperator(idToOp(id));
+      break;
+    case BTN_POINT:
+      calculator.putDecimalPoint();
+      break;
+    case BTN_EQUALS:
+      calculator.evaluate();
+      break;
+    case BTN_CLEAR:
+      calculator.clear();
+      break;
+  }
+
+  string displayVal = formatNumber(calculator.currentValue());
+
+  m_wgtDigitDisplay->setText(displayVal.c_str());
 }
 
 //===========================================

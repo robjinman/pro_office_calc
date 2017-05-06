@@ -3,13 +3,14 @@
 
 
 #include <stdexcept>
+#include <sstream>
 #include "types.hpp"
 
 
 #define EXCEPTION(x) { \
   std::stringstream ss; \
   ss << x; \
-  throw Exception(x, __FILE__, __LINE__); \
+  throw Exception(ss.str(), __FILE__, __LINE__); \
 }
 
 
