@@ -27,29 +27,28 @@ static float apply(Calculator::Expr expr, float rhs) {
 }
 
 //===========================================
-// Calculator::putDigit
+// Calculator::putValue
 //===========================================
-void Calculator::putDigit(int d) {
-  m_buffer.append(std::to_string(d));
-}
-
-//===========================================
-// Calculator::putDecimalPoint
-//===========================================
-void Calculator::putDecimalPoint() {
-  m_buffer.append(".");
+void Calculator::putValue(float val) {
+  if (m_stack.size() > 0 && m_stack.back().op == OP_NONE) {
+    m_stack.back().lhs = val;
+  }
+  else {
+    m_stack.push_back(Expr{val, OP_NONE});
+  }
 }
 
 //===========================================
 // Calculator::putOperator
 //===========================================
 void Calculator::putOperator(operator_t op) {
-  float number = strtof(m_buffer.c_str(), nullptr);
+  if (m_stack.empty()) {
+    m_stack.push_back(Expr{0, OP_NONE});
+  }
 
-  m_stack.push_back(Expr{number, op});
+  m_stack.back().op = op;
+
   collapseStack();
-
-  m_buffer = "";
 }
 
 //===========================================
@@ -77,20 +76,11 @@ void Calculator::collapseStack() {
 //===========================================
 // Calculator::evaluate
 //===========================================
-void Calculator::evaluate() {
-  if (m_buffer.length() > 0) {
-    float number = strtof(m_buffer.c_str(), nullptr);
-    m_stack.push_back(Expr{number, OP_NONE});
-  }
-
+float Calculator::evaluate() {
   collapseStack();
+  assert(m_stack.size() == 1);
 
-  if (m_stack.size() > 0) {
-    m_buffer = std::to_string(m_stack.back().lhs);
-    m_stack.pop_back();
-  }
-
-  assert(m_stack.empty());
+  return m_stack.back().lhs;
 }
 
 //===========================================
@@ -98,19 +88,11 @@ void Calculator::evaluate() {
 //===========================================
 void Calculator::clear() {
   m_stack.clear();
-  m_buffer = "";
 }
 
 //===========================================
-// Calculator::currentValue
+// Calculator::op
 //===========================================
-float Calculator::currentValue() const {
-  if (m_buffer.length() > 0) {
-    return strtof(m_buffer.c_str(), nullptr);
-  }
-  else if (m_stack.size() > 0) {
-    return m_stack.front().lhs;
-  }
-
-  return 0;
+operator_t Calculator::op() const {
+  return m_stack.size() > 0 ? m_stack.back().op : OP_NONE;
 }

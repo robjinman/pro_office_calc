@@ -3,7 +3,6 @@
 
 
 #include <deque>
-#include <string>
 
 
 enum operator_t {
@@ -16,13 +15,11 @@ enum operator_t {
 
 class Calculator {
   public:
-    void putDigit(int d);
+    void putValue(float val);
     void putOperator(operator_t op);
-    void putDecimalPoint();
     void clear();
-    void evaluate();
-    bool hasPending() const;
-    float currentValue() const;
+    float evaluate();
+    operator_t op() const;
 
     struct Expr {
       float lhs;
@@ -30,7 +27,6 @@ class Calculator {
     };
 
   private:
-    std::string m_buffer;
     std::deque<Expr> m_stack;
 
     void collapseStack();

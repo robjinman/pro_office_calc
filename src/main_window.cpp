@@ -119,35 +119,49 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
 // MainWindow::buttonClicked
 //===========================================
 void MainWindow::buttonClicked(int id) {
-  DBG_PRINT("Button " << id << " clicked\n");
-
   static Calculator calculator;
+  static bool reset = true;
+
+  QString text = m_wgtDigitDisplay->text();
 
   if (id <= 9) {
-    calculator.putDigit(id);
+    if (reset || calculator.op() != OP_NONE) {
+      text = "";
+      reset = false;
+    }
+
+    text.append(std::to_string(id).c_str());
+
+    float value = std::strtof(text.toStdString().c_str(), nullptr);
+    calculator.putValue(value);
+  }
+  else {
+    switch (id) {
+      case BTN_PLUS:
+      case BTN_MINUS:
+      case BTN_TIMES:
+      case BTN_DIVIDE:
+        calculator.putOperator(idToOp(id));
+        break;
+      case BTN_POINT:
+        if (!text.contains(".")) {
+          text.append(".");
+        }
+        break;
+      case BTN_EQUALS: {
+        float result = calculator.evaluate();
+        text = formatNumber(result).c_str();
+        reset = true;
+        break;
+      }
+      case BTN_CLEAR:
+        calculator.clear();
+        text = "";
+        break;
+    }
   }
 
-  switch (id) {
-    case BTN_PLUS:
-    case BTN_MINUS:
-    case BTN_TIMES:
-    case BTN_DIVIDE:
-      calculator.putOperator(idToOp(id));
-      break;
-    case BTN_POINT:
-      calculator.putDecimalPoint();
-      break;
-    case BTN_EQUALS:
-      calculator.evaluate();
-      break;
-    case BTN_CLEAR:
-      calculator.clear();
-      break;
-  }
-
-  string displayVal = formatNumber(calculator.currentValue());
-
-  m_wgtDigitDisplay->setText(displayVal.c_str());
+  m_wgtDigitDisplay->setText(text);
 }
 
 //===========================================
