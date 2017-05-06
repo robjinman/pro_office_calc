@@ -6,7 +6,7 @@ if (CMAKE_BUILD_TYPE EQUAL "Release")
   # ...
 else()
   message("Debug mode")
-  add_compile_options(-DDEBUG)
+  add_compile_options(-DDEBUG -g)
 endif()
 
 project(${projectName})

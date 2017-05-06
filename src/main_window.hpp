@@ -3,11 +3,14 @@
 
 
 #include <memory>
+#include <vector>
 #include <QMainWindow>
 
 
 class QAction;
 class QWidget;
+class QTextEdit;
+class ButtonGrid;
 class AppConfig;
 class AppState;
 
@@ -24,6 +27,7 @@ class MainWindow : public QMainWindow {
 
   private slots:
     void showAbout();
+    void buttonClicked(int id);
 
   private:
     const AppConfig& m_appConfig;
@@ -34,6 +38,8 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<QAction> m_actAbout;
     std::unique_ptr<QAction> m_actQuit;
     std::unique_ptr<QWidget> m_wgtCentral;
+    std::unique_ptr<QTextEdit> m_wgtDigitDisplay;
+    std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
 };
 
 

@@ -1,14 +1,19 @@
-#include <sstream>
 #include <QMenuBar>
 #include <QApplication>
-#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
-#include "utils.hpp"
+#include <QTextEdit>
 #include "main_window.hpp"
+#include "button_grid.hpp"
+#include "utils.hpp"
 #include "types.hpp"
 #include "app_config.hpp"
 #include "app_state.hpp"
+
+
+using std::string;
+using std::unique_ptr;
+using std::to_string;
 
 
 //===========================================
@@ -36,14 +41,9 @@ static QString numberToWord(int n) {
 MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   : QMainWindow(nullptr),
     m_appConfig(appConfig),
-    m_appState(appState),
-    m_mnuFile(nullptr),
-    m_mnuHelp(nullptr),
-    m_actAbout(nullptr),
-    m_actQuit(nullptr),
-    m_wgtCentral(nullptr) {
+    m_appState(appState) {
 
-  resize(600, 300);
+  setFixedSize(300, 260);
 
   setWindowTitle("Pro Office Calculator");
 
@@ -59,11 +59,26 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   m_wgtCentral.reset(new QWidget(this));
   setCentralWidget(m_wgtCentral.get());
 
-  QHBoxLayout* hbox = new QHBoxLayout;
-  m_wgtCentral->setLayout(hbox);
+  m_wgtDigitDisplay.reset(new QTextEdit(m_wgtCentral.get()));
+  m_wgtDigitDisplay->setMaximumHeight(40);
 
+  m_wgtButtonGrid.reset(new ButtonGrid(m_wgtCentral.get()));
+
+  QVBoxLayout* vbox = new QVBoxLayout;
+  vbox->addWidget(m_wgtDigitDisplay.get());
+  vbox->addWidget(m_wgtButtonGrid.get());
+  m_wgtCentral->setLayout(vbox);
+
+  connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
+}
+
+//===========================================
+// MainWindow::buttonClicked
+//===========================================
+void MainWindow::buttonClicked(int id) {
+  DBG_PRINT("Button " << id << " clicked\n");
 }
 
 //===========================================
@@ -96,4 +111,6 @@ void MainWindow::showAbout() {
 //===========================================
 // MainWindow::~MainWindow
 //===========================================
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() {
+  DBG_PRINT("MainWindow::~MainWindow()\n");
+}
