@@ -34,25 +34,6 @@ static operator_t idToOp(int id) {
 }
 
 //===========================================
-// numberToWord
-//===========================================
-static QString numberToWord(int n) {
-  switch (n) {
-    case 1: return "one";
-    case 2: return "two";
-    case 3: return "three";
-    case 4: return "four";
-    case 5: return "five";
-    case 6: return "six";
-    case 7: return "seven";
-    case 8: return "eight";
-    case 9: return "nine";
-    case 10: return "ten";
-    default: return "?";
-  }
-}
-
-//===========================================
 // formatNumber
 //===========================================
 static string formatNumber(float num) {
@@ -170,7 +151,7 @@ void MainWindow::buttonClicked(int id) {
 void MainWindow::closeEvent(QCloseEvent*) {
   DBG_PRINT("Quitting\n");
 
-  m_appState.count--;
+  //m_appState.count--;
   m_appState.persist(m_appConfig);
 }
 
@@ -182,7 +163,7 @@ void MainWindow::showAbout() {
    msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
      "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
      "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-     "<i>" + numberToWord(m_appState.count) + "</i>";
+     "<i>∞ = ☠</i>";
 
   QMessageBox msgBox(this);
   msgBox.setWindowTitle("About");
