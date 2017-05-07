@@ -36,7 +36,7 @@ static operator_t idToOp(int id) {
 //===========================================
 // formatNumber
 //===========================================
-static string formatNumber(float num) {
+static string formatNumber(double num) {
   stringstream ss;
   ss << std::fixed << std::setprecision(8) << num;
   string str = ss.str();
@@ -113,7 +113,7 @@ void MainWindow::buttonClicked(int id) {
 
     text.append(std::to_string(id).c_str());
 
-    float value = std::strtof(text.toStdString().c_str(), nullptr);
+    double value = std::strtof(text.toStdString().c_str(), nullptr);
     calculator.putValue(value);
   }
   else {
@@ -130,7 +130,7 @@ void MainWindow::buttonClicked(int id) {
         }
         break;
       case BTN_EQUALS: {
-        float result = calculator.evaluate();
+        double result = calculator.evaluate();
         text = formatNumber(result).c_str();
         reset = true;
         break;
