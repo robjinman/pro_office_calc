@@ -79,6 +79,10 @@ void Calculator::collapseStack() {
 // Calculator::evaluate
 //===========================================
 double Calculator::evaluate() {
+  if (m_stack.empty()) {
+    return 0;
+  }
+
   collapseStack();
   assert(m_stack.size() == 1);
 
