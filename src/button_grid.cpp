@@ -128,10 +128,19 @@ void ButtonGrid::onBtnClick(int id) {
       static int i = -1;
       ++i;
 
-      m_buttons[0]->resize(m_buttons[0]->size() * 0.9);
+      int n = 15;
 
-      if (i >= 10) {
-        m_buttons[0]->hide();
+      for (auto it = m_buttons.begin(); it != m_buttons.end(); ++it) {
+        (*it)->resize((*it)->size() * 0.9);
+
+        if (i >= n) {
+          (*it)->hide();
+        }
+      }
+
+      if (i >= n) {
+        m_appState.level++;
+        m_eventSystem.fire(Event("appStateUpdated"));
         return false;
       }
 

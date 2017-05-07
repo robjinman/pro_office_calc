@@ -114,7 +114,7 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState, EventSyst
 // MainWindow::onUpdateAppState
 //===========================================
 void MainWindow::onUpdateAppState(const Event& e) {
-  if (m_appState.level == 1) {
+  if (m_appState.level >= 1) {
     setWindowTitle("P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶");
 
     m_actQuit->setText("Q̶u̸i̶t̷");
@@ -208,13 +208,13 @@ void MainWindow::showAbout() {
     msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
       "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
       "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-      "<h2>∞☠</h2>";
+      "<font size=6>⚠∞</font>";
     msgBox.setWindowTitle("About");
   }
-  else if (m_appState.level == 1) {
+  else if (m_appState.level >= 1) {
     msg = msg + "<p align='center'><big>P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶</big><br>V̶e̸r̵s̴i̵o̸n̵ ̶1̸.̵0̵.̶0̵</p>"
       "<p><br><br></p>"
-      "<p align='center'>C̵o̴p̶y̶r̴i̶g̴h̶t̷ ̵(̶c̴)̶ ̴2̴0̶1̵7̶ ̴A̵c̸m̵e̶ ̶I̴n̶c̴.̴ ̶A̵l̴l̶ ̵r̴i̶g̸h̴t̸s̷ ̴r̵e̶s̵e̵r̸v̴e̷d̵.̶</p>";
+      "<p align='center'>C̴̠̓́o̶̥̟͘p̸̝͌̿y̷͈͈͝r̸̰͒ĭ̵͖͒g̸̭̭̅ḧ̸̟̖́͝ṯ̴̓ ̷̦̳̇(̷̯̩͆̈c̵͉̔)̵̛͕̕ ̴͔̇2̷̢̑͝0̵̖̀̎1̴̤̘͛7̷̻̳͛͌ ̷̙̙̈́̂Ạ̶̛̔c̸̢̿m̴̬̯̆͌ě̸̪͓͛ ̸̝͇̓͛I̸̺̜͊̀n̶̺̗̓̑c̸̳͖̆͋.̴͇͇̔̀ ̴̠́A̸̤̾̀l̸̛̜̖ḽ̴̈̾ ̴̹͌r̵̬̭̔͒i̴̭̣͛̔ǵ̵̩h̵̗̜͋̈́t̴̢̃s̶͇͓̆̅ ̷̗̀̚r̷̡͖͌͐ě̶̦̾ś̷͇̠e̴̫̺͒r̵̰͆v̵̧͝e̶̟͑ḓ̸̉.̵̨͉͌</p>";
       msgBox.setWindowTitle("A̶b̵o̷u̴t̶");
   }
 
