@@ -9,7 +9,7 @@ static const std::map<operator_t, int> PRECEDENCE {
   { OP_PLUS, 1 },
   { OP_MINUS, 1 },
   { OP_TIMES, 2 },
-  { OP_DIVIDE, 2 }
+  { OP_DIVIDE, 3 }
 };
 
 
