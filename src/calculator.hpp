@@ -2,7 +2,7 @@
 #define __PROCALC_CALCULATOR_HPP__
 
 
-#include <deque>
+#include <stack>
 
 
 enum operator_t {
@@ -27,7 +27,7 @@ class Calculator {
     };
 
   private:
-    std::deque<Expr> m_stack;
+    std::stack<Expr> m_stack;
 
     void collapseStack();
 };
