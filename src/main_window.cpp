@@ -115,12 +115,12 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState, EventSyst
 //===========================================
 void MainWindow::onUpdateAppState(const Event& e) {
   if (m_appState.level == 1) {
-    setWindowTitle("Ṕ̸̯r̷͈͈̿̔o̸̤͝ ̸̩̅́ͅO̸̗̤͋f̸̞͆f̵̢̣̈̂ï̶̢̛̫c̶̪̈́ͅè̸͎ ̸̠̀C̸̼̠̐a̷͉̺̽̕l̴̼̉͘͜c̵͚̖̋u̸̠͕̎l̴̻͍̏̈́a̴̦̅͂t̷͖́̀o̷̯̔ŕ̸͈");
+    setWindowTitle("P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶");
 
-    m_actQuit->setText("Q̵̳̙̚u̶͓͌̽i̵͈͂̾ṫ̷̹̚");
-    m_mnuFile->setTitle("F̸͕͗̓i̶̫̝̇l̷̗͑͑e̷̺̔");
-    m_actAbout->setText("A̵̙̎̌b̸͓̑͠o̵̩̝͛̀u̴̧̇ṱ̶͗");
-    m_mnuHelp->setTitle("H̷̩̤̊͂e̷͖̖͋̋l̸̡̪̽͋p̷̪̅");
+    m_actQuit->setText("Q̶u̸i̶t̷");
+    m_mnuFile->setTitle("F̷i̸l̴e̷");
+    m_actAbout->setText("A̵b̵o̸u̸t̴");
+    m_mnuHelp->setTitle("H̸e̵l̴p̷");
   }
 }
 
@@ -200,15 +200,24 @@ void MainWindow::closeEvent(QCloseEvent*) {
 // MainWindow::showAbout
 //===========================================
 void MainWindow::showAbout() {
-   QString msg;
-   msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
-     "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
-     "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-     "<h2>∞☠</h2>";
-
   QMessageBox msgBox(this);
-  msgBox.setWindowTitle("About");
   msgBox.setTextFormat(Qt::RichText);
+
+  QString msg;
+  if (m_appState.level == 0) {
+    msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
+      "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
+      "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
+      "<h2>∞☠</h2>";
+    msgBox.setWindowTitle("About");
+  }
+  else if (m_appState.level == 1) {
+    msg = msg + "<p align='center'><big>P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶</big><br>V̶e̸r̵s̴i̵o̸n̵ ̶1̸.̵0̵.̶0̵</p>"
+      "<p><br><br></p>"
+      "<p align='center'>C̵o̴p̶y̶r̴i̶g̴h̶t̷ ̵(̶c̴)̶ ̴2̴0̶1̵7̶ ̴A̵c̸m̵e̶ ̶I̴n̶c̴.̴ ̶A̵l̴l̶ ̵r̴i̶g̸h̴t̸s̷ ̴r̵e̶s̵e̵r̸v̴e̷d̵.̶</p>";
+      msgBox.setWindowTitle("A̶b̵o̷u̴t̶");
+  }
+
   msgBox.setText(msg);
   msgBox.exec();
 }
