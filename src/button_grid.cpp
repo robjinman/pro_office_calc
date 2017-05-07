@@ -124,7 +124,7 @@ void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
 
   if (m_appState.level == 1 && id == BTN_EQUALS) {
-    m_updateLoop.add([=]() mutable {
+    m_updateLoop.add([=]() {
       static int i = -1;
       ++i;
 
