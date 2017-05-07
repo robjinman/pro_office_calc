@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include "button_grid.hpp"
 #include "utils.hpp"
+#include "rotated_widget.hpp"
 
 
 using std::unique_ptr;

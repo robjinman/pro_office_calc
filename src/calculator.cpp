@@ -16,7 +16,7 @@ static const std::map<operator_t, int> PRECEDENCE {
 //===========================================
 // apply
 //===========================================
-static float apply(Calculator::Expr expr, float rhs) {
+static double apply(Calculator::Expr expr, double rhs) {
   switch (expr.op) {
     case OP_PLUS: return expr.lhs + rhs;
     case OP_MINUS: return expr.lhs - rhs;
@@ -29,7 +29,7 @@ static float apply(Calculator::Expr expr, float rhs) {
 //===========================================
 // Calculator::putValue
 //===========================================
-void Calculator::putValue(float val) {
+void Calculator::putValue(double val) {
   if (m_stack.size() > 0 && m_stack.back().op == OP_NONE) {
     m_stack.back().lhs = val;
   }
@@ -63,7 +63,7 @@ void Calculator::collapseStack() {
       m_stack.pop_back();
       m_stack.pop_back();
 
-      float val = apply(prev, curr.lhs);
+      double val = apply(prev, curr.lhs);
 
       m_stack.push_back(Expr{val, curr.op});
     }
@@ -76,7 +76,7 @@ void Calculator::collapseStack() {
 //===========================================
 // Calculator::evaluate
 //===========================================
-float Calculator::evaluate() {
+double Calculator::evaluate() {
   collapseStack();
   assert(m_stack.size() == 1);
 

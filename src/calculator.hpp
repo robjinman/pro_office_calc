@@ -15,14 +15,14 @@ enum operator_t {
 
 class Calculator {
   public:
-    void putValue(float val);
+    void putValue(double val);
     void putOperator(operator_t op);
     void clear();
-    float evaluate();
+    double evaluate();
     operator_t op() const;
 
     struct Expr {
-      float lhs;
+      double lhs;
       operator_t op;
     };
 
