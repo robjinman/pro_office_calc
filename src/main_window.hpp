@@ -10,6 +10,7 @@
 class QAction;
 class QWidget;
 class QLineEdit;
+class UpdateLoop;
 class ButtonGrid;
 class AppConfig;
 class AppState;
@@ -28,6 +29,7 @@ class MainWindow : public QMainWindow {
   private slots:
     void showAbout();
     void buttonClicked(int id);
+    void tick();
 
   private:
     const AppConfig& m_appConfig;
@@ -40,6 +42,7 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<QWidget> m_wgtCentral;
     std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
     std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
+    std::unique_ptr<UpdateLoop> m_updateLoop;
 };
 
 

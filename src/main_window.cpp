@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QLineEdit>
+#include <QTimer>
 #include "main_window.hpp"
 #include "button_grid.hpp"
 #include "utils.hpp"
@@ -13,6 +14,7 @@
 #include "app_state.hpp"
 #include "calculator.hpp"
 #include "exception.hpp"
+#include "update_loop.hpp"
 
 
 using std::string;
@@ -94,6 +96,18 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
+
+  QTimer* timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
+
+  m_updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 100));
+}
+
+//===========================================
+// MainWindow::tick
+//===========================================
+void MainWindow::tick() {
+  m_updateLoop->update();
 }
 
 //===========================================
