@@ -5,6 +5,7 @@
 #include "button_grid.hpp"
 #include "utils.hpp"
 #include "rotated_widget.hpp"
+#include "update_loop.hpp"
 
 
 using std::unique_ptr;
@@ -26,8 +27,8 @@ static QPushButton* makeButton(QWidget* parent, const QString& text) {
 //===========================================
 // ButtonGrid::ButtonGrid
 //===========================================
-ButtonGrid::ButtonGrid(QWidget* parent)
-  : QWidget(parent) {
+ButtonGrid::ButtonGrid(UpdateLoop& updateLoop, QWidget* parent)
+  : QWidget(parent), m_updateLoop(updateLoop) {
 
   QGridLayout* grid = new QGridLayout;
   grid->setSpacing(1);
@@ -84,10 +85,10 @@ ButtonGrid::ButtonGrid(QWidget* parent)
   grid->addWidget(btn7.get(), 1, 0);
   grid->addWidget(btn8.get(), 1, 1);
   grid->addWidget(btn9.get(), 1, 2);
-  grid->addWidget(btnPlus.get(), 1, 3);
-  grid->addWidget(btnMinus.get(), 2, 3);
-  grid->addWidget(btnTimes.get(), 3, 3);
-  grid->addWidget(btnDivide.get(), 4, 3);
+  grid->addWidget(btnPlus.get(), 4, 3);
+  grid->addWidget(btnMinus.get(), 3, 3);
+  grid->addWidget(btnTimes.get(), 2, 3);
+  grid->addWidget(btnDivide.get(), 1, 3);
 
   m_buttons.push_back(std::move(btn0));
   m_buttons.push_back(std::move(btn1));
@@ -115,6 +116,22 @@ ButtonGrid::ButtonGrid(QWidget* parent)
 //===========================================
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
+
+  if (id == 0) {
+    m_updateLoop.add([=]() mutable {
+      static int i = -1;
+      ++i;
+
+      m_buttons[0]->resize(m_buttons[0]->size() * 0.9);
+
+      if (i >= 10) {
+        m_buttons[0]->hide();
+        return false;
+      }
+
+      return true;
+    });
+  }
 }
 
 //===========================================

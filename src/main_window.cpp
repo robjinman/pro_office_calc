@@ -69,6 +69,11 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
 
   setWindowTitle("Pro Office Calculator");
 
+  QTimer* timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
+
+  m_updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 100));
+
   m_actQuit.reset(new QAction("Quit", this));
 
   m_mnuFile.reset(menuBar()->addMenu("File"));
@@ -86,7 +91,7 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_wgtDigitDisplay->setReadOnly(true);
 
-  m_wgtButtonGrid.reset(new ButtonGrid(m_wgtCentral.get()));
+  m_wgtButtonGrid.reset(new ButtonGrid(*m_updateLoop, m_wgtCentral.get()));
 
   QVBoxLayout* vbox = new QVBoxLayout;
   vbox->addWidget(m_wgtDigitDisplay.get());
@@ -96,11 +101,6 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
-
-  QTimer* timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
-
-  m_updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 100));
 }
 
 //===========================================

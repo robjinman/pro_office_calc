@@ -14,10 +14,10 @@ UpdateLoop::UpdateLoop(unique_ptr<QTimer> timer, int interval)
     m_interval(interval) {}
 
 //===========================================
-// UpdateLoop::addObject
+// UpdateLoop::addFunction
 //===========================================
-void UpdateLoop::addObject(weak_ptr<IUpdatable> obj) {
-  m_objects.push_back(obj);
+void UpdateLoop::add(std::function<bool()> fn) {
+  m_functions.push_back(fn);
 
   if (!m_timer->isActive()) {
     m_timer->start(m_interval);
@@ -25,26 +25,28 @@ void UpdateLoop::addObject(weak_ptr<IUpdatable> obj) {
 }
 
 //===========================================
-// UpdateLoop::numObjects
+// UpdateLoop::size
 //===========================================
-int UpdateLoop::numObjects() const {
-  return m_objects.size();
+int UpdateLoop::size() const {
+  return m_functions.size();
 }
 
 //===========================================
 // UpdateLoop::update
 //===========================================
 void UpdateLoop::update() {
-  auto it = m_objects.begin();
+  auto it = m_functions.begin();
 
-  while (it != m_objects.end()) {
-    auto pObj = it->lock();
-
-    if (!pObj || !pObj->update()) {
-      m_objects.erase(it++);
+  while (it != m_functions.end()) {
+    if (!(*it)()) {
+      m_functions.erase(it++);
     }
     else {
       ++it;
     }
+  }
+
+  if (m_functions.empty()) {
+    m_timer->stop();
   }
 }

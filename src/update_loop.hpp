@@ -4,12 +4,7 @@
 
 #include <memory>
 #include <list>
-
-
-struct IUpdatable {
-  virtual bool update() = 0;
-  virtual ~IUpdatable() {}
-};
+#include <functional>
 
 
 class QTimer;
@@ -18,14 +13,14 @@ class UpdateLoop {
   public:
     UpdateLoop(std::unique_ptr<QTimer> timer, int interval);
 
-    void addObject(std::weak_ptr<IUpdatable> obj);
-    int numObjects() const;
+    void add(std::function<bool()> fn);
+    int size() const;
     void update();
 
   private:
     std::unique_ptr<QTimer> m_timer;
     int m_interval;
-    std::list<std::weak_ptr<IUpdatable>> m_objects;
+    std::list<std::function<bool()>> m_functions;
 };
 
 
