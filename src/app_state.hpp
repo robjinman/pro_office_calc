@@ -5,7 +5,7 @@
 class AppConfig;
 
 struct AppState {
-  //uint8_t count = 10;
+  int level = 0;
 
   void load(const AppConfig& conf);
   void persist(const AppConfig& conf) const;

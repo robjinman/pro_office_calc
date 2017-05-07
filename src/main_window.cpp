@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iomanip>
+#include <math.h>
 #include <QMenuBar>
 #include <QApplication>
 #include <QVBoxLayout>
@@ -60,10 +61,11 @@ static string formatNumber(double num) {
 //===========================================
 // MainWindow::MainWindow
 //===========================================
-MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
+MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState, EventSystem& eventSystem)
   : QMainWindow(nullptr),
     m_appConfig(appConfig),
-    m_appState(appState) {
+    m_appState(appState),
+    m_eventSystem(eventSystem) {
 
   setFixedSize(300, 260);
 
@@ -83,6 +85,10 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   m_mnuHelp.reset(menuBar()->addMenu("Help"));
   m_mnuHelp->addAction(m_actAbout.get());
 
+  m_eventSystem.listen("appStateUpdated", [this](const Event& e) {
+    this->onUpdateAppState(e);
+  });
+
   m_wgtCentral.reset(new QWidget(this));
   setCentralWidget(m_wgtCentral.get());
 
@@ -91,7 +97,8 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_wgtDigitDisplay->setReadOnly(true);
 
-  m_wgtButtonGrid.reset(new ButtonGrid(*m_updateLoop, m_wgtCentral.get()));
+  m_wgtButtonGrid.reset(new ButtonGrid(m_appState, m_eventSystem,
+    *m_updateLoop, m_wgtCentral.get()));
 
   QVBoxLayout* vbox = new QVBoxLayout;
   vbox->addWidget(m_wgtDigitDisplay.get());
@@ -101,6 +108,20 @@ MainWindow::MainWindow(const AppConfig& appConfig, AppState& appState)
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
+}
+
+//===========================================
+// MainWindow::onUpdateAppState
+//===========================================
+void MainWindow::onUpdateAppState(const Event& e) {
+  if (m_appState.level == 1) {
+    setWindowTitle("Ṕ̸̯r̷͈͈̿̔o̸̤͝ ̸̩̅́ͅO̸̗̤͋f̸̞͆f̵̢̣̈̂ï̶̢̛̫c̶̪̈́ͅè̸͎ ̸̠̀C̸̼̠̐a̷͉̺̽̕l̴̼̉͘͜c̵͚̖̋u̸̠͕̎l̴̻͍̏̈́a̴̦̅͂t̷͖́̀o̷̯̔ŕ̸͈");
+
+    m_actQuit->setText("Q̵̳̙̚u̶͓͌̽i̵͈͂̾ṫ̷̹̚");
+    m_mnuFile->setTitle("F̸͕͗̓i̶̫̝̇l̷̗͑͑e̷̺̔");
+    m_actAbout->setText("A̵̙̎̌b̸͓̑͠o̵̩̝͛̀u̴̧̇ṱ̶͗");
+    m_mnuHelp->setTitle("H̷̩̤̊͂e̷͖̖͋̋l̸̡̪̽͋p̷̪̅");
+  }
 }
 
 //===========================================
@@ -147,6 +168,12 @@ void MainWindow::buttonClicked(int id) {
         double result = calculator.evaluate();
         text = formatNumber(result).c_str();
         reset = true;
+
+        if (std::isinf(result)) {
+          m_appState.level = 1;
+          m_eventSystem.fire(Event("appStateUpdated"));
+        }
+
         break;
       }
       case BTN_CLEAR:
@@ -177,7 +204,7 @@ void MainWindow::showAbout() {
    msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
      "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
      "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-     "<i>∞ = ☠</i>";
+     "<h2>∞☠</h2>";
 
   QMessageBox msgBox(this);
   msgBox.setWindowTitle("About");

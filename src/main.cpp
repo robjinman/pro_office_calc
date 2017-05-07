@@ -4,6 +4,7 @@
 #include "exception.hpp"
 #include "app_config.hpp"
 #include "app_state.hpp"
+#include "event_system.hpp"
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -43,12 +44,16 @@ int main(int argc, char** argv) {
   try {
     AppConfig appConfig;
 
+    EventSystem eventSystem;
+
     AppState appState;
     appState.load(appConfig);
 
     Application app(argc, argv);
-    MainWindow window(appConfig, appState);
+    MainWindow window(appConfig, appState, eventSystem);
     window.show();
+
+    eventSystem.fire(Event("appStateUpdated"));
 
     return app.exec();
   }

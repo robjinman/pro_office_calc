@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <QMainWindow>
+#include "event_system.hpp"
 
 
 class QAction;
@@ -19,7 +20,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   public:
-    MainWindow(const AppConfig& appConfig, AppState& state);
+    MainWindow(const AppConfig& appConfig, AppState& state, EventSystem& eventSystem);
 
     virtual ~MainWindow();
 
@@ -32,8 +33,12 @@ class MainWindow : public QMainWindow {
     void tick();
 
   private:
+    void onUpdateAppState(const Event& e);
+
     const AppConfig& m_appConfig;
     AppState& m_appState;
+    EventSystem& m_eventSystem;
+    std::unique_ptr<UpdateLoop> m_updateLoop;
 
     std::unique_ptr<QMenu> m_mnuFile;
     std::unique_ptr<QMenu> m_mnuHelp;
@@ -42,7 +47,6 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<QWidget> m_wgtCentral;
     std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
     std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
-    std::unique_ptr<UpdateLoop> m_updateLoop;
 };
 
 

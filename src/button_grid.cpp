@@ -6,6 +6,8 @@
 #include "utils.hpp"
 #include "rotated_widget.hpp"
 #include "update_loop.hpp"
+#include "event_system.hpp"
+#include "app_state.hpp"
 
 
 using std::unique_ptr;
@@ -27,8 +29,12 @@ static QPushButton* makeButton(QWidget* parent, const QString& text) {
 //===========================================
 // ButtonGrid::ButtonGrid
 //===========================================
-ButtonGrid::ButtonGrid(UpdateLoop& updateLoop, QWidget* parent)
-  : QWidget(parent), m_updateLoop(updateLoop) {
+ButtonGrid::ButtonGrid(AppState& appState, EventSystem& eventSystem,
+  UpdateLoop& updateLoop, QWidget* parent)
+  : QWidget(parent),
+    m_appState(appState),
+    m_eventSystem(eventSystem),
+    m_updateLoop(updateLoop) {
 
   QGridLayout* grid = new QGridLayout;
   grid->setSpacing(1);
@@ -117,7 +123,7 @@ ButtonGrid::ButtonGrid(UpdateLoop& updateLoop, QWidget* parent)
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
 
-  if (id == 0) {
+  if (m_appState.level == 1 && id == BTN_EQUALS) {
     m_updateLoop.add([=]() mutable {
       static int i = -1;
       ++i;
