@@ -113,7 +113,7 @@ void MainWindow::buttonClicked(int id) {
 
     text.append(std::to_string(id).c_str());
 
-    double value = std::strtof(text.toStdString().c_str(), nullptr);
+    double value = std::strtod(text.toStdString().c_str(), nullptr);
     calculator.putValue(value);
   }
   else {

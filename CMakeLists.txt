@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 
 set(projectName procalc)
 
+add_compile_options(-std=c++11)
+
 if (CMAKE_BUILD_TYPE EQUAL "Release")
-  # ...
+  add_compile_options(-O3)
 else()
   message("Debug mode")
-  add_compile_options(-DDEBUG -g)
+  add_compile_options(-DDEBUG -O0 -g)
 endif()
 
 project(${projectName})
@@ -19,8 +21,6 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
-
-add_compile_options(-std=c++11 -O3)
 
 file(GLOB_RECURSE srcs src/*.cpp)
 add_executable(procalc ${srcs})
