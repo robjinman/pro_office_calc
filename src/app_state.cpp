@@ -8,6 +8,16 @@ using std::ifstream;
 using std::ofstream;
 
 
+std::ostream& operator<<(std::ostream& os, const AppStateNew& state) {
+  state.serialize(os);
+  return os;
+}
+
+std::istream& operator>>(std::istream& is, AppStateNew& state) {
+  state.deserialize(is);
+  return is;
+}
+
 //===========================================
 // AppState::load
 //===========================================
