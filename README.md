@@ -1,11 +1,9 @@
-Hangman by Rob Jinman
+Pro Office Calculator
+=====================
 
-Dependencies: qt5
-
-To compile on Linux:
+To compile
 
         mkdir build
         cd build
         cmake -G "Unix Makefiles" ..
         make
-
