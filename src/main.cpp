@@ -1,10 +1,13 @@
 #include <iostream>
+#include <fstream>
+#include <memory>
 #include "application.hpp"
 #include "main_window.hpp"
 #include "exception.hpp"
 #include "app_config.hpp"
 #include "app_state.hpp"
 #include "event_system.hpp"
+#include "platform.hpp"
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -29,8 +32,21 @@ void changeWorkingDir() {
 #endif
 
 
-using namespace std;
+using std::ifstream;
+using std::cout;
+using std::cerr;
+using std::unique_ptr;
 
+
+//===========================================
+// loadAppState
+//===========================================
+void loadAppState(const AppConfig& conf, AppState& appState) {
+  ifstream fin(conf.userDataDir + sep + "procalc.dat", ifstream::binary);
+  if (fin.good()){
+    //fin >> appState;  
+  }
+}
 
 //===========================================
 // main
@@ -44,10 +60,10 @@ int main(int argc, char** argv) {
   try {
     AppConfig appConfig;
 
-    EventSystem eventSystem;
+    MainState appState;
+    loadAppState(appConfig, appState);
 
-    AppState appState;
-    appState.load(appConfig);
+    EventSystem eventSystem;
 
     Application app(argc, argv);
     MainWindow window(appConfig, appState, eventSystem);

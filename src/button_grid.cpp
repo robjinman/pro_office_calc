@@ -29,7 +29,7 @@ static QPushButton* makeButton(QWidget* parent, const QString& text) {
 //===========================================
 // ButtonGrid::ButtonGrid
 //===========================================
-ButtonGrid::ButtonGrid(AppState& appState, EventSystem& eventSystem,
+ButtonGrid::ButtonGrid(MainState& appState, EventSystem& eventSystem,
   UpdateLoop& updateLoop, QWidget* parent)
   : QWidget(parent),
     m_appState(appState),
@@ -139,8 +139,10 @@ void ButtonGrid::onBtnClick(int id) {
       }
 
       if (i >= n) {
-        m_appState.level++;
-        m_eventSystem.fire(Event("appStateUpdated"));
+//        m_appState.level = 3;
+//        m_appState.subState.reset(new MainSub3State);
+
+//        m_eventSystem.fire(Event("appStateUpdated"));
         return false;
       }
 

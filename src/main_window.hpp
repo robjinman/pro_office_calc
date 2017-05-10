@@ -6,6 +6,7 @@
 #include <vector>
 #include <QMainWindow>
 #include "event_system.hpp"
+#include "app_state.hpp"
 
 
 class QAction;
@@ -14,13 +15,12 @@ class QLineEdit;
 class UpdateLoop;
 class ButtonGrid;
 class AppConfig;
-class AppState;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
   public:
-    MainWindow(const AppConfig& appConfig, AppState& state, EventSystem& eventSystem);
+    MainWindow(const AppConfig& appConfig, MainState& state, EventSystem& eventSystem);
 
     virtual ~MainWindow();
 
@@ -35,8 +35,13 @@ class MainWindow : public QMainWindow {
   private:
     void onUpdateAppState(const Event& e);
 
+    template<class T>
+    T& castSubstate() {
+      return dynamic_cast<T&>(*m_appState.subState);
+    }
+
     const AppConfig& m_appConfig;
-    AppState& m_appState;
+    MainState& m_appState;
     EventSystem& m_eventSystem;
     std::unique_ptr<UpdateLoop> m_updateLoop;
 
