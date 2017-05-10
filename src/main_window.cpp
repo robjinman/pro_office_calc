@@ -12,7 +12,7 @@
 #include "utils.hpp"
 #include "types.hpp"
 #include "app_config.hpp"
-#include "app_state.hpp"
+#include "main_state.hpp"
 #include "calculator.hpp"
 #include "exception.hpp"
 #include "update_loop.hpp"
@@ -108,13 +108,25 @@ MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSys
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
+
+  if (m_appState.level == MainState::LVL_NORMAL_CALCULATOR) {
+    auto& subState = castSubstate<MainSub0State>();
+
+    if (subState.openCount > 1) {
+      subState.openCount--;
+    }
+    else {
+      m_appState.subState.reset(new MainSub1State);
+      m_appState.level = MainState::LVL_DANGER_INFINITY;
+    }
+  }
 }
 
 //===========================================
 // MainWindow::onUpdateAppState
 //===========================================
 void MainWindow::onUpdateAppState(const Event& e) {
-  if (m_appState.level >= 1) {
+  if (m_appState.level > MainState::LVL_DANGER_INFINITY) {
     setWindowTitle("P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶");
 
     m_actQuit->setText("Q̶u̸i̶t̷");
@@ -169,9 +181,9 @@ void MainWindow::buttonClicked(int id) {
         text = formatNumber(result).c_str();
         reset = true;
 
-        if (m_appState.level == 1 && std::isinf(result)) {
+        if (m_appState.level == MainState::LVL_DANGER_INFINITY && std::isinf(result)) {
           m_appState.subState.reset(new MainSub2State);
-          m_appState.level = 2;
+          m_appState.level++;
           m_eventSystem.fire(Event("appStateUpdated"));
         }
 
@@ -192,13 +204,6 @@ void MainWindow::buttonClicked(int id) {
 //===========================================
 void MainWindow::closeEvent(QCloseEvent*) {
   DBG_PRINT("Quitting\n");
-
-  if (m_appState.level == 0) {
-    auto subState = castSubstate<MainSub0State>();
-    subState.count--;
-  }
-
-  //m_appState.persist(m_appConfig);
 }
 
 //===========================================
@@ -210,21 +215,21 @@ void MainWindow::showAbout() {
 
   QString msg;
   switch (m_appState.level) {
-    case 0:
+    case MainState::LVL_NORMAL_CALCULATOR:
       msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
         "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
         "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-        "<i>" + QString::number(castSubstate<MainSub0State>().count) + "</i>";
+        "<i>" + QString::number(castSubstate<MainSub0State>().openCount) + "</i>";
       msgBox.setWindowTitle("About");
       break;
-    case 1:
+    case MainState::LVL_DANGER_INFINITY:
       msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
         "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
         "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
         "<font size=6>⚠∞</font>";
       msgBox.setWindowTitle("About");
       break;
-    case 2:
+    case MainState::LVL_WEIRD:
       msg = msg + "<p align='center'><big>P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶</big><br>V̶e̸r̵s̴i̵o̸n̵ ̶1̸.̵0̵.̶0̵</p>"
         "<p><br><br></p>"
         "<p align='center'>C̴̠̓́o̶̥̟͘p̸̝͌̿y̷͈͈͝r̸̰͒ĭ̵͖͒g̸̭̭̅ḧ̸̟̖́͝ṯ̴̓ ̷̦̳̇(̷̯̩͆̈c̵͉̔)̵̛͕̕ ̴͔̇2̷̢̑͝0̵̖̀̎1̴̤̘͛7̷̻̳͛͌ ̷̙̙̈́̂Ạ̶̛̔c̸̢̿m̴̬̯̆͌ě̸̪͓͛ ̸̝͇̓͛I̸̺̜͊̀n̶̺̗̓̑c̸̳͖̆͋.̴͇͇̔̀ ̴̠́A̸̤̾̀l̸̛̜̖ḽ̴̈̾ ̴̹͌r̵̬̭̔͒i̴̭̣͛̔ǵ̵̩h̵̗̜͋̈́t̴̢̃s̶͇͓̆̅ ̷̗̀̚r̷̡͖͌͐ě̶̦̾ś̷͇̠e̴̫̺͒r̵̰͆v̵̧͝e̶̟͑ḓ̸̉.̵̨͉͌</p>";

@@ -8,6 +8,7 @@
 #include "app_state.hpp"
 #include "event_system.hpp"
 #include "platform.hpp"
+#include "utils.hpp"
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -33,6 +34,7 @@ void changeWorkingDir() {
 
 
 using std::ifstream;
+using std::ofstream;
 using std::cout;
 using std::cerr;
 using std::unique_ptr;
@@ -43,9 +45,18 @@ using std::unique_ptr;
 //===========================================
 void loadAppState(const AppConfig& conf, AppState& appState) {
   ifstream fin(conf.userDataDir + sep + "procalc.dat", ifstream::binary);
-  if (fin.good()){
-    //fin >> appState;  
+
+  if (fin.good()) {
+    appState.deserialize(fin);
   }
+}
+
+//===========================================
+// persistAppState
+//===========================================
+void persistAppState(const AppConfig& conf, AppState& appState) {
+  ofstream fout(conf.userDataDir + sep + "procalc.dat", ofstream::binary | ofstream::trunc);
+  appState.serialize(fout);
 }
 
 //===========================================
@@ -71,7 +82,10 @@ int main(int argc, char** argv) {
 
     eventSystem.fire(Event("appStateUpdated"));
 
-    return app.exec();
+    int code = app.exec();
+    persistAppState(appConfig, appState);
+
+    return code;
   }
   catch (Exception& e) {
     cerr << "Encountered fatal error; " << e.what() << "\n";

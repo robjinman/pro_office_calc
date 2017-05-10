@@ -7,7 +7,7 @@
 #include "rotated_widget.hpp"
 #include "update_loop.hpp"
 #include "event_system.hpp"
-#include "app_state.hpp"
+#include "main_state.hpp"
 
 
 using std::unique_ptr;
@@ -123,7 +123,7 @@ ButtonGrid::ButtonGrid(MainState& appState, EventSystem& eventSystem,
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
 
-  if (m_appState.level == 1 && id == BTN_EQUALS) {
+  if (m_appState.level == MainState::LVL_WEIRD && id == BTN_CLEAR) {
     m_updateLoop.add([=]() {
       static int i = -1;
       ++i;

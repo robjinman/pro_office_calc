@@ -6,7 +6,7 @@
 #include <vector>
 #include <QMainWindow>
 #include "event_system.hpp"
-#include "app_state.hpp"
+#include "main_state.hpp"
 
 
 class QAction;
