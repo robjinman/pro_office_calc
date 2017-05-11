@@ -10,12 +10,12 @@ using std::string;
 using std::stringstream;
 
 
-static const std::map<Calculator::operator_t, int> PRECEDENCE {
-  { Calculator::OP_NONE, 0 },
-  { Calculator::OP_PLUS, 1 },
-  { Calculator::OP_MINUS, 1 },
-  { Calculator::OP_TIMES, 2 },
-  { Calculator::OP_DIVIDE, 3 }
+const std::map<Calculator::OpStack::operator_t, int> Calculator::OpStack::PRECEDENCE {
+  { Calculator::OpStack::OP_NONE, 0 },
+  { Calculator::OpStack::OP_PLUS, 1 },
+  { Calculator::OpStack::OP_MINUS, 1 },
+  { Calculator::OpStack::OP_TIMES, 2 },
+  { Calculator::OpStack::OP_DIVIDE, 3 }
 };
 
 
@@ -41,9 +41,9 @@ static string formatNumber(double num) {
 }
 
 //===========================================
-// Calculator::CalcStack::apply
+// Calculator::OpStack::apply
 //===========================================
-double Calculator::CalcStack::apply(Expr expr, double rhs) const {
+double Calculator::OpStack::apply(Expr expr, double rhs) const {
   switch (expr.op) {
     case OP_PLUS: return expr.lhs + rhs;
     case OP_MINUS: return expr.lhs - rhs;
@@ -54,9 +54,9 @@ double Calculator::CalcStack::apply(Expr expr, double rhs) const {
 }
 
 //===========================================
-// Calculator::CalcStack::putValue
+// Calculator::OpStack::putValue
 //===========================================
-void Calculator::CalcStack::putValue(double val) {
+void Calculator::OpStack::putValue(double val) {
   if (m_stack.size() > 0 && m_stack.top().op == OP_NONE) {
     m_stack.top().lhs = val;
   }
@@ -66,9 +66,9 @@ void Calculator::CalcStack::putValue(double val) {
 }
 
 //===========================================
-// Calculator::CalcStack::putOperator
+// Calculator::OpStack::putOperator
 //===========================================
-void Calculator::CalcStack::putOperator(operator_t op) {
+void Calculator::OpStack::putOperator(operator_t op) {
   if (m_stack.empty()) {
     m_stack.push(Expr{0, OP_NONE});
   }
@@ -79,9 +79,9 @@ void Calculator::CalcStack::putOperator(operator_t op) {
 }
 
 //===========================================
-// Calculator::CalcStack::collapseStack
+// Calculator::OpStack::collapseStack
 //===========================================
-void Calculator::CalcStack::collapseStack() {
+void Calculator::OpStack::collapseStack() {
   while (m_stack.size() > 1) {
     Expr curr = m_stack.top();
     m_stack.pop();
@@ -103,9 +103,9 @@ void Calculator::CalcStack::collapseStack() {
 }
 
 //===========================================
-// Calculator::CalcStack::evaluate
+// Calculator::OpStack::evaluate
 //===========================================
-double Calculator::CalcStack::evaluate() {
+double Calculator::OpStack::evaluate() {
   if (m_stack.empty()) {
     return 0;
   }
@@ -117,16 +117,16 @@ double Calculator::CalcStack::evaluate() {
 }
 
 //===========================================
-// Calculator::CalcStack::clear
+// Calculator::OpStack::clear
 //===========================================
-void Calculator::CalcStack::clear() {
+void Calculator::OpStack::clear() {
   m_stack = std::stack<Expr>();
 }
 
 //===========================================
-// Calculator::CalcStack::op
+// Calculator::OpStack::op
 //===========================================
-Calculator::operator_t Calculator::CalcStack::op() const {
+Calculator::OpStack::operator_t Calculator::OpStack::op() const {
   return m_stack.size() > 0 ? m_stack.top().op : OP_NONE;
 }
 
@@ -138,7 +138,7 @@ void Calculator::number(int n) {
     EXCEPTION("Calculator expects single digit");
   }
 
-  if (m_reset || m_calcStack.op() != OP_NONE) {
+  if (m_reset || m_OpStack.op() != OpStack::OP_NONE) {
     m_display = "";
     m_reset = false;
   }
@@ -146,7 +146,7 @@ void Calculator::number(int n) {
   m_display.append(std::to_string(n).c_str());
 
   double value = std::strtod(m_display.c_str(), nullptr);
-  m_calcStack.putValue(value);
+  m_OpStack.putValue(value);
 }
 
 //===========================================
@@ -162,35 +162,35 @@ void Calculator::point() {
 // Calculator::plus
 //===========================================
 void Calculator::plus() {
-  m_calcStack.putOperator(OP_PLUS);
+  m_OpStack.putOperator(OpStack::OP_PLUS);
 }
 
 //===========================================
 // Calculator::times
 //===========================================
 void Calculator::times() {
-  m_calcStack.putOperator(OP_TIMES);
+  m_OpStack.putOperator(OpStack::OP_TIMES);
 }
 
 //===========================================
 // Calculator::divide
 //===========================================
 void Calculator::divide() {
-  m_calcStack.putOperator(OP_DIVIDE);
+  m_OpStack.putOperator(OpStack::OP_DIVIDE);
 }
 
 //===========================================
 // Calculator::minus
 //===========================================
 void Calculator::minus() {
-  m_calcStack.putOperator(OP_MINUS);
+  m_OpStack.putOperator(OpStack::OP_MINUS);
 }
 
 //===========================================
 // Calculator::equals
 //===========================================
 double Calculator::equals() {
-  double result = m_calcStack.evaluate();
+  double result = m_OpStack.evaluate();
   m_display = formatNumber(result).c_str();
   m_reset = true;
 

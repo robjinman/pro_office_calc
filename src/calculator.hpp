@@ -19,36 +19,38 @@ class Calculator {
 
     const std::string& display() const;
 
-    enum operator_t {
-      OP_NONE,
-      OP_PLUS,
-      OP_MINUS,
-      OP_TIMES,
-      OP_DIVIDE
-    };
-
   private:
-    class CalcStack {
+    class OpStack {
       public:
+        enum operator_t {
+          OP_NONE,
+          OP_PLUS,
+          OP_MINUS,
+          OP_TIMES,
+          OP_DIVIDE
+        };
+
         void putValue(double val);
         void putOperator(operator_t op);
         void clear();
         double evaluate();
         operator_t op() const;
 
+      private:
         struct Expr {
           double lhs;
           operator_t op;
         };
 
-      private:
-        std::stack<Expr> m_stack;
-
         double apply(Expr, double rhs) const;
         void collapseStack();
+
+        std::stack<Expr> m_stack;
+
+        static const std::map<operator_t, int> PRECEDENCE;
     };
 
-    CalcStack m_calcStack;
+    OpStack m_OpStack;
     std::string m_display;
     bool m_reset;
 };
