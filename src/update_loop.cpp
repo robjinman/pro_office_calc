@@ -32,6 +32,13 @@ int UpdateLoop::size() const {
 }
 
 //===========================================
+// UpdateLoop::fps
+//===========================================
+double UpdateLoop::fps() const {
+  return 1000.0 / static_cast<double>(m_interval);
+}
+
+//===========================================
 // UpdateLoop::update
 //===========================================
 void UpdateLoop::update() {

@@ -16,6 +16,7 @@ class UpdateLoop {
     void add(std::function<bool()> fn);
     int size() const;
     void update();
+    double fps() const;
 
   private:
     std::unique_ptr<QTimer> m_timer;

@@ -14,6 +14,7 @@
 #include "calculator.hpp"
 #include "exception.hpp"
 #include "update_loop.hpp"
+#include "animation.hpp"
 
 
 using std::string;
@@ -36,7 +37,7 @@ MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSys
   QTimer* timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
 
-  m_updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 100));
+  m_updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 50));
 
   m_actQuit.reset(new QAction("Quit", this));
 
@@ -136,8 +137,10 @@ void MainWindow::buttonClicked(int id) {
 
         if (m_appState.level == MainState::LVL_DANGER_INFINITY && std::isinf(result)) {
           m_appState.subState.reset(new MainSub2State);
-          m_appState.level++;
+          m_appState.level = MainState::LVL_WEIRD;
           m_eventSystem.fire(Event("appStateUpdated"));
+
+          transitionColour(*m_updateLoop, *this, QColor(200, 50, 70), 0.5);
         }
 
         break;
