@@ -3,33 +3,54 @@
 
 
 #include <stack>
+#include <string>
 
-
-enum operator_t {
-  OP_NONE,
-  OP_PLUS,
-  OP_MINUS,
-  OP_TIMES,
-  OP_DIVIDE
-};
 
 class Calculator {
   public:
-    void putValue(double val);
-    void putOperator(operator_t op);
+    void number(int n);
+    void point();
+    void plus();
+    void times();
+    void divide();
+    void minus();
+    double equals();
     void clear();
-    double evaluate();
-    operator_t op() const;
 
-    struct Expr {
-      double lhs;
-      operator_t op;
+    const std::string& display() const;
+
+    enum operator_t {
+      OP_NONE,
+      OP_PLUS,
+      OP_MINUS,
+      OP_TIMES,
+      OP_DIVIDE
     };
 
   private:
-    std::stack<Expr> m_stack;
+    class CalcStack {
+      public:
+        void putValue(double val);
+        void putOperator(operator_t op);
+        void clear();
+        double evaluate();
+        operator_t op() const;
 
-    void collapseStack();
+        struct Expr {
+          double lhs;
+          operator_t op;
+        };
+
+      private:
+        std::stack<Expr> m_stack;
+
+        double apply(Expr, double rhs) const;
+        void collapseStack();
+    };
+
+    CalcStack m_calcStack;
+    std::string m_display;
+    bool m_reset;
 };
 
 

@@ -1,5 +1,3 @@
-#include <sstream>
-#include <iomanip>
 #include <math.h>
 #include <QMenuBar>
 #include <QApplication>
@@ -19,44 +17,8 @@
 
 
 using std::string;
-using std::stringstream;
 using std::unique_ptr;
 
-
-//===========================================
-// idToOp
-//===========================================
-static operator_t idToOp(int id) {
-  switch (id) {
-    case BTN_PLUS: return OP_PLUS;
-    case BTN_MINUS: return OP_MINUS;
-    case BTN_TIMES: return OP_TIMES;
-    case BTN_DIVIDE: return OP_DIVIDE;
-    default: EXCEPTION("No operator corresponding to button id " << id);
-  }
-}
-
-//===========================================
-// formatNumber
-//===========================================
-static string formatNumber(double num) {
-  stringstream ss;
-  ss << std::fixed << std::setprecision(8) << num;
-  string str = ss.str();
-
-  std::size_t i = str.find('.');
-  if (i != string::npos) {
-    while (str.back() == '0') {
-      str.pop_back();
-    }
-
-    if (str.back() == '.') {
-      str.pop_back();
-    }
-  }
-
-  return str;
-}
 
 //===========================================
 // MainWindow::MainWindow
@@ -148,38 +110,29 @@ void MainWindow::tick() {
 //===========================================
 void MainWindow::buttonClicked(int id) {
   static Calculator calculator;
-  static bool reset = true;
-
-  QString text = m_wgtDigitDisplay->text();
 
   if (id <= 9) {
-    if (reset || calculator.op() != OP_NONE) {
-      text = "";
-      reset = false;
-    }
-
-    text.append(std::to_string(id).c_str());
-
-    double value = std::strtod(text.toStdString().c_str(), nullptr);
-    calculator.putValue(value);
+    calculator.number(id);
   }
   else {
     switch (id) {
       case BTN_PLUS:
+        calculator.plus();
+        break;
       case BTN_MINUS:
+        calculator.minus();
+        break;
       case BTN_TIMES:
+        calculator.times();
+        break;
       case BTN_DIVIDE:
-        calculator.putOperator(idToOp(id));
+        calculator.divide();
         break;
       case BTN_POINT:
-        if (!text.contains(".")) {
-          text.append(".");
-        }
+        calculator.point();
         break;
       case BTN_EQUALS: {
-        double result = calculator.evaluate();
-        text = formatNumber(result).c_str();
-        reset = true;
+        double result = calculator.equals();
 
         if (m_appState.level == MainState::LVL_DANGER_INFINITY && std::isinf(result)) {
           m_appState.subState.reset(new MainSub2State);
@@ -191,12 +144,11 @@ void MainWindow::buttonClicked(int id) {
       }
       case BTN_CLEAR:
         calculator.clear();
-        text = "";
         break;
     }
   }
 
-  m_wgtDigitDisplay->setText(text);
+  m_wgtDigitDisplay->setText(calculator.display().c_str());
 }
 
 //===========================================

@@ -9,7 +9,7 @@
 
 
 struct MainSub0State : public AppState {
-  int openCount = 10;
+  int openCount = 11;
 
   virtual void serialize(std::ostream& os) const override {
     os.write(reinterpret_cast<const char*>(&openCount), sizeof(openCount));
