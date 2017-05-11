@@ -1,6 +1,5 @@
 #include <QWidget>
-#include <QPalette>
-#include "animation.hpp"
+#include "effects.hpp"
 #include "update_loop.hpp"
 #include "exception.hpp"
 
@@ -16,10 +15,10 @@ QColor tweenColour(const QColor& a, const QColor& b, double i) {
 }
 
 void transitionColour(UpdateLoop& updateLoop, QWidget& widget, const QColor& colour,
-  double duration) {
+  QPalette::ColorRole colourRole, double duration) {
 
     QPalette palette = widget.palette();
-    QColor origCol = palette.color(QPalette::Window);
+    QColor origCol = palette.color(colourRole);
 
     int frames = updateLoop.fps() * duration;
     int i = 0;
@@ -28,10 +27,18 @@ void transitionColour(UpdateLoop& updateLoop, QWidget& widget, const QColor& col
       double f = static_cast<double>(i) / static_cast<double>(frames);
 
       QColor c = tweenColour(origCol, colour, f);
-      palette.setColor(QPalette::Window, c);
+      palette.setColor(colourRole, c);
       widget.setPalette(palette);
 
       ++i;
       return i <= frames;
     });
   }
+
+void setBackgroundImage(QWidget& widget, const QString& path) {
+  QPixmap bg(path);
+  bg = bg.scaled(widget.size(), Qt::IgnoreAspectRatio);
+  QPalette palette = widget.palette();
+  palette.setBrush(QPalette::Background, bg);
+  widget.setPalette(palette);
+}

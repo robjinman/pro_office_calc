@@ -14,7 +14,7 @@
 #include "calculator.hpp"
 #include "exception.hpp"
 #include "update_loop.hpp"
-#include "animation.hpp"
+#include "effects.hpp"
 
 
 using std::string;
@@ -140,7 +140,8 @@ void MainWindow::buttonClicked(int id) {
           m_appState.level = MainState::LVL_WEIRD;
           m_eventSystem.fire(Event("appStateUpdated"));
 
-          transitionColour(*m_updateLoop, *this, QColor(200, 50, 70), 0.5);
+          setBackgroundImage(*this, "data/background.png");
+          transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base, 0.5);
         }
 
         break;
