@@ -4,6 +4,9 @@
 #include "exception.hpp"
 
 
+//===========================================
+// tweenColour
+//===========================================
 QColor tweenColour(const QColor& a, const QColor& b, double i) {
   if (i < 0.0 || i > 1.0) {
     EXCEPTION("Tween val of " << i << " is out of range");
@@ -14,27 +17,33 @@ QColor tweenColour(const QColor& a, const QColor& b, double i) {
                 a.blue() + (b.blue() - a.blue()) * i);
 }
 
+//===========================================
+// transitionColour
+//===========================================
 void transitionColour(UpdateLoop& updateLoop, QWidget& widget, const QColor& colour,
   QPalette::ColorRole colourRole, double duration) {
 
-    QPalette palette = widget.palette();
-    QColor origCol = palette.color(colourRole);
+  QPalette palette = widget.palette();
+  QColor origCol = palette.color(colourRole);
 
-    int frames = updateLoop.fps() * duration;
-    int i = 0;
+  int frames = updateLoop.fps() * duration;
+  int i = 0;
 
-    updateLoop.add([=,&widget]() mutable {
-      double f = static_cast<double>(i) / static_cast<double>(frames);
+  updateLoop.add([=,&widget]() mutable {
+    double f = static_cast<double>(i) / static_cast<double>(frames);
 
-      QColor c = tweenColour(origCol, colour, f);
-      palette.setColor(colourRole, c);
-      widget.setPalette(palette);
+    QColor c = tweenColour(origCol, colour, f);
+    palette.setColor(colourRole, c);
+    widget.setPalette(palette);
 
-      ++i;
-      return i <= frames;
-    });
-  }
+    ++i;
+    return i <= frames;
+  });
+}
 
+//===========================================
+// setBackgroundImage
+//===========================================
 void setBackgroundImage(QWidget& widget, const QString& path) {
   QPixmap bg(path);
   bg = bg.scaled(widget.size(), Qt::IgnoreAspectRatio);
