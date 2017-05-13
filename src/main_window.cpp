@@ -99,7 +99,7 @@ void MainWindow::onUpdateAppState(const Event& e) {
   }
 
   switch (m_appState.rootState) {
-    case ST_WEIRD:
+    case ST_SHUFFLED_KEYS:
       setColour(*this, QColor(160, 160, 160), QPalette::Window);
       setColour(*m_wgtDigitDisplay, QColor(160, 120, 120), QPalette::Base);
       break;
@@ -160,7 +160,7 @@ void MainWindow::buttonClicked(int id) {
           }, [&]() {
             transitionColour(*m_updateLoop, *this, QColor(160, 160, 160), QPalette::Window, 0.5,
               [&]() {
-                m_appState.rootState = ST_WEIRD;
+                m_appState.rootState = ST_SHUFFLED_KEYS;
                 m_eventSystem.fire(Event("appStateUpdated"));
               });
 
@@ -211,7 +211,7 @@ void MainWindow::showAbout() {
           "<font size=6>⚠∞</font>";
         msgBox.setWindowTitle("About");
         break;
-      case ST_WEIRD:
+      case ST_SHUFFLED_KEYS:
         msg = msg + "<p align='center'><big>P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶</big><br>V̶e̸r̵s̴i̵o̸n̵ ̶1̸.̵0̵.̶0̵</p>"
           "<h2 align='center'>4071</h2>"
           "<p align='center'>C̵o̶p̷y̴r̴i̵g̷h̷t̸ ̶(̶c̵)̷ ̶1̵9̵9̸3̸ ̷A̵c̸m̸e̶ ̷I̶n̵c̷.̷ ̸A̵l̴l̷ ̶r̸i̶g̸h̷t̴s̶ ̴r̸e̶s̴e̶r̸v̵e̶d̶.̶</p>";

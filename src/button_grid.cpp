@@ -123,7 +123,7 @@ ButtonGrid::ButtonGrid(MainState& appState, EventSystem& eventSystem,
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
 
-  if (m_appState.rootState == ST_WEIRD && id == BTN_CLEAR) {
+  if (m_appState.rootState == ST_SHUFFLED_KEYS && id == BTN_CLEAR) {
     m_updateLoop.add([=]() {
       static int i = -1;
       ++i;
@@ -138,15 +138,7 @@ void ButtonGrid::onBtnClick(int id) {
         }
       }
 
-      if (i >= n) {
-//        m_appState.level = 3;
-//        m_appState.subState.reset(new MainSub3State);
-
-//        m_eventSystem.fire(Event("appStateUpdated"));
-        return false;
-      }
-
-      return true;
+      return i < n;
     });
   }
 }

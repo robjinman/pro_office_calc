@@ -34,7 +34,7 @@ struct MainSub1State : public AppState {
 
 struct MainSub2State : public AppState {
   virtual void initialise(int rootState) override {
-    if (rootState != ST_WEIRD) {
+    if (rootState != ST_SHUFFLED_KEYS) {
       EXCEPTION("MainSub2State cannot be initialised for rootState " << rootState);
     }
 
@@ -56,7 +56,7 @@ struct MainState : public AppState {
         case ST_DANGER_INFINITY:
           subState.reset(new MainSub1State);
           break;
-        case ST_WEIRD:
+        case ST_SHUFFLED_KEYS:
           subState.reset(new MainSub2State);
           break;
         default:
