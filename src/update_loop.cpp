@@ -4,6 +4,7 @@
 
 using std::weak_ptr;
 using std::unique_ptr;
+using std::function;
 
 
 //===========================================
@@ -16,8 +17,8 @@ UpdateLoop::UpdateLoop(unique_ptr<QTimer> timer, int interval)
 //===========================================
 // UpdateLoop::addFunction
 //===========================================
-void UpdateLoop::add(std::function<bool()> fn) {
-  m_functions.push_back(fn);
+void UpdateLoop::add(function<bool()> fn, function<void()> fnOnFinish) {
+  m_functions.push_back(FuncPair{fn, fnOnFinish});
 
   if (!m_timer->isActive()) {
     m_timer->start(m_interval);
@@ -45,7 +46,8 @@ void UpdateLoop::update() {
   auto it = m_functions.begin();
 
   while (it != m_functions.end()) {
-    if (!(*it)()) {
+    if (!it->fnPeriodic()) {
+      it->fnFinish();
       m_functions.erase(it++);
     }
     else {

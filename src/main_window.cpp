@@ -101,7 +101,7 @@ void MainWindow::onUpdateAppState(const Event& e) {
   switch (m_appState.rootState) {
     case ST_WEIRD:
       setBackgroundImage(*this, "data/background.png");
-      transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base, 0.5);
+      setColour(*m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base);
       break;
     default:
       break;
@@ -145,8 +145,11 @@ void MainWindow::buttonClicked(int id) {
         double result = calculator.equals();
 
         if (m_appState.rootState == ST_DANGER_INFINITY && std::isinf(result)) {
-          m_appState.rootState = ST_WEIRD;
-          m_eventSystem.fire(Event("appStateUpdated"));
+          transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base,
+            0.5, [&]() mutable {
+              m_appState.rootState = ST_WEIRD;
+              m_eventSystem.fire(Event("appStateUpdated"));
+            });
         }
 
         break;

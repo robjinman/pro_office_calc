@@ -4,6 +4,9 @@
 #include "exception.hpp"
 
 
+using std::function;
+
+
 //===========================================
 // tweenColour
 //===========================================
@@ -18,13 +21,21 @@ QColor tweenColour(const QColor& a, const QColor& b, double i) {
 }
 
 //===========================================
+// setColour
+//===========================================
+void setColour(QWidget& widget, const QColor& colour, QPalette::ColorRole colourRole) {
+  QPalette palette = widget.palette();
+  palette.setColor(colourRole, colour);
+  widget.setPalette(palette);
+}
+
+//===========================================
 // transitionColour
 //===========================================
 void transitionColour(UpdateLoop& updateLoop, QWidget& widget, const QColor& colour,
-  QPalette::ColorRole colourRole, double duration) {
+  QPalette::ColorRole colourRole, double duration, function<void()> fnOnFinish) {
 
-  QPalette palette = widget.palette();
-  QColor origCol = palette.color(colourRole);
+  QColor origCol = widget.palette().color(colourRole);
 
   int frames = updateLoop.fps() * duration;
   int i = 0;
@@ -33,12 +44,11 @@ void transitionColour(UpdateLoop& updateLoop, QWidget& widget, const QColor& col
     double f = static_cast<double>(i) / static_cast<double>(frames);
 
     QColor c = tweenColour(origCol, colour, f);
-    palette.setColor(colourRole, c);
-    widget.setPalette(palette);
+    setColour(widget, c, colourRole);
 
     ++i;
     return i <= frames;
-  });
+  }, fnOnFinish);
 }
 
 //===========================================

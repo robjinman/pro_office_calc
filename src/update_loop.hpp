@@ -13,15 +13,20 @@ class UpdateLoop {
   public:
     UpdateLoop(std::unique_ptr<QTimer> timer, int interval);
 
-    void add(std::function<bool()> fn);
+    void add(std::function<bool()> fn, std::function<void()> fnOnFinish = []() {});
     int size() const;
     void update();
     double fps() const;
 
   private:
+    struct FuncPair {
+      std::function<bool()> fnPeriodic;
+      std::function<void()> fnFinish;
+    };
+
     std::unique_ptr<QTimer> m_timer;
     int m_interval;
-    std::list<std::function<bool()>> m_functions;
+    std::list<FuncPair> m_functions;
 };
 
 
