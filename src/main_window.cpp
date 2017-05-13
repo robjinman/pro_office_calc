@@ -146,7 +146,7 @@ void MainWindow::buttonClicked(int id) {
           QColor origCol = palette().color(QPalette::Window);
 
           int frames = m_updateLoop->fps() / 2;
-          m_updateLoop->add([=]() mutable {
+          m_updateLoop->add([=]() {
             static int i = -1;
             ++i;
             if (i % 2) {
@@ -157,9 +157,9 @@ void MainWindow::buttonClicked(int id) {
             }
 
             return i < frames;
-          }, [&]() mutable {
+          }, [&]() {
             transitionColour(*m_updateLoop, *this, QColor(160, 160, 160), QPalette::Window, 0.5,
-              [&]() mutable {
+              [&]() {
                 m_appState.rootState = ST_WEIRD;
                 m_eventSystem.fire(Event("appStateUpdated"));
               });
