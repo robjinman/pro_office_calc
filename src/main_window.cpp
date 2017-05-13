@@ -100,10 +100,8 @@ void MainWindow::onUpdateAppState(const Event& e) {
 
   switch (m_appState.rootState) {
     case ST_WEIRD:
-      setBackgroundImage(*this, "data/background.png");
-      setColour(*m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base);
-      break;
-    default:
+      setColour(*this, QColor(160, 160, 160), QPalette::Window);
+      setColour(*m_wgtDigitDisplay, QColor(160, 120, 120), QPalette::Base);
       break;
   }
 }
@@ -145,11 +143,30 @@ void MainWindow::buttonClicked(int id) {
         double result = calculator.equals();
 
         if (m_appState.rootState == ST_DANGER_INFINITY && std::isinf(result)) {
-          transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base,
-            0.5, [&]() mutable {
-              m_appState.rootState = ST_WEIRD;
-              m_eventSystem.fire(Event("appStateUpdated"));
-            });
+          QColor origCol = palette().color(QPalette::Window);
+
+          int frames = m_updateLoop->fps() / 2;
+          m_updateLoop->add([=]() mutable {
+            static int i = -1;
+            ++i;
+            if (i % 2) {
+              setColour(*this, origCol, QPalette::Window);
+            }
+            else {
+              setColour(*this, Qt::white, QPalette::Window);
+            }
+
+            return i < frames;
+          }, [&]() mutable {
+            transitionColour(*m_updateLoop, *this, QColor(160, 160, 160), QPalette::Window, 0.5,
+              [&]() mutable {
+                m_appState.rootState = ST_WEIRD;
+                m_eventSystem.fire(Event("appStateUpdated"));
+              });
+
+            transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(160, 120, 120),
+              QPalette::Base, 0.5);
+          });
         }
 
         break;

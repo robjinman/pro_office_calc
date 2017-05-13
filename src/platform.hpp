@@ -3,9 +3,12 @@
 
 
 #include <string>
+#include <unistd.h>
 
 
 const std::string sep = "/";
+
+void sleepThread(long millis);
 
 
 #endif

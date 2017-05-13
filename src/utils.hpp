@@ -10,6 +10,7 @@
 #else
 #  define DBG_PRINT(msg)
 #endif
+#include "platform.hpp"
 
 
 std::string readString(std::istream& is);
