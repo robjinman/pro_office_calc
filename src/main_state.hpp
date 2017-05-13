@@ -2,94 +2,74 @@
 #define __PROCALC_MAIN_STATE_HPP__
 
 
-#include <string>
-#include <fstream>
 #include "app_state.hpp"
+#include "state_ids.hpp"
+#include "exception.hpp"
 #include "utils.hpp"
 
 
 struct MainSub0State : public AppState {
-  int openCount = 11;
+  virtual void initialise(int rootState) override {
+    if (!ltelte<int>(ST_NORMAL_CALCULATOR_0, rootState, ST_NORMAL_CALCULATOR_10)) {
+      EXCEPTION("MainSub0State cannot be initialised for rootState " << rootState);
+    }
 
-  virtual void serialize(std::ostream& os) const override {
-    os.write(reinterpret_cast<const char*>(&openCount), sizeof(openCount));
+    openCount = 10 - rootState;
   }
 
-  virtual void shallowDeserialize(std::istream& is) override {
-    is.read(reinterpret_cast<char*>(&openCount), sizeof(openCount));
-  }
+  int openCount;
 };
 
 struct MainSub1State : public AppState {
-  bool divByZero = false;
+  virtual void initialise(int rootState) override {
+    if (rootState != ST_DANGER_INFINITY) {
+      EXCEPTION("MainSub1State cannot be initialised for rootState " << rootState);
+    }
 
-  virtual void serialize(std::ostream& os) const override {
-    os.write(reinterpret_cast<const char*>(&divByZero), sizeof(divByZero));
+    divByZero = false;
   }
 
-  virtual void shallowDeserialize(std::istream& is) override {
-    is.read(reinterpret_cast<char*>(&divByZero), sizeof(divByZero));
-  }
+  bool divByZero;
 };
 
 struct MainSub2State : public AppState {
+  virtual void initialise(int rootState) override {
+    if (rootState != ST_WEIRD) {
+      EXCEPTION("MainSub2State cannot be initialised for rootState " << rootState);
+    }
+
+    a = 5;
+  }
+
   int a;
-
-  virtual void serialize(std::ostream& os) const override {
-    os.write(reinterpret_cast<const char*>(&a), sizeof(a));
-  }
-
-  virtual void shallowDeserialize(std::istream& is) override {
-    is.read(reinterpret_cast<char*>(&a), sizeof(a));
-  }
 };
 
 struct MainState : public AppState {
-  enum LEVEL {
-    LVL_NORMAL_CALCULATOR,
-    LVL_DANGER_INFINITY,
-    LVL_WEIRD
-  };
+  virtual void initialise(int stateId) override {
+    rootState = stateId;
 
-  int level = LVL_NORMAL_CALCULATOR;
-  std::string msg1 = "hello";
-  std::string msg2 = "world";
-  float f = 1.23;
-  pAppState_t subState = pAppState_t(new MainSub0State);
-
-  virtual void serialize(std::ostream& os) const override {
-    os.write(reinterpret_cast<const char*>(&level), sizeof(level));
-    writeString(os, msg1);
-    writeString(os, msg2);
-    os.write(reinterpret_cast<const char*>(&f), sizeof(f));
-
-    subState->serialize(os);
-  }
-
-  virtual void shallowDeserialize(std::istream& is) override {
-    is.read(reinterpret_cast<char*>(&level), sizeof(level));
-    msg1 = readString(is);
-    msg2 = readString(is);
-    is.read(reinterpret_cast<char*>(&f), sizeof(f));
-  }
-
-  virtual void deepDeserialize(std::istream& is) override {
-    subState->deserialize(is);
-  }
-
-  virtual void postShallowDeserialize() override {
-    switch (level) {
-      case LVL_NORMAL_CALCULATOR:
-        subState.reset(new MainSub0State);
-        break;
-      case LVL_DANGER_INFINITY:
-        subState.reset(new MainSub1State);
-        break;
-      case LVL_WEIRD:
-        subState.reset(new MainSub2State);
-        break;
+    if (ltelte<int>(ST_NORMAL_CALCULATOR_0, rootState, ST_NORMAL_CALCULATOR_10)) {
+      subState.reset(new MainSub0State);
     }
+    else {
+      switch (rootState) {
+        case ST_DANGER_INFINITY:
+          subState.reset(new MainSub1State);
+          break;
+        case ST_WEIRD:
+          subState.reset(new MainSub2State);
+          break;
+        default:
+          EXCEPTION("MainState cannot be initialised for rootState " << rootState);
+          break;
+      }
+    }
+
+    subState->initialise(rootState);
   }
+
+  int rootState;
+  pAppState_t subState;
 };
 
 

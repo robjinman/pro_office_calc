@@ -15,6 +15,7 @@
 #include "exception.hpp"
 #include "update_loop.hpp"
 #include "effects.hpp"
+#include "state_ids.hpp"
 
 
 using std::string;
@@ -72,15 +73,14 @@ MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSys
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
 
-  if (m_appState.level == MainState::LVL_NORMAL_CALCULATOR) {
-    auto& subState = castSubstate<MainSub0State>();
-
-    if (subState.openCount > 1) {
-      subState.openCount--;
+  if (ltelte<int>(ST_NORMAL_CALCULATOR_0, m_appState.rootState, ST_NORMAL_CALCULATOR_10)) {
+    if (m_appState.rootState < ST_NORMAL_CALCULATOR_10) {
+      m_appState.rootState++;
+      m_eventSystem.fire(Event("appStateUpdated"));
     }
     else {
-      m_appState.subState.reset(new MainSub1State);
-      m_appState.level = MainState::LVL_DANGER_INFINITY;
+      m_appState.rootState = ST_DANGER_INFINITY;
+      m_eventSystem.fire(Event("appStateUpdated"));
     }
   }
 }
@@ -89,13 +89,22 @@ MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSys
 // MainWindow::onUpdateAppState
 //===========================================
 void MainWindow::onUpdateAppState(const Event& e) {
-  if (m_appState.level > MainState::LVL_DANGER_INFINITY) {
+  if (m_appState.rootState > ST_DANGER_INFINITY) {
     setWindowTitle("P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶");
 
     m_actQuit->setText("Q̶u̸i̶t̷");
     m_mnuFile->setTitle("F̷i̸l̴e̷");
     m_actAbout->setText("A̵b̵o̸u̸t̴");
     m_mnuHelp->setTitle("H̸e̵l̴p̷");
+  }
+
+  switch (m_appState.rootState) {
+    case ST_WEIRD:
+      setBackgroundImage(*this, "data/background.png");
+      transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base, 0.5);
+      break;
+    default:
+      break;
   }
 }
 
@@ -135,13 +144,9 @@ void MainWindow::buttonClicked(int id) {
       case BTN_EQUALS: {
         double result = calculator.equals();
 
-        if (m_appState.level == MainState::LVL_DANGER_INFINITY && std::isinf(result)) {
-          m_appState.subState.reset(new MainSub2State);
-          m_appState.level = MainState::LVL_WEIRD;
+        if (m_appState.rootState == ST_DANGER_INFINITY && std::isinf(result)) {
+          m_appState.rootState = ST_WEIRD;
           m_eventSystem.fire(Event("appStateUpdated"));
-
-          setBackgroundImage(*this, "data/background.png");
-          transitionColour(*m_updateLoop, *m_wgtDigitDisplay, QColor(200, 50, 70), QPalette::Base, 0.5);
         }
 
         break;
@@ -170,27 +175,29 @@ void MainWindow::showAbout() {
   msgBox.setTextFormat(Qt::RichText);
 
   QString msg;
-  switch (m_appState.level) {
-    case MainState::LVL_NORMAL_CALCULATOR:
-      msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
-        "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
-        "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-        "<i>" + QString::number(castSubstate<MainSub0State>().openCount) + "</i>";
-      msgBox.setWindowTitle("About");
-      break;
-    case MainState::LVL_DANGER_INFINITY:
-      msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
-        "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
-        "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-        "<font size=6>⚠∞</font>";
-      msgBox.setWindowTitle("About");
-      break;
-    case MainState::LVL_WEIRD:
-      msg = msg + "<p align='center'><big>P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶</big><br>V̶e̸r̵s̴i̵o̸n̵ ̶1̸.̵0̵.̶0̵</p>"
-        "<p><br><br></p>"
-        "<p align='center'>C̴̠̓́o̶̥̟͘p̸̝͌̿y̷͈͈͝r̸̰͒ĭ̵͖͒g̸̭̭̅ḧ̸̟̖́͝ṯ̴̓ ̷̦̳̇(̷̯̩͆̈c̵͉̔)̵̛͕̕ ̴͔̇2̷̢̑͝0̵̖̀̎1̴̤̘͛7̷̻̳͛͌ ̷̙̙̈́̂Ạ̶̛̔c̸̢̿m̴̬̯̆͌ě̸̪͓͛ ̸̝͇̓͛I̸̺̜͊̀n̶̺̗̓̑c̸̳͖̆͋.̴͇͇̔̀ ̴̠́A̸̤̾̀l̸̛̜̖ḽ̴̈̾ ̴̹͌r̵̬̭̔͒i̴̭̣͛̔ǵ̵̩h̵̗̜͋̈́t̴̢̃s̶͇͓̆̅ ̷̗̀̚r̷̡͖͌͐ě̶̦̾ś̷͇̠e̴̫̺͒r̵̰͆v̵̧͝e̶̟͑ḓ̸̉.̵̨͉͌</p>";
-        msgBox.setWindowTitle("A̶b̵o̷u̴t̶");
-      break;
+  if (ltelte<int>(ST_NORMAL_CALCULATOR_0, m_appState.rootState, ST_NORMAL_CALCULATOR_10)) {
+    msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
+      "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
+      "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
+      "<i>" + QString::number(castSubstate<MainSub0State>().openCount) + "</i>";
+    msgBox.setWindowTitle("About");
+  }
+  else {
+    switch (m_appState.rootState) {
+      case ST_DANGER_INFINITY:
+        msg = msg + "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
+          "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
+          "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
+          "<font size=6>⚠∞</font>";
+        msgBox.setWindowTitle("About");
+        break;
+      case ST_WEIRD:
+        msg = msg + "<p align='center'><big>P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶</big><br>V̶e̸r̵s̴i̵o̸n̵ ̶1̸.̵0̵.̶0̵</p>"
+          "<h2 align='center'>4071</h2>"
+          "<p align='center'>C̵o̶p̷y̴r̴i̵g̷h̷t̸ ̶(̶c̵)̷ ̶1̵9̵9̸3̸ ̷A̵c̸m̸e̶ ̷I̶n̵c̷.̷ ̸A̵l̴l̷ ̶r̸i̶g̸h̷t̴s̶ ̴r̸e̶s̴e̶r̸v̵e̶d̶.̶</p>";
+          msgBox.setWindowTitle("A̶b̵o̷u̴t̶");
+        break;
+    }
   }
 
   msgBox.setText(msg);

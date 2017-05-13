@@ -41,22 +41,25 @@ using std::unique_ptr;
 
 
 //===========================================
-// loadAppState
+// loadStateId
 //===========================================
-void loadAppState(const AppConfig& conf, AppState& appState) {
+int loadStateId(const AppConfig& conf) {
+  int id = 0;
   ifstream fin(conf.userDataDir + sep + "procalc.dat", ifstream::binary);
 
   if (fin.good()) {
-    appState.deserialize(fin);
+    fin.read(reinterpret_cast<char*>(&id), sizeof(id));
   }
+
+  return id;
 }
 
 //===========================================
-// persistAppState
+// persistStateId
 //===========================================
-void persistAppState(const AppConfig& conf, AppState& appState) {
+void persistStateId(const AppConfig& conf, int id) {
   ofstream fout(conf.userDataDir + sep + "procalc.dat", ofstream::binary | ofstream::trunc);
-  appState.serialize(fout);
+  fout.write(reinterpret_cast<const char*>(&id), sizeof(id));
 }
 
 //===========================================
@@ -71,8 +74,19 @@ int main(int argc, char** argv) {
   try {
     AppConfig appConfig;
 
+    int stateId = 0;
+
+    if (argc > 1) {
+      stateId = std::stoi(argv[1]);
+    }
+    else {
+      stateId = loadStateId(appConfig);
+    }
+
+    std::cout << stateId << "\n";
+
     MainState appState;
-    loadAppState(appConfig, appState);
+    appState.initialise(stateId);
 
     EventSystem eventSystem;
 
@@ -83,7 +97,7 @@ int main(int argc, char** argv) {
     eventSystem.fire(Event("appStateUpdated"));
 
     int code = app.exec();
-    persistAppState(appConfig, appState);
+    persistStateId(appConfig, appState.rootState);
 
     return code;
   }

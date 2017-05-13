@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 set(projectName procalc)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -Wall)
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
   add_compile_options(-O3)

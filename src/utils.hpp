@@ -15,5 +15,12 @@
 std::string readString(std::istream& is);
 void writeString(std::ostream& os, const std::string& s);
 
+template<class T>
+bool ltelte(T a, T b, T c) {
+  return a <= b && b <= c;
+}
+
+typedef std::hash<std::string> hashString;
+
 
 #endif

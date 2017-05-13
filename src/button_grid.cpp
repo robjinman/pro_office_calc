@@ -123,7 +123,7 @@ ButtonGrid::ButtonGrid(MainState& appState, EventSystem& eventSystem,
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
 
-  if (m_appState.level == MainState::LVL_WEIRD && id == BTN_CLEAR) {
+  if (m_appState.rootState == ST_WEIRD && id == BTN_CLEAR) {
     m_updateLoop.add([=]() {
       static int i = -1;
       ++i;
