@@ -3,19 +3,9 @@
 
 
 #include <functional>
-#include <string>
 #include <map>
 #include <list>
-
-
-struct Event {
-  Event(const std::string& name)
-    : name(name) {}
-
-  std::string name;
-
-  virtual ~Event() {}
-};
+#include "event.hpp"
 
 
 typedef std::function<void(const Event&)> handlerFunc_t;

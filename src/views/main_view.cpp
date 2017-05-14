@@ -5,17 +5,18 @@
 #include <QMessageBox>
 #include <QLineEdit>
 #include <QTimer>
-#include "main_window.hpp"
 #include "button_grid.hpp"
 #include "utils.hpp"
 #include "types.hpp"
 #include "app_config.hpp"
-#include "main_state.hpp"
 #include "calculator.hpp"
 #include "exception.hpp"
 #include "update_loop.hpp"
 #include "effects.hpp"
 #include "state_ids.hpp"
+#include "states/main_state.hpp"
+#include "views/calculator_view.hpp"
+#include "views/main_view.hpp"
 
 
 using std::string;
@@ -23,12 +24,12 @@ using std::unique_ptr;
 
 
 //===========================================
-// MainWindow::MainWindow
+// MainView::MainView
 //===========================================
-MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSystem& eventSystem)
+MainView::MainView(MainState& appState, const AppConfig& appConfig, EventSystem& eventSystem)
   : QMainWindow(nullptr),
-    m_appConfig(appConfig),
     m_appState(appState),
+    m_appConfig(appConfig),
     m_eventSystem(eventSystem) {
 
   setFixedSize(300, 260);
@@ -39,7 +40,12 @@ MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSys
   connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
 
   m_updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 50));
+}
 
+//===========================================
+// MainView::setup
+//===========================================
+void MainView::setup(int rootState) {
   m_actQuit.reset(new QAction("Quit", this));
 
   m_mnuFile.reset(menuBar()->addMenu("File"));
@@ -49,46 +55,32 @@ MainWindow::MainWindow(const AppConfig& appConfig, MainState& appState, EventSys
   m_mnuHelp.reset(menuBar()->addMenu("Help"));
   m_mnuHelp->addAction(m_actAbout.get());
 
-  m_eventSystem.listen("appStateUpdated", [this](const Event& e) {
-    this->onUpdateAppState(e);
-  });
-
   m_wgtCentral.reset(new QWidget(this));
   setCentralWidget(m_wgtCentral.get());
-
-  m_wgtDigitDisplay.reset(new QLineEdit(m_wgtCentral.get()));
-  m_wgtDigitDisplay->setMaximumHeight(40);
-  m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
-  m_wgtDigitDisplay->setReadOnly(true);
-
-  m_wgtButtonGrid.reset(new ButtonGrid(m_appState, m_eventSystem,
-    *m_updateLoop, m_wgtCentral.get()));
-
-  QVBoxLayout* vbox = new QVBoxLayout;
-  vbox->addWidget(m_wgtDigitDisplay.get());
-  vbox->addWidget(m_wgtButtonGrid.get());
-  m_wgtCentral->setLayout(vbox);
 
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect(m_actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
   connect(m_actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
 
-  if (ltelte<int>(ST_NORMAL_CALCULATOR_0, m_appState.rootState, ST_NORMAL_CALCULATOR_10)) {
-    if (m_appState.rootState < ST_NORMAL_CALCULATOR_10) {
-      m_appState.rootState++;
-      m_eventSystem.fire(Event("appStateUpdated"));
-    }
-    else {
-      m_appState.rootState = ST_DANGER_INFINITY;
-      m_eventSystem.fire(Event("appStateUpdated"));
+  if (ltelte<int>(ST_NORMAL_CALCULATOR_0, rootState, ST_NORMAL_CALCULATOR_10)) {
+    m_subview.reset(new CalculatorView(*this));
+  }
+  else {
+    switch (rootState) {
+      case ST_DANGER_INFINITY:
+      case ST_SHUFFLED_KEYS:
+        if (dynamic_cast<CalculatorView*>(m_subview.get()) == nullptr) {
+          m_subview.reset(new CalculatorView(*this, m_eventSystem, *m_updateLoop));
+        }
+        break;
+      default:
+        EXCEPTION("MainState cannot be initialised for rootState " << rootState);
+        break;
     }
   }
-}
 
-//===========================================
-// MainWindow::onUpdateAppState
-//===========================================
-void MainWindow::onUpdateAppState(const Event& e) {
+  m_subview->setup(rootState);
+
   if (m_appState.rootState > ST_DANGER_INFINITY) {
     setWindowTitle("P̴r̵o̸ ̷O̸f̶f̸i̸c̷e̷ ̵C̶a̶l̶c̷u̷l̸a̸t̶o̷r̶");
 
@@ -97,26 +89,19 @@ void MainWindow::onUpdateAppState(const Event& e) {
     m_actAbout->setText("A̵b̵o̸u̸t̴");
     m_mnuHelp->setTitle("H̸e̵l̴p̷");
   }
-
-  switch (m_appState.rootState) {
-    case ST_SHUFFLED_KEYS:
-      setColour(*this, QColor(160, 160, 160), QPalette::Window);
-      setColour(*m_wgtDigitDisplay, QColor(160, 120, 120), QPalette::Base);
-      break;
-  }
 }
 
 //===========================================
-// MainWindow::tick
+// MainView::tick
 //===========================================
-void MainWindow::tick() {
+void MainView::tick() {
   m_updateLoop->update();
 }
 
 //===========================================
-// MainWindow::buttonClicked
+// MainView::buttonClicked
 //===========================================
-void MainWindow::buttonClicked(int id) {
+void MainView::buttonClicked(int id) {
   static Calculator calculator;
 
   if (id <= 9) {
@@ -181,16 +166,16 @@ void MainWindow::buttonClicked(int id) {
 }
 
 //===========================================
-// MainWindow::closeEvent
+// MainView::closeEvent
 //===========================================
-void MainWindow::closeEvent(QCloseEvent*) {
+void MainView::closeEvent(QCloseEvent*) {
   DBG_PRINT("Quitting\n");
 }
 
 //===========================================
-// MainWindow::showAbout
+// MainView::showAbout
 //===========================================
-void MainWindow::showAbout() {
+void MainView::showAbout() {
   QMessageBox msgBox(this);
   msgBox.setTextFormat(Qt::RichText);
 
@@ -225,8 +210,8 @@ void MainWindow::showAbout() {
 }
 
 //===========================================
-// MainWindow::~MainWindow
+// MainView::~MainView
 //===========================================
-MainWindow::~MainWindow() {
-  DBG_PRINT("MainWindow::~MainWindow()\n");
+MainView::~MainView() {
+  DBG_PRINT("MainView::~MainView()\n");
 }

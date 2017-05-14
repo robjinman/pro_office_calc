@@ -7,7 +7,6 @@
 #include "rotated_widget.hpp"
 #include "update_loop.hpp"
 #include "event_system.hpp"
-#include "main_state.hpp"
 
 
 using std::unique_ptr;
@@ -29,10 +28,8 @@ static QPushButton* makeButton(QWidget* parent, const QString& text) {
 //===========================================
 // ButtonGrid::ButtonGrid
 //===========================================
-ButtonGrid::ButtonGrid(MainState& appState, EventSystem& eventSystem,
-  UpdateLoop& updateLoop, QWidget* parent)
+ButtonGrid::ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& updateLoop)
   : QWidget(parent),
-    m_appState(appState),
     m_eventSystem(eventSystem),
     m_updateLoop(updateLoop) {
 
@@ -122,7 +119,7 @@ ButtonGrid::ButtonGrid(MainState& appState, EventSystem& eventSystem,
 //===========================================
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
-
+/*
   if (m_appState.rootState == ST_SHUFFLED_KEYS && id == BTN_CLEAR) {
     m_updateLoop.add([=]() {
       static int i = -1;
@@ -140,7 +137,7 @@ void ButtonGrid::onBtnClick(int id) {
 
       return i < n;
     });
-  }
+  }*/
 }
 
 //===========================================

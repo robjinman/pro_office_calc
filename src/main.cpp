@@ -1,17 +1,19 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#ifdef __APPLE__
+#  include "CoreFoundation/CoreFoundation.h"
+#endif
 #include "application.hpp"
-#include "main_window.hpp"
 #include "exception.hpp"
 #include "app_config.hpp"
 #include "app_state.hpp"
 #include "event_system.hpp"
 #include "platform.hpp"
 #include "utils.hpp"
-#ifdef __APPLE__
-#include "CoreFoundation/CoreFoundation.h"
-#endif
+#include "new_root_state_event.hpp"
+#include "states/main_state.hpp"
+#include "views/main_view.hpp"
 
 
 #ifdef __APPLE__
@@ -83,18 +85,21 @@ int main(int argc, char** argv) {
       stateId = loadStateId(appConfig);
     }
 
-    std::cout << stateId << "\n";
+    DBG_PRINT("Loading app state " << stateId << "\n");
 
     MainState appState;
-    appState.initialise(stateId);
+    appState.setup(stateId);
 
     EventSystem eventSystem;
 
     Application app(argc, argv);
-    MainWindow window(appConfig, appState, eventSystem);
+    MainView window(appState, appConfig, eventSystem);
     window.show();
 
-    eventSystem.fire(Event("appStateUpdated"));
+    eventSystem.listen("newRootState", [this](const Event& e) {
+      appState.setup(dynamic_cast<const NewRootStateEvent&>(e).rootState);
+      window.setup(dynamic_cast<const NewRootStateEvent&>(e).rootState);
+    });
 
     int code = app.exec();
     persistStateId(appConfig, appState.rootState);

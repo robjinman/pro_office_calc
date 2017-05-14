@@ -6,7 +6,7 @@
 #include <vector>
 #include <QMainWindow>
 #include "event_system.hpp"
-#include "main_state.hpp"
+#include "view.hpp"
 
 
 class QAction;
@@ -15,14 +15,17 @@ class QLineEdit;
 class UpdateLoop;
 class ButtonGrid;
 class AppConfig;
+class MainState;
 
-class MainWindow : public QMainWindow {
+class MainView : public QMainWindow, public View {
   Q_OBJECT
 
   public:
-    MainWindow(const AppConfig& appConfig, MainState& state, EventSystem& eventSystem);
+    MainView(MainState& appState, const AppConfig& appConfig, EventSystem& eventSystem);
 
-    virtual ~MainWindow();
+    virtual void setup(int rootState) override;
+
+    virtual ~MainView();
 
   protected:
     virtual void closeEvent(QCloseEvent*);
@@ -35,13 +38,8 @@ class MainWindow : public QMainWindow {
   private:
     void onUpdateAppState(const Event& e);
 
-    template<class T>
-    T& castSubstate() {
-      return dynamic_cast<T&>(*m_appState.subState);
-    }
-
+    MainState& appstate;
     const AppConfig& m_appConfig;
-    MainState& m_appState;
     EventSystem& m_eventSystem;
     std::unique_ptr<UpdateLoop> m_updateLoop;
 
@@ -50,8 +48,8 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<QAction> m_actAbout;
     std::unique_ptr<QAction> m_actQuit;
     std::unique_ptr<QWidget> m_wgtCentral;
-    std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
-    std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
+
+    std::unique_ptr<View> m_subview;
 };
 
 

@@ -2,15 +2,10 @@
 #define __PROCALC_APP_STATE_HPP__
 
 
-#include <memory>
-
-
 struct AppState {
-  virtual void initialise(int rootState) = 0;
-  virtual ~AppState() {}
+  virtual void setup(int rootState) = 0;
+  virtual void ~AppState() {}
 };
-
-typedef std::unique_ptr<AppState> pAppState_t;
 
 
 #endif
