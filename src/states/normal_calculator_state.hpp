@@ -2,16 +2,25 @@
 #define __PROCALC_STATES_NORMAL_CALCULATOR_STATE_HPP__
 
 
-#include "app_state.hpp"
+#include "root_spec.hpp"
 
 
-struct NormalCalculatorState : public AppState {
-  virtual void setup(int rootState) override {
-    openCount = 10 - rootState;
-  }
+namespace normal_calculator {
 
-  int openCount = 10;
-};
+
+RootSpec* makeRootSpec(int stateId) {
+  RootSpec* rootSpec = new RootSpec;
+  rootSpec->mainFragmentSpec.showCalculatorFragment = true;
+  rootSpec->mainFragmentSpec.calculatorFragmentSpec.fragment =
+    CalculatorFragmentSpec::FRAG_NORMAL_CALC;
+  rootSpec->mainFragmentSpec.calculatorFragmentSpec.normalCalculatorFragmentSpec
+    .count = 10 - stateId;
+
+  return rootSpec;
+}
+
+
+}
 
 
 #endif

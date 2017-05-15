@@ -1,0 +1,10 @@
+#ifndef __PROCALC_FRAGMENTS_SPECS_NORMAL_CALCULATOR_FRAGMENT_SPEC_HPP__
+#define __PROCALC_FRAGMENTS_SPECS_NORMAL_CALCULATOR_FRAGMENT_SPEC_HPP__
+
+
+struct NormalCalculatorFragmentSpec {
+  int count = 10;
+};
+
+
+#endif

@@ -1,0 +1,10 @@
+#ifndef __PROCALC_FRAGMENTS_SPECS_TIMES_OPENED_COUNTER_FRAGMENT_SPEC_HPP__
+#define __PROCALC_FRAGMENTS_SPECS_TIMES_OPENED_COUNTER_FRAGMENT_SPEC_HPP__
+
+
+struct TimesOpenedCounterFragmentSpec {
+  int stateId = 0;
+};
+
+
+#endif

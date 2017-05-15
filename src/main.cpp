@@ -7,13 +7,12 @@
 #include "application.hpp"
 #include "exception.hpp"
 #include "app_config.hpp"
-#include "app_state.hpp"
+#include "root_spec_factory.hpp"
 #include "event_system.hpp"
 #include "platform.hpp"
 #include "utils.hpp"
-#include "new_root_state_event.hpp"
-#include "states/main_state.hpp"
-#include "views/main_view.hpp"
+#include "request_state_change_event.hpp"
+#include "fragments/main_fragment.hpp"
 
 
 #ifdef __APPLE__
@@ -87,22 +86,24 @@ int main(int argc, char** argv) {
 
     DBG_PRINT("Loading app state " << stateId << "\n");
 
-    MainState appState;
-    appState.setup(stateId);
-
     EventSystem eventSystem;
+    unique_ptr<RootSpec> rootSpec(makeRootSpec(stateId));
 
     Application app(argc, argv);
-    MainView window(appState, appConfig, eventSystem);
-    window.show();
 
-    eventSystem.listen("newRootState", [this](const Event& e) {
-      appState.setup(dynamic_cast<const NewRootStateEvent&>(e).rootState);
-      window.setup(dynamic_cast<const NewRootStateEvent&>(e).rootState);
+    MainFragment mainFragment(eventSystem);
+    mainFragment.rebuild(rootSpec->mainFragmentSpec);
+    mainFragment.show();
+
+    eventSystem.listen("RequestStateChangeEvent", [&](const Event& e) {
+      stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
+
+      rootSpec.reset(makeRootSpec(stateId));
+      mainFragment.rebuild(rootSpec->mainFragmentSpec);
     });
 
     int code = app.exec();
-    persistStateId(appConfig, appState.rootState);
+    persistStateId(appConfig, stateId);
 
     return code;
   }

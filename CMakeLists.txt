@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(projectName procalc)
 
+project(${projectName})
+
 add_compile_options(-std=c++11 -Wall)
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
@@ -11,7 +13,6 @@ else()
   add_compile_options(-DDEBUG -O0 -g)
 endif()
 
-project(${projectName})
 add_subdirectory(tools)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -24,6 +25,8 @@ find_package(Qt5Gui REQUIRED)
 
 file(GLOB_RECURSE srcs src/*.cpp)
 add_executable(procalc ${srcs})
+
+include_directories(src)
 
 target_link_libraries(${projectName} Qt5::Core)
 target_link_libraries(${projectName} Qt5::Widgets)

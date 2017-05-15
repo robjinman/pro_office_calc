@@ -2,12 +2,23 @@
 #define __PROCALC_STATES_DANGER_INFINITY_STATE_HPP__
 
 
-#include "app_state.hpp"
+#include "root_spec.hpp"
 
 
-struct DangerInfinityState : public AppState {
-  virtual void setup(int rootState) override {}
-};
+namespace danger_infinity {
+
+
+RootSpec* makeRootSpec() {
+  RootSpec* rootSpec = new RootSpec;
+  rootSpec->mainFragmentSpec.showCalculatorFragment = true;
+  rootSpec->mainFragmentSpec.calculatorFragmentSpec.fragment =
+    CalculatorFragmentSpec::FRAG_NORMAL_CALC;
+
+  return rootSpec;
+}
+
+
+}
 
 
 #endif
