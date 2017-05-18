@@ -1,12 +1,12 @@
-#include "root_spec_factory.hpp"
+#include "f_main_spec_factory.hpp"
 #include "exception.hpp"
 #include "state_ids.hpp"
-#include "states/normal_calculator_state.hpp"
-#include "states/danger_infinity_state.hpp"
-#include "states/shuffled_keys_state.hpp"
+#include "states/st_normal_calc.hpp"
+#include "states/st_shuffled_keys.hpp"
+#include "fragments/f_main/f_main_spec.hpp"
 
 
-RootSpec* makeRootSpec(int stateId) {
+FMainSpec* makeFMainSpec(int stateId) {
   switch (stateId) {
     case ST_NORMAL_CALCULATOR_0:
     case ST_NORMAL_CALCULATOR_1:
@@ -18,11 +18,10 @@ RootSpec* makeRootSpec(int stateId) {
     case ST_NORMAL_CALCULATOR_7:
     case ST_NORMAL_CALCULATOR_8:
     case ST_NORMAL_CALCULATOR_9:
-      return normal_calculator::makeRootSpec(stateId);
-    case ST_DANGER_INFINITY:
-      return danger_infinity::makeRootSpec();
+    case ST_NORMAL_CALCULATOR_10:
+      return st_normal_calc::makeFMainSpec(stateId);
     case ST_SHUFFLED_KEYS:
-      return shuffled_keys::makeRootSpec();
+      return st_shuffled_keys::makeFMainSpec(stateId);
     default:
       EXCEPTION("Unrecognised state id");
   }

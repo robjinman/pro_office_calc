@@ -4,7 +4,7 @@ set(projectName procalc)
 
 project(${projectName})
 
-add_compile_options(-std=c++11 -Wall)
+add_compile_options(-std=c++14 -Wall)
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
   add_compile_options(-O3)

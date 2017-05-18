@@ -4,7 +4,6 @@
 
 #include <stdexcept>
 #include <sstream>
-#include "types.hpp"
 
 
 #define EXCEPTION(x) { \

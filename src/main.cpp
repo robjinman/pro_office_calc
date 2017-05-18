@@ -7,12 +7,13 @@
 #include "application.hpp"
 #include "exception.hpp"
 #include "app_config.hpp"
-#include "root_spec_factory.hpp"
+#include "f_main_spec_factory.hpp"
 #include "event_system.hpp"
 #include "platform.hpp"
 #include "utils.hpp"
 #include "request_state_change_event.hpp"
-#include "fragments/main_fragment.hpp"
+#include "fragments/f_main/f_main.hpp"
+#include "fragments/f_main/f_main_spec.hpp"
 
 
 #ifdef __APPLE__
@@ -87,19 +88,19 @@ int main(int argc, char** argv) {
     DBG_PRINT("Loading app state " << stateId << "\n");
 
     EventSystem eventSystem;
-    unique_ptr<RootSpec> rootSpec(makeRootSpec(stateId));
+    unique_ptr<FMainSpec> mainSpec(makeFMainSpec(stateId));
 
     Application app(argc, argv);
 
-    MainFragment mainFragment(eventSystem);
-    mainFragment.rebuild(rootSpec->mainFragmentSpec);
+    FMain mainFragment(eventSystem);
+    mainFragment.rebuild(*mainSpec);
     mainFragment.show();
 
     eventSystem.listen("RequestStateChangeEvent", [&](const Event& e) {
       stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
 
-      rootSpec.reset(makeRootSpec(stateId));
-      mainFragment.rebuild(rootSpec->mainFragmentSpec);
+      mainSpec.reset(makeFMainSpec(stateId));
+      mainFragment.rebuild(*mainSpec);
     });
 
     int code = app.exec();

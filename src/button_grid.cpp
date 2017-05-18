@@ -4,7 +4,6 @@
 #include <QPushButton>
 #include "button_grid.hpp"
 #include "utils.hpp"
-#include "rotated_widget.hpp"
 #include "update_loop.hpp"
 #include "event_system.hpp"
 
