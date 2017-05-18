@@ -118,25 +118,6 @@ ButtonGrid::ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& up
 //===========================================
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
-/*
-  if (m_appState.rootState == ST_SHUFFLED_KEYS && id == BTN_CLEAR) {
-    m_updateLoop.add([=]() {
-      static int i = -1;
-      ++i;
-
-      int n = 15;
-
-      for (auto it = m_buttons.begin(); it != m_buttons.end(); ++it) {
-        (*it)->resize((*it)->size() * 0.9);
-
-        if (i >= n) {
-          (*it)->hide();
-        }
-      }
-
-      return i < n;
-    });
-  }*/
 }
 
 //===========================================
