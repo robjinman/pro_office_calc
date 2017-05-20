@@ -3,7 +3,7 @@
 #include "utils.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
-#include "fragments/f_main/f_about_dialog/f_about_dialog.hpp"
+#include "fragments/f_main/f_menu_bar/f_menu_bar.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 
@@ -17,8 +17,8 @@ using std::string;
 Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& parentData) {
   DBG_PRINT("constructFragment(), name=" << name << "\n");
 
-  if (name == "FAboutDialog") {
-    return new FAboutDialog(parent, parentData);
+  if (name == "FMenuBar") {
+    return new FMenuBar(parent, parentData);
   }
   else if (name == "FCalculator") {
     return new FCalculator(parent, parentData);

@@ -3,18 +3,14 @@
 
 
 #include <memory>
-#include <functional>
 #include <QMainWindow>
-#include <QMenu>
+#include <functional>
 #include "update_loop.hpp"
 #include "fragment.hpp"
 
 
-class QAction;
 class UpdateLoop;
-class AppConfig;
 class EventSystem;
-class FMainSpec;
 
 
 struct FMainData : public FragmentData {
@@ -25,11 +21,6 @@ struct FMainData : public FragmentData {
 
   EventSystem& eventSystem;
   UpdateLoop& updateLoop;
-
-  std::unique_ptr<QMenu> mnuFile;
-  std::unique_ptr<QMenu> mnuHelp;
-  std::unique_ptr<QAction> actQuit;
-
   std::function<void()> fnOnQuit = []() {};
 };
 

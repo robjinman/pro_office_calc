@@ -3,9 +3,10 @@
 
 
 #include <QColor>
+#include <QString>
 #include "fragment_spec.hpp"
 #include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
-#include "fragments/f_main/f_about_dialog/f_about_dialog_spec.hpp"
+#include "fragments/f_main/f_menu_bar/f_menu_bar_spec.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 
 
@@ -13,14 +14,15 @@ struct FMainSpec : public FragmentSpec {
   FMainSpec()
     : FragmentSpec("FMain", {
         &calculatorSpec,
-        &aboutDialogSpec,
+        &menuBarSpec,
         &countdownToStartSpec
       }) {}
 
   FCalculatorSpec calculatorSpec;
-  FAboutDialogSpec aboutDialogSpec;
+  FMenuBarSpec menuBarSpec;
   FCountdownToStartSpec countdownToStartSpec;
 
+  QString windowTitle = "Pro Office Calculator";
   QColor bgColour = QColor(240, 240, 240);
 };
 

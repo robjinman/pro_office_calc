@@ -1,5 +1,3 @@
-#include <QMenuBar>
-#include <QApplication>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 #include "utils.hpp"
@@ -20,17 +18,7 @@ FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
     m_data(eventSystem, updateLoop) {
 
   setFixedSize(300, 260);
-
   setWindowTitle("Pro Office Calculator");
-
-  m_data.actQuit.reset(new QAction("Quit", this));
-
-  m_data.mnuFile.reset(menuBar()->addMenu("File"));
-  m_data.mnuFile->addAction(m_data.actQuit.get());
-
-  m_data.mnuHelp.reset(menuBar()->addMenu("Help"));
-
-  connect(m_data.actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
 }
 
 //===========================================
@@ -38,7 +26,9 @@ FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
 //===========================================
 void FMain::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FMainSpec&>(spec_);
+
   setColour(*this, spec.bgColour, QPalette::Window);
+  setWindowTitle(spec.windowTitle);
 
   Fragment::rebuild(spec_);
 }

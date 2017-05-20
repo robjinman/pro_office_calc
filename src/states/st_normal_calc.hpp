@@ -8,7 +8,7 @@
 namespace st_normal_calc {
 
 
-static void makeAboutDialogSpec(FAboutDialogSpec& spec, int stateId) {
+static void makeMenuBarSpec(FMenuBarSpec& spec, int stateId) {
   int count = 10 - stateId;
 
   QString clue1;
@@ -16,8 +16,8 @@ static void makeAboutDialogSpec(FAboutDialogSpec& spec, int stateId) {
   QString clue2 = "<font size=6>⚠∞</font>";
 
   spec.setEnabled(true);
-  spec.text = "";
-  spec.text += "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
+  spec.aboutDialogText = "";
+  spec.aboutDialogText += "<p align='center'><big>Pro Office Calculator</big><br>Version 1.0.0</p>"
     "<p align='center'><a href='http://localhost'>Acme Inc</a></p>"
     "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
     + (count > 0 ? clue1 : clue2);
@@ -29,7 +29,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->calculatorSpec.setEnabled(true);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.setEnabled(true);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.stateId = stateId;
-  makeAboutDialogSpec(mainSpec->aboutDialogSpec, stateId);
+  makeMenuBarSpec(mainSpec->menuBarSpec, stateId);
   mainSpec->countdownToStartSpec.setEnabled(true);
   mainSpec->countdownToStartSpec.stateId = stateId;
 
