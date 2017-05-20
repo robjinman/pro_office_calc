@@ -29,6 +29,9 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->calculatorSpec.setEnabled(true);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.setEnabled(true);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.stateId = stateId;
+  mainSpec->calculatorSpec.normalCalcTriggerSpec.targetWindowColour = QColor(160, 160, 160);
+  mainSpec->calculatorSpec.normalCalcTriggerSpec.targetDisplayColour = QColor(160, 120, 120);
+  mainSpec->calculatorSpec.normalCalcTriggerSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
   makeMenuBarSpec(mainSpec->menuBarSpec, stateId);
   mainSpec->countdownToStartSpec.setEnabled(true);
   mainSpec->countdownToStartSpec.stateId = stateId;

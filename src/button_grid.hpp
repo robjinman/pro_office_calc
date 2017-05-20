@@ -39,8 +39,10 @@ class ButtonGrid : public QWidget {
 
   public:
     ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& updateLoop);
-
     virtual ~ButtonGrid();
+
+    std::vector<std::unique_ptr<QPushButton>> buttons;
+    std::unique_ptr<QButtonGroup> buttonGroup;
 
   private slots:
     void onBtnClick(int id);
@@ -51,8 +53,6 @@ class ButtonGrid : public QWidget {
   private:
     EventSystem& m_eventSystem;
     UpdateLoop& m_updateLoop;
-    std::vector<std::unique_ptr<QPushButton>> m_buttons;
-    std::unique_ptr<QButtonGroup> m_grpButtons;
 };
 
 

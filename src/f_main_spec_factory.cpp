@@ -3,6 +3,7 @@
 #include "state_ids.hpp"
 #include "states/st_normal_calc.hpp"
 #include "states/st_shuffled_keys.hpp"
+#include "states/st_login_screen.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 
 
@@ -22,6 +23,8 @@ FMainSpec* makeFMainSpec(int stateId) {
       return st_normal_calc::makeFMainSpec(stateId);
     case ST_SHUFFLED_KEYS:
       return st_shuffled_keys::makeFMainSpec(stateId);
+    case ST_LOGIN_SCREEN:
+      return st_login_screen::makeFMainSpec(stateId);
     default:
       EXCEPTION("Unrecognised state id");
   }

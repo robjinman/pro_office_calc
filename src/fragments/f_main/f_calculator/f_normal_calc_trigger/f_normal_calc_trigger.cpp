@@ -1,4 +1,5 @@
 #include <QMainWindow>
+#include <QPushButton>
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger_spec.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
@@ -28,9 +29,15 @@ FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentDa
 //===========================================
 // FNormalCalcTrigger::rebuild
 //===========================================
-void FNormalCalcTrigger::rebuild(const FragmentSpec& spec) {
-  Fragment::rebuild(spec);
-  m_stateId = dynamic_cast<const FNormalCalcTriggerSpec&>(spec).stateId;
+void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
+  auto& spec = dynamic_cast<const FNormalCalcTriggerSpec&>(spec_);
+
+  m_stateId = spec.stateId;
+  m_targetWindowColour = spec.targetWindowColour;
+  m_targetDisplayColour = spec.targetDisplayColour;
+  m_symbols = spec.symbols;
+
+  Fragment::rebuild(spec_);
 }
 
 //===========================================
@@ -58,9 +65,22 @@ void FNormalCalcTrigger::onButtonClick(int id) {
 
     if (std::isinf(result)) {
       QColor origCol = data.window->palette().color(QPalette::Window);
-
-      int frames = data.updateLoop->fps() / 2;
       int i = 0;
+
+      data.updateLoop->add([=,&data]() mutable {
+        auto& buttons = data.wgtButtonGrid->buttons;
+        ++i;
+
+        int j = 0;
+        for (auto it = buttons.begin(); it != buttons.end(); ++it) {
+          QChar ch = m_symbols[(i + j) % m_symbols.length()];
+          (*it)->setText(ch);
+          ++j;
+        }
+
+        return i < data.updateLoop->fps() * 1.5;
+      });
+
       data.updateLoop->add([=,&data]() mutable {
         ++i;
         if (i % 2) {
@@ -70,15 +90,15 @@ void FNormalCalcTrigger::onButtonClick(int id) {
           setColour(*data.window, Qt::white, QPalette::Window);
         }
 
-        return i < frames;
+        return i < data.updateLoop->fps();
       }, [&]() {
-        transitionColour(*data.updateLoop, *data.window, QColor(160, 160, 160), QPalette::Window,
+        transitionColour(*data.updateLoop, *data.window, m_targetWindowColour, QPalette::Window,
           0.5, [&]() {
 
           data.eventSystem->fire(RequestStateChangeEvent(ST_SHUFFLED_KEYS));
         });
 
-        transitionColour(*data.updateLoop, *data.wgtDigitDisplay, QColor(160, 120, 120),
+        transitionColour(*data.updateLoop, *data.wgtDigitDisplay, m_targetDisplayColour,
           QPalette::Base, 0.5);
       });
     }

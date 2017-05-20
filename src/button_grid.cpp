@@ -55,24 +55,24 @@ ButtonGrid::ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& up
   unique_ptr<QPushButton> btnClear(makeButton(this, "C"));
   unique_ptr<QPushButton> btnEquals(makeButton(this, "="));
 
-  m_grpButtons.reset(new QButtonGroup);
-  m_grpButtons->addButton(btn0.get(), BTN_ZERO);
-  m_grpButtons->addButton(btn1.get(), BTN_ONE);
-  m_grpButtons->addButton(btn2.get(), BTN_TWO);
-  m_grpButtons->addButton(btn3.get(), BTN_THREE);
-  m_grpButtons->addButton(btn4.get(), BTN_FOUR);
-  m_grpButtons->addButton(btn5.get(), BTN_FIVE);
-  m_grpButtons->addButton(btn6.get(), BTN_SIX);
-  m_grpButtons->addButton(btn7.get(), BTN_SEVEN);
-  m_grpButtons->addButton(btn8.get(), BTN_EIGHT);
-  m_grpButtons->addButton(btn9.get(), BTN_NINE);
-  m_grpButtons->addButton(btnPlus.get(), BTN_PLUS);
-  m_grpButtons->addButton(btnMinus.get(), BTN_MINUS);
-  m_grpButtons->addButton(btnTimes.get(), BTN_TIMES);
-  m_grpButtons->addButton(btnDivide.get(), BTN_DIVIDE);
-  m_grpButtons->addButton(btnPoint.get(), BTN_POINT);
-  m_grpButtons->addButton(btnClear.get(), BTN_CLEAR);
-  m_grpButtons->addButton(btnEquals.get(), BTN_EQUALS);
+  buttonGroup.reset(new QButtonGroup);
+  buttonGroup->addButton(btn0.get(), BTN_ZERO);
+  buttonGroup->addButton(btn1.get(), BTN_ONE);
+  buttonGroup->addButton(btn2.get(), BTN_TWO);
+  buttonGroup->addButton(btn3.get(), BTN_THREE);
+  buttonGroup->addButton(btn4.get(), BTN_FOUR);
+  buttonGroup->addButton(btn5.get(), BTN_FIVE);
+  buttonGroup->addButton(btn6.get(), BTN_SIX);
+  buttonGroup->addButton(btn7.get(), BTN_SEVEN);
+  buttonGroup->addButton(btn8.get(), BTN_EIGHT);
+  buttonGroup->addButton(btn9.get(), BTN_NINE);
+  buttonGroup->addButton(btnPlus.get(), BTN_PLUS);
+  buttonGroup->addButton(btnMinus.get(), BTN_MINUS);
+  buttonGroup->addButton(btnTimes.get(), BTN_TIMES);
+  buttonGroup->addButton(btnDivide.get(), BTN_DIVIDE);
+  buttonGroup->addButton(btnPoint.get(), BTN_POINT);
+  buttonGroup->addButton(btnClear.get(), BTN_CLEAR);
+  buttonGroup->addButton(btnEquals.get(), BTN_EQUALS);
 
   grid->addWidget(btnClear.get(), 0, 0);
   grid->addWidget(btn0.get(), 4, 0);
@@ -92,25 +92,25 @@ ButtonGrid::ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& up
   grid->addWidget(btnTimes.get(), 2, 3);
   grid->addWidget(btnDivide.get(), 1, 3);
 
-  m_buttons.push_back(std::move(btn0));
-  m_buttons.push_back(std::move(btn1));
-  m_buttons.push_back(std::move(btn2));
-  m_buttons.push_back(std::move(btn3));
-  m_buttons.push_back(std::move(btn4));
-  m_buttons.push_back(std::move(btn5));
-  m_buttons.push_back(std::move(btn6));
-  m_buttons.push_back(std::move(btn7));
-  m_buttons.push_back(std::move(btn8));
-  m_buttons.push_back(std::move(btn9));
-  m_buttons.push_back(std::move(btnPlus));
-  m_buttons.push_back(std::move(btnMinus));
-  m_buttons.push_back(std::move(btnTimes));
-  m_buttons.push_back(std::move(btnDivide));
-  m_buttons.push_back(std::move(btnPoint));
-  m_buttons.push_back(std::move(btnClear));
-  m_buttons.push_back(std::move(btnEquals));
+  buttons.push_back(std::move(btn0));
+  buttons.push_back(std::move(btn1));
+  buttons.push_back(std::move(btn2));
+  buttons.push_back(std::move(btn3));
+  buttons.push_back(std::move(btn4));
+  buttons.push_back(std::move(btn5));
+  buttons.push_back(std::move(btn6));
+  buttons.push_back(std::move(btn7));
+  buttons.push_back(std::move(btn8));
+  buttons.push_back(std::move(btn9));
+  buttons.push_back(std::move(btnPlus));
+  buttons.push_back(std::move(btnMinus));
+  buttons.push_back(std::move(btnTimes));
+  buttons.push_back(std::move(btnDivide));
+  buttons.push_back(std::move(btnPoint));
+  buttons.push_back(std::move(btnClear));
+  buttons.push_back(std::move(btnEquals));
 
-  connect(m_grpButtons.get(), SIGNAL(buttonClicked(int)), this, SLOT(onBtnClick(int)));
+  connect(buttonGroup.get(), SIGNAL(buttonClicked(int)), this, SLOT(onBtnClick(int)));
 }
 
 //===========================================

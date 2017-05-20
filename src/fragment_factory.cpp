@@ -6,6 +6,7 @@
 #include "fragments/f_main/f_menu_bar/f_menu_bar.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
+#include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
 
 
 using std::string;
@@ -23,11 +24,14 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   else if (name == "FCalculator") {
     return new FCalculator(parent, parentData);
   }
-  else if (name == "FCountdownToStart") {
-    return new FCountdownToStart(parent, parentData);
-  }
   else if (name == "FNormalCalcTrigger") {
     return new FNormalCalcTrigger(parent, parentData);
+  }
+  else if (name == "FShuffledCalc") {
+    return new FShuffledCalc(parent, parentData);
+  }
+  else if (name == "FCountdownToStart") {
+    return new FCountdownToStart(parent, parentData);
   }
 
   EXCEPTION("Cannot construct fragment with unrecognised name '" << name << "'\n");
