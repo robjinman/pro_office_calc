@@ -6,7 +6,6 @@
 #include <functional>
 #include <QMainWindow>
 #include <QMenu>
-#include <QTimer>
 #include "update_loop.hpp"
 #include "fragment.hpp"
 
@@ -19,12 +18,13 @@ class FMainSpec;
 
 
 struct FMainData : public FragmentData {
-  FMainData(EventSystem& eventSystem)
+  FMainData(EventSystem& eventSystem, UpdateLoop& updateLoop)
     : FragmentData(),
-      eventSystem(eventSystem) {}
+      eventSystem(eventSystem),
+      updateLoop(updateLoop) {}
 
   EventSystem& eventSystem;
-  std::unique_ptr<UpdateLoop> updateLoop;
+  UpdateLoop& updateLoop;
 
   std::unique_ptr<QMenu> mnuFile;
   std::unique_ptr<QMenu> mnuHelp;
@@ -38,7 +38,7 @@ class FMain : public QMainWindow, public Fragment {
   Q_OBJECT
 
   public:
-    FMain(EventSystem& eventSystem);
+    FMain(EventSystem& eventSystem, UpdateLoop& updateLoop);
 
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
@@ -47,9 +47,6 @@ class FMain : public QMainWindow, public Fragment {
 
   protected:
     virtual void closeEvent(QCloseEvent*);
-
-  private slots:
-    void tick();
 
   private:
     FMainData m_data;

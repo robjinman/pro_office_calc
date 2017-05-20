@@ -1,4 +1,3 @@
-#include <QTimer>
 #include "update_loop.hpp"
 
 
@@ -10,9 +9,12 @@ using std::function;
 //===========================================
 // UpdateLoop::UpdateLoop
 //===========================================
-UpdateLoop::UpdateLoop(unique_ptr<QTimer> timer, int interval)
-  : m_timer(std::move(timer)),
-    m_interval(interval) {}
+UpdateLoop::UpdateLoop(int interval)
+  : m_interval(interval) {
+
+  m_timer.reset(new QTimer(this));
+  connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+}
 
 //===========================================
 // UpdateLoop::addFunction
@@ -23,6 +25,13 @@ void UpdateLoop::add(function<bool()> fn, function<void()> fnOnFinish) {
   if (!m_timer->isActive()) {
     m_timer->start(m_interval);
   }
+}
+
+//===========================================
+// UpdateLoop::finishAll
+//===========================================
+void UpdateLoop::finishAll() {
+  m_timer->stop();
 }
 
 //===========================================
@@ -40,13 +49,19 @@ double UpdateLoop::fps() const {
 }
 
 //===========================================
-// UpdateLoop::update
+// UpdateLoop::tick
 //===========================================
-void UpdateLoop::update() {
+void UpdateLoop::tick() {
   auto it = m_functions.begin();
 
   while (it != m_functions.end()) {
-    if (!it->fnPeriodic()) {
+    bool result = false;
+
+    if (m_timer->isActive()) {
+      result = it->fnPeriodic();
+    }
+
+    if (!result) {
       it->fnFinish();
       m_functions.erase(it++);
     }

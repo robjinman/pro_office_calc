@@ -1,7 +1,9 @@
 #include <QVBoxLayout>
 #include "event_system.hpp"
 #include "update_loop.hpp"
+#include "effects.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
+#include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_main.hpp"
 
 
@@ -21,7 +23,7 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
 
   QWidget::setParent(&parent);
   m_data.eventSystem = &parentData.eventSystem;
-  m_data.updateLoop = parentData.updateLoop.get();
+  m_data.updateLoop = &parentData.updateLoop;
 
   m_data.wgtDigitDisplay.reset(new QLineEdit(this));
   m_data.wgtDigitDisplay->setMaximumHeight(40);
@@ -41,8 +43,11 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
 //===========================================
 // FCalculator::rebuild
 //===========================================
-void FCalculator::rebuild(const FragmentSpec& spec) {
-  Fragment::rebuild(spec);
+void FCalculator::rebuild(const FragmentSpec& spec_) {
+  auto& spec = dynamic_cast<const FCalculatorSpec&>(spec_);
+  setColour(*m_data.wgtDigitDisplay, spec.displayColour, QPalette::Base);
+
+  Fragment::rebuild(spec_);
 }
 
 //===========================================

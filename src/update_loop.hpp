@@ -5,18 +5,23 @@
 #include <memory>
 #include <list>
 #include <functional>
+#include <QObject>
+#include <QTimer>
 
 
-class QTimer;
+class UpdateLoop : QObject {
+  Q_OBJECT
 
-class UpdateLoop {
   public:
-    UpdateLoop(std::unique_ptr<QTimer> timer, int interval);
+    UpdateLoop(int interval);
 
     void add(std::function<bool()> fn, std::function<void()> fnOnFinish = []() {});
     int size() const;
-    void update();
     double fps() const;
+    void finishAll();
+
+  private slots:
+    void tick();
 
   private:
     struct FuncPair {

@@ -9,6 +9,7 @@
 #include "app_config.hpp"
 #include "f_main_spec_factory.hpp"
 #include "event_system.hpp"
+#include "update_loop.hpp"
 #include "platform.hpp"
 #include "utils.hpp"
 #include "request_state_change_event.hpp"
@@ -88,16 +89,20 @@ int main(int argc, char** argv) {
     DBG_PRINT("Loading app state " << stateId << "\n");
 
     EventSystem eventSystem;
+    UpdateLoop updateLoop(50);
+
     unique_ptr<FMainSpec> mainSpec(makeFMainSpec(stateId));
 
     Application app(argc, argv);
 
-    FMain mainFragment(eventSystem);
+    FMain mainFragment(eventSystem, updateLoop);
     mainFragment.rebuild(*mainSpec);
     mainFragment.show();
 
     eventSystem.listen("RequestStateChangeEvent", [&](const Event& e) {
       stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
+
+      updateLoop.finishAll();
 
       mainSpec.reset(makeFMainSpec(stateId));
       mainFragment.rebuild(*mainSpec);

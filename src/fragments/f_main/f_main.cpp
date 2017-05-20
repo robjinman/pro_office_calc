@@ -14,10 +14,10 @@ using std::unique_ptr;
 //===========================================
 // FMain::FMain
 //===========================================
-FMain::FMain(EventSystem& eventSystem)
+FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
   : QMainWindow(nullptr),
     Fragment("FMain", m_data),
-    m_data(eventSystem) {
+    m_data(eventSystem, updateLoop) {
 
   setFixedSize(300, 260);
 
@@ -31,17 +31,15 @@ FMain::FMain(EventSystem& eventSystem)
   m_data.mnuHelp.reset(menuBar()->addMenu("Help"));
 
   connect(m_data.actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
-
-  QTimer* timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
-
-  m_data.updateLoop.reset(new UpdateLoop(unique_ptr<QTimer>(timer), 50));
 }
 
 //===========================================
 // FMain::rebuild
 //===========================================
 void FMain::rebuild(const FragmentSpec& spec_) {
+  auto& spec = dynamic_cast<const FMainSpec&>(spec_);
+  setColour(*this, spec.bgColour, QPalette::Window);
+
   Fragment::rebuild(spec_);
 }
 
@@ -50,13 +48,6 @@ void FMain::rebuild(const FragmentSpec& spec_) {
 //===========================================
 void FMain::cleanUp() {
 
-}
-
-//===========================================
-// FMain::tick
-//===========================================
-void FMain::tick() {
-  m_data.updateLoop->update();
 }
 
 //===========================================
