@@ -4,18 +4,21 @@
 
 #include "fragment_spec.hpp"
 #include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
-#include "fragments/f_main/f_normal_calc_about_dialog/f_normal_calc_about_dialog_spec.hpp"
+#include "fragments/f_main/f_about_dialog/f_about_dialog_spec.hpp"
+#include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 
 
 struct FMainSpec : public FragmentSpec {
   FMainSpec()
     : FragmentSpec("FMain", {
         &calculatorSpec,
-        &normalCalcAboutDialogSpec
+        &aboutDialogSpec,
+        &countdownToStartSpec
       }) {}
 
   FCalculatorSpec calculatorSpec;
-  FNormalCalcAboutDialogSpec normalCalcAboutDialogSpec;
+  FAboutDialogSpec aboutDialogSpec;
+  FCountdownToStartSpec countdownToStartSpec;
 };
 
 
