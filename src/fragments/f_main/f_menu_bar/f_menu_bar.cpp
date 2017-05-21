@@ -62,7 +62,7 @@ void FMenuBar::cleanUp() {
 void FMenuBar::showAbout() {
   QMessageBox msgBox(&parentFrag<FMain>());
   msgBox.setTextFormat(Qt::RichText);
-  msgBox.setWindowTitle("About");
+  msgBox.setWindowTitle(m_aboutDialogTitle);
   msgBox.setText(m_aboutDialogText);
   msgBox.exec();
 }
