@@ -10,6 +10,7 @@
 #include "strings.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
+#include "utils.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc_spec.hpp"
 #include "fragments/f_main/f_main.hpp"
@@ -115,6 +116,8 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
     buttons[i]->setText(ch);
     m_symbols[idToChar(newIds[i])] = ch;
   }
+
+  DBG_PRINT("Answer = " << translateToSymbols(m_targetValue.c_str()).toStdString() << "\n");
 
   setColour(*m_wgtDigitDisplay, spec.displayColour, QPalette::Base);
 
