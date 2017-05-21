@@ -57,7 +57,7 @@ class Calculator {
         static const std::map<operator_t, int> PRECEDENCE;
     };
 
-    OpStack m_OpStack;
+    OpStack m_opStack;
     std::string m_display;
     bool m_reset;
 };

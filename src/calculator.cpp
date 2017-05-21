@@ -156,7 +156,7 @@ void Calculator::number(int n) {
     EXCEPTION("Calculator expects single digit");
   }
 
-  if (m_reset || m_OpStack.op() != OpStack::OP_NONE) {
+  if (m_reset || m_opStack.op() != OpStack::OP_NONE) {
     m_display = "";
     m_reset = false;
   }
@@ -164,7 +164,7 @@ void Calculator::number(int n) {
   m_display.append(std::to_string(n).c_str());
 
   double value = std::strtod(m_display.c_str(), nullptr);
-  m_OpStack.putValue(value);
+  m_opStack.putValue(value);
 }
 
 //===========================================
@@ -180,35 +180,35 @@ void Calculator::point() {
 // Calculator::plus
 //===========================================
 void Calculator::plus() {
-  m_OpStack.putOperator(OpStack::OP_PLUS);
+  m_opStack.putOperator(OpStack::OP_PLUS);
 }
 
 //===========================================
 // Calculator::times
 //===========================================
 void Calculator::times() {
-  m_OpStack.putOperator(OpStack::OP_TIMES);
+  m_opStack.putOperator(OpStack::OP_TIMES);
 }
 
 //===========================================
 // Calculator::divide
 //===========================================
 void Calculator::divide() {
-  m_OpStack.putOperator(OpStack::OP_DIVIDE);
+  m_opStack.putOperator(OpStack::OP_DIVIDE);
 }
 
 //===========================================
 // Calculator::minus
 //===========================================
 void Calculator::minus() {
-  m_OpStack.putOperator(OpStack::OP_MINUS);
+  m_opStack.putOperator(OpStack::OP_MINUS);
 }
 
 //===========================================
 // Calculator::equals
 //===========================================
 double Calculator::equals() {
-  double result = m_OpStack.evaluate();
+  double result = m_opStack.evaluate();
   m_display = formatNumber(result).c_str();
   m_reset = true;
 
@@ -219,6 +219,7 @@ double Calculator::equals() {
 // Calculator::clear
 //===========================================
 void Calculator::clear() {
+  m_opStack.clear();
   m_display = "";
 }
 
