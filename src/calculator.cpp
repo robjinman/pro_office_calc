@@ -41,6 +41,22 @@ static string formatNumber(double num) {
 }
 
 //===========================================
+// Calculator::OpStack::dbg_print
+//===========================================
+#ifdef DEBUG
+void Calculator::OpStack::dbg_print(std::ostream& os) const {
+  std::stack<Expr> stack = m_stack;
+
+  os << "OpStack\n";
+  while (!stack.empty()) {
+    Expr e = stack.top();
+    stack.pop();
+    os << e.lhs << ", " << e.op << "\n";
+  }
+}
+#endif
+
+//===========================================
 // Calculator::OpStack::apply
 //===========================================
 double Calculator::OpStack::apply(Expr expr, double rhs) const {
@@ -109,6 +125,8 @@ double Calculator::OpStack::evaluate() {
   if (m_stack.empty()) {
     return 0;
   }
+
+  m_stack.top().op = OP_NONE;
 
   collapseStack();
   assert(m_stack.size() == 1);

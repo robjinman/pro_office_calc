@@ -4,6 +4,9 @@
 
 #include <stack>
 #include <string>
+#ifdef DEBUG
+#  include <ostream>
+#endif
 
 
 class Calculator {
@@ -35,6 +38,10 @@ class Calculator {
         void clear();
         double evaluate();
         operator_t op() const;
+
+#ifdef DEBUG
+        void dbg_print(std::ostream& os) const;
+#endif
 
       private:
         struct Expr {
