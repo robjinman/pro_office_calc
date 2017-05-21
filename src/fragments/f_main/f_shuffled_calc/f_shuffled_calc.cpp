@@ -183,8 +183,20 @@ void FShuffledCalc::onButtonClick(int id) {
   m_wgtDigitDisplay->setText(symbols);
 
   if (m_calculator.display() == m_targetValue) {
-    // TODO: Transition
+    auto& buttons = m_wgtButtonGrid->buttons;
+    int i = 0;
 
-    parentFragData<FMainData>().eventSystem.fire(RequestStateChangeEvent(ST_LOGIN_SCREEN));
+    m_updateLoop->add([&, i]() mutable {
+      ++i;
+
+      for (auto it = buttons.begin(); it != buttons.end(); ++it) {
+        QSize sz = (*it)->size();
+        (*it)->resize(sz * 0.9);
+      }
+
+      return i < m_updateLoop->fps();
+    }, [&]() {
+      parentFragData<FMainData>().eventSystem.fire(RequestStateChangeEvent(ST_LOGIN_SCREEN));
+    });
   }
 }
