@@ -4,8 +4,6 @@
 #include <QPushButton>
 #include "button_grid.hpp"
 #include "utils.hpp"
-#include "update_loop.hpp"
-#include "event_system.hpp"
 
 
 using std::unique_ptr;
@@ -27,10 +25,8 @@ static QPushButton* makeButton(QWidget* parent, const QString& text) {
 //===========================================
 // ButtonGrid::ButtonGrid
 //===========================================
-ButtonGrid::ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& updateLoop)
-  : QWidget(parent),
-    m_eventSystem(eventSystem),
-    m_updateLoop(updateLoop) {
+ButtonGrid::ButtonGrid(QWidget* parent)
+  : QWidget(parent) {
 
   QGridLayout* grid = new QGridLayout;
   grid->setSpacing(1);

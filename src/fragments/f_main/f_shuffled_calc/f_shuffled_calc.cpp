@@ -61,7 +61,7 @@ FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_wgtDigitDisplay->setReadOnly(true);
 
-  m_wgtButtonGrid.reset(new ButtonGrid(this, *m_eventSystem, *m_updateLoop));
+  m_wgtButtonGrid.reset(new ButtonGrid(this));
 
   QVBoxLayout* vbox = new QVBoxLayout;
   vbox->addWidget(m_wgtDigitDisplay.get());

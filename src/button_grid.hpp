@@ -31,14 +31,12 @@ enum buttonId_t {
 class QGridLayout;
 class QButtonGroup;
 class QPushButton;
-class EventSystem;
-class UpdateLoop;
 
 class ButtonGrid : public QWidget {
   Q_OBJECT
 
   public:
-    ButtonGrid(QWidget* parent, EventSystem& eventSystem, UpdateLoop& updateLoop);
+    ButtonGrid(QWidget* parent);
     virtual ~ButtonGrid();
 
     std::vector<std::unique_ptr<QPushButton>> buttons;
@@ -49,10 +47,6 @@ class ButtonGrid : public QWidget {
 
   signals:
     void buttonClicked(int id);
-
-  private:
-    EventSystem& m_eventSystem;
-    UpdateLoop& m_updateLoop;
 };
 
 

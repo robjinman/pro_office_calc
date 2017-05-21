@@ -30,7 +30,7 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
   m_data.wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_data.wgtDigitDisplay->setReadOnly(true);
 
-  m_data.wgtButtonGrid.reset(new ButtonGrid(this, *m_data.eventSystem, *m_data.updateLoop));
+  m_data.wgtButtonGrid.reset(new ButtonGrid(this));
 
   QVBoxLayout* vbox = new QVBoxLayout;
   vbox->addWidget(m_data.wgtDigitDisplay.get());
