@@ -15,7 +15,8 @@ FMainSpec* makeFMainSpec(int stateId) {
   srand(time(nullptr));
 
   std::stringstream ss;
-  ss << std::setfill('0') << std::setw(7) << static_cast<double>(rand() % 1000000) * 0.01;
+  ss << std::setfill('0') << std::setw(7) << std::fixed << std::setprecision(2)
+    << static_cast<double>(rand() % 1000000) * 0.01;
 
   QString targetValue(ss.str().c_str());
 
