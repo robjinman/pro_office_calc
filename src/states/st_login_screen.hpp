@@ -11,6 +11,7 @@ namespace st_login_screen {
 FMainSpec* makeFMainSpec(int stateId) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "P̵͍̖̅͋r̵̢͓͒o̵͂̋ͅ ̶̩̝͐͒O̶̟̥͌f̵̢͙͑f̶̥̩̂͆i̷̻͐c̷̳̅̃e̴̢̞̓ ̴͓͂́C̸̻̳͗a̵̱̙̓l̶̯̬̉͘ć̶͎͚͠ụ̸̢̊͐l̸̦̀͐a̶̻͝t̵͇̂o̵͙̤̓̿r̷̛͖͝";
+  mainSpec->bgColour = QColor(160, 160, 160);
   mainSpec->menuBarSpec.setEnabled(true);
   mainSpec->menuBarSpec.fileLabel = "F̶̱͍̏͂ḭ̷̺̉͐l̷̦̹̃͛ẽ̶͈̳";
   mainSpec->menuBarSpec.quitLabel = "Q̵͎̠̊͘u̴̖͙͝͝i̴̯̯͛̈́ţ̴͗";
