@@ -23,7 +23,6 @@ class FNormalCalcTrigger : public QObject, public Fragment {
   private:
     FNormalCalcTriggerData m_data;
 
-    int m_stateId;
     QColor m_targetWindowColour;
     QColor m_targetDisplayColour;
     QString m_symbols;

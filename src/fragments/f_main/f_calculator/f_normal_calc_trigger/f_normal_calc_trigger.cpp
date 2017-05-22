@@ -14,8 +14,7 @@
 // FNormalCalcTrigger::FNormalCalcTrigger
 //===========================================
 FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data),
-    m_stateId(0) {
+  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {
 
   auto& parentData = parentFragData<FCalculatorData>();
   auto& parent = parentFrag<FCalculator>();
@@ -32,7 +31,6 @@ FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentDa
 void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FNormalCalcTriggerSpec&>(spec_);
 
-  m_stateId = spec.stateId;
   m_targetWindowColour = spec.targetWindowColour;
   m_targetDisplayColour = spec.targetDisplayColour;
   m_symbols = spec.symbols;
@@ -59,7 +57,7 @@ void FNormalCalcTrigger::cleanUp() {
 void FNormalCalcTrigger::onButtonClick(int id) {
   auto& data = parentFragData<FCalculatorData>();
 
-  if (m_stateId == ST_NORMAL_CALCULATOR_10 && id == BTN_EQUALS) {
+  if (id == BTN_EQUALS) {
     double result = data.calculator.equals();
     data.wgtDigitDisplay->setText(data.calculator.display().c_str());
 

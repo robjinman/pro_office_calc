@@ -40,7 +40,7 @@ void FCountdownToStart::cleanUp() {
 void FCountdownToStart::onQuit() {
   DBG_PRINT("FCountdownToStart::onQuit\n");
 
-  if (m_stateId < ST_NORMAL_CALCULATOR_10) {
+  if (m_stateId <= ST_NORMAL_CALCULATOR_9) {
     parentFragData<FMainData>().eventSystem.fire(RequestStateChangeEvent(m_stateId + 1));
   }
 }
