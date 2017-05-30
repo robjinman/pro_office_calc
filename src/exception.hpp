@@ -12,6 +12,11 @@
   throw Exception(ss.str(), __FILE__, __LINE__); \
 }
 
+#define ASSERT(cond) \
+  if (!(cond)) { \
+    EXCEPTION("Assertion failed"); \
+  }
+
 
 class Exception : public std::runtime_error {
   public:

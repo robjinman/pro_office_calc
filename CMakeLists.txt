@@ -4,6 +4,8 @@ set(projectName procalc)
 
 project(${projectName})
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
 add_compile_options(-std=c++14 -Wall)
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
@@ -22,15 +24,18 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
+find_package(TinyXML2 REQUIRED)
 
 file(GLOB_RECURSE srcs src/*.cpp)
 add_executable(procalc ${srcs})
 
 include_directories(src)
+include_directories(${TINYXML2_INCLUDE_DIR})
 
 target_link_libraries(${projectName} Qt5::Core)
 target_link_libraries(${projectName} Qt5::Widgets)
 target_link_libraries(${projectName} Qt5::Gui)
+target_link_libraries(${projectName} ${TINYXML2_LIBRARIES})
 
 file(COPY "data" DESTINATION "${CMAKE_BINARY_DIR}")
 file(COPY "VERSION" DESTINATION "${CMAKE_BINARY_DIR}/data")

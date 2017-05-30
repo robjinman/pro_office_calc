@@ -4,11 +4,16 @@
 
 #include <QString>
 #include "fragment_spec.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog_spec.hpp"
 
 
 struct FMenuBarSpec : public FragmentSpec {
   FMenuBarSpec()
-    : FragmentSpec("FMenuBar", {}) {}
+    : FragmentSpec("FMenuBar", {
+        &settingsDialogSpec
+      }) {}
+
+  FSettingsDialogSpec settingsDialogSpec;
 
   QString fileLabel = "File";
   QString quitLabel = "Quit";

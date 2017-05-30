@@ -4,6 +4,8 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
 #include "fragments/f_main/f_menu_bar/f_menu_bar.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
@@ -32,6 +34,12 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FCountdownToStart") {
     return new FCountdownToStart(parent, parentData);
+  }
+  else if (name == "FSettingsDialog") {
+    return new FSettingsDialog(parent, parentData);
+  }
+  else if (name == "FRaycast") {
+    return new FRaycast(parent, parentData);
   }
 
   EXCEPTION("Cannot construct fragment with unrecognised name '" << name << "'\n");
