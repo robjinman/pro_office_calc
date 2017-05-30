@@ -7,7 +7,8 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast_spec.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/game_map.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
 
 
 //===========================================
@@ -28,7 +29,8 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 void FRaycast::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FRaycastSpec&>(spec_);
 
-  GameMap map("data/map.svg");
+  m_gameMap.reset(new Scene("data/map.svg"));
+  m_camera.reset(new Camera);
 
   Fragment::rebuild(spec_);
 }
@@ -44,13 +46,7 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent* event) {
-  QPainter painter;
-  painter.begin(this);
-  painter.setRenderHint(QPainter::Antialiasing);
-
-  painter.fillRect(event->rect(), QBrush(QColor(64, 32, 64)));
-
-  painter.end();
+  renderScene(*this, event->rect(), *m_gameMap, *m_camera);
 }
 
 //===========================================

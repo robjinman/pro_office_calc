@@ -5,6 +5,8 @@
 #include <memory>
 #include <QOpenGLWidget>
 #include "fragment.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
 
 
 class QPaintEvent;
@@ -29,6 +31,9 @@ class FRaycast : public QOpenGLWidget, public Fragment {
 
   private:
     FRaycastData m_data;
+
+    std::unique_ptr<Scene> m_gameMap;
+    std::unique_ptr<Camera> m_camera;
 };
 
 

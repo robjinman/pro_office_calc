@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 #include <tinyxml2.h>
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/game_map.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -47,7 +47,7 @@ static Primitive* createPrimitiveFromSvgElement(XMLElement* e) {
 }
 
 
-GameMap::GameMap(const std::string& mapFilePath) {
+Scene::Scene(const std::string& mapFilePath) {
   XMLDocument doc;
   doc.LoadFile(mapFilePath.c_str());
 
