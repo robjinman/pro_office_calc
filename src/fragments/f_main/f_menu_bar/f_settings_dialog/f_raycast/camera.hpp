@@ -6,8 +6,7 @@
 
 
 struct Camera {
-  Point pos;
-  double angle;
+  Matrix matrix;
 };
 
 

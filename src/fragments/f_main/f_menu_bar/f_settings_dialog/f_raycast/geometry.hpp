@@ -2,6 +2,7 @@
 #define __PROCALC_FRAGMENTS_F_RAYCAST_GEOMETRY_HPP__
 
 
+#include <array>
 #include <string>
 
 
@@ -14,6 +15,33 @@ struct Point {
 
   double x;
   double y;
+};
+
+struct Matrix {
+  Matrix()
+    : data{{
+        {{1.0, 0.0, 0.0}},
+        {{0.0, 1.0, 0.0}},
+        {{0.0, 0.0, 1.0}}
+      }},
+      tx(data[0][2]),
+      ty(data[1][2]) {}
+
+  std::array<std::array<double, 3>, 3> data;
+  double& tx;
+  double& ty;
+
+  std::array<double, 3>& operator[](int idx) {
+    return data[idx];
+  }
+
+  const std::array<double, 3>& operator[](int idx) const {
+    return data[idx];
+  }
+
+  Matrix& operator=(const Matrix& rhs) {
+    data = rhs.data;
+  }
 };
 
 struct Primitive {
@@ -35,6 +63,7 @@ struct LineSegment : public Primitive {
 #include <ostream>
 std::ostream& operator<<(std::ostream& os, const Point& lseg);
 std::ostream& operator<<(std::ostream& os, const LineSegment& lseg);
+std::ostream& operator<<(std::ostream& os, const Matrix& mat);
 #endif
 
 

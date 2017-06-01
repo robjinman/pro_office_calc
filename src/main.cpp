@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
 
     return code;
   }
-  catch (Exception& e) {
+  catch (std::exception& e) {
     cerr << "Encountered fatal error; " << e.what() << "\n";
     return EXIT_FAILURE;
   }

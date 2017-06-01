@@ -5,11 +5,44 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg2"
-   viewBox="0 0 744.09448819 1052.3622047"
-   height="297mm"
-   width="210mm">
+   viewBox="0 0 125 125"
+   height="100pt"
+   width="100pt"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="map.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="999"
+     id="namedview10"
+     showgrid="true"
+     inkscape:zoom="11.313709"
+     inkscape:cx="29.798636"
+     inkscape:cy="32.389124"
+     inkscape:window-x="1280"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     inkscape:document-units="pt"
+     units="pt">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4163"
+       units="pt"
+       spacingx="1.25"
+       spacingy="1.25" />
+  </sodipodi:namedview>
   <defs
      id="defs4" />
   <metadata
@@ -24,26 +57,21 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     id="layer1">
-    <path
-       id="path3336"
-       d="m 302.03561,609.41031 48.73986,-42.4264"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       id="path3338"
-       d="m 368.45314,562.9433 55.05332,25.25381"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       id="path3340"
-       d="m 319.96582,644.26058 32.07234,8.83883 5.55584,-16.16244 46.21448,28.28427 5.05076,-35.60788"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <ellipse
-       ry="7.8286824"
-       rx="7.5761442"
-       cy="597.54102"
-       cx="361.12955"
-       id="path3342"
-       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-  </g>
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 10.6534,81.694578 -0.004,27.904402 23.499998,8.8603 12.125,-20.000002 -1.625,-16.375 z"
+     id="path4138"
+     inkscape:connector-curvature="0" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.26631212px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     x="57.500462"
+     y="64.651253"
+     id="text4548"
+     sodipodi:linespacing="125%"
+     transform="matrix(0.85601465,0.68145205,-0.56923434,0.71505095,0,0)"><tspan
+       sodipodi:role="line"
+       id="tspan4550"
+       x="57.500462"
+       y="64.651253">&lt;</tspan></text>
 </svg>

@@ -9,12 +9,17 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
 
 
+namespace tinyxml2 { class XMLElement; }
+
 class Scene {
   public:
     Scene(const std::string& mapFilePath);
 
-    Camera camera;
+    std::unique_ptr<Camera> camera;
     std::list<std::unique_ptr<Primitive>> primitives;
+
+  private:
+    void addFromSvgElement(const tinyxml2::XMLElement& e);
 };
 
 
