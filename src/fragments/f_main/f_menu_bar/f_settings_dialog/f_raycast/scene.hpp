@@ -16,7 +16,9 @@ class Scene {
     Scene(const std::string& mapFilePath);
 
     std::unique_ptr<Camera> camera;
-    std::list<std::unique_ptr<Primitive>> primitives;
+    std::list<std::unique_ptr<LineSegment>> walls;
+    Vec2f viewport;
+    double wallHeight;
 
   private:
     void addFromSvgElement(const tinyxml2::XMLElement& e);

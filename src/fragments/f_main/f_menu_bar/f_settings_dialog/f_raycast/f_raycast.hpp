@@ -3,7 +3,9 @@
 
 
 #include <memory>
+#include <map>
 #include <QOpenGLWidget>
+#include <QTimer>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 
@@ -23,15 +25,19 @@ class FRaycast : public QOpenGLWidget, public Fragment {
     virtual void cleanUp() override;
 
   public slots:
-    void animate();
+    void tick();
 
   protected:
     void paintEvent(QPaintEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
 
   private:
     FRaycastData m_data;
 
-    std::unique_ptr<Scene> m_gameMap;
+    std::unique_ptr<QTimer> m_timer;
+    std::unique_ptr<Scene> m_scene;
+    std::map<int, bool> m_keyStates;
 };
 
 

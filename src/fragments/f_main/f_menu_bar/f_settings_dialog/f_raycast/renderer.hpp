@@ -6,7 +6,7 @@ class QPaintDevice;
 class QRect;
 class Scene;
 
-void renderScene(QPaintDevice& target, const QRect& rect, const Scene& scene);
+void renderScene(QPaintDevice& target, const Scene& scene);
 
 
 #endif

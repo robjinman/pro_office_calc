@@ -73,7 +73,9 @@ static Camera* createCamera(const XMLElement& e) {
   m.ty += std::stod(e.Attribute("y"));
 
   Camera* camera = new Camera;
-  camera->matrix = m;
+  camera->pos.x = m.tx;
+  camera->pos.y = m.ty;
+  camera->angle = m.a();
 
   return camera;
 }
@@ -82,7 +84,7 @@ void Scene::addFromSvgElement(const XMLElement& e) {
   string tag(e.Name());
 
   if (tag == "path") {
-    primitives.push_back(unique_ptr<LineSegment>(createLineSegment(e)));
+    walls.push_back(unique_ptr<LineSegment>(createLineSegment(e)));
   }
   else if (tag == "text") {
     const XMLElement* ch = e.FirstChildElement();
@@ -90,13 +92,30 @@ void Scene::addFromSvgElement(const XMLElement& e) {
 
     if (std::string(ch->GetText()) == "<") {
       camera.reset(createCamera(e));
-      DBG_PRINT(camera->matrix << "\n");
+      //DBG_PRINT(camera->matrix << "\n");
     }
   }
 }
 
+static void dbg_populateScene(Scene& scene) {
+  scene.viewport.x = 8.0;
+  scene.viewport.y = 8.0;
+  scene.camera.reset(new Camera);
+  scene.camera->pos.x = 0.0;
+  scene.camera->pos.y = 0.0;
+  scene.camera->angle = DEG_TO_RAD(45.0);
+  scene.wallHeight = 10.0;
+
+  scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(-50.0, -50.0), Point(50.0, -50.0))));
+  scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(50.0, -50.0), Point(51.0, 50.0))));
+  scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(51.0, 50.0), Point(-49.0, 50.0))));
+  scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(-49.0, 50.0), Point(-50.0, -50.0))));
+}
+
 
 Scene::Scene(const std::string& mapFilePath) {
+  dbg_populateScene(*this);
+  /*
   XMLDocument doc;
   doc.LoadFile(mapFilePath.c_str());
 
@@ -106,5 +125,5 @@ Scene::Scene(const std::string& mapFilePath) {
   while (e != nullptr) {
     addFromSvgElement(*e);
     e = e->NextSiblingElement();
-  }
+  }*/
 }

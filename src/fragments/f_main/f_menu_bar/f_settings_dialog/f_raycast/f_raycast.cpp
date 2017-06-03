@@ -20,6 +20,8 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   parentData.vbox->addWidget(this);
+
+  setFocus();
 }
 
 //===========================================
@@ -28,7 +30,12 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 void FRaycast::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FRaycastSpec&>(spec_);
 
-  m_gameMap.reset(new Scene("data/map.svg"));
+  m_scene.reset(new Scene("data/map.svg"));
+
+  m_timer.reset(new QTimer(this));
+  connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+
+  m_timer->start(1000 / 60);
 
   Fragment::rebuild(spec_);
 }
@@ -43,13 +50,50 @@ void FRaycast::cleanUp() {
 //===========================================
 // FRaycast::paintEvent
 //===========================================
-void FRaycast::paintEvent(QPaintEvent* event) {
-  renderScene(*this, event->rect(), *m_gameMap);
+void FRaycast::paintEvent(QPaintEvent*) {
+  renderScene(*this, *m_scene);
 }
 
 //===========================================
-// FRaycast::animate
+// FRaycast::keyPressEvent
 //===========================================
-void FRaycast::animate() {
+void FRaycast::keyPressEvent(QKeyEvent* event) {
+  m_keyStates[event->key()] = true;
+}
+
+//===========================================
+// FRaycast::keyReleaseEvent
+//===========================================
+void FRaycast::keyReleaseEvent(QKeyEvent* event) {
+  m_keyStates[event->key()] = false;
+}
+
+//===========================================
+// FRaycast::tick
+//===========================================
+void FRaycast::tick() {
+  static const double da = PI / 60;
+  static const double ds = 0.5;
+
+  Camera& cam = *m_scene->camera;
+
+  if (m_keyStates[Qt::Key_Left]) {
+    cam.angle += da;
+  }
+
+  if (m_keyStates[Qt::Key_Right]) {
+    cam.angle -= da;
+  }
+
+  if (m_keyStates[Qt::Key_Up]) {
+    cam.pos.x += ds * cos(cam.angle);
+    cam.pos.y += ds * sin(cam.angle);
+  }
+
+  if (m_keyStates[Qt::Key_Down]) {
+    cam.pos.x -= ds * cos(cam.angle);
+    cam.pos.y -= ds * sin(cam.angle);
+  }
+
   update();
 }
