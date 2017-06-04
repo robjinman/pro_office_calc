@@ -8,39 +8,26 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 
 
+//===========================================
+// computeF
+//===========================================
 static double computeF(double w, double fov) {
   return w / (2.0 * tan(0.5 * fov));
 }
 
+//===========================================
+// computeSliceHeight
+//===========================================
 static double computeSliceHeight(double F, double d, double h) {
   return h * F / d;
 }
 
-static Point lineIntersect(const Line& l0, const Line& l1) {
-  Point p;
-
-  p.x = (l1.c - l0.c) / (l0.m - l1.m);
-  p.y = l0.m * p.x + l0.c;
-
-  return p;
-}
-
-static bool isBetween(double x, double a, double b) {
-  if (a < b) {
-    return x >= a && x <= b;
-  }
-  return x >= b && x <= a;
-}
-
-static bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
-  p = lineIntersect(l0.line(), l1.line());
-  return isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x);
-}
-
-static LineSegment transform(const LineSegment& lseg, const Matrix& m) {
-  return LineSegment(m * lseg.A, m * lseg.B);
-}
-
+//===========================================
+// castRay
+//
+// This is performed in camera space, hence geometry is transformed by the
+// inverse of the camera's transformation matrix prior to intersection test.
+//===========================================
 static bool castRay(Vec2f r, const Scene& scene, Point& p) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
@@ -56,6 +43,7 @@ static bool castRay(Vec2f r, const Scene& scene, Point& p) {
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
+      // In camera space the ray will always point in positive x direction
       assert(pt.x > 0.0);
 
       if (pt.x < p.x) {
@@ -68,10 +56,12 @@ static bool castRay(Vec2f r, const Scene& scene, Point& p) {
   return hitSomething;
 }
 
+//===========================================
+// renderScene
+//===========================================
 void renderScene(QPaintDevice& target, const Scene& scene) {
   QPainter painter;
   painter.begin(&target);
-  painter.setRenderHint(QPainter::Antialiasing);
 
   Camera& cam = *scene.camera;
 

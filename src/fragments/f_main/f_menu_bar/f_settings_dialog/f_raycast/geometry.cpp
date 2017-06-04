@@ -23,6 +23,9 @@ ostream& operator<<(ostream& os, const Matrix& mat) {
 }
 #endif
 
+//===========================================
+// operator*
+//===========================================
 Point operator*(const Matrix& lhs, const Point& rhs) {
   Point p;
   p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
@@ -30,6 +33,33 @@ Point operator*(const Matrix& lhs, const Point& rhs) {
   return p;
 }
 
+//===========================================
+// Matrix::Matrix
+//===========================================
+Matrix::Matrix()
+  : data{{
+      {{1.0, 0.0, 0.0}},
+      {{0.0, 1.0, 0.0}},
+      {{0.0, 0.0, 1.0}}
+    }},
+    tx(data[0][2]),
+    ty(data[1][2]) {}
+
+//===========================================
+// Matrix::Matrix
+//===========================================
+Matrix::Matrix(double a, Vec2f t)
+  : data{{
+      {{cos(a), -sin(a), t.x}},
+      {{sin(a), cos(a), t.y}},
+      {{0.0, 0.0, 1.0}}
+    }},
+    tx(data[0][2]),
+    ty(data[1][2]) {}
+
+//===========================================
+// Matrix::inverse
+//===========================================
 Matrix Matrix::inverse() const {
   Matrix m;
   m.data = {{
@@ -38,4 +68,41 @@ Matrix Matrix::inverse() const {
     {{0.0, 0.0, 1.0}}
   }};
   return m;
+}
+
+//===========================================
+// lineIntersect
+//===========================================
+Point lineIntersect(const Line& l0, const Line& l1) {
+  Point p;
+
+  p.x = (l1.c - l0.c) / (l0.m - l1.m);
+  p.y = l0.m * p.x + l0.c;
+
+  return p;
+}
+
+//===========================================
+// isBetween
+//===========================================
+bool isBetween(double x, double a, double b) {
+  if (a < b) {
+    return x >= a && x <= b;
+  }
+  return x >= b && x <= a;
+}
+
+//===========================================
+// lineSegmentIntersect
+//===========================================
+bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
+  p = lineIntersect(l0.line(), l1.line());
+  return isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x);
+}
+
+//===========================================
+// transform
+//===========================================
+LineSegment transform(const LineSegment& lseg, const Matrix& m) {
+  return LineSegment(m * lseg.A, m * lseg.B);
 }

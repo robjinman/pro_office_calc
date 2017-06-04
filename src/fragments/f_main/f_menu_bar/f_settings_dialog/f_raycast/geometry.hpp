@@ -21,23 +21,8 @@ struct Point {
 typedef Point Vec2f;
 
 struct Matrix {
-  Matrix()
-    : data{{
-        {{1.0, 0.0, 0.0}},
-        {{0.0, 1.0, 0.0}},
-        {{0.0, 0.0, 1.0}}
-      }},
-      tx(data[0][2]),
-      ty(data[1][2]) {}
-
-  Matrix(double a, Vec2f t)
-    : data{{
-        {{cos(a), -sin(a), t.x}},
-        {{sin(a), cos(a), t.y}},
-        {{0.0, 0.0, 1.0}}
-      }},
-      tx(data[0][2]),
-      ty(data[1][2]) {}
+  Matrix();
+  Matrix(double a, Vec2f t);
 
   std::array<std::array<double, 3>, 3> data;
   double& tx;
@@ -72,10 +57,6 @@ struct Line {
   Line(double m, double c)
     : m(m), c(c) {}
 
-  Point at(double x) const {
-    return Point(x, m * x + c);
-  }
-
   double m;
   double c;
 };
@@ -98,6 +79,11 @@ struct LineSegment {
   Point A;
   Point B;
 };
+
+Point lineIntersect(const Line& l0, const Line& l1);
+bool isBetween(double x, double a, double b);
+bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
+LineSegment transform(const LineSegment& lseg, const Matrix& m);
 
 #ifdef DEBUG
 #include <ostream>
