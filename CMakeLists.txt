@@ -16,6 +16,7 @@ else()
 endif()
 
 add_subdirectory(tools)
+add_subdirectory(tests)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -27,15 +28,25 @@ find_package(Qt5Gui REQUIRED)
 find_package(TinyXML2 REQUIRED)
 
 file(GLOB_RECURSE srcs src/*.cpp)
-add_executable(procalc ${srcs})
+list(REMOVE_ITEM srcs "src/main.cpp")
+
+add_library(procalclib ${srcs})
+add_executable(procalc "src/main.cpp")
+
+target_link_libraries(procalc procalclib)
 
 include_directories(src)
 include_directories(${TINYXML2_INCLUDE_DIR})
 
-target_link_libraries(${projectName} Qt5::Core)
-target_link_libraries(${projectName} Qt5::Widgets)
-target_link_libraries(${projectName} Qt5::Gui)
-target_link_libraries(${projectName} ${TINYXML2_LIBRARIES})
+target_link_libraries(procalc Qt5::Core)
+target_link_libraries(procalc Qt5::Widgets)
+target_link_libraries(procalc Qt5::Gui)
+target_link_libraries(procalc ${TINYXML2_LIBRARIES})
+
+target_link_libraries(procalclib Qt5::Core)
+target_link_libraries(procalclib Qt5::Widgets)
+target_link_libraries(procalclib Qt5::Gui)
+target_link_libraries(procalclib ${TINYXML2_LIBRARIES})
 
 file(COPY "data" DESTINATION "${CMAKE_BINARY_DIR}")
 file(COPY "VERSION" DESTINATION "${CMAKE_BINARY_DIR}/data")

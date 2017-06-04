@@ -25,6 +25,9 @@ static double computeSliceHeight(double F, double d, double h) {
 //===========================================
 // castRay
 //
+// Returns true if the ray intersects something and sets p to the point of
+// intersection.
+//
 // This is performed in camera space, hence geometry is transformed by the
 // inverse of the camera's transformation matrix prior to intersection test.
 //===========================================
