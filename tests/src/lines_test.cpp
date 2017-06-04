@@ -15,9 +15,7 @@ TEST_F(LinesTest, lineSegmentIntersect) {
   LineSegment l1(Point(0, 8), Point(4, 0));
 
   Point p;
-  bool b = lineSegmentIntersect(l0, l1, p);
-
-  ASSERT_TRUE(b);
+  ASSERT_TRUE(lineSegmentIntersect(l0, l1, p));
   ASSERT_DOUBLE_EQ(2, p.x);
   ASSERT_DOUBLE_EQ(4, p.y);
 }

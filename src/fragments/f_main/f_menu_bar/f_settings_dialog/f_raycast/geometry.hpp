@@ -84,6 +84,7 @@ Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
+double distance(const Point& A, const Point& B);
 
 #ifdef DEBUG
 #include <ostream>

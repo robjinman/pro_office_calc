@@ -110,6 +110,8 @@ static void dbg_populateScene(Scene& scene) {
   scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(50.0, -50.0), Point(51.0, 50.0))));
   scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(51.0, 50.0), Point(-49.0, 50.0))));
   scene.walls.push_back(unique_ptr<LineSegment>(new LineSegment(Point(-49.0, 50.0), Point(-50.0, -50.0))));
+
+  scene.texture.reset(new QPixmap("data/wall.png"));
 }
 
 

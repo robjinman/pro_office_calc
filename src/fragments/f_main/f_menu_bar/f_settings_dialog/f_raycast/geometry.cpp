@@ -106,3 +106,10 @@ bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p
 LineSegment transform(const LineSegment& lseg, const Matrix& m) {
   return LineSegment(m * lseg.A, m * lseg.B);
 }
+
+//===========================================
+// distance
+//===========================================
+double distance(const Point& A, const Point& B) {
+  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
+}
