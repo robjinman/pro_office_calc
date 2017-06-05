@@ -12,7 +12,12 @@
   throw Exception(ss.str(), __FILE__, __LINE__); \
 }
 
-#define ASSERT(actual, expected) \
+#define ASSERT(cond) \
+  if (!(cond)) { \
+    EXCEPTION("Assertion failed"); \
+  }
+
+#define ASSERT_EQ(actual, expected) \
   if ((actual) != (expected)) { \
     EXCEPTION("Assertion failed (" << actual << " != " << expected << ")"); \
   }

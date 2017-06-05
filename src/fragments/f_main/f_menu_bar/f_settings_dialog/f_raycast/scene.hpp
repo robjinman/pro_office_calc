@@ -11,6 +11,7 @@
 
 
 namespace tinyxml2 { class XMLElement; }
+namespace parser { class Object; }
 
 class Scene {
   public:
@@ -23,7 +24,7 @@ class Scene {
     std::unique_ptr<QPixmap> texture;
 
   private:
-    void addFromSvgElement(const tinyxml2::XMLElement& e);
+    void addObject(const parser::Object& obj);
 };
 
 

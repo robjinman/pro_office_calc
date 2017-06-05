@@ -42,7 +42,7 @@ static CastResult castRay(Vec2f r, const Scene& scene) {
   result.distanceFromCamera = inf;
 
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    LineSegment wall = transform(**it, cam.matrix().inverse());
+    LineSegment& wall = (*it)->transform(cam.matrix());
 
     Point pt;
     if (lineSegmentIntersect(ray, wall, pt)) {
@@ -100,11 +100,11 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
 
     CastResult result = castRay(Vec2f(F, scX), scene);
     if (result.hitSomething) {
-      double h = computeSliceHeight(F, result.distanceFromCamera,
-        scene.wallHeight) * vWorldUnitsInPx;
+      double h = computeSliceHeight(F, result.distanceFromCamera, scene.wallHeight)
+        * vWorldUnitsInPx;
 
-      QRect srcRect = sampleTexture(scene.texture->rect(),
-        result.distanceAlongWall, scene.wallHeight);
+      QRect srcRect = sampleTexture(scene.texture->rect(), result.distanceAlongWall,
+        scene.wallHeight);
 
       QRect trgRect(i, 0.5 * (pxH - h), 1, h);
 

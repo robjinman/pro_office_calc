@@ -5,6 +5,7 @@
 #include <cmath>
 #include <array>
 #include <string>
+#include <memory>
 
 
 struct Point {
@@ -16,9 +17,15 @@ struct Point {
 
   double x;
   double y;
+
+  bool operator==(const Point& rhs) const {
+    return x == rhs.x && y == rhs.y;
+  }
 };
 
 typedef Point Vec2f;
+
+Point operator+(const Point& lhs, const Point& rhs);
 
 struct Matrix {
   Matrix();
@@ -49,6 +56,7 @@ struct Matrix {
 };
 
 Point operator*(const Matrix& lhs, const Point& rhs);
+Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
 struct Line {
   Line()
@@ -76,9 +84,13 @@ struct LineSegment {
     return l;
   }
 
+  LineSegment& transform(const Matrix& m);
+
   Point A;
   Point B;
 };
+
+typedef std::unique_ptr<LineSegment> pLineSegment_t;
 
 Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);

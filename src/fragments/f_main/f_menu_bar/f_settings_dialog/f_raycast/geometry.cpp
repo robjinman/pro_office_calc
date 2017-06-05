@@ -24,6 +24,13 @@ ostream& operator<<(ostream& os, const Matrix& mat) {
 #endif
 
 //===========================================
+// operator+
+//===========================================
+Point operator+(const Point& lhs, const Point& rhs) {
+  return Point(lhs.x + rhs.x, lhs.y + rhs.y);
+}
+
+//===========================================
 // operator*
 //===========================================
 Point operator*(const Matrix& lhs, const Point& rhs) {
@@ -31,6 +38,26 @@ Point operator*(const Matrix& lhs, const Point& rhs) {
   p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
   p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
   return p;
+}
+
+//===========================================
+// operator*
+//===========================================
+Matrix operator*(const Matrix& A, const Matrix& B) {
+  Matrix m;
+  m.data = {{
+    {{A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][1] * B[2][0],
+      A[0][0] * B[0][1] + A[0][1] * B[1][1] + A[0][1] * B[2][1],
+      A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][1] * B[2][2]}},
+    {{A[1][0] * B[0][0] + A[1][1] * B[1][0] + A[1][2] * B[2][0],
+      A[1][0] * B[0][1] + A[1][1] * B[1][1] + A[1][2] * B[2][1],
+      A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2] * B[2][2]}},
+    {{A[2][0] * B[0][0] + A[2][1] * B[1][0] + A[2][2] * B[2][0],
+      A[2][0] * B[0][1] + A[2][1] * B[1][1] + A[2][2] * B[2][1],
+      A[2][0] * B[0][2] + A[2][1] * B[1][2] + A[2][2] * B[2][2]}}
+  }};
+
+  return m;
 }
 
 //===========================================
@@ -71,6 +98,16 @@ Matrix Matrix::inverse() const {
 }
 
 //===========================================
+// LineSegment::transform
+//===========================================
+LineSegment& LineSegment::transform(const Matrix& m) {
+  A = m * A;
+  B = m * B;
+
+  return *this;
+}
+
+//===========================================
 // lineIntersect
 //===========================================
 Point lineIntersect(const Line& l0, const Line& l1) {
@@ -98,13 +135,6 @@ bool isBetween(double x, double a, double b) {
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
   p = lineIntersect(l0.line(), l1.line());
   return isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x);
-}
-
-//===========================================
-// transform
-//===========================================
-LineSegment transform(const LineSegment& lseg, const Matrix& m) {
-  return LineSegment(m * lseg.A, m * lseg.B);
 }
 
 //===========================================
