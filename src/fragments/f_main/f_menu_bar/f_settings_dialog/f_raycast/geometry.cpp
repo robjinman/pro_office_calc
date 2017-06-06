@@ -98,13 +98,10 @@ Matrix Matrix::inverse() const {
 }
 
 //===========================================
-// LineSegment::transform
+// transform
 //===========================================
-LineSegment& LineSegment::transform(const Matrix& m) {
-  A = m * A;
-  B = m * B;
-
-  return *this;
+LineSegment transform(const LineSegment& lseg, const Matrix& m) {
+  return LineSegment(m * lseg.A, m * lseg.B);
 }
 
 //===========================================

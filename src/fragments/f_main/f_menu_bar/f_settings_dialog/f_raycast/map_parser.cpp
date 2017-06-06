@@ -18,6 +18,9 @@ using tinyxml2::XMLDocument;
 using tinyxml2::XMLElement;
 
 
+//===========================================
+// getNextToken
+//===========================================
 PathStreamToken getNextToken(istream& is) {
   PathStreamToken result;
 
@@ -52,6 +55,9 @@ PathStreamToken getNextToken(istream& is) {
   return result;
 }
 
+//===========================================
+// constructPath
+//===========================================
 void constructPath(const XMLElement& e, Path& path) {
   string data = e.Attribute("d");
   stringstream ss(data);
@@ -89,6 +95,9 @@ void constructPath(const XMLElement& e, Path& path) {
   }
 }
 
+//===========================================
+// parseKvpString
+//===========================================
 pair<string, string> parseKvpString(const string& s) {
   stringstream ss(s);
   string key;
@@ -99,6 +108,9 @@ pair<string, string> parseKvpString(const string& s) {
   return std::make_pair(key, val);
 }
 
+//===========================================
+// extractKvPairs
+//===========================================
 void extractKvPairs(const XMLElement& node, map<string, string>& kv) {
   const XMLElement* e = node.FirstChildElement();
   while (e != nullptr) {
@@ -115,6 +127,9 @@ void extractKvPairs(const XMLElement& node, map<string, string>& kv) {
   }
 }
 
+//===========================================
+// parseTranslateTransform
+//===========================================
 Matrix parseTranslateTransform(const string& s) {
   stringstream ss(s);
 
@@ -132,6 +147,9 @@ Matrix parseTranslateTransform(const string& s) {
   return m;
 }
 
+//===========================================
+// parseMatrixTransform
+//===========================================
 Matrix parseMatrixTransform(const string& s) {
   stringstream ss(s);
 
@@ -157,6 +175,9 @@ Matrix parseMatrixTransform(const string& s) {
   return m;
 }
 
+//===========================================
+// parseTransform
+//===========================================
 Matrix parseTransform(const string& s) {
   ASSERT(s.length() > 0);
 
@@ -170,6 +191,9 @@ Matrix parseTransform(const string& s) {
   EXCEPTION("Error parsing unknown transform");
 }
 
+//===========================================
+// extractGeometry
+//===========================================
 void extractGeometry(const XMLElement& node, Path& path, Matrix& transform) {
   Matrix groupM;
   Matrix pathM;
@@ -200,6 +224,9 @@ void extractGeometry(const XMLElement& node, Path& path, Matrix& transform) {
   transform = groupM * pathM;
 }
 
+//===========================================
+// constructObject
+//===========================================
 Object constructObject(const XMLElement& node) {
   Object obj;
 
@@ -209,6 +236,9 @@ Object constructObject(const XMLElement& node) {
   return obj;
 }
 
+//===========================================
+// parse
+//===========================================
 list<Object> parse(const string& file) {
   list<Object> objects;
 

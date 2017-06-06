@@ -19,7 +19,7 @@ struct Camera {
   }
 
   Matrix matrix() const {
-    return Matrix(angle, Vec2f(pos.x, pos.y)).inverse();
+    return Matrix(angle, Vec2f(pos.x, pos.y));
   }
 };
 

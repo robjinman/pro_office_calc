@@ -73,7 +73,7 @@ void FRaycast::keyReleaseEvent(QKeyEvent* event) {
 //===========================================
 void FRaycast::tick() {
   static const double da = PI / 60;
-  static const double ds = 0.5;
+  static const double ds = 10;
 
   Camera& cam = *m_scene->camera;
 

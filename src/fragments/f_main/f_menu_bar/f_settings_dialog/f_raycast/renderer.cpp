@@ -42,7 +42,7 @@ static CastResult castRay(Vec2f r, const Scene& scene) {
   result.distanceFromCamera = inf;
 
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    LineSegment& wall = (*it)->transform(cam.matrix());
+    LineSegment wall = transform(**it, cam.matrix().inverse());
 
     Point pt;
     if (lineSegmentIntersect(ray, wall, pt)) {

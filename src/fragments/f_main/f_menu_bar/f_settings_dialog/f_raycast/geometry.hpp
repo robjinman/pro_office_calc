@@ -84,7 +84,7 @@ struct LineSegment {
     return l;
   }
 
-  LineSegment& transform(const Matrix& m);
+  //LineSegment& transform(const Matrix& m);
 
   Point A;
   Point B;
