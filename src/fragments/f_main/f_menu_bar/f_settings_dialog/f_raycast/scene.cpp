@@ -17,25 +17,64 @@ using std::list;
 //===========================================
 // constructWalls
 //===========================================
-static void constructWalls(const parser::Object& obj, list<pLineSegment_t>& walls) {
+static void constructWalls(const parser::Object& obj, list<Wall>& walls) {
   for (auto it = std::next(obj.path.points.begin()); it != obj.path.points.end(); ++it) {
-    LineSegment* lseg = new LineSegment(*std::prev(it), *it);
-    transform(*lseg, obj.transform);
+    Wall wall;
 
-    std::cout << *lseg << "\n";
+    wall.lseg.A = *std::prev(it);
+    wall.lseg.B = *it;
+    transform(wall.lseg, obj.transform);
 
-    walls.push_back(pLineSegment_t(lseg));
+    wall.texture = obj.dict.at("texture");
+
+    walls.push_back(wall);
   }
+}
+
+//===========================================
+// isTriangle
+//===========================================
+static bool isTriangle(const parser::Path& path) {
+  return path.points.size() == 3 && path.closed;
+}
+
+//===========================================
+// transformFromTriangle
+//===========================================
+static Matrix transformFromTriangle(const parser::Path& path) {
+  if (!isTriangle(path)) {
+    EXCEPTION("Path is not a triangle");
+  }
+
+  double furthestNearest = 0.0;
+  Point mostDistantPoint;
+
+  for (int i = 0; i < 3; ++i) {
+    const Point& P = path.points[i];
+    const Point& A = path.points[(i + 1) % 3];
+    const Point& B = path.points[(i + 2) % 3];
+
+    double nearest = smallest(distance(P, A), distance(P, B));
+    if (nearest > furthestNearest) {
+      furthestNearest = nearest;
+      mostDistantPoint = P;
+    }
+  }
+
+  Point centre = (path.points[0] + path.points[1] + path.points[2]) / 3.0;
+
+  Vec2f v = mostDistantPoint - centre;
+  double a = atan(v.y / v.x) - PI;
+
+  return Matrix(a, centre);
 }
 
 //===========================================
 // constructCamera
 //===========================================
-static Camera* constructCamera(const parser::Object& obj) {
-  Camera* camera = new Camera;
-  camera->setTransform(obj.transform);
-
-  std::cout << "Camera " << camera->matrix() << "\n";
+static Camera constructCamera(const parser::Object& obj) {
+  Camera camera;
+  camera.setTransform(transformFromTriangle(obj.path));
 
   return camera;
 }
@@ -44,13 +83,11 @@ static Camera* constructCamera(const parser::Object& obj) {
 // Scene::addObject
 //===========================================
 void Scene::addObject(const parser::Object& obj) {
-  std::cout << "Type=" << obj.dict.at("type") << "\n";
-
   if (obj.dict.at("type") == "wall") {
     constructWalls(obj, walls);
   }
   else if (obj.dict.at("type") == "camera") {
-    camera.reset(constructCamera(obj));
+    camera = constructCamera(obj);
   }
 }
 
@@ -63,14 +100,10 @@ Scene::Scene(const std::string& mapFilePath) {
     addObject(*it);
   }
 
-  camera.reset(new Camera);
-  camera->pos.x = 0.0;
-  camera->pos.y = 0.0;
-  camera->angle = DEG_TO_RAD(45.0);
-
   viewport.x = 10.0;
   viewport.y = 10.0;
   wallHeight = 100.0;
 
-  texture.reset(new QPixmap("data/wall.png"));
+  textures["light_bricks"] = QPixmap("data/light_bricks.png");
+  textures["dark_bricks"] = QPixmap("data/dark_bricks.png");
 }

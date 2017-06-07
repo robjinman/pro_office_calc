@@ -8,10 +8,14 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 
 
+using std::string;
+
+
 struct CastResult {
   bool hitSomething = false;
   double distanceFromCamera;
   double distanceAlongWall;
+  string texture;
 };
 
 
@@ -36,23 +40,25 @@ static CastResult castRay(Vec2f r, const Scene& scene) {
   CastResult result;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
-  const Camera& cam = *scene.camera;
+  const Camera& cam = scene.camera;
 
   double inf = std::numeric_limits<double>::infinity();
   result.distanceFromCamera = inf;
 
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    LineSegment wall = transform(**it, cam.matrix().inverse());
+    const Wall& wall = *it;
+    LineSegment lseg = transform(wall.lseg, cam.matrix().inverse());
 
     Point pt;
-    if (lineSegmentIntersect(ray, wall, pt)) {
+    if (lineSegmentIntersect(ray, lseg, pt)) {
       // In camera space the ray will always point in positive x direction
       assert(pt.x > 0.0);
 
       if (pt.x < result.distanceFromCamera) {
         result.distanceFromCamera = pt.x;
-        result.distanceAlongWall = distance(wall.A, pt);
+        result.distanceAlongWall = distance(lseg.A, pt);
         result.hitSomething = true;
+        result.texture = wall.texture;
       }
     }
   }
@@ -81,7 +87,7 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
   QPainter painter;
   painter.begin(&target);
 
-  Camera& cam = *scene.camera;
+  const Camera& cam = scene.camera;
 
   int pxW = target.width();
   int pxH = target.height();
@@ -95,7 +101,7 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
   double F = computeF(scene.viewport.x, cam.hFov);
 
   for (int i = 0; i < pxW; ++i) {
-    int i_ = pxW / 2 - i;
+    int i_ = i - 300;
     double scX = static_cast<double>(i_) / hWorldUnitsInPx;
 
     CastResult result = castRay(Vec2f(F, scX), scene);
@@ -103,12 +109,12 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
       double h = computeSliceHeight(F, result.distanceFromCamera, scene.wallHeight)
         * vWorldUnitsInPx;
 
-      QRect srcRect = sampleTexture(scene.texture->rect(), result.distanceAlongWall,
-        scene.wallHeight);
+      const QPixmap& tex = scene.textures.at(result.texture);
 
       QRect trgRect(i, 0.5 * (pxH - h), 1, h);
+      QRect srcRect = sampleTexture(tex.rect(), result.distanceAlongWall, scene.wallHeight);
 
-      painter.drawPixmap(trgRect, *scene.texture, srcRect);
+      painter.drawPixmap(trgRect, tex, srcRect);
     }
   }
 

@@ -26,17 +26,25 @@ struct Point {
 typedef Point Vec2f;
 
 Point operator+(const Point& lhs, const Point& rhs);
+Point operator-(const Point& lhs, const Point& rhs);
+Point operator/(const Point& lhs, double rhs);
 
 struct Matrix {
   Matrix();
   Matrix(double a, Vec2f t);
 
   std::array<std::array<double, 3>, 3> data;
-  double& tx;
-  double& ty;
+
+  double tx() const {
+    return data[0][2];
+  }
+
+  double ty() const {
+    return data[1][2];
+  }
 
   double a() const {
-    return acos(data[0][0]);
+    return atan2(data[1][0], data[1][1]);
   }
 
   std::array<double, 3>& operator[](int idx) {

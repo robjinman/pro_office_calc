@@ -26,6 +26,11 @@ bool ltelte(T a, T b, T c) {
   return a <= b && b <= c;
 }
 
+template<class T>
+T smallest(T a, T b) {
+  return a < b ? a : b;
+}
+
 typedef std::hash<std::string> hashString;
 
 

@@ -31,6 +31,20 @@ Point operator+(const Point& lhs, const Point& rhs) {
 }
 
 //===========================================
+// operator-
+//===========================================
+Point operator-(const Point& lhs, const Point& rhs) {
+  return Point(lhs.x - rhs.x, lhs.y - rhs.y);
+}
+
+//===========================================
+// operator/
+//===========================================
+Point operator/(const Point& lhs, double rhs) {
+  return Point(lhs.x / rhs, lhs.y / rhs);
+}
+
+//===========================================
 // operator*
 //===========================================
 Point operator*(const Matrix& lhs, const Point& rhs) {
@@ -46,9 +60,9 @@ Point operator*(const Matrix& lhs, const Point& rhs) {
 Matrix operator*(const Matrix& A, const Matrix& B) {
   Matrix m;
   m.data = {{
-    {{A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][1] * B[2][0],
-      A[0][0] * B[0][1] + A[0][1] * B[1][1] + A[0][1] * B[2][1],
-      A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][1] * B[2][2]}},
+    {{A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][2] * B[2][0],
+      A[0][0] * B[0][1] + A[0][1] * B[1][1] + A[0][2] * B[2][1],
+      A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][2] * B[2][2]}},
     {{A[1][0] * B[0][0] + A[1][1] * B[1][0] + A[1][2] * B[2][0],
       A[1][0] * B[0][1] + A[1][1] * B[1][1] + A[1][2] * B[2][1],
       A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2] * B[2][2]}},
@@ -68,9 +82,7 @@ Matrix::Matrix()
       {{1.0, 0.0, 0.0}},
       {{0.0, 1.0, 0.0}},
       {{0.0, 0.0, 1.0}}
-    }},
-    tx(data[0][2]),
-    ty(data[1][2]) {}
+    }} {}
 
 //===========================================
 // Matrix::Matrix
@@ -80,9 +92,7 @@ Matrix::Matrix(double a, Vec2f t)
       {{cos(a), -sin(a), t.x}},
       {{sin(a), cos(a), t.y}},
       {{0.0, 0.0, 1.0}}
-    }},
-    tx(data[0][2]),
-    ty(data[1][2]) {}
+    }} {}
 
 //===========================================
 // Matrix::inverse

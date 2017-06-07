@@ -3,8 +3,8 @@
 
 
 #include <string>
-#include <memory>
 #include <list>
+#include <map>
 #include <QPixmap>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
@@ -13,15 +13,20 @@
 namespace tinyxml2 { class XMLElement; }
 namespace parser { class Object; }
 
+struct Wall {
+  LineSegment lseg;
+  std::string texture;
+};
+
 class Scene {
   public:
     Scene(const std::string& mapFilePath);
 
-    std::unique_ptr<Camera> camera;
-    std::list<std::unique_ptr<LineSegment>> walls;
+    Camera camera;
+    std::list<Wall> walls;
     Vec2f viewport;
     double wallHeight;
-    std::unique_ptr<QPixmap> texture;
+    std::map<std::string, QPixmap> textures;
 
   private:
     void addObject(const parser::Object& obj);

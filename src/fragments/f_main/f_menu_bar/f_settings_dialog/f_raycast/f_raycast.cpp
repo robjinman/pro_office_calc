@@ -75,14 +75,14 @@ void FRaycast::tick() {
   static const double da = PI / 60;
   static const double ds = 10;
 
-  Camera& cam = *m_scene->camera;
+  Camera& cam = m_scene->camera;
 
   if (m_keyStates[Qt::Key_Left]) {
-    cam.angle += da;
+    cam.angle -= da;
   }
 
   if (m_keyStates[Qt::Key_Right]) {
-    cam.angle -= da;
+    cam.angle += da;
   }
 
   if (m_keyStates[Qt::Key_Up]) {

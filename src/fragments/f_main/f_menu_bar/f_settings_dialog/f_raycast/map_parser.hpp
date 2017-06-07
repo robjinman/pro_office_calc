@@ -3,6 +3,7 @@
 
 
 #include <list>
+#include <vector>
 #include <map>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 
@@ -11,7 +12,7 @@ namespace parser {
 
 
 struct Path {
-  std::list<Point> points;
+  std::vector<Point> points;
   bool closed = false;
 };
 

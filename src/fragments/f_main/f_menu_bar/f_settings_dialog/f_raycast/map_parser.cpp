@@ -139,9 +139,9 @@ Matrix parseTranslateTransform(const string& s) {
 
   Matrix m;
   char comma;
-  ss >> m.tx >> comma;
+  ss >> m[0][2] >> comma;
   ASSERT_EQ(comma, ',');
-  ss >> m.ty >> buf;
+  ss >> m[1][2] >> buf;
   ASSERT_EQ(buf, ")");
 
   return m;
