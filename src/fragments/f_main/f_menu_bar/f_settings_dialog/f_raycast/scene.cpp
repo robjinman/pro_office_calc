@@ -46,22 +46,14 @@ static Matrix transformFromTriangle(const parser::Path& path) {
     EXCEPTION("Path is not a triangle");
   }
 
-  double furthestNearest = 0.0;
+  Point centre = (path.points[0] + path.points[1] + path.points[2]) / 3.0;
   Point mostDistantPoint;
 
   for (int i = 0; i < 3; ++i) {
-    const Point& P = path.points[i];
-    const Point& A = path.points[(i + 1) % 3];
-    const Point& B = path.points[(i + 2) % 3];
-
-    double nearest = smallest(distance(P, A), distance(P, B));
-    if (nearest > furthestNearest) {
-      furthestNearest = nearest;
-      mostDistantPoint = P;
+    if (distance(path.points[i], centre) > distance(mostDistantPoint, centre)) {
+      mostDistantPoint = path.points[i];
     }
   }
-
-  Point centre = (path.points[0] + path.points[1] + path.points[2]) / 3.0;
 
   Vec2f v = mostDistantPoint - centre;
   double a = atan(v.y / v.x) - PI;
