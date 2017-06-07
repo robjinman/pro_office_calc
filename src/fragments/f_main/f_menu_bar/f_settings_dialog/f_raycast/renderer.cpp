@@ -101,7 +101,7 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
   double F = computeF(scene.viewport.x, cam.hFov);
 
   for (int i = 0; i < pxW; ++i) {
-    int i_ = i - 300;
+    int i_ = i - pxW / 2;
     double scX = static_cast<double>(i_) / hWorldUnitsInPx;
 
     CastResult result = castRay(Vec2f(F, scX), scene);

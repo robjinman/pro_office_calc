@@ -51,7 +51,14 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  renderScene(*this, *m_scene);
+  QPixmap buffer(320, 240);
+
+  renderScene(buffer, *m_scene);
+
+  QPainter painter;
+  painter.begin(this);
+  painter.drawPixmap(rect(), buffer);
+  painter.end();
 }
 
 //===========================================
