@@ -99,4 +99,5 @@ Scene::Scene(const std::string& mapFilePath) {
   textures["light_bricks"] = QPixmap("data/light_bricks.png");
   textures["dark_bricks"] = QPixmap("data/dark_bricks.png");
   textures["floor"] = QPixmap("data/floor.png");
+  textures["ceiling"] = QPixmap("data/ceiling.png");
 }

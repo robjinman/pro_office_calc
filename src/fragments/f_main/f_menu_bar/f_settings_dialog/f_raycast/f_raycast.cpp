@@ -35,7 +35,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-  m_timer->start(1000 / 60);
+  m_timer->start(1000 / 30);
 
   Fragment::rebuild(spec_);
 }
@@ -79,8 +79,8 @@ void FRaycast::keyReleaseEvent(QKeyEvent* event) {
 // FRaycast::tick
 //===========================================
 void FRaycast::tick() {
-  static const double da = PI / 60;
-  static const double ds = 10;
+  static const double da = PI / 30;
+  static const double ds = 8;
 
   Camera& cam = m_scene->camera;
 

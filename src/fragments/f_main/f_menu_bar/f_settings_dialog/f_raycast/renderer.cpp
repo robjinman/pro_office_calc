@@ -37,10 +37,10 @@ static double computeSliceHeight(double F, double d, double h) {
 //===========================================
 // worldCoordToFloorTexel
 //===========================================
-static Point worldPointToFloorTexel(const Point& p, const Size& texSzWld, const Size& texSzPx) {
-  double nx = p.x / texSzWld.x;
-  double ny = p.y / texSzWld.y;
-  return Point((nx - floor(nx)) * texSzPx.x, (ny - floor(ny)) * texSzPx.y);
+static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd, const Size& texSz_px) {
+  double nx = p.x / texSz_wd.x;
+  double ny = p.y / texSz_wd.y;
+  return Point((nx - floor(nx)) * texSz_px.x, (ny - floor(ny)) * texSz_px.y);
 }
 
 //===========================================
@@ -92,6 +92,72 @@ static QRect sampleTexture(const QRect& rect, double distanceAlongWall, double w
 }
 
 //===========================================
+// drawCeiling
+//===========================================
+static void drawCeiling(QPainter& painter, const Scene& scene, const Point& collisionPoint,
+  int wallTop_px, int screenX_px, int screenH_px, double screenX_wd, double vWorldUnitsInPx,
+  double F) {
+
+  const Camera& cam = scene.camera;
+  const QPixmap& ceilingTex = scene.textures.at("ceiling");
+
+  for (int j = wallTop_px; j >= 0; --j) {
+    double screenY_wd = (screenH_px / 2 - j) / vWorldUnitsInPx;
+    double vAngle = atan(screenY_wd / F);
+    double hAngle = atan(screenX_wd / F);
+    double d_ = scene.wallHeight / (2.0 * tan(vAngle));
+    double d = d_ / cos(hAngle);
+
+    LineSegment ray(cam.pos, collisionPoint);
+
+    double s = d / ray.length();
+    Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
+
+    Size texSz_px(ceilingTex.rect().width(), ceilingTex.rect().height());
+    double texelInWorldUnits = scene.wallHeight / texSz_px.y;
+    Size texSz_wd(texSz_px.x * texelInWorldUnits, texSz_px.y * texelInWorldUnits);
+    Point texel = worldPointToFloorTexel(p, texSz_wd, texSz_px);
+
+    QRect trgRect(screenX_px, j, 1, 1);
+    QRect srcRect(floor(texel.x), floor(texel.y), 1, 1);
+    painter.drawPixmap(trgRect, ceilingTex, srcRect);
+  }
+}
+
+//===========================================
+// drawFloor
+//===========================================
+static void drawFloor(QPainter& painter, const Scene& scene, const Point& collisionPoint,
+  int wallBottom_px, int screenX_px, int screenH_px, double screenX_wd, double vWorldUnitsInPx,
+  double F) {
+
+  const Camera& cam = scene.camera;
+  const QPixmap& floorTex = scene.textures.at("floor");
+
+  for (int j = wallBottom_px; j < screenH_px; ++j) {
+    double screenY_wd = (j - screenH_px / 2) / vWorldUnitsInPx;
+    double vAngle = atan(screenY_wd / F);
+    double hAngle = atan(screenX_wd / F);
+    double d_ = scene.wallHeight / (2.0 * tan(vAngle));
+    double d = d_ / cos(hAngle);
+
+    LineSegment ray(cam.pos, collisionPoint);
+
+    double s = d / ray.length();
+    Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
+
+    Size texSz_px(floorTex.rect().width(), floorTex.rect().height());
+    double texelInWorldUnits = scene.wallHeight / texSz_px.y;
+    Size texSz_wd(texSz_px.x * texelInWorldUnits, texSz_px.y * texelInWorldUnits);
+    Point texel = worldPointToFloorTexel(p, texSz_wd, texSz_px);
+
+    QRect trgRect(screenX_px, j, 1, 1);
+    QRect srcRect(floor(texel.x), floor(texel.y), 1, 1);
+    painter.drawPixmap(trgRect, floorTex, srcRect);
+  }
+}
+
+//===========================================
 // renderScene
 //===========================================
 void renderScene(QPaintDevice& target, const Scene& scene) {
@@ -100,57 +166,38 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
 
   const Camera& cam = scene.camera;
 
-  int pxW = target.width();
-  int pxH = target.height();
+  int screenW_px = target.width();
+  int screenH_px = target.height();
 
-  double hWorldUnitsInPx = pxW / scene.viewport.x;
-  double vWorldUnitsInPx = pxH / scene.viewport.y;
+  double hWorldUnitsInPx = screenW_px / scene.viewport.x;
+  double vWorldUnitsInPx = screenH_px / scene.viewport.y;
 
-  QRect rect(QPoint(), QSize(pxW, pxH));
+  QRect rect(QPoint(), QSize(screenW_px, screenH_px));
   painter.fillRect(rect, QBrush(QColor(0, 0, 0)));
 
   double F = computeF(scene.viewport.x, cam.hFov);
 
-  for (int i = 0; i < pxW; ++i) {
-    int i_ = i - pxW / 2;
-    double scX = static_cast<double>(i_) / hWorldUnitsInPx;
+  for (int i = 0; i < screenW_px; ++i) {
+    int i_ = i - screenW_px / 2;
+    double screenX_wd = static_cast<double>(i_) / hWorldUnitsInPx;
 
-    CastResult result = castRay(Vec2f(F, scX), scene);
+    CastResult result = castRay(Vec2f(F, screenX_wd), scene);
     if (result.hitSomething) {
-      int h = computeSliceHeight(F, result.distanceFromCamera, scene.wallHeight)
+      int sliceH_px = computeSliceHeight(F, result.distanceFromCamera, scene.wallHeight)
         * vWorldUnitsInPx;
 
       const QPixmap& wallTex = scene.textures.at(result.texture);
 
-      int y = 0.5 * (pxH - h);
-      QRect trgRect(i, y, 1, h);
+      int wallBottom_px = 0.5 * (screenH_px - sliceH_px);
+      QRect trgRect(i, wallBottom_px, 1, sliceH_px);
       QRect srcRect = sampleTexture(wallTex.rect(), result.distanceAlongWall, scene.wallHeight);
 
       painter.drawPixmap(trgRect, wallTex, srcRect);
 
-      for (int j = y + h; j < pxH; ++j) {
-        double scY = (j - pxH / 2) / vWorldUnitsInPx;
-        double vAngle = atan(scY / F);
-        double hAngle = atan(scX / F);
-        double d_ = scene.wallHeight / (2.0 * tan(vAngle));
-        double d = d_ / cos(hAngle);
-
-        LineSegment ray(cam.pos, result.collisionPoint);
-
-        double s = d / ray.length();
-        Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
-
-        const QPixmap& floorTex = scene.textures.at("floor");
-
-        Size texSzPx(floorTex.rect().width(), floorTex.rect().height());
-        double texelInWorldUnits = scene.wallHeight / texSzPx.y; // TODO
-        Size texSzWld(texSzPx.x * texelInWorldUnits, texSzPx.y * texelInWorldUnits);
-        Point texel = worldPointToFloorTexel(p, texSzWld, texSzPx);
-
-        QRect trgRect(i, j, 1, 1);
-        QRect srcRect(floor(texel.x), floor(texel.y), 1, 1);
-        painter.drawPixmap(trgRect, floorTex, srcRect);
-      }
+      drawFloor(painter, scene, result.collisionPoint, wallBottom_px + sliceH_px, i, screenH_px,
+        screenX_wd, vWorldUnitsInPx, F);
+      drawCeiling(painter, scene, result.collisionPoint, wallBottom_px, i, screenH_px, screenX_wd,
+        vWorldUnitsInPx, F);
     }
   }
 
