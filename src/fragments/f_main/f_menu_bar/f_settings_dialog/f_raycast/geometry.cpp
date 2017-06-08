@@ -108,6 +108,13 @@ Matrix Matrix::inverse() const {
 }
 
 //===========================================
+// LineSegment::length
+//===========================================
+double LineSegment::length() const {
+  return distance(A, B);
+}
+
+//===========================================
 // transform
 //===========================================
 LineSegment transform(const LineSegment& lseg, const Matrix& m) {

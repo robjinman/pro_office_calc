@@ -24,6 +24,7 @@ struct Point {
 };
 
 typedef Point Vec2f;
+typedef Vec2f Size;
 
 Point operator+(const Point& lhs, const Point& rhs);
 Point operator-(const Point& lhs, const Point& rhs);
@@ -92,7 +93,7 @@ struct LineSegment {
     return l;
   }
 
-  //LineSegment& transform(const Matrix& m);
+  double length() const;
 
   Point A;
   Point B;

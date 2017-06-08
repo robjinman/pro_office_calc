@@ -92,10 +92,11 @@ Scene::Scene(const std::string& mapFilePath) {
     addObject(*it);
   }
 
-  viewport.x = 10.0;
+  viewport.x = 10.0; // TODO: Read from map file
   viewport.y = 10.0;
   wallHeight = 100.0;
 
   textures["light_bricks"] = QPixmap("data/light_bricks.png");
   textures["dark_bricks"] = QPixmap("data/dark_bricks.png");
+  textures["floor"] = QPixmap("data/floor.png");
 }

@@ -13,6 +13,7 @@ using std::string;
 
 struct CastResult {
   bool hitSomething = false;
+  Point collisionPoint;
   double distanceFromCamera;
   double distanceAlongWall;
   string texture;
@@ -31,6 +32,15 @@ static double computeF(double w, double fov) {
 //===========================================
 static double computeSliceHeight(double F, double d, double h) {
   return h * F / d;
+}
+
+//===========================================
+// worldCoordToFloorTexel
+//===========================================
+static Point worldPointToFloorTexel(const Point& p, const Size& texSzWld, const Size& texSzPx) {
+  double nx = p.x / texSzWld.x;
+  double ny = p.y / texSzWld.y;
+  return Point((nx - floor(nx)) * texSzPx.x, (ny - floor(ny)) * texSzPx.y);
 }
 
 //===========================================
@@ -55,6 +65,7 @@ static CastResult castRay(Vec2f r, const Scene& scene) {
       assert(pt.x > 0.0);
 
       if (pt.x < result.distanceFromCamera) {
+        result.collisionPoint = cam.matrix() * pt;
         result.distanceFromCamera = pt.x;
         result.distanceAlongWall = distance(lseg.A, pt);
         result.hitSomething = true;
@@ -106,15 +117,40 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
 
     CastResult result = castRay(Vec2f(F, scX), scene);
     if (result.hitSomething) {
-      double h = computeSliceHeight(F, result.distanceFromCamera, scene.wallHeight)
+      int h = computeSliceHeight(F, result.distanceFromCamera, scene.wallHeight)
         * vWorldUnitsInPx;
 
-      const QPixmap& tex = scene.textures.at(result.texture);
+      const QPixmap& wallTex = scene.textures.at(result.texture);
 
-      QRect trgRect(i, 0.5 * (pxH - h), 1, h);
-      QRect srcRect = sampleTexture(tex.rect(), result.distanceAlongWall, scene.wallHeight);
+      int y = 0.5 * (pxH - h);
+      QRect trgRect(i, y, 1, h);
+      QRect srcRect = sampleTexture(wallTex.rect(), result.distanceAlongWall, scene.wallHeight);
 
-      painter.drawPixmap(trgRect, tex, srcRect);
+      painter.drawPixmap(trgRect, wallTex, srcRect);
+
+      for (int j = y + h; j < pxH; ++j) {
+        double scY = (j - pxH / 2) / vWorldUnitsInPx;
+        double vAngle = atan(scY / F);
+        double hAngle = atan(scX / F);
+        double d_ = scene.wallHeight / (2.0 * tan(vAngle));
+        double d = d_ / cos(hAngle);
+
+        LineSegment ray(cam.pos, result.collisionPoint);
+
+        double s = d / ray.length();
+        Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
+
+        const QPixmap& floorTex = scene.textures.at("floor");
+
+        Size texSzPx(floorTex.rect().width(), floorTex.rect().height());
+        double texelInWorldUnits = scene.wallHeight / texSzPx.y; // TODO
+        Size texSzWld(texSzPx.x * texelInWorldUnits, texSzPx.y * texelInWorldUnits);
+        Point texel = worldPointToFloorTexel(p, texSzWld, texSzPx);
+
+        QRect trgRect(i, j, 1, 1);
+        QRect srcRect(floor(texel.x), floor(texel.y), 1, 1);
+        painter.drawPixmap(trgRect, floorTex, srcRect);
+      }
     }
   }
 
