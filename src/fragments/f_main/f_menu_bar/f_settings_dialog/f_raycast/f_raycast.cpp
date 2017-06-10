@@ -107,29 +107,30 @@ static void translateCamera(Scene& scene, double ds) {
   Circle circle{cam.pos + dv, radius};
   LineSegment ray(cam.pos, cam.pos + dv);
 
+  bool collision = false;
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
     const Wall& wall = *it;
 
     if (lineSegmentCircleIntersect(circle, wall.lseg)) {
-/*
-      lineIntersect(wall.lseg.line(), ray.line());
+      collision = true;
 
-      double a = angleBetween(ray.line(), wall.lseg.line());
-      double ds_ = ds * cos(a);
-      Vec2f dir = normalise(wall.lseg.B - wall.lseg.A);
-      Vec2f dv_ = ds_ * dir;
+      Matrix m(-atan(wall.lseg.line().m), Vec2f());
+      Vec2f dv_ = m * dv;
+      dv_.y = 0;
+      dv_ = m.inverse() * dv_;
 
       Circle circle2{cam.pos + dv_, radius};
 
       if (!intersectWall(scene, circle2)) {
         cam.pos = cam.pos + dv_;
+        return;
       }
-*/
-      return;
     }
   }
 
-  cam.pos = cam.pos + dv;
+  if (!collision) {
+    cam.pos = cam.pos + dv;
+  }
 }
 
 //===========================================

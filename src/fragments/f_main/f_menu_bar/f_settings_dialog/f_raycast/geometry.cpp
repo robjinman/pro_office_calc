@@ -199,7 +199,7 @@ double distance(const Point& A, const Point& B) {
 // normalise
 //===========================================
 Vec2f normalise(const Vec2f& v) {
-  double l = sqrt(v.x * v.x + v.y + v.y);
+  double l = sqrt(v.x * v.x + v.y * v.y);
   return Vec2f(v.x / l, v.y / l);
 }
 

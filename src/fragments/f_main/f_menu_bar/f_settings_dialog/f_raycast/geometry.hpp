@@ -79,6 +79,10 @@ struct Line {
   Line(double m, double c)
     : m(m), c(c) {}
 
+  Point at(double x) const {
+    return Point(x, m * x + c);
+  }
+
   double m;
   double c;
 };
