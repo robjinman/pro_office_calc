@@ -18,11 +18,22 @@ using std::list;
 // constructWalls
 //===========================================
 static void constructWalls(const parser::Object& obj, list<Wall>& walls) {
-  for (auto it = std::next(obj.path.points.begin()); it != obj.path.points.end(); ++it) {
+  for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
+    int j = i - 1;
+
+    if (i == 0) {
+      if (obj.path.closed) {
+        j = obj.path.points.size() - 1;
+      }
+      else {
+        continue;
+      }
+    }
+
     Wall wall;
 
-    wall.lseg.A = *std::prev(it);
-    wall.lseg.B = *it;
+    wall.lseg.A = obj.path.points[j];
+    wall.lseg.B = obj.path.points[i];
     transform(wall.lseg, obj.transform);
 
     wall.texture = obj.dict.at("texture");
@@ -72,18 +83,6 @@ static Camera constructCamera(const parser::Object& obj) {
 }
 
 //===========================================
-// Scene::addObject
-//===========================================
-void Scene::addObject(const parser::Object& obj) {
-  if (obj.dict.at("type") == "wall") {
-    constructWalls(obj, walls);
-  }
-  else if (obj.dict.at("type") == "camera") {
-    camera = constructCamera(obj);
-  }
-}
-
-//===========================================
 // Scene::Scene
 //===========================================
 Scene::Scene(const std::string& mapFilePath) {
@@ -100,4 +99,16 @@ Scene::Scene(const std::string& mapFilePath) {
   textures["dark_bricks"] = QPixmap("data/dark_bricks.png");
   textures["floor"] = QPixmap("data/floor.png");
   textures["ceiling"] = QPixmap("data/ceiling.png");
+}
+
+//===========================================
+// Scene::addObject
+//===========================================
+void Scene::addObject(const parser::Object& obj) {
+  if (obj.dict.at("type") == "wall") {
+    constructWalls(obj, walls);
+  }
+  else if (obj.dict.at("type") == "camera") {
+    camera = constructCamera(obj);
+  }
 }

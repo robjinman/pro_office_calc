@@ -76,30 +76,83 @@ void FRaycast::keyReleaseEvent(QKeyEvent* event) {
 }
 
 //===========================================
+// rotateCamera
+//===========================================
+static void rotateCamera(Scene& scene, double da) {
+  scene.camera.angle += da;
+}
+
+//===========================================
+// intersectWall
+//===========================================
+static bool intersectWall(const Scene& scene, const Circle& circle) {
+  for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
+    if (lineSegmentCircleIntersect(circle, it->lseg)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//===========================================
+// translateCamera
+//===========================================
+static void translateCamera(Scene& scene, double ds) {
+  Camera& cam = scene.camera;
+
+  Vec2f dv(ds * cos(cam.angle), ds * sin(cam.angle));
+
+  double radius = scene.wallHeight / 5.0;
+
+  Circle circle{cam.pos + dv, radius};
+  LineSegment ray(cam.pos, cam.pos + dv);
+
+  for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
+    const Wall& wall = *it;
+
+    if (lineSegmentCircleIntersect(circle, wall.lseg)) {
+/*
+      lineIntersect(wall.lseg.line(), ray.line());
+
+      double a = angleBetween(ray.line(), wall.lseg.line());
+      double ds_ = ds * cos(a);
+      Vec2f dir = normalise(wall.lseg.B - wall.lseg.A);
+      Vec2f dv_ = ds_ * dir;
+
+      Circle circle2{cam.pos + dv_, radius};
+
+      if (!intersectWall(scene, circle2)) {
+        cam.pos = cam.pos + dv_;
+      }
+*/
+      return;
+    }
+  }
+
+  cam.pos = cam.pos + dv;
+}
+
+//===========================================
 // FRaycast::tick
 //===========================================
 void FRaycast::tick() {
   static const double da = PI / 30;
   static const double ds = 8;
 
-  Camera& cam = m_scene->camera;
-
   if (m_keyStates[Qt::Key_Left]) {
-    cam.angle -= da;
+    rotateCamera(*m_scene, -da);
   }
 
   if (m_keyStates[Qt::Key_Right]) {
-    cam.angle += da;
+    rotateCamera(*m_scene, da);
   }
 
   if (m_keyStates[Qt::Key_Up]) {
-    cam.pos.x += ds * cos(cam.angle);
-    cam.pos.y += ds * sin(cam.angle);
+    translateCamera(*m_scene, ds);
   }
 
   if (m_keyStates[Qt::Key_Down]) {
-    cam.pos.x -= ds * cos(cam.angle);
-    cam.pos.y -= ds * sin(cam.angle);
+    translateCamera(*m_scene, -ds);
   }
 
   update();

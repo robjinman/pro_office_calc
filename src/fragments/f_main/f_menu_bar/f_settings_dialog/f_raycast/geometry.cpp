@@ -47,6 +47,13 @@ Point operator/(const Point& lhs, double rhs) {
 //===========================================
 // operator*
 //===========================================
+Point operator*(const Point& lhs, double rhs) {
+  return Point(lhs.x * rhs, lhs.y * rhs);
+}
+
+//===========================================
+// operator*
+//===========================================
 Point operator*(const Matrix& lhs, const Point& rhs) {
   Point p;
   p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
@@ -152,8 +159,53 @@ bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p
 }
 
 //===========================================
+// lineSegmentCircleIntersect
+//===========================================
+bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
+  if (distance(lseg.A, circ.pos) <= circ.radius || distance(lseg.B, circ.pos) <= circ.radius) {
+    return true;
+  }
+
+  Line l = lseg.line();
+
+  double a = pow(l.m, 2) + 1.0;
+  double b = 2.0 * l.m * l.c - 2.0 * l.m * circ.pos.y - 2.0 * circ.pos.x;
+  double c = pow(circ.pos.x, 2) + pow(circ.pos.y, 2) + pow(l.c, 2) - 2.0 * circ.pos.y * l.c
+    - pow(circ.radius, 2);
+
+  double discriminant = b * b - 4.0 * a * c;
+  if (discriminant < 0.0) {
+    return false;
+  }
+
+  double x0 = (-b + sqrt(discriminant)) / (2.0 * a);
+  double y0 = l.m * x0 + l.c;
+
+  double x1 = (-b - sqrt(discriminant)) / (2.0 * a);
+  double y1 = l.m * x1 + l.c;
+
+  return (isBetween(x0, lseg.A.x, lseg.B.x) && isBetween(y0, lseg.A.y, lseg.B.y))
+    || (isBetween(x1, lseg.A.x, lseg.B.x) && isBetween(y1, lseg.A.y, lseg.B.y));
+}
+
+//===========================================
 // distance
 //===========================================
 double distance(const Point& A, const Point& B) {
   return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
+}
+
+//===========================================
+// normalise
+//===========================================
+Vec2f normalise(const Vec2f& v) {
+  double l = sqrt(v.x * v.x + v.y + v.y);
+  return Vec2f(v.x / l, v.y / l);
+}
+
+//===========================================
+// angleBetween
+//===========================================
+double angleBetween(const Line& l0, const Line& l1) {
+  return atan(l0.m) - atan(l1.m);
 }

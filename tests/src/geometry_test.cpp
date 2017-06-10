@@ -1,0 +1,49 @@
+#include <gtest/gtest.h>
+#include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp>
+
+
+class GeometryTest : public testing::Test {
+  public:
+    virtual void SetUp() override {}
+
+    virtual void TearDown() override {}
+};
+
+
+TEST_F(GeometryTest, lineSegmentIntersect) {
+  LineSegment l0(Point(0, -2), Point(4, 10));
+  LineSegment l1(Point(0, 8), Point(4, 0));
+
+  Point p;
+  ASSERT_TRUE(lineSegmentIntersect(l0, l1, p));
+  ASSERT_DOUBLE_EQ(2, p.x);
+  ASSERT_DOUBLE_EQ(4, p.y);
+}
+
+TEST_F(GeometryTest, lineSegmentCircleIntersect_hit0) {
+  LineSegment l(Point(0, -2), Point(4, 6));
+  Circle c{Point(3, 2), 2};
+
+  ASSERT_TRUE(lineSegmentCircleIntersect(c, l));
+}
+
+TEST_F(GeometryTest, lineSegmentCircleIntersect_miss0) {
+  LineSegment l(Point(0, -2), Point(4, 6));
+  Circle c{Point(-1, 2), 2};
+
+  ASSERT_FALSE(lineSegmentCircleIntersect(c, l));
+}
+
+TEST_F(GeometryTest, lineSegmentCircleIntersect_miss1) {
+  LineSegment l(Point(-10, 8.9), Point(10, -1.1));
+  Circle c{Point(-1, 2), 2};
+
+  ASSERT_FALSE(lineSegmentCircleIntersect(c, l));
+}
+
+TEST_F(GeometryTest, lineSegmentCircleIntersect_miss2) {
+  LineSegment l(Point(-4, -2), Point(-2, 0));
+  Circle c{Point(1, 2), 2};
+
+  ASSERT_FALSE(lineSegmentCircleIntersect(c, l));
+}
