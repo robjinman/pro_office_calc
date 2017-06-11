@@ -79,7 +79,7 @@ void FRaycast::keyReleaseEvent(QKeyEvent* event) {
 // rotateCamera
 //===========================================
 static void rotateCamera(Scene& scene, double da) {
-  scene.camera.angle += da;
+  scene.camera->angle += da;
 }
 
 //===========================================
@@ -87,7 +87,7 @@ static void rotateCamera(Scene& scene, double da) {
 //===========================================
 static bool intersectWall(const Scene& scene, const Circle& circle) {
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    if (lineSegmentCircleIntersect(circle, it->lseg)) {
+    if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
       return true;
     }
   }
@@ -98,7 +98,7 @@ static bool intersectWall(const Scene& scene, const Circle& circle) {
 // translateCamera
 //===========================================
 static void translateCamera(Scene& scene, double ds) {
-  Camera& cam = scene.camera;
+  Camera& cam = *scene.camera;
 
   Vec2f dv(ds * cos(cam.angle), ds * sin(cam.angle));
 
@@ -109,7 +109,7 @@ static void translateCamera(Scene& scene, double ds) {
 
   bool collision = false;
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    const Wall& wall = *it;
+    const Wall& wall = **it;
 
     if (lineSegmentCircleIntersect(circle, wall.lseg)) {
       collision = true;

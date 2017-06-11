@@ -17,7 +17,7 @@ using std::list;
 //===========================================
 // constructWalls
 //===========================================
-static void constructWalls(const parser::Object& obj, list<Wall>& walls) {
+static void constructWalls(const parser::Object& obj, list<unique_ptr<Wall>>& walls) {
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
 
@@ -30,15 +30,15 @@ static void constructWalls(const parser::Object& obj, list<Wall>& walls) {
       }
     }
 
-    Wall wall;
+    Wall* wall = new Wall;
 
-    wall.lseg.A = obj.path.points[j];
-    wall.lseg.B = obj.path.points[i];
-    transform(wall.lseg, obj.transform);
+    wall->lseg.A = obj.path.points[j];
+    wall->lseg.B = obj.path.points[i];
+    transform(wall->lseg, obj.transform);
 
-    wall.texture = obj.dict.at("texture");
+    wall->texture = obj.dict.at("texture");
 
-    walls.push_back(wall);
+    walls.push_back(unique_ptr<Wall>(wall));
   }
 }
 
@@ -75,17 +75,36 @@ static Matrix transformFromTriangle(const parser::Path& path) {
 //===========================================
 // constructCamera
 //===========================================
-static Camera constructCamera(const parser::Object& obj) {
-  Camera camera;
-  camera.setTransform(transformFromTriangle(obj.path));
+static Camera* constructCamera(const parser::Object& obj) {
+  Camera* camera = new Camera;
+  camera->setTransform(obj.transform * transformFromTriangle(obj.path));
 
   return camera;
 }
 
 //===========================================
+// constructSprite
+//===========================================
+static Sprite* constructSprite(const parser::Object& obj) {
+  if (obj.dict.at("subtype") == "bad_guy") {
+    BadGuy* sprite = new BadGuy;
+    return sprite;
+  }
+  else if (obj.dict.at("subtype") == "ammo") {
+    Ammo* sprite = new Ammo;
+    Matrix m = transformFromTriangle(obj.path);
+    sprite->transform = obj.transform * m;
+
+    return sprite;
+  }
+
+  EXCEPTION("Error constructing sprite of unknown type");
+}
+
+//===========================================
 // Scene::Scene
 //===========================================
-Scene::Scene(const std::string& mapFilePath) {
+Scene::Scene(const string& mapFilePath) {
   list<parser::Object> objects = parser::parse(mapFilePath);
   for (auto it = objects.begin(); it != objects.end(); ++it) {
     addObject(*it);
@@ -99,6 +118,8 @@ Scene::Scene(const std::string& mapFilePath) {
   textures["dark_bricks"] = QPixmap("data/dark_bricks.png");
   textures["floor"] = QPixmap("data/floor.png");
   textures["ceiling"] = QPixmap("data/ceiling.png");
+  textures["ammo"] = QPixmap("data/ammo.png");
+  textures["bad_guy"] = QPixmap("data/bad_guy.png");
 }
 
 //===========================================
@@ -109,6 +130,9 @@ void Scene::addObject(const parser::Object& obj) {
     constructWalls(obj, walls);
   }
   else if (obj.dict.at("type") == "camera") {
-    camera = constructCamera(obj);
+    camera.reset(constructCamera(obj));
+  }
+  else if (obj.dict.at("type") == "sprite") {
+    sprites.push_back(unique_ptr<Sprite>(constructSprite(obj)));
   }
 }

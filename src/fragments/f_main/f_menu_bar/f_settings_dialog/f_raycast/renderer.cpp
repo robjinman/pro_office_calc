@@ -50,13 +50,13 @@ static CastResult castRay(Vec2f r, const Scene& scene) {
   CastResult result;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
-  const Camera& cam = scene.camera;
+  const Camera& cam = *scene.camera;
 
   double inf = std::numeric_limits<double>::infinity();
   result.distanceFromCamera = inf;
 
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    const Wall& wall = *it;
+    const Wall& wall = **it;
     LineSegment lseg = transform(wall.lseg, cam.matrix().inverse());
 
     Point pt;
@@ -98,7 +98,7 @@ static void drawCeiling(QPainter& painter, const Scene& scene, const Point& coll
   int wallTop_px, int screenX_px, int screenH_px, double screenX_wd, double vWorldUnitsInPx,
   double F) {
 
-  const Camera& cam = scene.camera;
+  const Camera& cam = *scene.camera;
   const QPixmap& ceilingTex = scene.textures.at("ceiling");
 
   for (int j = wallTop_px; j >= 0; --j) {
@@ -131,7 +131,7 @@ static void drawFloor(QPainter& painter, const Scene& scene, const Point& collis
   int wallBottom_px, int screenX_px, int screenH_px, double screenX_wd, double vWorldUnitsInPx,
   double F) {
 
-  const Camera& cam = scene.camera;
+  const Camera& cam = *scene.camera;
   const QPixmap& floorTex = scene.textures.at("floor");
 
   for (int j = wallBottom_px; j < screenH_px; ++j) {
@@ -164,7 +164,7 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
   QPainter painter;
   painter.begin(&target);
 
-  const Camera& cam = scene.camera;
+  const Camera& cam = *scene.camera;
 
   int screenW_px = target.width();
   int screenH_px = target.height();
