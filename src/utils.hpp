@@ -33,5 +33,12 @@ T smallest(T a, T b) {
 
 typedef std::hash<std::string> hashString;
 
+#ifdef DEBUG
+class QRect;
+class QRectF;
+std::ostream& operator<<(std::ostream& os, const QRect& rect);
+std::ostream& operator<<(std::ostream& os, const QRectF& rect);
+#endif
+
 
 #endif

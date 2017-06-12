@@ -121,6 +121,7 @@ LineSegment transform(const LineSegment& lseg, const Matrix& m);
 double distance(const Point& A, const Point& B);
 Vec2f normalise(const Vec2f& v);
 double angleBetween(const Line& l0, const Line& l1);
+double normaliseAngle(double a);
 
 #ifdef DEBUG
 #include <ostream>

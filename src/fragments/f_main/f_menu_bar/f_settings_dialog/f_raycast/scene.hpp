@@ -24,30 +24,45 @@ struct AnimationFrame {
   std::array<QRectF, 8> parts;
 
   const QRectF& part(double angle) const {
-    return parts[static_cast<int>(round(8.0 * angle / PI)) % 8];
+    return parts[static_cast<int>(round(8.0 * normaliseAngle(angle) / PI)) % 8];
   }
 };
 
 class Animation {
   public:
-    int fps;
+    int fps = 0;
     std::vector<AnimationFrame> frames;
 
     void update();
-    const AnimationFrame& currentFrame() const;
+    const AnimationFrame& currentFrame() const {
+      return frames[m_currentFrameIdx];
+    }
 
   private:
-    double m_elapsed;
-    int m_currentFrameIdx;
+    double m_elapsed = 0.0;
+    int m_currentFrameIdx = 0;
 };
 
 class Sprite {
   public:
-    Sprite(const std::string& texture)
-      : texture(texture) {}
+    Sprite(const Size& size, const std::string& texture)
+      : texture(texture),
+        size(size) {}
+
+    void setTransform(const Matrix& m) {
+      pos.x = m.tx();
+      pos.y = m.ty();
+      angle = m.a();
+    }
+
+    const QRectF& textureRegion() const {
+      return animations.at("idle").currentFrame().part(angle);
+    }
 
     std::string texture;
-    Matrix transform;
+    Vec2f pos;
+    double angle;
+    Size size;
     std::map<std::string, Animation> animations;
 
     void playAnimation(const std::string& name);
@@ -56,7 +71,7 @@ class Sprite {
 };
 
 struct Ammo : public Sprite {
-  Ammo() : Sprite("ammo") {
+  Ammo() : Sprite(Size(30, 15), "ammo") {
     Animation anim;
     anim.fps = 0;
 
@@ -78,7 +93,7 @@ struct Ammo : public Sprite {
 };
 
 struct BadGuy : public Sprite {
-  BadGuy() : Sprite("bad_guy") {
+  BadGuy() : Sprite(Size(40, 40), "bad_guy") {
     Animation anim;
     anim.fps = 0;
 

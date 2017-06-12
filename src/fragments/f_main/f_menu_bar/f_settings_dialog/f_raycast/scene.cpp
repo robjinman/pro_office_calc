@@ -93,7 +93,7 @@ static Sprite* constructSprite(const parser::Object& obj) {
   else if (obj.dict.at("subtype") == "ammo") {
     Ammo* sprite = new Ammo;
     Matrix m = transformFromTriangle(obj.path);
-    sprite->transform = obj.transform * m;
+    sprite->setTransform(obj.transform * m);
 
     return sprite;
   }
@@ -110,7 +110,7 @@ Scene::Scene(const string& mapFilePath) {
     addObject(*it);
   }
 
-  viewport.x = 10.0; // TODO: Read from map file
+  viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   viewport.y = 10.0;
   wallHeight = 100.0;
 

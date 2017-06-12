@@ -1,5 +1,7 @@
 #include <cmath>
 #include <limits>
+#include <QRect>
+#include <QRectF>
 #include "utils.hpp"
 
 
@@ -7,6 +9,17 @@ using std::string;
 using std::istream;
 using std::ostream;
 
+
+#ifdef DEBUG
+ostream& operator<<(ostream& os, const QRect& rect) {
+  os << rect.x() << ", " << rect.y() << ", " << rect.width() << ", " << rect.height();
+  return os;
+}
+ostream& operator<<(ostream& os, const QRectF& rect) {
+  os << rect.x() << ", " << rect.y() << ", " << rect.width() << ", " << rect.height();
+  return os;
+}
+#endif
 
 string readString(istream& is) {
   int nBytes = 0;

@@ -1,4 +1,5 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
+#include "utils.hpp"
 
 
 #ifdef DEBUG
@@ -201,6 +202,16 @@ double distance(const Point& A, const Point& B) {
 Vec2f normalise(const Vec2f& v) {
   double l = sqrt(v.x * v.x + v.y * v.y);
   return Vec2f(v.x / l, v.y / l);
+}
+
+//===========================================
+// normaliseAngle
+//===========================================
+double normaliseAngle(double angle) {
+  double q = angle / PI;
+  angle = PI * (q - floor(q));
+
+  return angle < 0 ? PI + angle : angle;
 }
 
 //===========================================
