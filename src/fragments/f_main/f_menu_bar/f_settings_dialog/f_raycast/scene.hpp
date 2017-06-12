@@ -24,7 +24,7 @@ struct AnimationFrame {
   std::array<QRectF, 8> parts;
 
   const QRectF& part(double angle) const {
-    return parts[static_cast<int>(round(8.0 * normaliseAngle(angle) / PI)) % 8];
+    return parts[static_cast<int>(round(4.0 * normaliseAngle(angle) / PI)) % 8];
   }
 };
 
@@ -55,8 +55,10 @@ class Sprite {
       angle = m.a();
     }
 
-    const QRectF& textureRegion() const {
-      return animations.at("idle").currentFrame().part(angle);
+    const QRectF& textureRegion(const Point& camPos) const {
+      // TODO: Account for sprite angle
+      Vec2f v = pos - camPos;
+      return animations.at("idle").currentFrame().part(-atan2(v.y, v.x));
     }
 
     std::string texture;
@@ -93,19 +95,19 @@ struct Ammo : public Sprite {
 };
 
 struct BadGuy : public Sprite {
-  BadGuy() : Sprite(Size(40, 40), "bad_guy") {
+  BadGuy() : Sprite(Size(70, 70), "bad_guy") {
     Animation anim;
     anim.fps = 0;
 
     anim.frames.push_back(AnimationFrame{
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1)
+      QRectF(0, 0, 0.125, 1),
+      QRectF(0.125, 0, 0.125, 1),
+      QRectF(0.25, 0, 0.125, 1),
+      QRectF(0.375, 0, 0.125, 1),
+      QRectF(0.5, 0, 0.125, 1),
+      QRectF(0.625, 0, 0.125, 1),
+      QRectF(0.750, 0, 0.125, 1),
+      QRectF(0.875, 0, 0.125, 1)
     });
 
     animations["idle"] = anim;

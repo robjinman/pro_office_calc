@@ -12,7 +12,7 @@ if (CMAKE_BUILD_TYPE EQUAL "Release")
   add_compile_options(-O3)
 else()
   message("Debug mode")
-  add_compile_options(-DDEBUG -O0 -g)
+  add_compile_options(-DDEBUG -O3 -g)
 
   if (PROFILE_MODE)
     message("Profiling ON")

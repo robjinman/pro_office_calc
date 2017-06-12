@@ -69,10 +69,11 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   const Camera& cam = *scene.camera;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
   double distanceFromCamera = std::numeric_limits<double>::infinity();
+  Matrix invCamMatrix = cam.matrix().inverse();
 
   for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
     const Wall& wall = **it;
-    LineSegment lseg = transform(wall.lseg, cam.matrix().inverse());
+    LineSegment lseg = transform(wall.lseg, invCamMatrix);
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
@@ -93,9 +94,9 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
 
   for (auto it = scene.sprites.begin(); it != scene.sprites.end(); ++it) {
     const Sprite& sprite = **it;
-    Point pos = cam.matrix().inverse() * sprite.pos;
+    Point pos = invCamMatrix * sprite.pos;
     double w = sprite.size.x;
-    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x * 1.00001, pos.y + 0.5 * w)); // TODO
+    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x * 1.00001, pos.y + 0.5 * w));
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
@@ -264,9 +265,10 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
       int spriteY_px = (scene.viewport.y - ((d - F) * tan(a) - viewportY_wd)) * vWorldUnitsInPx;
 
       const QPixmap& tex = scene.textures.at(sprite.texture);
-      const QRectF& uv = sprite.textureRegion();
+      const QRectF& uv = sprite.textureRegion(cam.pos);
       QRect r = tex.rect();
-      QRect frame(r.x() * uv.x(), r.y() * uv.y(), r.width() * uv.width(), r.height() * uv.height());
+      QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
+        r.height() * uv.height());
 
       double worldUnit_px = frame.width() / sprite.size.x;
       int texX_px = collision.distanceAlongSprite * worldUnit_px;

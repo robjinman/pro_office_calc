@@ -208,10 +208,15 @@ Vec2f normalise(const Vec2f& v) {
 // normaliseAngle
 //===========================================
 double normaliseAngle(double angle) {
-  double q = angle / PI;
-  angle = PI * (q - floor(q));
+  double q = angle / (2.0 * PI);
+  angle = 2.0 * PI * (q - floor(q));
 
-  return angle < 0 ? PI + angle : angle;
+  if (angle < 0.0) {
+    return 2.0 * PI + angle;
+  }
+  else {
+    return angle;
+  }
 }
 
 //===========================================

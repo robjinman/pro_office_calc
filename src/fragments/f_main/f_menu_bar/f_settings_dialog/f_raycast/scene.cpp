@@ -88,6 +88,9 @@ static Camera* constructCamera(const parser::Object& obj) {
 static Sprite* constructSprite(const parser::Object& obj) {
   if (obj.dict.at("subtype") == "bad_guy") {
     BadGuy* sprite = new BadGuy;
+    Matrix m = transformFromTriangle(obj.path);
+    sprite->setTransform(obj.transform * m);
+
     return sprite;
   }
   else if (obj.dict.at("subtype") == "ammo") {

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp>
+#include <utils.hpp>
 
 
 class GeometryTest : public testing::Test {
@@ -46,4 +47,12 @@ TEST_F(GeometryTest, lineSegmentCircleIntersect_miss2) {
   Circle c{Point(1, 2), 2};
 
   ASSERT_FALSE(lineSegmentCircleIntersect(c, l));
+}
+
+TEST_F(GeometryTest, normaliseAngle_neg0) {
+  ASSERT_DOUBLE_EQ(2.0 * PI - 1.23, normaliseAngle(-1.23));
+}
+
+TEST_F(GeometryTest, normaliseAngle_wrap0) {
+  ASSERT_DOUBLE_EQ(1.23, normaliseAngle(2.0 * PI + 1.23));
 }
