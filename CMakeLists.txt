@@ -13,6 +13,13 @@ if (CMAKE_BUILD_TYPE EQUAL "Release")
 else()
   message("Debug mode")
   add_compile_options(-DDEBUG -O0 -g)
+
+  if (PROFILE_MODE)
+    message("Profiling ON")
+
+    add_compile_options(-pg)
+    set(CMAKE_EXE_LINKER_FLAGS "-O3 -pg")
+  endif()
 endif()
 
 add_subdirectory(tools)

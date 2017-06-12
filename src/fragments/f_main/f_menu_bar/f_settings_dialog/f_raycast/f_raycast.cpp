@@ -10,6 +10,11 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
 
 
+#ifdef DEBUG
+namespace chrono = std::chrono;
+#endif
+
+
 //===========================================
 // FRaycast::FRaycast
 //===========================================
@@ -66,6 +71,10 @@ void FRaycast::paintEvent(QPaintEvent*) {
 //===========================================
 void FRaycast::keyPressEvent(QKeyEvent* event) {
   m_keyStates[event->key()] = true;
+
+  if (event->key() == Qt::Key_F) {
+    DBG_PRINT("Frame rate = " << m_frameRate << "\n");
+  }
 }
 
 //===========================================
@@ -137,6 +146,13 @@ static void translateCamera(Scene& scene, double ds) {
 // FRaycast::tick
 //===========================================
 void FRaycast::tick() {
+#ifdef DEBUG
+  chrono::high_resolution_clock::time_point t_ = chrono::high_resolution_clock::now();
+  chrono::duration<double> span = chrono::duration_cast<chrono::duration<double>>(t_ - m_t);
+  m_frameRate = 1.0 / span.count();
+  m_t = t_;
+#endif
+
   static const double da = PI / 50;
   static const double ds = 5;
 

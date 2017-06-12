@@ -8,6 +8,9 @@
 #include <QTimer>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#ifdef DEBUG
+#  include <chrono>
+#endif
 
 
 class QPaintEvent;
@@ -38,6 +41,11 @@ class FRaycast : public QOpenGLWidget, public Fragment {
     std::unique_ptr<QTimer> m_timer;
     std::unique_ptr<Scene> m_scene;
     std::map<int, bool> m_keyStates;
+
+#ifdef DEBUG
+    std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();
+    double m_frameRate;
+#endif
 };
 
 
