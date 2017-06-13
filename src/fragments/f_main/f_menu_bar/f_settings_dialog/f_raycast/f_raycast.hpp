@@ -45,6 +45,7 @@ class FRaycast : public QOpenGLWidget, public Fragment {
     std::map<int, bool> m_keyStates;
     Point m_cursor;
     bool m_cursorCaptured;
+    Qt::CursorShape m_defaultCursor;
 
 #ifdef DEBUG
     std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();

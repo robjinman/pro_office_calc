@@ -27,6 +27,7 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   parentData.vbox->addWidget(this);
   setMouseTracking(true);
 
+  m_defaultCursor = cursor().shape();
   m_cursorCaptured = false;
 
   setFocus();
@@ -80,6 +81,7 @@ void FRaycast::keyPressEvent(QKeyEvent* event) {
   }
   else if (event->key() == Qt::Key_Escape) {
     m_cursorCaptured = false;
+    setCursor(m_defaultCursor);
   }
 }
 
@@ -95,6 +97,10 @@ void FRaycast::keyReleaseEvent(QKeyEvent* event) {
 //===========================================
 void FRaycast::mousePressEvent(QMouseEvent* event) {
   m_cursorCaptured = true;
+  m_cursor.x = width() / 2;
+  m_cursor.y = height() / 2;
+
+  setCursor(Qt::BlankCursor);
 }
 
 //===========================================
