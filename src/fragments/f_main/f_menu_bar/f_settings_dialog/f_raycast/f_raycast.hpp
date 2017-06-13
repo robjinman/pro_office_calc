@@ -34,6 +34,8 @@ class FRaycast : public QOpenGLWidget, public Fragment {
     void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
 
   private:
     FRaycastData m_data;
@@ -41,6 +43,8 @@ class FRaycast : public QOpenGLWidget, public Fragment {
     std::unique_ptr<QTimer> m_timer;
     std::unique_ptr<Scene> m_scene;
     std::map<int, bool> m_keyStates;
+    Point m_cursor;
+    bool m_cursorCaptured;
 
 #ifdef DEBUG
     std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();

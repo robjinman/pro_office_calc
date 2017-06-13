@@ -25,6 +25,9 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   parentData.vbox->addWidget(this);
+  setMouseTracking(true);
+
+  m_cursorCaptured = false;
 
   setFocus();
 }
@@ -75,6 +78,9 @@ void FRaycast::keyPressEvent(QKeyEvent* event) {
   if (event->key() == Qt::Key_F) {
     DBG_PRINT("Frame rate = " << m_frameRate << "\n");
   }
+  else if (event->key() == Qt::Key_Escape) {
+    m_cursorCaptured = false;
+  }
 }
 
 //===========================================
@@ -82,6 +88,21 @@ void FRaycast::keyPressEvent(QKeyEvent* event) {
 //===========================================
 void FRaycast::keyReleaseEvent(QKeyEvent* event) {
   m_keyStates[event->key()] = false;
+}
+
+//===========================================
+// FRaycast::mousePressEvent
+//===========================================
+void FRaycast::mousePressEvent(QMouseEvent* event) {
+  m_cursorCaptured = true;
+}
+
+//===========================================
+// FRaycast::mouseMoveEvent
+//===========================================
+void FRaycast::mouseMoveEvent(QMouseEvent* event) {
+  m_cursor.x = event->x();
+  m_cursor.y = event->y();
 }
 
 //===========================================
@@ -106,10 +127,11 @@ static bool intersectWall(const Scene& scene, const Circle& circle) {
 //===========================================
 // translateCamera
 //===========================================
-static void translateCamera(Scene& scene, double ds) {
+static void translateCamera(Scene& scene, double ds, bool strafe) {
   Camera& cam = *scene.camera;
 
-  Vec2f dv(ds * cos(cam.angle), ds * sin(cam.angle));
+  Vec2f dv = strafe ? Vec2f(ds * sin(cam.angle), -ds * cos(cam.angle))
+    : Vec2f(ds * cos(cam.angle), ds * sin(cam.angle));
 
   double radius = scene.wallHeight / 5.0;
 
@@ -153,23 +175,36 @@ void FRaycast::tick() {
   m_t = t_;
 #endif
 
-  static const double da = PI / 50;
-  static const double ds = 5;
+  double ds = 5;
 
-  if (m_keyStates[Qt::Key_Left]) {
-    rotateCamera(*m_scene, -da);
+  if (m_keyStates[Qt::Key_A]) {
+    translateCamera(*m_scene, ds, true);
   }
 
-  if (m_keyStates[Qt::Key_Right]) {
-    rotateCamera(*m_scene, da);
+  if (m_keyStates[Qt::Key_D]) {
+    translateCamera(*m_scene, -ds, true);
   }
 
-  if (m_keyStates[Qt::Key_Up]) {
-    translateCamera(*m_scene, ds);
+  if (m_keyStates[Qt::Key_W]) {
+    translateCamera(*m_scene, ds, false);
   }
 
-  if (m_keyStates[Qt::Key_Down]) {
-    translateCamera(*m_scene, -ds);
+  if (m_keyStates[Qt::Key_S]) {
+    translateCamera(*m_scene, -ds, false);
+  }
+
+  if (m_cursorCaptured) {
+    Point centre(width() / 2, height() / 2);
+
+    Point v(m_cursor.x - centre.x, m_cursor.y - centre.y);
+
+    QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
+    m_cursor = centre;
+
+    if (fabs(v.x) > 0) {
+      double da = 0.001 * PI * v.x;
+      rotateCamera(*m_scene, da);
+    }
   }
 
   update();

@@ -24,7 +24,8 @@ struct AnimationFrame {
   std::array<QRectF, 8> parts;
 
   const QRectF& part(double angle) const {
-    return parts[static_cast<int>(round(4.0 * normaliseAngle(angle) / PI)) % 8];
+    double da = PI * 0.25;
+    return parts[static_cast<int>(round(normaliseAngle(angle) / da)) % 8];
   }
 };
 
