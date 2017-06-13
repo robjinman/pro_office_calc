@@ -29,6 +29,7 @@ struct PathStreamToken {
   Point p;
 };
 
+Matrix transformFromTriangle(const Path& path);
 PathStreamToken getNextToken(std::istream& is);
 void constructPath(const tinyxml2::XMLElement& e, Path& path);
 std::pair<std::string, std::string> parseKvpString(const std::string& s);

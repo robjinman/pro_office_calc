@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <tinyxml2.h>
 #include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp>
+#include "utils.hpp"
 
 
 using std::string;
@@ -113,4 +114,28 @@ TEST_F(MapParserTest, constructPath) {
   ++i;
   ASSERT_DOUBLE_EQ(c.x += -336.651315, i->x);
   ASSERT_DOUBLE_EQ(c.y += 1.035986, i->y);
+}
+
+TEST_F(MapParserTest, transformFromTriangle_rightFacing) {
+  parser::Path path;
+  path.points.push_back(Point(-10, 10));
+  path.points.push_back(Point(-10, -10));
+  path.points.push_back(Point(20, 0));
+  path.closed = true;
+
+  Matrix m = transformFromTriangle(path);
+
+  ASSERT_DOUBLE_EQ(0, m.a());
+}
+
+TEST_F(MapParserTest, transformFromTriangle_leftFacing) {
+  parser::Path path;
+  path.points.push_back(Point(10, 10));
+  path.points.push_back(Point(10, -10));
+  path.points.push_back(Point(-20, 0));
+  path.closed = true;
+
+  Matrix m = transformFromTriangle(path);
+
+  ASSERT_DOUBLE_EQ(PI, m.a());
 }

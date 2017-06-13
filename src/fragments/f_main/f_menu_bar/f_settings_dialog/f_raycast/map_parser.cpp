@@ -19,6 +19,36 @@ using tinyxml2::XMLElement;
 
 
 //===========================================
+// isTriangle
+//===========================================
+static bool isTriangle(const parser::Path& path) {
+  return path.points.size() == 3 && path.closed;
+}
+
+//===========================================
+// transformFromTriangle
+//===========================================
+Matrix transformFromTriangle(const Path& path) {
+  if (!isTriangle(path)) {
+    EXCEPTION("Path is not a triangle");
+  }
+
+  Point centre = (path.points[0] + path.points[1] + path.points[2]) / 3.0;
+  Point mostDistantPoint = centre;
+
+  for (int i = 0; i < 3; ++i) {
+    if (distance(path.points[i], centre) > distance(mostDistantPoint, centre)) {
+      mostDistantPoint = path.points[i];
+    }
+  }
+
+  Vec2f v = mostDistantPoint - centre;
+  double a = atan2(v.y, v.x);
+
+  return Matrix(a, centre);
+}
+
+//===========================================
 // getNextToken
 //===========================================
 PathStreamToken getNextToken(istream& is) {

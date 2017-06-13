@@ -11,6 +11,27 @@ class GeometryTest : public testing::Test {
 };
 
 
+TEST_F(GeometryTest, matrix_angle0) {
+  double a = DEG_TO_RAD(12.3);
+
+  Matrix m(a, Vec2f(-8, 7));
+  ASSERT_DOUBLE_EQ(a, m.a());
+}
+
+TEST_F(GeometryTest, matrix_angle1) {
+  double a = DEG_TO_RAD(-12.3);
+
+  Matrix m(a, Vec2f(51, 10));
+  ASSERT_DOUBLE_EQ(a, m.a());
+}
+
+TEST_F(GeometryTest, matrix_angle2) {
+  double a = DEG_TO_RAD(-180);
+
+  Matrix m(a, Vec2f(14, 0));
+  ASSERT_DOUBLE_EQ(a, m.a());
+}
+
 TEST_F(GeometryTest, lineSegmentIntersect) {
   LineSegment l0(Point(0, -2), Point(4, 10));
   LineSegment l1(Point(0, 8), Point(4, 0));

@@ -56,9 +56,8 @@ class Sprite {
     }
 
     const QRectF& textureRegion(const Point& camPos) const {
-      // TODO: Account for sprite angle
       Vec2f v = pos - camPos;
-      return animations.at("idle").currentFrame().part(-atan2(v.y, v.x));
+      return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + angle);
     }
 
     std::string texture;
