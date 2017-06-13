@@ -133,11 +133,11 @@ static bool intersectWall(const Scene& scene, const Circle& circle) {
 //===========================================
 // translateCamera
 //===========================================
-static void translateCamera(Scene& scene, double ds, bool strafe) {
+static void translateCamera(Scene& scene, const Vec2f& dir) {
   Camera& cam = *scene.camera;
 
-  Vec2f dv = strafe ? Vec2f(ds * sin(cam.angle), -ds * cos(cam.angle))
-    : Vec2f(ds * cos(cam.angle), ds * sin(cam.angle));
+  Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
+    sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
   double radius = scene.wallHeight / 5.0;
 
@@ -181,22 +181,23 @@ void FRaycast::tick() {
   m_t = t_;
 #endif
 
-  double ds = 5;
-
+  Vec2f v; // The vector is in camera space
   if (m_keyStates[Qt::Key_A]) {
-    translateCamera(*m_scene, ds, true);
+    v.y -= 1;
   }
-
   if (m_keyStates[Qt::Key_D]) {
-    translateCamera(*m_scene, -ds, true);
+    v.y += 1;
   }
-
   if (m_keyStates[Qt::Key_W]) {
-    translateCamera(*m_scene, ds, false);
+    v.x += 1;
+  }
+  if (m_keyStates[Qt::Key_S]) {
+    v.x -= 1;
   }
 
-  if (m_keyStates[Qt::Key_S]) {
-    translateCamera(*m_scene, -ds, false);
+  if (v.x != 0 || v.y != 0) {
+    double ds = 5;
+    translateCamera(*m_scene, normalise(v) * ds);
   }
 
   if (m_cursorCaptured) {
