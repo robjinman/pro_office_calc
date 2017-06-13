@@ -216,6 +216,39 @@ static WallSlice drawWallSlice(QPainter& painter, const Scene& scene,
 }
 
 //===========================================
+// drawSprites
+//===========================================
+static void drawSprites(QPainter& painter, const Scene& scene, const CastResult& result,
+  const Camera& cam, double F, double vWorldUnitsInPx, double screenX_px) {
+
+  for (auto it = result.spriteCollisions.begin(); it != result.spriteCollisions.end(); ++it) {
+    const SpriteCollision& collision = *it;
+    const Sprite& sprite = *collision.sprite;
+
+    double d = collision.distanceFromCamera;
+    double a = atan(0.5 * scene.wallHeight / d);
+
+    double viewportY_wd  = 0.5 * (scene.wallHeight - scene.viewport.y);
+    int spriteH_px = computeSliceHeight(F, d, sprite.size.y) * vWorldUnitsInPx;
+    int spriteY_px = (scene.viewport.y - ((d - F) * tan(a) - viewportY_wd)) * vWorldUnitsInPx;
+
+    const QPixmap& tex = scene.textures.at(sprite.texture);
+    const QRectF& uv = sprite.textureRegion(cam.pos);
+    QRect r = tex.rect();
+    QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
+      r.height() * uv.height());
+
+    double worldUnit_px = frame.width() / sprite.size.x;
+    int texX_px = collision.distanceAlongSprite * worldUnit_px;
+
+    QRect srcRect(frame.x() + texX_px, frame.y(), 1, frame.height());
+    QRect trgRect(screenX_px, spriteY_px - spriteH_px, 1, spriteH_px);
+
+    painter.drawPixmap(trgRect, tex, srcRect);
+  }
+}
+
+//===========================================
 // renderScene
 //===========================================
 void renderScene(QPaintDevice& target, const Scene& scene) {
@@ -253,31 +286,7 @@ void renderScene(QPaintDevice& target, const Scene& scene) {
         screenH_px, screenX_wd, vWorldUnitsInPx, F);
     }
 
-    for (auto it = result.spriteCollisions.begin(); it != result.spriteCollisions.end(); ++it) {
-      const SpriteCollision& collision = *it;
-      const Sprite& sprite = *collision.sprite;
-
-      double d = collision.distanceFromCamera;
-      double a = atan(0.5 * scene.wallHeight / d);
-
-      double viewportY_wd  = 0.5 * (scene.wallHeight - scene.viewport.y);
-      int spriteH_px = computeSliceHeight(F, d, sprite.size.y) * vWorldUnitsInPx;
-      int spriteY_px = (scene.viewport.y - ((d - F) * tan(a) - viewportY_wd)) * vWorldUnitsInPx;
-
-      const QPixmap& tex = scene.textures.at(sprite.texture);
-      const QRectF& uv = sprite.textureRegion(cam.pos);
-      QRect r = tex.rect();
-      QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
-        r.height() * uv.height());
-
-      double worldUnit_px = frame.width() / sprite.size.x;
-      int texX_px = collision.distanceAlongSprite * worldUnit_px;
-
-      QRect srcRect(frame.x() + texX_px, frame.y(), 1, frame.height());
-      QRect trgRect(screenX_px, spriteY_px - spriteH_px, 1, spriteH_px);
-
-      painter.drawPixmap(trgRect, tex, srcRect);
-    }
+    drawSprites(painter, scene, result, cam, F, vWorldUnitsInPx, screenX_px);
   }
 
   painter.end();
