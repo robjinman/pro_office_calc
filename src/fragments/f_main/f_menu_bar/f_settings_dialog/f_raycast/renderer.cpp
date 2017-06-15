@@ -112,6 +112,10 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       }
     }
   }
+
+  result.spriteCollisions.sort([](const SpriteCollision& a, const SpriteCollision& b) {
+    return a.distanceFromCamera > b.distanceFromCamera;
+  });
 }
 
 //===========================================
