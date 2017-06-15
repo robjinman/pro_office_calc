@@ -6,7 +6,7 @@
 #include <list>
 #include <map>
 #include <memory>
-#include <QPixmap>
+#include <QImage>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
 
@@ -125,7 +125,7 @@ class Scene {
     std::list<std::unique_ptr<Sprite>> sprites;
     Size viewport;
     double wallHeight;
-    std::map<std::string, QPixmap> textures;
+    std::map<std::string, QImage> textures;
 
   private:
     void addObject(const parser::Object& obj);

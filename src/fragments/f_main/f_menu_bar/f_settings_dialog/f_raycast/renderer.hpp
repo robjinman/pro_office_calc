@@ -2,11 +2,10 @@
 #define __PROCALC_FRAGMENTS_F_RAYCAST_RENDERER_HPP__
 
 
-class QPaintDevice;
-class QRect;
+class QImage;
 class Scene;
 
-void renderScene(QPaintDevice& target, const Scene& scene);
+void renderScene(QImage& target, const Scene& scene);
 
 
 #endif

@@ -113,12 +113,15 @@ struct Circle {
   double radius;
 };
 
+inline double distance(const Point& A, const Point& B) {
+  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
+}
+
 Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
-double distance(const Point& A, const Point& B);
 Vec2f normalise(const Vec2f& v);
 double angleBetween(const Line& l0, const Line& l1);
 double normaliseAngle(double a);

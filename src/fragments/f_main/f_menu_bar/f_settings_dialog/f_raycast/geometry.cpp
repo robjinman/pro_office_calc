@@ -190,13 +190,6 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 }
 
 //===========================================
-// distance
-//===========================================
-double distance(const Point& A, const Point& B) {
-  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
-}
-
-//===========================================
 // normalise
 //===========================================
 Vec2f normalise(const Vec2f& v) {

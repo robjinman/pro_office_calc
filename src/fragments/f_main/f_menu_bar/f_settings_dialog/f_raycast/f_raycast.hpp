@@ -4,7 +4,7 @@
 
 #include <memory>
 #include <map>
-#include <QOpenGLWidget>
+#include <QWidget>
 #include <QTimer>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
@@ -18,7 +18,7 @@ class QPaintEvent;
 
 struct FRaycastData : public FragmentData {};
 
-class FRaycast : public QOpenGLWidget, public Fragment {
+class FRaycast : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
@@ -49,7 +49,8 @@ class FRaycast : public QOpenGLWidget, public Fragment {
 
 #ifdef DEBUG
     std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();
-    double m_frameRate;
+    double m_frameRate = 0;
+    long m_frame = 0;
 #endif
 };
 

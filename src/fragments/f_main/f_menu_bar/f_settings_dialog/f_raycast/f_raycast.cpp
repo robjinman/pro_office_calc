@@ -15,6 +15,11 @@ namespace chrono = std::chrono;
 #endif
 
 
+const int SCREEN_WIDTH = 320;
+const int SCREEN_HEIGHT = 240;
+const int FRAME_RATE = 60;
+
+
 //===========================================
 // FRaycast::FRaycast
 //===========================================
@@ -44,7 +49,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-  m_timer->start(1000 / 60);
+  m_timer->start(1000 / FRAME_RATE);
 
   Fragment::rebuild(spec_);
 }
@@ -60,13 +65,13 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  QPixmap buffer(320, 240);
+  QImage buffer(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
 
   renderScene(buffer, *m_scene);
 
   QPainter painter;
   painter.begin(this);
-  painter.drawPixmap(rect(), buffer);
+  painter.drawImage(rect(), buffer);
   painter.end();
 }
 
@@ -175,10 +180,13 @@ static void translateCamera(Scene& scene, const Vec2f& dir) {
 //===========================================
 void FRaycast::tick() {
 #ifdef DEBUG
-  chrono::high_resolution_clock::time_point t_ = chrono::high_resolution_clock::now();
-  chrono::duration<double> span = chrono::duration_cast<chrono::duration<double>>(t_ - m_t);
-  m_frameRate = 1.0 / span.count();
-  m_t = t_;
+  if (m_frame % 10 == 0) {
+    chrono::high_resolution_clock::time_point t_ = chrono::high_resolution_clock::now();
+    chrono::duration<double> span = chrono::duration_cast<chrono::duration<double>>(t_ - m_t);
+    m_frameRate = 10.0 / span.count();
+    m_t = t_;
+  }
+  ++m_frame;
 #endif
 
   Vec2f v; // The vector is in camera space
