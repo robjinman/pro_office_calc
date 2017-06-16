@@ -15,8 +15,8 @@ namespace chrono = std::chrono;
 #endif
 
 
-const int SCREEN_WIDTH = 320;
-const int SCREEN_HEIGHT = 240;
+const int SCREEN_WIDTH = 400;
+const int SCREEN_HEIGHT = 300;
 const int FRAME_RATE = 60;
 
 
@@ -224,12 +224,12 @@ void FRaycast::tick() {
     m_cursor = centre;
 
     if (fabs(v.x) > 0) {
-      double da = 0.001 * PI * v.x;
+      double da = 0.0008 * PI * v.x;
       rotateCamera(*m_scene, da);
     }
 
     if (fabs(v.y) > 0) {
-      double da = 0.001 * PI * v.y;
+      double da = 0.0008 * PI * v.y;
       if (fabs(m_scene->camera->vAngle + da) < fabs(DEG_TO_RAD(10))) {
         m_scene->camera->vAngle += da;
       }
