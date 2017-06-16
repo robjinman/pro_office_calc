@@ -196,16 +196,23 @@ void FRaycast::tick() {
   if (m_keyStates[Qt::Key_D]) {
     v.y += 1;
   }
-  if (m_keyStates[Qt::Key_W]) {
+  if (m_keyStates[Qt::Key_W] || m_keyStates[Qt::Key_Up]) {
     v.x += 1;
   }
-  if (m_keyStates[Qt::Key_S]) {
+  if (m_keyStates[Qt::Key_S] || m_keyStates[Qt::Key_Down]) {
     v.x -= 1;
   }
 
   if (v.x != 0 || v.y != 0) {
     double ds = 5;
     translateCamera(*m_scene, normalise(v) * ds);
+  }
+
+  if (m_keyStates[Qt::Key_Left]) {
+    rotateCamera(*m_scene, -0.02 * PI);
+  }
+  if (m_keyStates[Qt::Key_Right]) {
+    rotateCamera(*m_scene, 0.02 * PI);
   }
 
   if (m_cursorCaptured) {
