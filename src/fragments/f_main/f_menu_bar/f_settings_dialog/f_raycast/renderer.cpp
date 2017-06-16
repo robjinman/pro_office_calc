@@ -24,6 +24,7 @@ struct SpriteCollision {
   const Sprite* sprite;
   double distanceFromCamera;
   double distanceAlongSprite;
+  double screenY;
 };
 
 struct CastResult {
@@ -65,7 +66,7 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd, const 
 //===========================================
 // castRay
 //===========================================
-static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
+static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
   const Camera& cam = *scene.camera;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
   double distanceFromCamera = std::numeric_limits<double>::infinity();
@@ -103,10 +104,23 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       SpriteCollision collision;
       collision.sprite = &sprite;
       collision.distanceFromCamera = pt.x;
-      collision.distanceAlongSprite = distance(lseg.A, pt);
 
       if (!result.hitWall ||
         result.wallCollision.distanceFromCamera > collision.distanceFromCamera) {
+
+        collision.distanceAlongSprite = distance(lseg.A, pt);
+
+        double camY_wd = scene.wallHeight / 2;
+        LineSegment vRay(Point(0, 0), Point(pos.x, -camY_wd));
+        LineSegment screen(Point(F + 0.0001, scene.viewport.y / 2), Point(F, -scene.viewport.y / 2));
+
+        Matrix m(-cam.vAngle, Vec2f());
+        LineSegment rotScreen = transform(screen, m);
+
+        Point p;
+        lineSegmentIntersect(vRay, rotScreen, p);
+
+        collision.screenY = distance(rotScreen.A, p);
 
         result.spriteCollisions.push_back(collision);
       }
@@ -151,7 +165,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& co
 
   for (int j = wallTop_px; j >= 0; --j) {
     double screenY_wd = (screenH_px / 2 - j) / vWorldUnitsInPx;
-    double vAngle = atan(screenY_wd / F);
+    double vAngle = atan(screenY_wd / F) - cam.vAngle;
     double d_ = scene.wallHeight / (2.0 * tan(vAngle));
     double d = d_ / cos(hAngle);
     double s = d / ray.length();
@@ -183,7 +197,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
 
   for (int j = wallBottom_px; j < screenH_px; ++j) {
     double screenY_wd = (j - screenH_px / 2) / vWorldUnitsInPx;
-    double vAngle = atan(screenY_wd / F);
+    double vAngle = atan(screenY_wd / F) + cam.vAngle;
     double d_ = scene.wallHeight / (2.0 * tan(vAngle));
     double d = d_ / cos(hAngle);
 
@@ -198,18 +212,40 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
 }
 
 //===========================================
+// computeHorizon
+//===========================================
+static double computeHorizon(double vAngle, double F, double screenH_wd) {
+  LineSegment screen(Point(F + 0.0001, -screenH_wd / 2), Point(F, screenH_wd / 2));
+
+  Matrix m(vAngle, Vec2f());
+  LineSegment rotScreen = transform(screen, m);
+
+  LineSegment ray(Point(0, 0), Point(F * 2.0, 0));
+
+  Point p;
+  bool intersect = lineSegmentIntersect(ray, rotScreen, p);
+
+  assert(intersect);
+
+  return distance(rotScreen.A, p);
+}
+
+//===========================================
 // drawWallSlice
 //===========================================
 static WallSlice drawWallSlice(QPainter& painter, const Scene& scene,
   const WallCollision& collision, double F, int screenX_px, int screenH_px,
   double vWorldUnitsInPx) {
 
+  double screenH_wd = screenH_px / vWorldUnitsInPx;
+  double horizon_px = computeHorizon(scene.camera->vAngle, F, screenH_wd) * vWorldUnitsInPx;
+
   int sliceH_px = computeSliceHeight(F, collision.distanceFromCamera, scene.wallHeight)
     * vWorldUnitsInPx;
 
   const QImage& wallTex = scene.textures.at(collision.wall->texture);
 
-  int wallBottom_px = 0.5 * (screenH_px - sliceH_px);
+  int wallBottom_px = horizon_px - 0.5 * sliceH_px;
   QRect trgRect(screenX_px, wallBottom_px, 1, sliceH_px);
   QRect srcRect = sampleTexture(wallTex.rect(), collision.distanceAlongWall, scene.wallHeight);
 
@@ -222,18 +258,15 @@ static WallSlice drawWallSlice(QPainter& painter, const Scene& scene,
 // drawSprites
 //===========================================
 static void drawSprites(QPainter& painter, const Scene& scene, const CastResult& result,
-  const Camera& cam, double F, double vWorldUnitsInPx, double screenX_px) {
+  const Camera& cam, double F, double screenX_px, double screenH_px, double vWorldUnitsInPx) {
 
   for (auto it = result.spriteCollisions.begin(); it != result.spriteCollisions.end(); ++it) {
     const SpriteCollision& collision = *it;
     const Sprite& sprite = *collision.sprite;
 
-    double d = collision.distanceFromCamera;
-    double a = atan(0.5 * scene.wallHeight / d);
-
-    double viewportY_wd  = 0.5 * (scene.wallHeight - scene.viewport.y);
-    int spriteH_px = computeSliceHeight(F, d, sprite.size.y) * vWorldUnitsInPx;
-    int spriteY_px = (scene.viewport.y - ((d - F) * tan(a) - viewportY_wd)) * vWorldUnitsInPx;
+    int spriteH_px = computeSliceHeight(F, collision.distanceFromCamera, sprite.size.y)
+      * vWorldUnitsInPx;
+    int spriteY_px = collision.screenY * vWorldUnitsInPx;
 
     const QImage& tex = scene.textures.at(sprite.texture);
     const QRectF& uv = sprite.textureRegion(cam.pos);
@@ -275,7 +308,7 @@ void renderScene(QImage& target, const Scene& scene) {
     double screenX_wd = static_cast<double>(screenX_px - screenW_px / 2) / hWorldUnitsInPx;
 
     CastResult result;
-    castRay(Vec2f(F, screenX_wd), scene, result);
+    castRay(Vec2f(F, screenX_wd), scene, F, result);
 
     if (result.hitWall) {
       WallCollision& collision = result.wallCollision;
@@ -289,7 +322,7 @@ void renderScene(QImage& target, const Scene& scene) {
         screenH_px, screenX_wd, vWorldUnitsInPx, F);
     }
 
-    drawSprites(painter, scene, result, cam, F, vWorldUnitsInPx, screenX_px);
+    drawSprites(painter, scene, result, cam, F, screenX_px, screenH_px, vWorldUnitsInPx);
   }
 
   painter.end();

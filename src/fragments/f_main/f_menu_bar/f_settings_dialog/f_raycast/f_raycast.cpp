@@ -227,6 +227,13 @@ void FRaycast::tick() {
       double da = 0.001 * PI * v.x;
       rotateCamera(*m_scene, da);
     }
+
+    if (fabs(v.y) > 0) {
+      double da = 0.001 * PI * v.y;
+      if (fabs(m_scene->camera->vAngle + da) < fabs(DEG_TO_RAD(10))) {
+        m_scene->camera->vAngle += da;
+      }
+    }
   }
 
   update();

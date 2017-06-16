@@ -9,6 +9,7 @@
 struct Camera {
   Vec2f pos;
   double angle;
+  double vAngle = 0;
   double hFov = DEG_TO_RAD(60.0);
   double vFov = DEG_TO_RAD(50.0);
 
