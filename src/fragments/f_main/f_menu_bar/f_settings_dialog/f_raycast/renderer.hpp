@@ -5,7 +5,10 @@
 class QImage;
 class Scene;
 
-void renderScene(QImage& target, const Scene& scene);
+class Renderer {
+  public:
+    void renderScene(QImage& target, const Scene& scene);
+};
 
 
 #endif

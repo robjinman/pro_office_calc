@@ -15,9 +15,9 @@ namespace chrono = std::chrono;
 #endif
 
 
-const int SCREEN_WIDTH = 400;
-const int SCREEN_HEIGHT = 300;
-const int FRAME_RATE = 60;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
+const int FRAME_RATE = 1000;
 
 
 //===========================================
@@ -67,7 +67,7 @@ void FRaycast::cleanUp() {
 void FRaycast::paintEvent(QPaintEvent*) {
   QImage buffer(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
 
-  renderScene(buffer, *m_scene);
+  m_renderer.renderScene(buffer, *m_scene);
 
   QPainter painter;
   painter.begin(this);

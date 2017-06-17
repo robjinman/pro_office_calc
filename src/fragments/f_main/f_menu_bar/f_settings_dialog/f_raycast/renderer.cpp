@@ -285,9 +285,9 @@ static void drawSprites(QPainter& painter, const Scene& scene, const CastResult&
 }
 
 //===========================================
-// renderScene
+// Renderer::renderScene
 //===========================================
-void renderScene(QImage& target, const Scene& scene) {
+void Renderer::renderScene(QImage& target, const Scene& scene) {
   QPainter painter;
   painter.begin(&target);
 
