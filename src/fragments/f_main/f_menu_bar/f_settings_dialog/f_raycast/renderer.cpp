@@ -81,9 +81,9 @@ static double computeSliceHeight(double F, double d, double h) {
 //===========================================
 // worldCoordToFloorTexel
 //===========================================
-static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd, const Size& texSz_px) {
-  double nx = p.x / texSz_wd.x;
-  double ny = p.y / texSz_wd.y;
+static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, const Size& texSz_px) {
+  double nx = p.x * texSz_wd_rp.x;
+  double ny = p.y * texSz_wd_rp.y;
   return Point((nx - floor(nx)) * texSz_px.x, (ny - floor(ny)) * texSz_px.y);
 }
 
@@ -186,7 +186,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& co
 
   Size texSz_px(ceilingTex.rect().width(), ceilingTex.rect().height());
   double texelInWorldUnits = scene.wallHeight / texSz_px.y;
-  Size texSz_wd(texSz_px.x * texelInWorldUnits, texSz_px.y * texelInWorldUnits);
+  Size texSz_wd_rp(1.0 / (texSz_px.x * texelInWorldUnits), 1.0 / (texSz_px.y * texelInWorldUnits));
 
   double vWorldUnitsInPx_rp = 1.0 / vWorldUnitsInPx;
   double F_rp = 1.0 / F;
@@ -201,7 +201,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& co
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
-    Point texel = worldPointToFloorTexel(p, texSz_wd, texSz_px);
+    Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
     pixels[screenX_px] = ceilingTex.pixel(texel.x, texel.y);
@@ -223,7 +223,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
 
   Size texSz_px(floorTex.rect().width(), floorTex.rect().height());
   double texelInWorldUnits = scene.wallHeight / texSz_px.y;
-  Size texSz_wd(texSz_px.x * texelInWorldUnits, texSz_px.y * texelInWorldUnits);
+  Size texSz_wd_rp(1.0 / (texSz_px.x * texelInWorldUnits), 1.0 / (texSz_px.y * texelInWorldUnits));
 
   double vWorldUnitsInPx_rp = 1.0 / vWorldUnitsInPx;
   double F_rp = 1.0 / F;
@@ -238,7 +238,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
-    Point texel = worldPointToFloorTexel(p, texSz_wd, texSz_px);
+    Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
     pixels[screenX_px] = floorTex.pixel(texel.x, texel.y);
