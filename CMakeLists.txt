@@ -9,15 +9,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 add_compile_options(-std=c++14 -Wall)
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
-  add_compile_options(-O3)
+  add_compile_options(-Ofast)
 else()
   message("Debug mode")
-  add_compile_options(-DDEBUG -O3 -g)
+  add_compile_options(-DDEBUG -Ofast -g)
 
   if (PROFILING_ON)
     message("Profiling ON")
 
-    add_compile_options(-O3)
+    add_compile_options(-Ofast)
     set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed -lprofiler -Wl,--as-needed")
   endif()
 endif()

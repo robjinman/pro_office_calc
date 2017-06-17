@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cassert>
+#include <array>
 #include <limits>
 #include <list>
 #include <QPainter>
@@ -11,6 +12,7 @@
 
 using std::string;
 using std::list;
+using std::array;
 
 
 struct WallCollision {
@@ -38,6 +40,28 @@ struct WallSlice {
   int wallBottom_px;
   int sliceH_px;
 };
+
+
+typedef array<double, 10000> tanMap_t;
+typedef array<double, 10000> atanMap_t;
+static const double ATAN_MIN = -10.0;
+static const double ATAN_MAX = 10.0;
+
+static double fastTan_rp(const tanMap_t& tanMap_rp, double a) {
+  static const double x = static_cast<double>(tanMap_rp.size()) / (2.0 * PI);
+  return tanMap_rp[static_cast<int>(normaliseAngle(a) * x)];
+}
+
+static double fastATan(const atanMap_t& atanMap, double x) {
+  if (x < ATAN_MIN) {
+    x = ATAN_MIN;
+  }
+  if (x > ATAN_MAX) {
+    x = ATAN_MAX;
+  }
+  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(atanMap.size());
+  return atanMap[static_cast<int>((x - ATAN_MIN) / dx)];
+}
 
 
 //===========================================
@@ -112,7 +136,8 @@ static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
 
         double camY_wd = scene.wallHeight / 2;
         LineSegment vRay(Point(0, 0), Point(pos.x, -camY_wd));
-        LineSegment screen(Point(F + 0.0001, scene.viewport.y / 2), Point(F, -scene.viewport.y / 2));
+        LineSegment screen(Point(F + 0.0001, scene.viewport.y / 2),
+          Point(F, -scene.viewport.y / 2));
 
         Matrix m(-cam.vAngle, Vec2f());
         LineSegment rotScreen = transform(screen, m);
@@ -151,7 +176,7 @@ static QRect sampleTexture(const QRect& rect, double distanceAlongWall, double w
 //===========================================
 static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& collisionPoint,
   int wallTop_px, int screenX_px, int screenH_px, double screenX_wd, double vWorldUnitsInPx,
-  double F) {
+  double F, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   const Camera& cam = *scene.camera;
   const QImage& ceilingTex = scene.textures.at("ceiling");
@@ -163,12 +188,17 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& co
   double texelInWorldUnits = scene.wallHeight / texSz_px.y;
   Size texSz_wd(texSz_px.x * texelInWorldUnits, texSz_px.y * texelInWorldUnits);
 
+  double vWorldUnitsInPx_rp = 1.0 / vWorldUnitsInPx;
+  double F_rp = 1.0 / F;
+  double rayLen_rp = 1.0 / ray.length();
+  double cosHAngle_rp = 1.0 / cos(hAngle);
+
   for (int j = wallTop_px; j >= 0; --j) {
-    double screenY_wd = (screenH_px / 2 - j) / vWorldUnitsInPx;
-    double vAngle = atan(screenY_wd / F) - cam.vAngle;
-    double d_ = scene.wallHeight / (2.0 * tan(vAngle));
-    double d = d_ / cos(hAngle);
-    double s = d / ray.length();
+    double screenY_wd = (screenH_px * 0.5 - j) * vWorldUnitsInPx_rp;
+    double vAngle = fastATan(atanMap, screenY_wd * F_rp) - cam.vAngle;
+    double d_ = 0.5 * scene.wallHeight * fastTan_rp(tanMap_rp, vAngle);
+    double d = d_ * cosHAngle_rp;
+    double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
     Point texel = worldPointToFloorTexel(p, texSz_wd, texSz_px);
@@ -183,7 +213,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& co
 //===========================================
 static void drawFloorSlice(QImage& target, const Scene& scene, const Point& collisionPoint,
   int wallBottom_px, int screenX_px, int screenH_px, double screenX_wd, double vWorldUnitsInPx,
-  double F) {
+  double F, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   const Camera& cam = *scene.camera;
   const QImage& floorTex = scene.textures.at("floor");
@@ -195,13 +225,17 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
   double texelInWorldUnits = scene.wallHeight / texSz_px.y;
   Size texSz_wd(texSz_px.x * texelInWorldUnits, texSz_px.y * texelInWorldUnits);
 
-  for (int j = wallBottom_px; j < screenH_px; ++j) {
-    double screenY_wd = (j - screenH_px / 2) / vWorldUnitsInPx;
-    double vAngle = atan(screenY_wd / F) + cam.vAngle;
-    double d_ = scene.wallHeight / (2.0 * tan(vAngle));
-    double d = d_ / cos(hAngle);
+  double vWorldUnitsInPx_rp = 1.0 / vWorldUnitsInPx;
+  double F_rp = 1.0 / F;
+  double rayLen_rp = 1.0 / ray.length();
+  double cosHAngle_rp = 1.0 / cos(hAngle);
 
-    double s = d / ray.length();
+  for (int j = wallBottom_px; j < screenH_px; ++j) {
+    double screenY_wd = (j - screenH_px * 0.5) * vWorldUnitsInPx_rp;
+    double vAngle = fastATan(atanMap, screenY_wd * F_rp) + cam.vAngle;
+    double d_ = 0.5 * scene.wallHeight * fastTan_rp(tanMap_rp, vAngle);
+    double d = d_ * cosHAngle_rp;
+    double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
     Point texel = worldPointToFloorTexel(p, texSz_wd, texSz_px);
@@ -288,6 +322,18 @@ static void drawSprites(QPainter& painter, const Scene& scene, const CastResult&
 // Renderer::renderScene
 //===========================================
 void Renderer::renderScene(QImage& target, const Scene& scene) {
+  tanMap_t tanMap_rp;
+  for (int i = 0; i < tanMap_rp.size(); ++i) {
+    tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
+      / static_cast<double>(tanMap_rp.size()));
+  }
+
+  atanMap_t atanMap;
+  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(atanMap.size());
+  for (int i = 0; i < atanMap.size(); ++i) {
+    atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
+  }
+
   QPainter painter;
   painter.begin(&target);
 
@@ -317,9 +363,9 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         vWorldUnitsInPx);
       drawFloorSlice(target, scene, collision.collisionPoint,
         slice.wallBottom_px + slice.sliceH_px, screenX_px, screenH_px, screenX_wd, vWorldUnitsInPx,
-        F);
+        F, tanMap_rp, atanMap);
       drawCeilingSlice(target, scene, collision.collisionPoint, slice.wallBottom_px, screenX_px,
-        screenH_px, screenX_wd, vWorldUnitsInPx, F);
+        screenH_px, screenX_wd, vWorldUnitsInPx, F, tanMap_rp, atanMap);
     }
 
     drawSprites(painter, scene, result, cam, F, screenX_px, screenH_px, vWorldUnitsInPx);
