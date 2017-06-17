@@ -1,6 +1,5 @@
 #include <cmath>
 #include <cassert>
-#include <array>
 #include <limits>
 #include <list>
 #include <QPainter>
@@ -13,6 +12,10 @@
 using std::string;
 using std::list;
 using std::array;
+
+
+static const double ATAN_MIN = -10.0;
+static const double ATAN_MAX = 10.0;
 
 
 struct WallCollision {
@@ -41,17 +44,21 @@ struct WallSlice {
   int sliceH_px;
 };
 
-
-typedef array<double, 10000> tanMap_t;
-typedef array<double, 10000> atanMap_t;
-static const double ATAN_MIN = -10.0;
-static const double ATAN_MAX = 10.0;
-
+//===========================================
+// fastTan_rp
+//
+// Retrieves the reciprocal of tan(a) from the lookup table
+//===========================================
 static double fastTan_rp(const tanMap_t& tanMap_rp, double a) {
   static const double x = static_cast<double>(tanMap_rp.size()) / (2.0 * PI);
   return tanMap_rp[static_cast<int>(normaliseAngle(a) * x)];
 }
 
+//===========================================
+// fastATan
+//
+// Retrieves atan(x) from the lookup table
+//===========================================
 static double fastATan(const atanMap_t& atanMap, double x) {
   if (x < ATAN_MIN) {
     x = ATAN_MIN;
@@ -62,7 +69,6 @@ static double fastATan(const atanMap_t& atanMap, double x) {
   double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(atanMap.size());
   return atanMap[static_cast<int>((x - ATAN_MIN) / dx)];
 }
-
 
 //===========================================
 // computeF
@@ -319,21 +325,24 @@ static void drawSprites(QPainter& painter, const Scene& scene, const CastResult&
 }
 
 //===========================================
+// Renderer::Renderer
+//===========================================
+Renderer::Renderer() {
+  for (int i = 0; i < m_tanMap_rp.size(); ++i) {
+    m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
+      / static_cast<double>(m_tanMap_rp.size()));
+  }
+
+  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(m_atanMap.size());
+  for (int i = 0; i < m_atanMap.size(); ++i) {
+    m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
+  }
+}
+
+//===========================================
 // Renderer::renderScene
 //===========================================
 void Renderer::renderScene(QImage& target, const Scene& scene) {
-  tanMap_t tanMap_rp;
-  for (int i = 0; i < tanMap_rp.size(); ++i) {
-    tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
-      / static_cast<double>(tanMap_rp.size()));
-  }
-
-  atanMap_t atanMap;
-  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(atanMap.size());
-  for (int i = 0; i < atanMap.size(); ++i) {
-    atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
-  }
-
   QPainter painter;
   painter.begin(&target);
 
@@ -363,9 +372,9 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         vWorldUnitsInPx);
       drawFloorSlice(target, scene, collision.collisionPoint,
         slice.wallBottom_px + slice.sliceH_px, screenX_px, screenH_px, screenX_wd, vWorldUnitsInPx,
-        F, tanMap_rp, atanMap);
+        F, m_tanMap_rp, m_atanMap);
       drawCeilingSlice(target, scene, collision.collisionPoint, slice.wallBottom_px, screenX_px,
-        screenH_px, screenX_wd, vWorldUnitsInPx, F, tanMap_rp, atanMap);
+        screenH_px, screenX_wd, vWorldUnitsInPx, F, m_tanMap_rp, m_atanMap);
     }
 
     drawSprites(painter, scene, result, cam, F, screenX_px, screenH_px, vWorldUnitsInPx);
