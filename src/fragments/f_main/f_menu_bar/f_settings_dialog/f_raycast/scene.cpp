@@ -34,7 +34,7 @@ static void constructWalls(const parser::Object& obj, list<unique_ptr<Wall>>& wa
 
     wall->lseg.A = obj.path.points[j];
     wall->lseg.B = obj.path.points[i];
-    transform(wall->lseg, obj.transform);
+    wall->lseg = transform(wall->lseg, obj.transform);
 
     wall->texture = obj.dict.at("texture");
 
