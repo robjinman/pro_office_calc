@@ -12,6 +12,7 @@ struct Camera {
   double vAngle = 0.001;
   double hFov = DEG_TO_RAD(60.0);
   double vFov = DEG_TO_RAD(50.0);
+  double height;
 
   void setTransform(const Matrix& m) {
     pos.x = m.tx();

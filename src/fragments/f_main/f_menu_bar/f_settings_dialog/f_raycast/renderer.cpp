@@ -32,7 +32,10 @@ struct SpriteCollision {
   const Sprite* sprite;
   double distanceFromCamera;
   double distanceAlongSprite;
-  double screenY;
+  double sliceBottom_wd;
+  double sliceTop_wd;
+  double screenSliceBottom_wd;
+  double screenSliceTop_wd;
 };
 
 struct CastResult {
@@ -130,8 +133,8 @@ static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
         Matrix m(cam.vAngle, Vec2f(0, 0));
         LineSegment rotScreen = transform(screen, m);
 
-        LineSegment wallRay0(Point(0, 0), Point(pt.x, -scene.wallHeight / 2));
-        LineSegment wallRay1(Point(0, 0), Point(pt.x, scene.wallHeight / 2));
+        LineSegment wallRay0(Point(0, 0), Point(pt.x, -cam.height));
+        LineSegment wallRay1(Point(0, 0), Point(pt.x, scene.wallHeight - cam.height));
 
         LineSegment screenRay0(Point(0, 0), rotScreen.A * 999.9);
         LineSegment screenRay1(Point(0, 0), rotScreen.B * 999.9);
@@ -172,18 +175,35 @@ static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
       if (!result.hitWall || distanceFromCamera > collision.distanceFromCamera) {
         collision.distanceAlongSprite = distance(lseg.A, pt);
 
-        double camY_wd = scene.wallHeight / 2;
-        LineSegment vRay(Point(0, 0), Point(pos.x, -camY_wd));
-        LineSegment screen(Point(F + 0.0001, scene.viewport.y / 2),
-          Point(F, -scene.viewport.y / 2));
+        LineSegment screen(Point(F, 0.00001 - scene.viewport.y / 2),
+          Point(F, scene.viewport.y * 0.5));
 
-        Matrix m(-cam.vAngle, Vec2f());
+        Matrix m(cam.vAngle, Vec2f(0, 0));
         LineSegment rotScreen = transform(screen, m);
 
-        Point p;
-        lineSegmentIntersect(vRay, rotScreen, p);
+        LineSegment spriteRay0(Point(0, 0), Point(pt.x, -cam.height));
+        LineSegment spriteRay1(Point(0, 0), Point(pt.x, sprite.size.y - cam.height));
 
-        collision.screenY = distance(rotScreen.A, p);
+        LineSegment screenRay0(Point(0, 0), rotScreen.A * 999.9);
+        LineSegment screenRay1(Point(0, 0), rotScreen.B * 999.9);
+
+        Point p;
+        p = lineIntersect(spriteRay0.line(), rotScreen.line());
+        double screen_w0 = rotScreen.signedDistance(p.x);
+        p = lineIntersect(spriteRay1.line(), rotScreen.line());
+        double screen_w1 = rotScreen.signedDistance(p.x);
+
+        collision.screenSliceBottom_wd = clipNumber(screen_w0, Size(0, scene.viewport.y));
+        collision.screenSliceTop_wd = clipNumber(screen_w1, Size(0, scene.viewport.y));
+
+        LineSegment spriteLseg(Point(pt.x + 0.00001, -cam.height),
+          Point(pt.x, sprite.size.y - cam.height));
+
+        double sprite_s0 = lineIntersect(screenRay0.line(), spriteLseg.line()).y;
+        double sprite_s1 = lineIntersect(screenRay1.line(), spriteLseg.line()).y;
+
+        collision.sliceBottom_wd = clipNumber(spriteLseg.A.y, Size(sprite_s0, sprite_s1));
+        collision.sliceTop_wd = clipNumber(spriteLseg.B.y, Size(sprite_s0, sprite_s1));
 
         result.spriteCollisions.push_back(collision);
       }
@@ -288,6 +308,7 @@ static QRect sampleTexture(const QRect& rect, const WallCollision& collision, do
   double y1 = ((y + collision.sliceTop_wd) / wallHeight) * H;
 
   int i = x * worldUnit;
+
   return QRect(i, y0, 1, y1 - y0);
 }
 
@@ -321,10 +342,6 @@ static void drawSprites(QPainter& painter, const Scene& scene, const CastResult&
     const SpriteCollision& collision = *it;
     const Sprite& sprite = *collision.sprite;
 
-    int spriteH_px = computeSliceHeight(F, collision.distanceFromCamera, sprite.size.y)
-      * vWorldUnitsInPx;
-    int spriteY_px = collision.screenY * vWorldUnitsInPx;
-
     const QImage& tex = scene.textures.at(sprite.texture);
     const QRectF& uv = sprite.textureRegion(cam.pos);
     QRect r = tex.rect();
@@ -334,8 +351,15 @@ static void drawSprites(QPainter& painter, const Scene& scene, const CastResult&
     double worldUnit_px = frame.width() / sprite.size.x;
     int texX_px = collision.distanceAlongSprite * worldUnit_px;
 
-    QRect srcRect(frame.x() + texX_px, frame.y(), 1, frame.height());
-    QRect trgRect(screenX_px, spriteY_px - spriteH_px, 1, spriteH_px);
+    int screenSliceBottom_px = collision.screenSliceBottom_wd * vWorldUnitsInPx;
+    int screenSliceTop_px = collision.screenSliceTop_wd * vWorldUnitsInPx;
+
+    double y = cam.height;
+    double y0 = ((y + collision.sliceBottom_wd) / sprite.size.y) * frame.height();
+    double y1 = ((y + collision.sliceTop_wd) / sprite.size.y) * frame.height();
+
+    QRect srcRect(frame.x() + texX_px, frame.y() + y0, 1, y1 - y0);
+    QRect trgRect(screenX_px, screenSliceBottom_px, 1, screenSliceTop_px - screenSliceBottom_px);
 
     painter.drawImage(trgRect, tex, srcRect);
   }

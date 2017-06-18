@@ -87,6 +87,8 @@ Scene::Scene(const string& mapFilePath) {
   viewport.y = 10.0;
   wallHeight = 100.0;
 
+  camera->height = wallHeight / 2;
+
   textures["light_bricks"] = QImage("data/light_bricks.png");
   textures["dark_bricks"] = QImage("data/dark_bricks.png");
   textures["floor"] = QImage("data/floor.png");
