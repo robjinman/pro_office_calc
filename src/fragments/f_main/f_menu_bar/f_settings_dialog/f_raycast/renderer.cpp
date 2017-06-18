@@ -46,7 +46,7 @@ struct CastResult {
 };
 
 struct WallSlice {
-  int wallBottom_px;
+  int wallTop_px;
   int sliceH_px;
 };
 
@@ -239,7 +239,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Point& co
 
   for (int j = wallTop_px; j >= 0; --j) {
     double projY_wd = (screenH_px * 0.5 - j) * vWorldUnitsInPx_rp;
-    double vAngle = fastATan(atanMap, projY_wd * F_rp) - cam.vAngle;
+    double vAngle = fastATan(atanMap, projY_wd * F_rp) + cam.vAngle;
     double d_ = 0.5 * scene.wallHeight * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
@@ -276,7 +276,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
 
   for (int j = wallBottom_px; j < screenH_px; ++j) {
     double projY_wd = (j - screenH_px * 0.5) * vWorldUnitsInPx_rp;
-    double vAngle = fastATan(atanMap, projY_wd * F_rp) + cam.vAngle;
+    double vAngle = fastATan(atanMap, projY_wd * F_rp) - cam.vAngle;
     double d_ = 0.5 * scene.wallHeight * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
@@ -292,7 +292,9 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
 //===========================================
 // sampleTexture
 //===========================================
-static QRect sampleTexture(const QRect& rect, const WallCollision& collision, double wallHeight) {
+static QRect sampleTexture(const QRect& rect, const WallCollision& collision, double camHeight,
+  double wallHeight) {
+
   double H = rect.height();
   double W = rect.width();
 
@@ -302,14 +304,12 @@ static QRect sampleTexture(const QRect& rect, const WallCollision& collision, do
   double n = collision.distanceAlongWall / texW;
   double x = (n - floor(n)) * texW;
 
-  double y = wallHeight / 2;
-
-  double y0 = ((y + collision.sliceBottom_wd) / wallHeight) * H;
-  double y1 = ((y + collision.sliceTop_wd) / wallHeight) * H;
+  double texBottom_px = H - ((camHeight + collision.sliceBottom_wd) / wallHeight) * H;
+  double texTop_px = H - ((camHeight + collision.sliceTop_wd) / wallHeight) * H;
 
   int i = x * worldUnit;
 
-  return QRect(i, y0, 1, y1 - y0);
+  return QRect(i, texTop_px, 1, texBottom_px - texTop_px);
 }
 
 //===========================================
@@ -321,15 +321,38 @@ static WallSlice drawWallSlice(QPainter& painter, const Scene& scene,
 
   const QImage& wallTex = scene.textures.at(collision.wall->texture);
 
-  int screenSliceBottom_px = collision.projSliceBottom_wd * vWorldUnitsInPx;
-  int screenSliceTop_px = collision.projSliceTop_wd * vWorldUnitsInPx;
+  int screenSliceBottom_px = screenH_px - collision.projSliceBottom_wd * vWorldUnitsInPx;
+  int screenSliceTop_px = screenH_px - collision.projSliceTop_wd * vWorldUnitsInPx;
 
-  QRect trgRect(screenX_px, screenSliceBottom_px, 1, screenSliceTop_px - screenSliceBottom_px);
-  QRect srcRect = sampleTexture(wallTex.rect(), collision, scene.wallHeight);
+  QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
+  QRect srcRect = sampleTexture(wallTex.rect(), collision, scene.camera->height, scene.wallHeight);
 
   painter.drawImage(trgRect, wallTex, srcRect);
 
-  return WallSlice{screenSliceBottom_px, screenSliceTop_px - screenSliceBottom_px};
+  return WallSlice{screenSliceTop_px, screenSliceBottom_px - screenSliceTop_px};
+}
+
+//===========================================
+// sampleTexture_2
+//===========================================
+static QRect sampleTexture_2(const QRect& rect, const SpriteCollision& collision, double camHeight,
+  double wallHeight) {
+
+  double H = rect.height();
+  double W = rect.width();
+
+  double worldUnit = H / wallHeight;
+  double texW = W / worldUnit;
+
+  double n = collision.distanceAlongSprite / texW;
+  double x = (n - floor(n)) * texW;
+
+  double texBottom_px = H - ((camHeight + collision.sliceBottom_wd) / wallHeight) * H;
+  double texTop_px = H - ((camHeight + collision.sliceTop_wd) / wallHeight) * H;
+
+  int i = x * worldUnit;
+
+  return QRect(rect.x() + i, rect.y() + texTop_px, 1, texBottom_px - texTop_px);
 }
 
 //===========================================
@@ -348,18 +371,11 @@ static void drawSprites(QPainter& painter, const Scene& scene, const CastResult&
     QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
       r.height() * uv.height());
 
-    double worldUnit_px = frame.width() / sprite.size.x;
-    int texX_px = collision.distanceAlongSprite * worldUnit_px;
+    int screenSliceBottom_px = screenH_px - collision.projSliceBottom_wd * vWorldUnitsInPx;
+    int screenSliceTop_px = screenH_px - collision.projSliceTop_wd * vWorldUnitsInPx;
 
-    int screenSliceBottom_px = collision.projSliceBottom_wd * vWorldUnitsInPx;
-    int screenSliceTop_px = collision.projSliceTop_wd * vWorldUnitsInPx;
-
-    double y = cam.height;
-    double y0 = ((y + collision.sliceBottom_wd) / sprite.size.y) * frame.height();
-    double y1 = ((y + collision.sliceTop_wd) / sprite.size.y) * frame.height();
-
-    QRect srcRect(frame.x() + texX_px, frame.y() + y0, 1, y1 - y0);
-    QRect trgRect(screenX_px, screenSliceBottom_px, 1, screenSliceTop_px - screenSliceBottom_px);
+    QRect srcRect = sampleTexture_2(frame, collision, scene.camera->height, sprite.size.y);
+    QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
     painter.drawImage(trgRect, tex, srcRect);
   }
@@ -413,9 +429,9 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         vWorldUnitsInPx);
 
       drawFloorSlice(target, scene, collision.collisionPoint,
-        slice.wallBottom_px + slice.sliceH_px, screenX_px, screenH_px, projX_wd, vWorldUnitsInPx,
+        slice.wallTop_px + slice.sliceH_px, screenX_px, screenH_px, projX_wd, vWorldUnitsInPx,
         F, m_tanMap_rp, m_atanMap);
-      drawCeilingSlice(target, scene, collision.collisionPoint, slice.wallBottom_px, screenX_px,
+      drawCeilingSlice(target, scene, collision.collisionPoint, slice.wallTop_px, screenX_px,
         screenH_px, projX_wd, vWorldUnitsInPx, F, m_tanMap_rp, m_atanMap);
     }
 

@@ -218,7 +218,8 @@ void FRaycast::tick() {
   if (m_cursorCaptured) {
     Point centre(width() / 2, height() / 2);
 
-    Point v(m_cursor.x - centre.x, m_cursor.y - centre.y);
+    // Y-axis is top to bottom
+    Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
 
     QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
     m_cursor = centre;
@@ -230,7 +231,8 @@ void FRaycast::tick() {
 
     if (fabs(v.y) > 0) {
       double da = 0.0008 * PI * v.y;
-      if (fabs(m_scene->camera->vAngle + da) < fabs(DEG_TO_RAD(10))) {
+
+      if (fabs(m_scene->camera->vAngle + da) < fabs(DEG_TO_RAD(20))) {
         m_scene->camera->vAngle += da;
       }
     }
