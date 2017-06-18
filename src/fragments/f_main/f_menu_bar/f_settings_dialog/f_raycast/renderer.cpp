@@ -145,7 +145,7 @@ static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
         collision.screenSliceBottom_wd = clipNumber(screen_w0, Size(0, scene.viewport.y));
         collision.screenSliceTop_wd = clipNumber(screen_w1, Size(0, scene.viewport.y));
 
-        LineSegment wall(Point(pt.x + 0.000001, -scene.wallHeight * 0.5),
+        LineSegment wall(Point(pt.x + 0.00001, -scene.wallHeight * 0.5),
           Point(pt.x, scene.wallHeight * 0.5));
 
         double wall_s0 = lineIntersect(screenRay0.line(), wall.line()).y;
@@ -273,16 +273,19 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Point& coll
 // sampleTexture
 //===========================================
 static QRect sampleTexture(const QRect& rect, const WallCollision& collision, double wallHeight) {
-  double worldUnit = static_cast<double>(rect.height()) / wallHeight;
-  double texW = static_cast<double>(rect.width()) / worldUnit;
+  double H = rect.height();
+  double W = rect.width();
+
+  double worldUnit = H / wallHeight;
+  double texW = W / worldUnit;
 
   double n = collision.distanceAlongWall / texW;
   double x = (n - floor(n)) * texW;
 
   double y = wallHeight / 2;
 
-  double y0 = ((y + collision.sliceBottom_wd) / wallHeight) * static_cast<double>(rect.height());
-  double y1 = ((y + collision.sliceTop_wd) / wallHeight) * static_cast<double>(rect.height());
+  double y0 = ((y + collision.sliceBottom_wd) / wallHeight) * H;
+  double y1 = ((y + collision.sliceTop_wd) / wallHeight) * H;
 
   int i = x * worldUnit;
   return QRect(i, y0, 1, y1 - y0);
