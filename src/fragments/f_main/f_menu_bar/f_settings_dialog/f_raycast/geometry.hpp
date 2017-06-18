@@ -35,6 +35,14 @@ inline Point operator*(double lhs, const Point& rhs) {
   return rhs * lhs;
 }
 
+inline double distance(const Point& A, const Point& B) {
+  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
+}
+
+inline double length(const Vec2f& v) {
+  return sqrt(v.x * v.x + v.y * v.y);
+}
+
 struct Matrix {
   Matrix();
   Matrix(double a, Vec2f t);
@@ -104,6 +112,13 @@ struct LineSegment {
 
   double length() const;
 
+  // Signed distance from A
+  double signedDistance(double x) const {
+    double lineDir = A.x < B.x ? 1.0 : -1.0;
+    double pointDir = x > A.x ? 1.0 : -1.0;
+    return distance(A, Point(x, line().at(x).y)) * lineDir * pointDir;
+  }
+
   Point A;
   Point B;
 };
@@ -113,14 +128,6 @@ struct Circle {
   double radius;
 };
 
-inline double distance(const Point& A, const Point& B) {
-  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
-}
-
-inline double length(const Vec2f& v) {
-  return sqrt(v.x * v.x + v.y * v.y);
-}
-
 Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
@@ -129,6 +136,7 @@ LineSegment transform(const LineSegment& lseg, const Matrix& m);
 Vec2f normalise(const Vec2f& v);
 double angleBetween(const Line& l0, const Line& l1);
 double normaliseAngle(double a);
+double clipNumber(double x, const Size& range);
 
 #ifdef DEBUG
 #include <ostream>

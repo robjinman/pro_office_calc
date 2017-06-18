@@ -32,6 +32,40 @@ TEST_F(GeometryTest, matrix_angle2) {
   ASSERT_DOUBLE_EQ(a, m.a());
 }
 
+TEST_F(GeometryTest, lineSegmentSignedDistance_0) {
+  LineSegment lseg(Point(-2, 1), Point(4, 1));
+
+  ASSERT_DOUBLE_EQ(-1, lseg.signedDistance(-3));
+  ASSERT_DOUBLE_EQ(0, lseg.signedDistance(-2));
+  ASSERT_DOUBLE_EQ(1, lseg.signedDistance(-1));
+  ASSERT_DOUBLE_EQ(2, lseg.signedDistance(0));
+  ASSERT_DOUBLE_EQ(3, lseg.signedDistance(1));
+  ASSERT_DOUBLE_EQ(4, lseg.signedDistance(2));
+  ASSERT_DOUBLE_EQ(5, lseg.signedDistance(3));
+  ASSERT_DOUBLE_EQ(6, lseg.signedDistance(4));
+  ASSERT_DOUBLE_EQ(7, lseg.signedDistance(5));
+}
+
+TEST_F(GeometryTest, lineSegmentSignedDistance_1) {
+  LineSegment lseg(Point(4, 1), Point(-2, 1));
+
+  ASSERT_DOUBLE_EQ(-1, lseg.signedDistance(5));
+  ASSERT_DOUBLE_EQ(0, lseg.signedDistance(4));
+  ASSERT_DOUBLE_EQ(1, lseg.signedDistance(3));
+  ASSERT_DOUBLE_EQ(2, lseg.signedDistance(2));
+  ASSERT_DOUBLE_EQ(3, lseg.signedDistance(1));
+  ASSERT_DOUBLE_EQ(4, lseg.signedDistance(0));
+  ASSERT_DOUBLE_EQ(5, lseg.signedDistance(-1));
+  ASSERT_DOUBLE_EQ(6, lseg.signedDistance(-2));
+  ASSERT_DOUBLE_EQ(7, lseg.signedDistance(-3));
+}
+
+TEST_F(GeometryTest, lineSegmentSignedDistance_2) {
+  LineSegment lseg(Point(2, 2), Point(-2, -2));
+
+  ASSERT_DOUBLE_EQ(-sqrt(2), lseg.signedDistance(3));
+}
+
 TEST_F(GeometryTest, lineSegmentIntersect) {
   LineSegment l0(Point(0, -2), Point(4, 10));
   LineSegment l1(Point(0, 8), Point(4, 0));

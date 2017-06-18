@@ -218,3 +218,16 @@ double normaliseAngle(double angle) {
 double angleBetween(const Line& l0, const Line& l1) {
   return atan(l0.m) - atan(l1.m);
 }
+
+//===========================================
+// clipNumber
+//===========================================
+double clipNumber(double x, const Size& range) {
+  if (x < range.x) {
+    x = range.x;
+  }
+  if (x > range.y) {
+    x = range.y;
+  }
+  return x;
+}
