@@ -93,6 +93,48 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 }
 
 //===========================================
+// handleCollision
+//===========================================
+static void handleCollision(const Scene& scene, double F, const LineSegment& lseg,
+  double targetHeight, const Point& pt, Collision& collision) {
+
+  const Camera& cam = *scene.camera;
+
+  collision.collisionPoint = cam.matrix() * pt;
+  collision.distanceAlongTarget = distance(lseg.A, pt);
+  collision.distanceFromCamera = pt.x;
+
+  LineSegment projPlane(Point(F, 0.00001 - scene.viewport.y / 2),
+    Point(F, scene.viewport.y * 0.5));
+
+  Matrix m(cam.vAngle, Vec2f(0, 0));
+  LineSegment rotProjPlane = transform(projPlane, m);
+
+  LineSegment wallRay0(Point(0, 0), Point(pt.x, -cam.height));
+  LineSegment wallRay1(Point(0, 0), Point(pt.x, targetHeight - cam.height));
+
+  LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
+  LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
+
+  Point p;
+  p = lineIntersect(wallRay0.line(), rotProjPlane.line());
+  double proj_w0 = rotProjPlane.signedDistance(p.x);
+  p = lineIntersect(wallRay1.line(), rotProjPlane.line());
+  double proj_w1 = rotProjPlane.signedDistance(p.x);
+
+  collision.projSliceBottom_wd = clipNumber(proj_w0, Size(0, scene.viewport.y));
+  collision.projSliceTop_wd = clipNumber(proj_w1, Size(0, scene.viewport.y));
+
+  LineSegment wall(Point(pt.x + 0.00001, -cam.height), Point(pt.x, targetHeight - cam.height));
+
+  double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
+  double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
+
+  collision.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
+  collision.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
+}
+
+//===========================================
 // castRay
 //===========================================
 static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
@@ -111,46 +153,12 @@ static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
       assert(pt.x > 0.0);
 
       if (pt.x < distanceFromCamera) {
-        distanceFromCamera = pt.x;
-
-        WallCollision& wallCollision = result.wallCollision;
-        Collision& collision = wallCollision.collision;
-
         result.hitWall = true;
-        wallCollision.wall = &wall;
-        collision.collisionPoint = cam.matrix() * pt;
-        collision.distanceAlongTarget = distance(lseg.A, pt);
-        collision.distanceFromCamera = pt.x;
+        result.wallCollision.wall = &wall;
 
-        LineSegment projPlane(Point(F, 0.00001 - scene.viewport.y / 2),
-          Point(F, scene.viewport.y * 0.5));
+        handleCollision(scene, F, lseg, scene.wallHeight, pt, result.wallCollision.collision);
 
-        Matrix m(cam.vAngle, Vec2f(0, 0));
-        LineSegment rotProjPlane = transform(projPlane, m);
-
-        LineSegment wallRay0(Point(0, 0), Point(pt.x, -cam.height));
-        LineSegment wallRay1(Point(0, 0), Point(pt.x, scene.wallHeight - cam.height));
-
-        LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
-        LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
-
-        Point p;
-        p = lineIntersect(wallRay0.line(), rotProjPlane.line());
-        double proj_w0 = rotProjPlane.signedDistance(p.x);
-        p = lineIntersect(wallRay1.line(), rotProjPlane.line());
-        double proj_w1 = rotProjPlane.signedDistance(p.x);
-
-        collision.projSliceBottom_wd = clipNumber(proj_w0, Size(0, scene.viewport.y));
-        collision.projSliceTop_wd = clipNumber(proj_w1, Size(0, scene.viewport.y));
-
-        LineSegment wall(Point(pt.x + 0.00001, -scene.wallHeight * 0.5),
-          Point(pt.x, scene.wallHeight * 0.5));
-
-        double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
-        double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
-
-        collision.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
-        collision.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
+        distanceFromCamera = pt.x;
       }
     }
   }
@@ -167,42 +175,10 @@ static void castRay(Vec2f r, const Scene& scene, double F, CastResult& result) {
       Collision& collision = spriteCollision.collision;
 
       spriteCollision.sprite = &sprite;
-      collision.collisionPoint = cam.matrix() * pt;
       collision.distanceFromCamera = pt.x;
 
       if (!result.hitWall || distanceFromCamera > collision.distanceFromCamera) {
-        collision.distanceAlongTarget = distance(lseg.A, pt);
-
-        LineSegment projPlane(Point(F, 0.00001 - scene.viewport.y / 2),
-          Point(F, scene.viewport.y * 0.5));
-
-        Matrix m(cam.vAngle, Vec2f(0, 0));
-        LineSegment rotProjPlane = transform(projPlane, m);
-
-        LineSegment spriteRay0(Point(0, 0), Point(pt.x, -cam.height));
-        LineSegment spriteRay1(Point(0, 0), Point(pt.x, sprite.size.y - cam.height));
-
-        LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
-        LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
-
-        Point p;
-        p = lineIntersect(spriteRay0.line(), rotProjPlane.line());
-        double proj_w0 = rotProjPlane.signedDistance(p.x);
-        p = lineIntersect(spriteRay1.line(), rotProjPlane.line());
-        double proj_w1 = rotProjPlane.signedDistance(p.x);
-
-        collision.projSliceBottom_wd = clipNumber(proj_w0, Size(0, scene.viewport.y));
-        collision.projSliceTop_wd = clipNumber(proj_w1, Size(0, scene.viewport.y));
-
-        LineSegment spriteLseg(Point(pt.x + 0.00001, -cam.height),
-          Point(pt.x, sprite.size.y - cam.height));
-
-        double sprite_s0 = lineIntersect(projRay0.line(), spriteLseg.line()).y;
-        double sprite_s1 = lineIntersect(projRay1.line(), spriteLseg.line()).y;
-
-        collision.sliceBottom_wd = clipNumber(spriteLseg.A.y, Size(sprite_s0, sprite_s1));
-        collision.sliceTop_wd = clipNumber(spriteLseg.B.y, Size(sprite_s0, sprite_s1));
-
+        handleCollision(scene, F, lseg, sprite.size.y, pt, collision);
         result.spriteCollisions.push_back(spriteCollision);
       }
     }
