@@ -8,7 +8,7 @@
 #include <QTimer>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer2.hpp"
 #ifdef DEBUG
 #  include <chrono>
 #endif
@@ -40,7 +40,7 @@ class FRaycast : public QWidget, public Fragment {
   private:
     FRaycastData m_data;
 
-    Renderer m_renderer;
+    Renderer2 m_renderer;
     std::unique_ptr<QTimer> m_timer;
     std::unique_ptr<Scene> m_scene;
     std::map<int, bool> m_keyStates;

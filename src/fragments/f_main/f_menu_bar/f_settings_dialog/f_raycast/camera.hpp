@@ -9,10 +9,12 @@
 struct Camera {
   Vec2f pos;
   double angle;
+  double height;
+  double F;
+
   double vAngle = 0.001;
   double hFov = DEG_TO_RAD(60.0);
   double vFov = DEG_TO_RAD(50.0);
-  double height;
 
   void setTransform(const Matrix& m) {
     pos.x = m.tx();
@@ -24,6 +26,13 @@ struct Camera {
     return Matrix(angle, Vec2f(pos.x, pos.y));
   }
 };
+
+//===========================================
+// computeF
+//===========================================
+inline double computeF(double w, double fov) {
+  return w / (2.0 * tan(0.5 * fov));
+}
 
 
 #endif

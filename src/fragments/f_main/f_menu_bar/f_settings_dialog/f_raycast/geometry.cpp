@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "utils.hpp"
 
@@ -127,6 +128,38 @@ double LineSegment::length() const {
 //===========================================
 LineSegment transform(const LineSegment& lseg, const Matrix& m) {
   return LineSegment(m * lseg.A, m * lseg.B);
+}
+
+//===========================================
+// polygonsEqual
+//===========================================
+bool polygonsEqual(const Polygon& lhs, const Polygon& rhs, double delta) {
+  if (lhs.points.size() != rhs.points.size()) {
+    return false;
+  }
+
+  if (lhs.points.size() == 0) {
+    return true;
+  }
+
+  auto it = std::find(lhs.points.begin(), lhs.points.end(), rhs.points[0]);
+
+  if (it == lhs.points.end()) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < lhs.points.size(); ++i) {
+    if (!pointsEqual(rhs.points[i], *it, delta)) {
+      return false;
+    }
+
+    ++it;
+    if (it == lhs.points.end()) {
+      it = lhs.points.begin();
+    }
+  }
+
+  return true;
 }
 
 //===========================================

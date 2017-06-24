@@ -74,20 +74,141 @@ static Sprite* constructSprite(const parser::Object& obj) {
   EXCEPTION("Error constructing sprite of unknown type");
 }
 
+static void buildPolygon(ConvexRegion& region) {
+  region.polygon.points.clear();
+  Polygon polyCpy;
+
+  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
+    const Edge& edge = **it;
+
+    // If the line segments are connected, lseg.A and lseg.B should yield
+    // the same polygon
+    region.polygon.points.push_back(edge.lseg.A);
+    polyCpy.points.push_back(edge.lseg.B);
+  }
+
+  if (!polygonsEqual(region.polygon, polyCpy, 0.0001)) {
+    EXCEPTION("Error constructing polygon; Line segments not connected\n");
+  }
+}
+
+static void populateScene(Scene& scene) {
+  scene.camera.reset(new Camera);
+  scene.camera->pos = Point(30, 30);
+  scene.camera->angle = DEG_TO_RAD(45);
+
+
+
+
+
+  ConvexRegion* rootRegion = new ConvexRegion;
+  ConvexRegion* region1 = new ConvexRegion;
+  ConvexRegion* region2 = new ConvexRegion;
+
+  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
+  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));
+
+  Wall* wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(0, 0), Point(200, 1));
+  wall->texture = "light_bricks";
+  region1->edges.push_back(wall);
+
+  JoiningEdge* je = new JoiningEdge;
+  scene.edges.push_back(std::unique_ptr<JoiningEdge>(je));
+  je->lseg = LineSegment(Point(200, 1), Point(201, 201));
+  je->topTexture = "light_bricks";
+  je->bottomTexture = "dark_bricks";
+  region1->edges.push_back(je);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(201, 201), Point(1, 200));
+  wall->texture = "light_bricks";
+  region1->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(1, 200), Point(0, 0));
+  wall->texture = "light_bricks";
+  region1->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(200, 1), Point(400, 2));
+  wall->texture = "light_bricks";
+  region2->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(400, 2), Point(401, 202));
+  wall->texture = "light_bricks";
+  region2->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(401, 202), Point(201, 201));
+  wall->texture = "light_bricks";
+  region2->edges.push_back(wall);
+
+  region2->edges.push_back(je);
+  je->regionA = region1;
+  je->regionB = region2;
+
+
+
+
+/*
+  ConvexRegion* region = new ConvexRegion;
+
+  Wall* wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(1, 1), Point(200, 1));
+  wall->texture = "light_bricks";
+  region->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(200, 1), Point(200, 200));
+  wall->texture = "light_bricks";
+  region->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(200, 200), Point(0, 200));
+  wall->texture = "light_bricks";
+  region->edges.push_back(wall);
+
+  wall = new Wall;
+  scene.edges.push_back(std::unique_ptr<Wall>(wall));
+  wall->lseg = LineSegment(Point(0, 200), Point(1, 1));
+  wall->texture = "light_bricks";
+  region->edges.push_back(wall);
+
+  buildPolygon(*region);
+*/
+  scene.rootRegion.reset(rootRegion);
+}
+
 //===========================================
 // Scene::Scene
 //===========================================
 Scene::Scene(const string& mapFilePath) {
+  /*
   list<parser::Object> objects = parser::parse(mapFilePath);
   for (auto it = objects.begin(); it != objects.end(); ++it) {
     addObject(*it);
-  }
+  }*/
+
+  populateScene(*this);
 
   viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   viewport.y = 10.0;
   wallHeight = 100.0;
+  currentRegion = rootRegion.get();
 
   camera->height = wallHeight / 2;
+  camera->F = computeF(viewport.x, camera->hFov);
 
   textures["light_bricks"] = QImage("data/light_bricks.png");
   textures["dark_bricks"] = QImage("data/dark_bricks.png");

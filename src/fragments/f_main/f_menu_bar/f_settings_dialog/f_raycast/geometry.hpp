@@ -6,6 +6,7 @@
 #include <array>
 #include <string>
 #include <memory>
+#include <vector>
 
 
 struct Point {
@@ -31,8 +32,16 @@ Point operator-(const Point& lhs, const Point& rhs);
 Point operator/(const Point& lhs, double rhs);
 Point operator*(const Point& lhs, double rhs);
 
+inline bool operator<(const Point& lhs, const Point& rhs) {
+  return lhs.x * lhs.x + lhs.y * lhs.y < rhs.x * rhs.x + rhs.y * rhs.y;
+}
+
 inline Point operator*(double lhs, const Point& rhs) {
   return rhs * lhs;
+}
+
+inline bool pointsEqual(const Point& lhs, const Point& rhs, double delta) {
+  return fabs(rhs.x - lhs.x) <= delta && fabs(rhs.y - lhs.y) <= delta;
 }
 
 inline double distance(const Point& A, const Point& B) {
@@ -128,6 +137,11 @@ struct Circle {
   double radius;
 };
 
+struct Polygon {
+  std::vector<Point> points;
+};
+
+bool polygonsEqual(const Polygon& lhs, const Polygon& rhs, double delta);
 Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);

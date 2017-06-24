@@ -15,11 +15,6 @@ namespace tinyxml2 { class XMLElement; }
 namespace parser { class Object; }
 
 
-struct Wall {
-  LineSegment lseg;
-  std::string texture;
-};
-
 struct AnimationFrame {
   std::array<QRectF, 8> parts;
 
@@ -116,16 +111,71 @@ struct BadGuy : public Sprite {
   virtual ~BadGuy() override {}
 };
 
+struct Edge {
+  enum kind_t {
+    WALL,
+    JOINING_EDGE
+  };
+
+  Edge(kind_t kind)
+    : m_kind(kind) {}
+
+  kind_t kind() const {
+    return m_kind;
+  }
+
+  LineSegment lseg;
+
+  virtual ~Edge() {}
+
+  private:
+    kind_t m_kind;
+};
+
+struct ConvexRegion {
+  Polygon polygon;
+  std::list<std::unique_ptr<ConvexRegion>> children;
+  std::list<ConvexRegion*> siblings;
+  std::list<Edge*> edges;
+  std::list<std::unique_ptr<Sprite>> sprites;
+};
+
+struct Wall : public Edge {
+  Wall() : Edge(WALL) {}
+
+  std::string texture;
+
+  virtual ~Wall() {}
+};
+
+struct JoiningEdge : public Edge {
+  JoiningEdge() : Edge(JOINING_EDGE) {}
+
+  std::string topTexture;
+  std::string bottomTexture;
+
+  ConvexRegion* regionA;
+  ConvexRegion* regionB;
+
+  virtual ~JoiningEdge() {}
+};
+
 class Scene {
   public:
     Scene(const std::string& mapFilePath);
 
+    Size viewport;
     std::unique_ptr<Camera> camera;
+    std::map<std::string, QImage> textures;
+
+    std::unique_ptr<ConvexRegion> rootRegion;
+    std::list<std::unique_ptr<Edge>> edges;
+    const ConvexRegion* currentRegion;
+
+    // TODO
     std::list<std::unique_ptr<Wall>> walls;
     std::list<std::unique_ptr<Sprite>> sprites;
-    Size viewport;
     double wallHeight;
-    std::map<std::string, QImage> textures;
 
   private:
     void addObject(const parser::Object& obj);

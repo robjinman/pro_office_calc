@@ -77,13 +77,6 @@ static double fastATan(const atanMap_t& atanMap, double x) {
 }
 
 //===========================================
-// computeF
-//===========================================
-static double computeF(double w, double fov) {
-  return w / (2.0 * tan(0.5 * fov));
-}
-
-//===========================================
 // worldPointToFloorTexel
 //===========================================
 static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, const Size& texSz_px) {
