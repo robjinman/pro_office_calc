@@ -183,9 +183,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   const Camera& cam = *scene.camera;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
-  const ConvexRegion& region = *scene.currentRegion;
-
-  findIntersections_r(cam, ray, region, nullptr, result);
+  findIntersections_r(cam, ray, *scene.currentRegion, nullptr, result);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -202,6 +200,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   double subview0 = 0;
   double subview1 = scene.viewport.y;
 
+  const ConvexRegion* region = scene.currentRegion;
   int last = 0;
   for (auto it = intersections.begin(); it != intersections.end(); ++it, ++last) {
     if ((*it)->kind == Edge::WALL) {
@@ -237,16 +236,17 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
     else if ((*it)->kind == Edge::JOINING_EDGE) {
       JoiningEdgeX& X = dynamic_cast<JoiningEdgeX&>(**it);
 
-      ConvexRegion* nextRegion = scene.currentRegion == X.joiningEdge->regionA ?
-        X.joiningEdge->regionB : X.joiningEdge->regionA; // TODO: Wrong
+      assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
+      ConvexRegion* nextRegion = region == X.joiningEdge->regionA ?
+        X.joiningEdge->regionB : X.joiningEdge->regionA;
 
       const Point& pt = X.point_cam;
 
-      double floorDiff = nextRegion->floorHeight - scene.currentRegion->floorHeight;
-      double ceilingDiff = scene.currentRegion->ceilingHeight - nextRegion->ceilingHeight;
+      double floorDiff = nextRegion->floorHeight - region->floorHeight;
+      double ceilingDiff = region->ceilingHeight - nextRegion->ceilingHeight;
       double nextRegionSpan = nextRegion->ceilingHeight - nextRegion->floorHeight;
 
-      double bottomWallA = scene.currentRegion->floorHeight - cam.height;
+      double bottomWallA = region->floorHeight - cam.height;
       double bottomWallB = bottomWallA + floorDiff;
       double topWallA = bottomWallB + nextRegionSpan;
       double topWallB = topWallA + ceilingDiff;
@@ -290,6 +290,8 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
 
       projRay0 = LineSegment(Point(0, 0), vw0 * 999.9);
       projRay1 = LineSegment(Point(0, 0), vw1 * 999.9);
+
+      region = nextRegion;
     }
 
     if (subview1 <= subview0) {
