@@ -6,6 +6,7 @@
 #include <map>
 #include <QWidget>
 #include <QTimer>
+#include <QImage>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer2.hpp"
@@ -43,6 +44,7 @@ class FRaycast : public QWidget, public Fragment {
     Renderer2 m_renderer;
     std::unique_ptr<QTimer> m_timer;
     std::unique_ptr<Scene> m_scene;
+    QImage m_buffer;
     std::map<int, bool> m_keyStates;
     Point m_cursor;
     bool m_cursorCaptured;

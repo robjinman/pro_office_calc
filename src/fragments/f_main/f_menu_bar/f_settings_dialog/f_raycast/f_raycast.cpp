@@ -35,6 +35,8 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   m_defaultCursor = cursor().shape();
   m_cursorCaptured = false;
 
+  m_buffer = QImage(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
+
   setFocus();
 }
 
@@ -65,13 +67,11 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  QImage buffer(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
-
-  m_renderer.renderScene(buffer, *m_scene);
+  m_renderer.renderScene(m_buffer, *m_scene);
 
   QPainter painter;
   painter.begin(this);
-  painter.drawImage(rect(), buffer);
+  painter.drawImage(rect(), m_buffer);
   painter.end();
 }
 

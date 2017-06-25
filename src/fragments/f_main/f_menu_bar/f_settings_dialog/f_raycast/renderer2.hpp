@@ -29,6 +29,8 @@ struct Slice {
   double sliceTop_wd;
   double projSliceBottom_wd;
   double projSliceTop_wd;
+  double viewportBottom_wd;
+  double viewportTop_wd;
 };
 
 struct JoiningEdgeX : public Intersection {
@@ -38,6 +40,8 @@ struct JoiningEdgeX : public Intersection {
   JoiningEdge* joiningEdge;
   Slice slice0;
   Slice slice1;
+  const ConvexRegion* nearRegion;
+  const ConvexRegion* farRegion;
 
   virtual ~JoiningEdgeX() {}
 };
