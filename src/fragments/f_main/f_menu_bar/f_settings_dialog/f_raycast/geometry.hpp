@@ -132,6 +132,17 @@ struct LineSegment {
   Point B;
 };
 
+inline Point clipToLineSegment(const Point& p, const LineSegment& lseg) {
+  double d = lseg.signedDistance(p.x);
+  if (d < 0) {
+    return lseg.A;
+  }
+  if (d > lseg.length()) {
+    return lseg.B;
+  }
+  return p;
+}
+
 struct Circle {
   Point pos;
   double radius;

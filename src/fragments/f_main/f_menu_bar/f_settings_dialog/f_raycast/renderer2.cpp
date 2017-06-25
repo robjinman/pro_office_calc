@@ -250,9 +250,11 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       Point p;
       p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
       double proj_bw0 = rotProjPlane.signedDistance(p.x);
-      Point vw0 = p = lineIntersect(bottomWallRay1.line(), rotProjPlane.line());
+      p = lineIntersect(bottomWallRay1.line(), rotProjPlane.line());
+      Point vw0 = p = clipToLineSegment(p, rotProjPlane);
       double proj_bw1 = rotProjPlane.signedDistance(p.x);
-      Point vw1 = p = lineIntersect(topWallRay0.line(), rotProjPlane.line());
+      p = lineIntersect(topWallRay0.line(), rotProjPlane.line());
+      Point vw1 = p = clipToLineSegment(p, rotProjPlane);
       double proj_tw0 = rotProjPlane.signedDistance(p.x);
       p = lineIntersect(topWallRay1.line(), rotProjPlane.line());
       double proj_tw1 = rotProjPlane.signedDistance(p.x);
