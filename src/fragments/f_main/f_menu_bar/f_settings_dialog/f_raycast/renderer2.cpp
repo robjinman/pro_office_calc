@@ -178,38 +178,44 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Con
 }
 
 static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
+  auto& intersections = result.intersections;
+
   const Camera& cam = *scene.camera;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
-  //double distanceFromCamera = std::numeric_limits<double>::infinity();
-  //Matrix invCamMatrix = cam.matrix().inverse();
 
   const ConvexRegion& region = *scene.currentRegion;
 
   findIntersections_r(cam, ray, region, nullptr, result);
 
-  result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
+  intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
   });
 
-  for (auto it = result.intersections.begin(); it != result.intersections.end(); ++it) {
+  LineSegment projPlane(Point(cam.F, 0.00001 - scene.viewport.y / 2),
+    Point(cam.F, scene.viewport.y * 0.5));
+
+  Matrix m(cam.vAngle, Vec2f(0, 0));
+  LineSegment rotProjPlane = transform(projPlane, m);
+
+  LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
+  LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
+  double subview0 = 0;
+  double subview1 = scene.viewport.y;
+
+  int last = 0;
+  for (auto it = intersections.begin(); it != intersections.end(); ++it, ++last) {
     if ((*it)->kind == Edge::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
-      double targetHeight = scene.wallHeight; // TODO
-
+      double floorHeight = X.wall->region->floorHeight;
+      double targetHeight = X.wall->region->ceilingHeight - X.wall->region->floorHeight;
       const Point& pt = X.point_cam;
 
-      LineSegment projPlane(Point(cam.F, 0.00001 - scene.viewport.y / 2),
-        Point(cam.F, scene.viewport.y * 0.5));
+      LineSegment wall(Point(pt.x + 0.00001, floorHeight - cam.height),
+        Point(pt.x, floorHeight - cam.height + targetHeight));
 
-      Matrix m(cam.vAngle, Vec2f(0, 0));
-      LineSegment rotProjPlane = transform(projPlane, m);
-
-      LineSegment wallRay0(Point(0, 0), Point(pt.x, -cam.height));
-      LineSegment wallRay1(Point(0, 0), Point(pt.x, targetHeight - cam.height));
-
-      LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
-      LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
+      LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));
+      LineSegment wallRay1(Point(0, 0), Point(pt.x, wall.B.y));
 
       Point p;
       p = lineIntersect(wallRay0.line(), rotProjPlane.line());
@@ -217,18 +223,85 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       p = lineIntersect(wallRay1.line(), rotProjPlane.line());
       double proj_w1 = rotProjPlane.signedDistance(p.x);
 
-      X.projSliceBottom_wd = clipNumber(proj_w0, Size(0, scene.viewport.y));
-      X.projSliceTop_wd = clipNumber(proj_w1, Size(0, scene.viewport.y));
-
-      LineSegment wall(Point(pt.x + 0.00001, -cam.height), Point(pt.x, targetHeight - cam.height));
+      X.projSliceBottom_wd = clipNumber(proj_w0, Size(subview0, subview1));
+      X.projSliceTop_wd = clipNumber(proj_w1, Size(subview0, subview1));
 
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
       X.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
       X.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
+
+      break;
+    }
+    else if ((*it)->kind == Edge::JOINING_EDGE) {
+      JoiningEdgeX& X = dynamic_cast<JoiningEdgeX&>(**it);
+
+      ConvexRegion* nextRegion = scene.currentRegion == X.joiningEdge->regionA ?
+        X.joiningEdge->regionB : X.joiningEdge->regionA; // TODO: Wrong
+
+      const Point& pt = X.point_cam;
+
+      //double floorHeight = X.joiningEdge->region->floorHeight;
+      double floorDiff = nextRegion->floorHeight - scene.currentRegion->floorHeight;
+      double ceilingDiff = nextRegion->ceilingHeight - scene.currentRegion->ceilingHeight;
+      double nextRegionSpan = nextRegion->ceilingHeight - nextRegion->floorHeight;
+
+      double bottomWallA = -cam.height; // TODO
+      double bottomWallB = bottomWallA + floorDiff;
+      double topWallA = bottomWallB + nextRegionSpan;
+      double topWallB = topWallA + ceilingDiff;
+
+      LineSegment bottomWall(Point(pt.x, bottomWallA), Point(pt.x, bottomWallB));
+      LineSegment topWall(Point(pt.x, topWallA), Point(pt.x, topWallB));
+
+      LineSegment bottomWallRay0(Point(0, 0), bottomWall.A);
+      LineSegment bottomWallRay1(Point(0, 0), bottomWall.B);
+
+      LineSegment topWallRay0(Point(0, 0), topWall.A);
+      LineSegment topWallRay1(Point(0, 0), topWall.B);
+
+      Point p;
+      p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
+      double proj_bw0 = rotProjPlane.signedDistance(p.x);
+      Point vw0 = p = lineIntersect(bottomWallRay1.line(), rotProjPlane.line());
+      double proj_bw1 = rotProjPlane.signedDistance(p.x);
+      Point vw1 = p = lineIntersect(topWallRay0.line(), rotProjPlane.line());
+      double proj_tw0 = rotProjPlane.signedDistance(p.x);
+      p = lineIntersect(topWallRay1.line(), rotProjPlane.line());
+      double proj_tw1 = rotProjPlane.signedDistance(p.x);
+
+      X.projSlice0Bottom_wd = clipNumber(proj_bw0, Size(subview0, subview1));
+      X.projSlice0Top_wd = clipNumber(proj_bw1, Size(subview0, subview1));
+
+      X.projSlice1Bottom_wd = clipNumber(proj_tw0, Size(subview0, subview1));
+      X.projSlice1Top_wd = clipNumber(proj_tw1, Size(subview0, subview1));
+
+      subview0 = proj_bw1;
+      subview1 = proj_tw0;
+
+      projRay0 = LineSegment(Point(0, 0), vw0 * 999.9);
+      projRay1 = LineSegment(Point(0, 0), vw1 * 999.9);
+
+      double bottomWall_s0 = lineIntersect(projRay0.line(), bottomWall.line()).y;
+      double bottomWall_s1 = lineIntersect(projRay1.line(), bottomWall.line()).y;
+
+      double topWall_s0 = lineIntersect(projRay0.line(), topWall.line()).y;
+      double topWall_s1 = lineIntersect(projRay1.line(), topWall.line()).y;
+
+      X.slice0Bottom_wd = clipNumber(bottomWall.A.y, Size(bottomWall_s0, bottomWall_s1));
+      X.slice0Top_wd = clipNumber(bottomWall.B.y, Size(bottomWall_s0, bottomWall_s1));
+
+      X.slice1Bottom_wd = clipNumber(topWall.A.y, Size(topWall_s0, topWall_s1));
+      X.slice1Top_wd = clipNumber(topWall.B.y, Size(topWall_s0, topWall_s1));
+    }
+
+    if (subview1 <= subview0) {
+      break;
     }
   }
+
+  intersections.resize(last + 1);
 }
 
 //===========================================

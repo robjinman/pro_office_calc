@@ -97,13 +97,12 @@ static void populateScene(Scene& scene) {
   scene.camera->pos = Point(30, 30);
   scene.camera->angle = DEG_TO_RAD(45);
 
-
-
-
-
   ConvexRegion* rootRegion = new ConvexRegion;
   ConvexRegion* region1 = new ConvexRegion;
   ConvexRegion* region2 = new ConvexRegion;
+
+  region2->floorHeight = 20;
+  region2->ceilingHeight = 80;
 
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));
@@ -111,12 +110,14 @@ static void populateScene(Scene& scene) {
   Wall* wall = new Wall;
   scene.edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(0, 0), Point(200, 1));
+  wall->region = region1;
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
   JoiningEdge* je = new JoiningEdge;
   scene.edges.push_back(std::unique_ptr<JoiningEdge>(je));
   je->lseg = LineSegment(Point(200, 1), Point(201, 201));
+  wall->region = region1;
   je->topTexture = "light_bricks";
   je->bottomTexture = "dark_bricks";
   region1->edges.push_back(je);
@@ -124,30 +125,35 @@ static void populateScene(Scene& scene) {
   wall = new Wall;
   scene.edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(201, 201), Point(1, 200));
+  wall->region = region1;
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
   wall = new Wall;
   scene.edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(1, 200), Point(0, 0));
+  wall->region = region1;
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
   wall = new Wall;
   scene.edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(200, 1), Point(400, 2));
+  wall->region = region2;
   wall->texture = "light_bricks";
   region2->edges.push_back(wall);
 
   wall = new Wall;
   scene.edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(400, 2), Point(401, 202));
+  wall->region = region2;
   wall->texture = "light_bricks";
   region2->edges.push_back(wall);
 
   wall = new Wall;
   scene.edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(401, 202), Point(201, 201));
+  wall->region = region2;
   wall->texture = "light_bricks";
   region2->edges.push_back(wall);
 

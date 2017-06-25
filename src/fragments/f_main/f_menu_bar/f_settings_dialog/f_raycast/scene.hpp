@@ -133,7 +133,9 @@ struct Edge {
 };
 
 struct ConvexRegion {
-  Polygon polygon;
+  Polygon polygon; // TODO: Remove?
+  double floorHeight = 0;
+  double ceilingHeight = 100;
   std::list<std::unique_ptr<ConvexRegion>> children;
   std::list<ConvexRegion*> siblings;
   std::list<Edge*> edges;
@@ -144,6 +146,11 @@ struct Wall : public Edge {
   Wall() : Edge(WALL) {}
 
   std::string texture;
+  ConvexRegion* region;
+
+  double height() const {
+    return region->ceilingHeight - region->floorHeight;
+  }
 
   virtual ~Wall() {}
 };
