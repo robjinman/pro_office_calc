@@ -24,21 +24,20 @@ struct Intersection {
 
 typedef std::unique_ptr<Intersection> pIntersection_t;
 
+struct Slice {
+  double sliceBottom_wd;
+  double sliceTop_wd;
+  double projSliceBottom_wd;
+  double projSliceTop_wd;
+};
+
 struct JoiningEdgeX : public Intersection {
   JoiningEdgeX()
     : Intersection(Edge::JOINING_EDGE) {}
 
   JoiningEdge* joiningEdge;
-
-  double slice0Bottom_wd;
-  double slice0Top_wd;
-  double projSlice0Bottom_wd;
-  double projSlice0Top_wd;
-
-  double slice1Bottom_wd;
-  double slice1Top_wd;
-  double projSlice1Bottom_wd;
-  double projSlice1Top_wd;
+  Slice slice0;
+  Slice slice1;
 
   virtual ~JoiningEdgeX() {}
 };
@@ -48,10 +47,7 @@ struct WallX : public Intersection {
     : Intersection(Edge::WALL) {}
 
   Wall* wall;
-  double sliceBottom_wd;
-  double sliceTop_wd;
-  double projSliceBottom_wd;
-  double projSliceTop_wd;
+  Slice slice;
 
   virtual ~WallX() {}
 };

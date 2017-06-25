@@ -161,7 +161,7 @@ static void populateScene(Scene& scene) {
   je->regionA = region1;
   je->regionB = region2;
 
-
+  scene.currentRegion = region1;
 
 
 /*
@@ -211,7 +211,6 @@ Scene::Scene(const string& mapFilePath) {
   viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   viewport.y = 10.0;
   wallHeight = 100.0;
-  currentRegion = rootRegion.get();
 
   camera->height = wallHeight / 2;
   camera->F = computeF(viewport.x, camera->hFov);
