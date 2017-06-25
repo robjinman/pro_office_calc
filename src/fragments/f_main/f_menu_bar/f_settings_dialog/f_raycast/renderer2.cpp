@@ -238,6 +238,13 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       double topWallA = bottomWallB + nextRegionSpan;
       double topWallB = topWallA + ceilingDiff;
 
+      if (floorDiff < 0) {
+        bottomWallB = bottomWallA;
+      }
+      if (ceilingDiff < 0) {
+        topWallA = topWallB;
+      }
+
       LineSegment bottomWall(Point(pt.x + 0.00001, bottomWallA), Point(pt.x, bottomWallB));
       LineSegment topWall(Point(pt.x + 0.00001, topWallA), Point(pt.x, topWallB));
 
