@@ -117,65 +117,6 @@ void FRaycast::mouseMoveEvent(QMouseEvent* event) {
 }
 
 //===========================================
-// rotateCamera
-//===========================================
-static void rotateCamera(Scene& scene, double da) {
-  scene.camera->angle += da;
-}
-
-//===========================================
-// intersectWall
-//===========================================
-static bool intersectWall(const Scene& scene, const Circle& circle) {
-  for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-//===========================================
-// translateCamera
-//===========================================
-static void translateCamera(Scene& scene, const Vec2f& dir) {
-  Camera& cam = *scene.camera;
-
-  Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
-    sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
-
-  double radius = scene.wallHeight / 5.0;
-
-  Circle circle{cam.pos + dv, radius};
-  LineSegment ray(cam.pos, cam.pos + dv);
-
-  bool collision = false;
-  for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
-    const Wall& wall = **it;
-
-    if (lineSegmentCircleIntersect(circle, wall.lseg)) {
-      collision = true;
-
-      Matrix m(-atan(wall.lseg.line().m), Vec2f());
-      Vec2f dv_ = m * dv;
-      dv_.y = 0;
-      dv_ = m.inverse() * dv_;
-
-      Circle circle2{cam.pos + dv_, radius};
-
-      if (!intersectWall(scene, circle2)) {
-        cam.pos = cam.pos + dv_;
-        return;
-      }
-    }
-  }
-
-  if (!collision) {
-    cam.pos = cam.pos + dv;
-  }
-}
-
-//===========================================
 // FRaycast::tick
 //===========================================
 void FRaycast::tick() {
@@ -205,14 +146,14 @@ void FRaycast::tick() {
 
   if (v.x != 0 || v.y != 0) {
     double ds = 5;
-    translateCamera(*m_scene, normalise(v) * ds);
+    m_scene->translateCamera(normalise(v) * ds);
   }
 
   if (m_keyStates[Qt::Key_Left]) {
-    rotateCamera(*m_scene, -0.02 * PI);
+    m_scene->rotateCamera(-0.02 * PI);
   }
   if (m_keyStates[Qt::Key_Right]) {
-    rotateCamera(*m_scene, 0.02 * PI);
+    m_scene->rotateCamera(0.02 * PI);
   }
 
   if (m_cursorCaptured) {
@@ -226,7 +167,7 @@ void FRaycast::tick() {
 
     if (fabs(v.x) > 0) {
       double da = 0.0008 * PI * v.x;
-      rotateCamera(*m_scene, da);
+      m_scene->rotateCamera(da);
     }
 
     if (fabs(v.y) > 0) {

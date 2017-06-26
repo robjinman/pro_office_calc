@@ -228,6 +228,18 @@ static void populateScene(Scene& scene) {
 }
 
 //===========================================
+// intersectWall
+//===========================================
+static bool intersectWall(const Scene& scene, const Circle& circle) {
+  for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
+    if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//===========================================
 // Scene::Scene
 //===========================================
 Scene::Scene(const string& mapFilePath) {
@@ -252,6 +264,53 @@ Scene::Scene(const string& mapFilePath) {
   textures["ceiling"] = QImage("data/ceiling.png");
   textures["ammo"] = QImage("data/ammo.png");
   textures["bad_guy"] = QImage("data/bad_guy.png");
+}
+
+//===========================================
+// Scene::rotateCamera
+//===========================================
+void Scene::rotateCamera(double da) {
+  camera->angle += da;
+}
+
+//===========================================
+// Scene::translateCamera
+//===========================================
+void Scene::translateCamera(const Vec2f& dir) {
+  Camera& cam = *camera;
+
+  Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
+    sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
+
+  double radius = wallHeight / 5.0;
+
+  Circle circle{cam.pos + dv, radius};
+  LineSegment ray(cam.pos, cam.pos + dv);
+
+  bool collision = false;
+  for (auto it = walls.begin(); it != walls.end(); ++it) {
+    const Wall& wall = **it;
+
+    if (lineSegmentCircleIntersect(circle, wall.lseg)) {
+      collision = true;
+
+      Matrix m(-atan(wall.lseg.line().m), Vec2f());
+      Vec2f dv_ = m * dv;
+      dv_.y = 0;
+      dv_ = m.inverse() * dv_;
+
+      Circle circle2{cam.pos + dv_, radius};
+
+      if (!intersectWall(*this, circle2)) {
+        cam.pos = cam.pos + dv_;
+        return;
+      }
+    }
+  }
+
+  if (!collision) {
+    cam.pos = cam.pos + dv;
+  }
 }
 
 //===========================================

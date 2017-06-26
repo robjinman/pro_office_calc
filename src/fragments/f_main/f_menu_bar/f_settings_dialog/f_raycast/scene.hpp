@@ -179,6 +179,9 @@ class Scene {
     std::list<std::unique_ptr<Edge>> edges;
     const ConvexRegion* currentRegion;
 
+    void rotateCamera(double da);
+    void translateCamera(const Vec2f& dir);
+
     // TODO
     std::list<std::unique_ptr<Wall>> walls;
     std::list<std::unique_ptr<Sprite>> sprites;
