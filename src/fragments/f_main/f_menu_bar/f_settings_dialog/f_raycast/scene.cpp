@@ -230,8 +230,8 @@ static void populateScene(Scene& scene) {
 //===========================================
 // intersectWall
 //===========================================
-static bool intersectWall(const Scene& scene, const Circle& circle) {
-  for (auto it = scene.walls.begin(); it != scene.walls.end(); ++it) {
+static bool intersectWall(const ConvexRegion& region, const Circle& circle) {
+  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
     if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
       return true;
     }
@@ -288,20 +288,20 @@ void Scene::translateCamera(const Vec2f& dir) {
   LineSegment ray(cam.pos, cam.pos + dv);
 
   bool collision = false;
-  for (auto it = walls.begin(); it != walls.end(); ++it) {
-    const Wall& wall = **it;
+  for (auto it = currentRegion->edges.begin(); it != currentRegion->edges.end(); ++it) {
+    const Edge& edge = **it;
 
-    if (lineSegmentCircleIntersect(circle, wall.lseg)) {
+    if (lineSegmentCircleIntersect(circle, edge.lseg)) {
       collision = true;
 
-      Matrix m(-atan(wall.lseg.line().m), Vec2f());
+      Matrix m(-atan(edge.lseg.line().m), Vec2f());
       Vec2f dv_ = m * dv;
       dv_.y = 0;
       dv_ = m.inverse() * dv_;
 
       Circle circle2{cam.pos + dv_, radius};
 
-      if (!intersectWall(*this, circle2)) {
+      if (!intersectWall(*currentRegion, circle2)) {
         cam.pos = cam.pos + dv_;
         return;
       }

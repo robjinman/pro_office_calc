@@ -57,7 +57,7 @@ struct WallX : public Intersection {
 };
 
 struct CastResult {
-  std::list<std::unique_ptr<Intersection>> intersections;
+  std::list<pIntersection_t> intersections;
 };
 
 typedef std::array<double, 10000> tanMap_t;
