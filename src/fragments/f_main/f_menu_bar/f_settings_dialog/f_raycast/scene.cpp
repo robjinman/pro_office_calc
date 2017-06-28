@@ -102,11 +102,14 @@ static void populateScene(Scene& scene) {
   ConvexRegion* region2 = new ConvexRegion;
   ConvexRegion* region3 = new ConvexRegion;
 
+  region1->floorHeight = 0;
+  region1->ceilingHeight = 160;
+
   region2->floorHeight = 20;
-  region2->ceilingHeight = 80;
+  region2->ceilingHeight = 120;
 
   region3->floorHeight = 40;
-  region3->ceilingHeight = 100;
+  region3->ceilingHeight = 160;
 
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));
@@ -292,18 +295,31 @@ void Scene::translateCamera(const Vec2f& dir) {
     const Edge& edge = **it;
 
     if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-      collision = true;
+      if (edge.kind() == Edge::WALL) {
+        collision = true;
 
-      Matrix m(-atan(edge.lseg.line().m), Vec2f());
-      Vec2f dv_ = m * dv;
-      dv_.y = 0;
-      dv_ = m.inverse() * dv_;
+        Matrix m(-atan(edge.lseg.line().m), Vec2f());
+        Vec2f dv_ = m * dv;
+        dv_.y = 0;
+        dv_ = m.inverse() * dv_;
 
-      Circle circle2{cam.pos + dv_, radius};
+        Circle circle2{cam.pos + dv_, radius};
 
-      if (!intersectWall(*currentRegion, circle2)) {
-        cam.pos = cam.pos + dv_;
-        return;
+        if (!intersectWall(*currentRegion, circle2)) {
+          cam.pos = cam.pos + dv_;
+          return;
+        }
+      }
+      else if (edge.kind() == Edge::JOINING_EDGE) {
+        const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+
+        double floorH = currentRegion->floorHeight;
+        currentRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
+
+        dv = dv * 10; // TODO
+
+        cam.height += currentRegion->floorHeight - floorH;
+        break;
       }
     }
   }
