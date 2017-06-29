@@ -102,13 +102,13 @@ static void populateScene(Scene& scene) {
   ConvexRegion* region2 = new ConvexRegion;
   ConvexRegion* region3 = new ConvexRegion;
 
-  region1->floorHeight = 0;
-  region1->ceilingHeight = 160;
+  region1->floorHeight = 20;
+  region1->ceilingHeight = 120;
 
-  region2->floorHeight = 20;
-  region2->ceilingHeight = 120;
+  region2->floorHeight = 0;
+  region2->ceilingHeight = 140;
 
-  region3->floorHeight = 40;
+  region3->floorHeight = 10;
   region3->ceilingHeight = 160;
 
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));

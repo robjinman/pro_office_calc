@@ -249,8 +249,9 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       X.slice1.projSliceBottom_wd = clipNumber(proj_tw0, Size(subview0, subview1));
       X.slice1.projSliceTop_wd = clipNumber(proj_tw1, Size(subview0, subview1));
 
-      double wall_s0 = lineIntersect(projRay0.line(), bottomWall.line()).y;
-      double wall_s1 = lineIntersect(projRay1.line(), bottomWall.line()).y;
+      LineSegment wall(Point(pt.x + 0.00001, bottomWallA), Point(pt.x, topWallB));
+      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
+      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
       X.slice0.sliceBottom_wd = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1));
       X.slice0.sliceTop_wd = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1));
