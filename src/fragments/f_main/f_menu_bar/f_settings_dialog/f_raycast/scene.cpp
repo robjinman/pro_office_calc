@@ -74,24 +74,6 @@ static Sprite* constructSprite(const parser::Object& obj) {
   EXCEPTION("Error constructing sprite of unknown type");
 }
 
-static void buildPolygon(ConvexRegion& region) {
-  region.polygon.points.clear();
-  Polygon polyCpy;
-
-  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
-    const Edge& edge = **it;
-
-    // If the line segments are connected, lseg.A and lseg.B should yield
-    // the same polygon
-    region.polygon.points.push_back(edge.lseg.A);
-    polyCpy.points.push_back(edge.lseg.B);
-  }
-
-  if (!polygonsEqual(region.polygon, polyCpy, 0.0001)) {
-    EXCEPTION("Error constructing polygon; Line segments not connected\n");
-  }
-}
-
 static void populateScene(Scene& scene) {
   scene.camera.reset(new Camera);
   scene.camera->pos = Point(30, 30);
@@ -197,36 +179,6 @@ static void populateScene(Scene& scene) {
 
   scene.currentRegion = region1;
 
-
-/*
-  ConvexRegion* region = new ConvexRegion;
-
-  Wall* wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(1, 1), Point(200, 1));
-  wall->texture = "light_bricks";
-  region->edges.push_back(wall);
-
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(200, 1), Point(200, 200));
-  wall->texture = "light_bricks";
-  region->edges.push_back(wall);
-
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(200, 200), Point(0, 200));
-  wall->texture = "light_bricks";
-  region->edges.push_back(wall);
-
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(0, 200), Point(1, 1));
-  wall->texture = "light_bricks";
-  region->edges.push_back(wall);
-
-  buildPolygon(*region);
-*/
   scene.rootRegion.reset(rootRegion);
 }
 

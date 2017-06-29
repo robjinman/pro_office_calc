@@ -131,38 +131,6 @@ LineSegment transform(const LineSegment& lseg, const Matrix& m) {
 }
 
 //===========================================
-// polygonsEqual
-//===========================================
-bool polygonsEqual(const Polygon& lhs, const Polygon& rhs, double delta) {
-  if (lhs.points.size() != rhs.points.size()) {
-    return false;
-  }
-
-  if (lhs.points.size() == 0) {
-    return true;
-  }
-
-  auto it = std::find(lhs.points.begin(), lhs.points.end(), rhs.points[0]);
-
-  if (it == lhs.points.end()) {
-    return false;
-  }
-
-  for (unsigned int i = 0; i < lhs.points.size(); ++i) {
-    if (!pointsEqual(rhs.points[i], *it, delta)) {
-      return false;
-    }
-
-    ++it;
-    if (it == lhs.points.end()) {
-      it = lhs.points.begin();
-    }
-  }
-
-  return true;
-}
-
-//===========================================
 // lineIntersect
 //===========================================
 Point lineIntersect(const Line& l0, const Line& l1) {

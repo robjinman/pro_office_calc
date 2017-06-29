@@ -148,11 +148,6 @@ struct Circle {
   double radius;
 };
 
-struct Polygon {
-  std::vector<Point> points;
-};
-
-bool polygonsEqual(const Polygon& lhs, const Polygon& rhs, double delta);
 Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);

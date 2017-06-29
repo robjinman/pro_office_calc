@@ -133,11 +133,9 @@ struct Edge {
 };
 
 struct ConvexRegion {
-  Polygon polygon; // TODO: Remove?
   double floorHeight = 0;
   double ceilingHeight = 100;
   std::list<std::unique_ptr<ConvexRegion>> children;
-  std::list<ConvexRegion*> siblings;
   std::list<Edge*> edges;
   std::list<std::unique_ptr<Sprite>> sprites;
 };
