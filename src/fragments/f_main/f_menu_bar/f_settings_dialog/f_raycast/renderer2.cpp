@@ -65,20 +65,8 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 }
 
 //===========================================
-// Renderer2::Renderer2
+// constructIntersection
 //===========================================
-Renderer2::Renderer2() {
-  for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
-    m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
-      / static_cast<double>(m_tanMap_rp.size()));
-  }
-
-  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(m_atanMap.size());
-  for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
-    m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
-  }
-}
-
 static Intersection* constructIntersection(Edge::kind_t kind) {
   switch (kind) {
     case Edge::WALL:
@@ -92,6 +80,9 @@ static Intersection* constructIntersection(Edge::kind_t kind) {
   }
 }
 
+//===========================================
+// findIntersections_r
+//===========================================
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const ConvexRegion& region,
   const Edge* exclude, CastResult& result) {
 
@@ -137,6 +128,9 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Con
   }
 }
 
+//===========================================
+// castRay
+//===========================================
 static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   auto& intersections = result.intersections;
 
@@ -382,6 +376,7 @@ static void sampleTexture(const QRect& texRect, double camHeight_wd, const Size&
   double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd;
   double sliceTop_wd = slice.sliceTop_wd + camHeight_wd;
 
+  // World space (not camera space)
   auto fnSliceToProjY = [&](double y) {
     return slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
   };
@@ -414,11 +409,13 @@ static void sampleTexture(const QRect& texRect, double camHeight_wd, const Size&
     trgRect.setWidth(1);
     trgRect.setHeight(projTexH_wd * vWorldUnit_px);
 
+    // Note that screen y-axis is inverted
     if (j == j0) {
       srcRect.setHeight(srcRect.height() - bottomOffset_wd * vWorldUnit_tx);
       trgRect.setHeight(trgRect.height() - bottomOffset_wd * sliceToProjScale * vWorldUnit_px);
     }
     if (j + 1 == j1) {
+      // QRect::setY() also changes the height!
       srcRect.setY(srcRect.y() + topOffset_wd * vWorldUnit_tx);
       trgRect.setY(trgRect.y() + topOffset_wd * sliceToProjScale * vWorldUnit_px);
     }
@@ -465,6 +462,21 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
   viewportTop_px = clipNumber(viewportTop_px, Size(0, viewport_px.y - 1));
 
   return ScreenSlice{screenSliceBottom_px, screenSliceTop_px, viewportBottom_px, viewportTop_px};
+}
+
+//===========================================
+// Renderer2::Renderer2
+//===========================================
+Renderer2::Renderer2() {
+  for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
+    m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
+      / static_cast<double>(m_tanMap_rp.size()));
+  }
+
+  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(m_atanMap.size());
+  for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
+    m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
+  }
 }
 
 //===========================================
