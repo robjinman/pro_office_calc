@@ -93,6 +93,10 @@ static void populateScene(Scene& scene) {
   region3->floorHeight = 10;
   region3->ceilingHeight = 160;
 
+  Sprite* badGuy1 = new BadGuy;
+  badGuy1->setTransform(Matrix(DEG_TO_RAD(45), Vec2f(300, 300)));
+  region2->sprites.push_back(unique_ptr<Sprite>(badGuy1));
+
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region3));
@@ -247,7 +251,7 @@ void Scene::translateCamera(const Vec2f& dir) {
     const Edge& edge = **it;
 
     if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-      if (edge.kind() == Edge::WALL) {
+      if (edge.kind == EdgeKind::WALL) {
         collision = true;
 
         Matrix m(-atan(edge.lseg.line().m), Vec2f());
@@ -262,7 +266,7 @@ void Scene::translateCamera(const Vec2f& dir) {
           return;
         }
       }
-      else if (edge.kind() == Edge::JOINING_EDGE) {
+      else if (edge.kind == EdgeKind::JOINING_EDGE) {
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
         double floorH = currentRegion->floorHeight;

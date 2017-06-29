@@ -9,11 +9,17 @@
 
 class QImage;
 
+enum class IntersectionKind {
+  JOINING_EDGE,
+  WALL,
+  SPRITE
+};
+
 struct Intersection {
-  Intersection(Edge::kind_t kind)
+  Intersection(IntersectionKind kind)
     : kind(kind) {}
 
-  Edge::kind_t kind;
+  IntersectionKind kind;
   Point point_cam;
   Point point_world;
   double distanceFromCamera;
@@ -35,7 +41,7 @@ struct Slice {
 
 struct JoiningEdgeX : public Intersection {
   JoiningEdgeX()
-    : Intersection(Edge::JOINING_EDGE) {}
+    : Intersection(IntersectionKind::JOINING_EDGE) {}
 
   JoiningEdge* joiningEdge;
   Slice slice0;
@@ -48,7 +54,7 @@ struct JoiningEdgeX : public Intersection {
 
 struct WallX : public Intersection {
   WallX()
-    : Intersection(Edge::WALL) {}
+    : Intersection(IntersectionKind::WALL) {}
 
   Wall* wall;
   Slice slice;

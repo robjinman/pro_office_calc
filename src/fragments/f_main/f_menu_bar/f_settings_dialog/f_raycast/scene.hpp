@@ -111,25 +111,19 @@ struct BadGuy : public Sprite {
   virtual ~BadGuy() override {}
 };
 
+enum class EdgeKind {
+  JOINING_EDGE,
+  WALL
+};
+
 struct Edge {
-  enum kind_t {
-    WALL,
-    JOINING_EDGE
-  };
+  Edge(EdgeKind kind)
+    : kind(kind) {}
 
-  Edge(kind_t kind)
-    : m_kind(kind) {}
-
-  kind_t kind() const {
-    return m_kind;
-  }
-
+  EdgeKind kind;
   LineSegment lseg;
 
   virtual ~Edge() {}
-
-  private:
-    kind_t m_kind;
 };
 
 struct ConvexRegion {
@@ -141,7 +135,7 @@ struct ConvexRegion {
 };
 
 struct Wall : public Edge {
-  Wall() : Edge(WALL) {}
+  Wall() : Edge(EdgeKind::WALL) {}
 
   std::string texture;
   ConvexRegion* region;
@@ -154,7 +148,7 @@ struct Wall : public Edge {
 };
 
 struct JoiningEdge : public Edge {
-  JoiningEdge() : Edge(JOINING_EDGE) {}
+  JoiningEdge() : Edge(EdgeKind::JOINING_EDGE) {}
 
   std::string topTexture;
   std::string bottomTexture;

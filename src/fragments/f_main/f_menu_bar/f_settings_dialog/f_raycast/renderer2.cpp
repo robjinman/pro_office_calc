@@ -67,12 +67,12 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 //===========================================
 // constructIntersection
 //===========================================
-static Intersection* constructIntersection(Edge::kind_t kind) {
+static Intersection* constructIntersection(EdgeKind kind) {
   switch (kind) {
-    case Edge::WALL:
+    case EdgeKind::WALL:
       return new WallX;
       break;
-    case Edge::JOINING_EDGE:
+    case EdgeKind::JOINING_EDGE:
       return new JoiningEdgeX;
       break;
     default:
@@ -100,7 +100,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Con
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
       if (exclude != &edge) {
-        Intersection* X = constructIntersection(edge.kind());
+        Intersection* X = constructIntersection(edge.kind);
         result.intersections.push_back(pIntersection_t(X));
 
         X->point_cam = pt;
@@ -108,13 +108,13 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Con
         X->distanceFromCamera = pt.x;
         X->distanceAlongTarget = distance(lseg.A, pt);
 
-        if (edge.kind() == Edge::WALL) {
+        if (edge.kind == EdgeKind::WALL) {
           WallX* wallX = dynamic_cast<WallX*>(X);
           Wall& wall = dynamic_cast<Wall&>(edge);
 
           wallX->wall = &wall;
         }
-        else if (edge.kind() == Edge::JOINING_EDGE) {
+        else if (edge.kind == EdgeKind::JOINING_EDGE) {
           JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
           JoiningEdge& je = dynamic_cast<JoiningEdge&>(edge);
 
@@ -157,7 +157,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   const ConvexRegion* region = scene.currentRegion;
   int last = 0;
   for (auto it = intersections.begin(); it != intersections.end(); ++it, ++last) {
-    if ((*it)->kind == Edge::WALL) {
+    if ((*it)->kind == IntersectionKind::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
       double floorHeight = X.wall->region->floorHeight;
@@ -189,7 +189,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
 
       break;
     }
-    else if ((*it)->kind == Edge::JOINING_EDGE) {
+    else if ((*it)->kind == IntersectionKind::JOINING_EDGE) {
       JoiningEdgeX& X = dynamic_cast<JoiningEdgeX&>(**it);
 
       assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
@@ -504,7 +504,7 @@ void Renderer2::renderScene(QImage& target, const Scene& scene) {
     for (auto it = result.intersections.begin(); it != result.intersections.end(); ++it) {
       pIntersection_t& X = *it;
 
-      if (X->kind == Edge::WALL) {
+      if (X->kind == IntersectionKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(*X);
 
         ScreenSlice slice = drawSlice(painter, scene, cam.F, wallX.distanceAlongTarget, wallX.slice,
@@ -517,7 +517,7 @@ void Renderer2::renderScene(QImage& target, const Scene& scene) {
 
         break;
       }
-      else if (X->kind == Edge::JOINING_EDGE) {
+      else if (X->kind == IntersectionKind::JOINING_EDGE) {
         const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(*X);
 
         ScreenSlice slice0 = drawSlice(painter, scene, cam.F, jeX.distanceAlongTarget, jeX.slice0,
