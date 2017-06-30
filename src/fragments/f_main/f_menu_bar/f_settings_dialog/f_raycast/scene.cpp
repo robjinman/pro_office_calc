@@ -84,18 +84,19 @@ static void populateScene(Scene& scene) {
   ConvexRegion* region2 = new ConvexRegion;
   ConvexRegion* region3 = new ConvexRegion;
 
-  region1->floorHeight = 20;
+  region1->floorHeight = 0;
   region1->ceilingHeight = 120;
 
-  region2->floorHeight = 0;
+  region2->floorHeight = -20;
   region2->ceilingHeight = 140;
 
   region3->floorHeight = 10;
-  region3->ceilingHeight = 160;
+  region3->ceilingHeight = 100;
 
   Sprite* badGuy1 = new BadGuy;
-  badGuy1->setTransform(Matrix(DEG_TO_RAD(45), Vec2f(300, 300)));
-  region2->sprites.push_back(unique_ptr<Sprite>(badGuy1));
+  badGuy1->setTransform(Matrix(DEG_TO_RAD(0), Vec2f(100, 100)));
+  badGuy1->region = region1;
+  region1->sprites.push_back(unique_ptr<Sprite>(badGuy1));
 
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
   rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));

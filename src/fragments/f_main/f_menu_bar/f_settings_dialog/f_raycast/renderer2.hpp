@@ -62,6 +62,16 @@ struct WallX : public Intersection {
   virtual ~WallX() {}
 };
 
+struct SpriteX : public Intersection {
+  SpriteX()
+    : Intersection(IntersectionKind::SPRITE) {}
+
+  Sprite* sprite;
+  Slice slice;
+
+  virtual ~SpriteX() {}
+};
+
 struct CastResult {
   std::list<pIntersection_t> intersections;
 };

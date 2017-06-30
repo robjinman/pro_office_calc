@@ -39,6 +39,8 @@ class Animation {
     int m_currentFrameIdx = 0;
 };
 
+class ConvexRegion;
+
 class Sprite {
   public:
     Sprite(const Size& size, const std::string& texture)
@@ -56,6 +58,7 @@ class Sprite {
       return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + angle);
     }
 
+    ConvexRegion* region;
     std::string texture;
     Vec2f pos;
     double angle;

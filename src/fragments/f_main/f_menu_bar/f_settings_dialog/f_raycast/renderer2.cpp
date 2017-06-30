@@ -92,6 +92,25 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Con
 
   Matrix invCamMatrix = camera.matrix().inverse();
 
+  for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
+    Sprite& sprite = **it;
+    Point pos = invCamMatrix * sprite.pos;
+    double w = sprite.size.x;
+    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x * 1.00001, pos.y + 0.5 * w));
+
+    Point pt;
+    if (lineSegmentIntersect(ray, lseg, pt)) {
+      SpriteX* X = new SpriteX;
+      result.intersections.push_back(pIntersection_t(X));
+
+      X->point_cam = pt;
+      X->point_world = camera.matrix() * pt;
+      X->distanceFromCamera = pt.x;
+      X->distanceAlongTarget = distance(lseg.A, pt);
+      X->sprite = &sprite;
+    }
+  }
+
   for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
     Edge& edge = **it;
 
@@ -265,6 +284,35 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       projRay1 = LineSegment(Point(0, 0), vw1 * 999.9);
 
       region = nextRegion;
+    }
+    else if ((*it)->kind == IntersectionKind::SPRITE) {
+      SpriteX& X = dynamic_cast<SpriteX&>(**it);
+
+      double floorHeight = region->floorHeight;
+      const Point& pt = X.point_cam;
+
+      LineSegment wall(Point(pt.x + 0.00001, floorHeight - cam.height),
+        Point(pt.x, floorHeight - cam.height + X.sprite->size.y));
+
+      LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));
+      LineSegment wallRay1(Point(0, 0), Point(pt.x, wall.B.y));
+
+      Point p = lineIntersect(wallRay0.line(), rotProjPlane.line());
+      double proj_w0 = rotProjPlane.signedDistance(p.x);
+      p = lineIntersect(wallRay1.line(), rotProjPlane.line());
+      double proj_w1 = rotProjPlane.signedDistance(p.x);
+
+      X.slice.viewportBottom_wd = subview0;
+      X.slice.viewportTop_wd = subview1;
+
+      X.slice.projSliceBottom_wd = clipNumber(proj_w0, Size(subview0, subview1));
+      X.slice.projSliceTop_wd = clipNumber(proj_w1, Size(subview0, subview1));
+
+      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
+      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
+
+      X.slice.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
+      X.slice.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
     }
 
     if (subview1 <= subview0) {
@@ -465,6 +513,29 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
 }
 
 //===========================================
+// sampleTexture2
+//===========================================
+static QRect sampleTexture2(const QRect& rect, const SpriteX& X, double camHeight,
+  double width_wd, double height_wd, double y_wd) {
+
+  double H_px = rect.height();
+  double W_px = rect.width();
+
+  double hWorldUnit_px = W_px / width_wd;
+  double texW_wd = W_px / hWorldUnit_px;
+
+  double n = X.distanceAlongTarget / texW_wd;
+  double x = (n - floor(n)) * texW_wd;
+
+  double texBottom_px = H_px - ((camHeight + X.slice.sliceBottom_wd - y_wd) / height_wd) * H_px;
+  double texTop_px = H_px - ((camHeight + X.slice.sliceTop_wd - y_wd) / height_wd) * H_px;
+
+  int i = x * hWorldUnit_px;
+
+  return QRect(rect.x() + i, rect.y() + texTop_px, 1, texBottom_px - texTop_px);
+}
+
+//===========================================
 // Renderer2::Renderer2
 //===========================================
 Renderer2::Renderer2() {
@@ -501,7 +572,7 @@ void Renderer2::renderScene(QImage& target, const Scene& scene) {
     CastResult result;
     castRay(Vec2f(cam.F, projX_wd), scene, result);
 
-    for (auto it = result.intersections.begin(); it != result.intersections.end(); ++it) {
+    for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       pIntersection_t& X = *it;
 
       if (X->kind == IntersectionKind::WALL) {
@@ -514,8 +585,6 @@ void Renderer2::renderScene(QImage& target, const Scene& scene) {
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         drawCeilingSlice(target, scene, wallX.wall->region->ceilingHeight, wallX.point_world, slice,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
-
-        break;
       }
       else if (X->kind == IntersectionKind::JOINING_EDGE) {
         const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(*X);
@@ -531,6 +600,26 @@ void Renderer2::renderScene(QImage& target, const Scene& scene) {
 
         drawCeilingSlice(target, scene, jeX.nearRegion->ceilingHeight, jeX.point_world, slice1,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+      }
+      else if (X->kind == IntersectionKind::SPRITE) {
+        const SpriteX& spriteX = dynamic_cast<const SpriteX&>(*X);
+        const Sprite& sprite = *spriteX.sprite;
+        const Slice& slice = spriteX.slice;
+
+        const QImage& tex = scene.textures.at(sprite.texture);
+        const QRectF& uv = sprite.textureRegion(cam.pos);
+        QRect r = tex.rect();
+        QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
+          r.height() * uv.height());
+
+        int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
+        int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
+
+        QRect srcRect = sampleTexture2(frame, spriteX, scene.camera->height, sprite.size.x,
+          sprite.size.y, sprite.region->floorHeight);
+        QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
+
+        painter.drawImage(trgRect, tex, srcRect);
       }
     }
   }
