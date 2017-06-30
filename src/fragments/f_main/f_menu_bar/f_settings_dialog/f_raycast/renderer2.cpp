@@ -402,9 +402,9 @@ static void drawFloorSlice(QImage& target, const Scene& scene, double floorHeigh
 }
 
 //===========================================
-// sampleTexture
+// sampleWallTexture
 //===========================================
-static void sampleTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
+static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
   double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double distanceAlongTarget,
   const Slice& slice, double width_wd, double height_wd, vector<QRectF>& trgRects,
   vector<QRect>& srcRects) {
@@ -474,48 +474,9 @@ static void sampleTexture(const QRect& texRect, double camHeight_wd, const Size&
 }
 
 //===========================================
-// drawSlice
+// sampleSpriteTexture
 //===========================================
-static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
-  double distanceAlongTarget, const Slice& slice, const string& texture, double screenX_px,
-  const Size& viewport_px) {
-
-  double hWorldUnit_px = viewport_px.x / scene.viewport.x;
-  double vWorldUnit_px = viewport_px.y / scene.viewport.y;
-
-  const QImage& wallTex = scene.textures.at(texture);
-
-  int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
-  int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
-
-  screenSliceBottom_px = clipNumber(screenSliceBottom_px, Size(0, viewport_px.y - 1));
-  screenSliceTop_px = clipNumber(screenSliceTop_px, Size(0, viewport_px.y - 1));
-
-  vector<QRect> srcRects;
-  vector<QRectF> trgRects;
-  sampleTexture(wallTex.rect(), scene.camera->height, viewport_px, screenX_px, hWorldUnit_px,
-    vWorldUnit_px, distanceAlongTarget, slice, scene.wallHeight, scene.wallHeight, trgRects,
-    srcRects);
-
-  assert(srcRects.size() == trgRects.size());
-
-  for (unsigned int i = 0; i < srcRects.size(); ++i) {
-    painter.drawImage(trgRects[i], wallTex, srcRects[i]);
-  }
-
-  int viewportBottom_px = (scene.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
-  int viewportTop_px = (scene.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
-
-  viewportBottom_px = clipNumber(viewportBottom_px, Size(0, viewport_px.y - 1));
-  viewportTop_px = clipNumber(viewportTop_px, Size(0, viewport_px.y - 1));
-
-  return ScreenSlice{screenSliceBottom_px, screenSliceTop_px, viewportBottom_px, viewportTop_px};
-}
-
-//===========================================
-// sampleTexture2
-//===========================================
-static QRect sampleTexture2(const QRect& rect, const SpriteX& X, double camHeight,
+static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double camHeight,
   double width_wd, double height_wd, double y_wd) {
 
   double H_px = rect.height();
@@ -536,6 +497,45 @@ static QRect sampleTexture2(const QRect& rect, const SpriteX& X, double camHeigh
 }
 
 //===========================================
+// drawSlice
+//===========================================
+static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
+  double distanceAlongTarget, const Slice& slice, const string& texture, double screenX_px,
+  const Size& viewport_px) {
+
+  double hWorldUnit_px = viewport_px.x / scene.viewport.x;
+  double vWorldUnit_px = viewport_px.y / scene.viewport.y;
+
+  const QImage& wallTex = scene.textures.at(texture);
+
+  int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
+  int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
+
+  screenSliceBottom_px = clipNumber(screenSliceBottom_px, Size(0, viewport_px.y - 1));
+  screenSliceTop_px = clipNumber(screenSliceTop_px, Size(0, viewport_px.y - 1));
+
+  vector<QRect> srcRects;
+  vector<QRectF> trgRects;
+  sampleWallTexture(wallTex.rect(), scene.camera->height, viewport_px, screenX_px, hWorldUnit_px,
+    vWorldUnit_px, distanceAlongTarget, slice, scene.wallHeight, scene.wallHeight, trgRects,
+    srcRects);
+
+  assert(srcRects.size() == trgRects.size());
+
+  for (unsigned int i = 0; i < srcRects.size(); ++i) {
+    painter.drawImage(trgRects[i], wallTex, srcRects[i]);
+  }
+
+  int viewportBottom_px = (scene.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
+  int viewportTop_px = (scene.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
+
+  viewportBottom_px = clipNumber(viewportBottom_px, Size(0, viewport_px.y - 1));
+  viewportTop_px = clipNumber(viewportTop_px, Size(0, viewport_px.y - 1));
+
+  return ScreenSlice{screenSliceBottom_px, screenSliceTop_px, viewportBottom_px, viewportTop_px};
+}
+
+//===========================================
 // Renderer2::Renderer2
 //===========================================
 Renderer2::Renderer2() {
@@ -548,6 +548,33 @@ Renderer2::Renderer2() {
   for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
     m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
   }
+}
+
+//===========================================
+// drawSprite
+//===========================================
+static void drawSprite(QPainter& painter, const Scene& scene, const Size& viewport_px,
+  const SpriteX& spriteX, double screenX_px) {
+
+  double vWorldUnit_px = viewport_px.y / scene.viewport.y;
+
+  const Sprite& sprite = *spriteX.sprite;
+  const Slice& slice = spriteX.slice;
+
+  const QImage& tex = scene.textures.at(sprite.texture);
+  const QRectF& uv = sprite.textureRegion(scene.camera->pos);
+  QRect r = tex.rect();
+  QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
+    r.height() * uv.height());
+
+  int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
+  int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
+
+  QRect srcRect = sampleSpriteTexture(frame, spriteX, scene.camera->height, sprite.size.x,
+    sprite.size.y, sprite.region->floorHeight);
+  QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
+
+  painter.drawImage(trgRect, tex, srcRect);
 }
 
 //===========================================
@@ -603,23 +630,7 @@ void Renderer2::renderScene(QImage& target, const Scene& scene) {
       }
       else if (X->kind == IntersectionKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(*X);
-        const Sprite& sprite = *spriteX.sprite;
-        const Slice& slice = spriteX.slice;
-
-        const QImage& tex = scene.textures.at(sprite.texture);
-        const QRectF& uv = sprite.textureRegion(cam.pos);
-        QRect r = tex.rect();
-        QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
-          r.height() * uv.height());
-
-        int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
-        int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
-
-        QRect srcRect = sampleTexture2(frame, spriteX, scene.camera->height, sprite.size.x,
-          sprite.size.y, sprite.region->floorHeight);
-        QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
-
-        painter.drawImage(trgRect, tex, srcRect);
+        drawSprite(painter, scene, viewport_px, spriteX, screenX_px);
       }
     }
   }
