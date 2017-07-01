@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <memory>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 
 
@@ -16,13 +17,18 @@ struct Path {
   bool closed = false;
 };
 
+class Object;
+
+typedef std::unique_ptr<Object> pObject_t;
+
 struct Object {
   Matrix transform;
   Path path;
   std::map<std::string, std::string> dict;
+  std::list<pObject_t> children;
 };
 
-std::list<Object> parse(const std::string& file);
+void parse(const std::string& file, std::list<pObject_t>& objects);
 
 struct PathStreamToken {
   enum { SET_RELATIVE, SET_ABSOLUTE, CLOSE_PATH, POINT } kind;
@@ -38,7 +44,7 @@ Matrix parseTranslateTransform(const std::string& s);
 Matrix parseMatrixTransform(const std::string& s);
 Matrix parseTransform(const std::string& s);
 void extractGeometry(const tinyxml2::XMLElement& node, Path& path, Matrix& transform);
-Object constructObject(const tinyxml2::XMLElement& node);
+Object* constructObject_r(const tinyxml2::XMLElement& node);
 
 
 }

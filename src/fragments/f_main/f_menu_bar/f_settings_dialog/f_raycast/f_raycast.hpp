@@ -9,7 +9,7 @@
 #include <QImage>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer2.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
 #ifdef DEBUG
 #  include <chrono>
 #endif
@@ -41,7 +41,7 @@ class FRaycast : public QWidget, public Fragment {
   private:
     FRaycastData m_data;
 
-    Renderer2 m_renderer;
+    Renderer m_renderer;
     std::unique_ptr<QTimer> m_timer;
     std::unique_ptr<Scene> m_scene;
     QImage m_buffer;

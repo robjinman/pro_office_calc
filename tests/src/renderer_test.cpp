@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <list>
 #include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp>
-#include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer2.hpp>
+#include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp>
 #include <utils.hpp>
 
 
@@ -28,7 +28,7 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
   viewport.x = 10.0 * 320.0 / 240.0;
   viewport.y = 10.0;
 
-  ConvexRegion* region = new ConvexRegion;
+  Region* region = new Region;
 
   Wall* wall = new Wall;
   edges.push_back(std::unique_ptr<Wall>(wall));
@@ -90,7 +90,7 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   viewport.x = 10.0 * 320.0 / 240.0;
   viewport.y = 10.0;
 
-  ConvexRegion* region = new ConvexRegion;
+  Region* region = new Region;
 
   Wall* wall = new Wall;
   edges.push_back(std::unique_ptr<Wall>(wall));
@@ -116,7 +116,7 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  ConvexRegion* subregion = new ConvexRegion;
+  Region* subregion = new Region;
 
   wall = new Wall;
   edges.push_back(std::unique_ptr<Wall>(wall));
@@ -142,7 +142,7 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   wall->texture = "light_bricks";
   subregion->edges.push_back(wall);
 
-  region->children.push_back(unique_ptr<ConvexRegion>(subregion));
+  region->children.push_back(unique_ptr<Region>(subregion));
 
   //buildPolygon(*region);
 
@@ -180,12 +180,12 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   viewport.x = 10.0 * 320.0 / 240.0;
   viewport.y = 10.0;
 
-  ConvexRegion* rootRegion = new ConvexRegion;
-  ConvexRegion* region1 = new ConvexRegion;
-  ConvexRegion* region2 = new ConvexRegion;
+  Region* rootRegion = new Region;
+  Region* region1 = new Region;
+  Region* region2 = new Region;
 
-  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
-  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));
+  rootRegion->children.push_back(unique_ptr<Region>(region1));
+  rootRegion->children.push_back(unique_ptr<Region>(region2));
 
   Wall* wall = new Wall;
   edges.push_back(std::unique_ptr<Wall>(wall));

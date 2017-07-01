@@ -39,7 +39,7 @@ class Animation {
     int m_currentFrameIdx = 0;
 };
 
-class ConvexRegion;
+class Region;
 
 class Sprite {
   public:
@@ -58,7 +58,7 @@ class Sprite {
       return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + angle);
     }
 
-    ConvexRegion* region;
+    Region* region;
     std::string texture;
     Vec2f pos;
     double angle;
@@ -69,6 +69,8 @@ class Sprite {
 
     virtual ~Sprite() {}
 };
+
+typedef std::unique_ptr<Sprite> pSprite_t;
 
 struct Ammo : public Sprite {
   Ammo() : Sprite(Size(30, 15), "ammo") {
@@ -123,25 +125,37 @@ struct Edge {
   Edge(EdgeKind kind)
     : kind(kind) {}
 
+  Edge(const Edge& cpy) {
+    kind = cpy.kind;
+    lseg = cpy.lseg;
+  }
+
   EdgeKind kind;
   LineSegment lseg;
 
   virtual ~Edge() {}
 };
 
-struct ConvexRegion {
+typedef std::unique_ptr<Edge> pEdge_t;
+
+class Region;
+typedef std::unique_ptr<Region> pRegion_t;
+
+struct Region {
   double floorHeight = 0;
   double ceilingHeight = 100;
-  std::list<std::unique_ptr<ConvexRegion>> children;
+  std::string floorTexture;
+  std::string ceilingTexture;
+  std::list<pRegion_t> children;
   std::list<Edge*> edges;
-  std::list<std::unique_ptr<Sprite>> sprites;
+  std::list<pSprite_t> sprites;
 };
 
 struct Wall : public Edge {
   Wall() : Edge(EdgeKind::WALL) {}
 
   std::string texture;
-  ConvexRegion* region;
+  Region* region;
 
   double height() const {
     return region->ceilingHeight - region->floorHeight;
@@ -152,12 +166,27 @@ struct Wall : public Edge {
 
 struct JoiningEdge : public Edge {
   JoiningEdge() : Edge(EdgeKind::JOINING_EDGE) {}
+  JoiningEdge(const JoiningEdge& cpy) : Edge(cpy) {
+    topTexture = cpy.topTexture;
+    bottomTexture = cpy.bottomTexture;
+    regionA = cpy.regionA;
+    regionB = cpy.regionB;
+  }
 
-  std::string topTexture;
-  std::string bottomTexture;
+  void mergeIn(const JoiningEdge& other) {
+    if (other.topTexture.length() > 0) {
+      topTexture = other.topTexture;
+    }
+    if (other.bottomTexture.length() > 0) {
+      bottomTexture = other.bottomTexture;
+    }
+  }
 
-  ConvexRegion* regionA;
-  ConvexRegion* regionB;
+  std::string topTexture = "";
+  std::string bottomTexture = "";
+
+  Region* regionA = nullptr;
+  Region* regionB = nullptr;
 
   virtual ~JoiningEdge() {}
 };
@@ -166,21 +195,23 @@ class Scene {
   public:
     Scene(const std::string& mapFilePath);
 
+    double defaultFloorHeight;
+    double defaultCeilingHeight;
+    std::string defaultFloorTexture;
+    std::string defaultCeilingTexture;
+
     Size viewport;
     std::unique_ptr<Camera> camera;
     std::map<std::string, QImage> textures;
 
-    std::unique_ptr<ConvexRegion> rootRegion;
-    std::list<std::unique_ptr<Edge>> edges;
-    const ConvexRegion* currentRegion;
+    pRegion_t rootRegion;
+    std::list<pEdge_t> edges;
+    const Region* currentRegion;
 
     void rotateCamera(double da);
     void translateCamera(const Vec2f& dir);
 
-    // TODO
-    std::list<std::unique_ptr<Wall>> walls;
-    std::list<std::unique_ptr<Sprite>> sprites;
-    double wallHeight;
+    double wallHeight; // TODO: remove
 
   private:
     void addObject(const parser::Object& obj);

@@ -6,9 +6,11 @@
 
 
 using std::string;
+using std::list;
 using std::pair;
 using tinyxml2::XMLDocument;
 using tinyxml2::XMLElement;
+using namespace parser;
 
 
 class MapParserTest : public testing::Test {
@@ -20,7 +22,7 @@ class MapParserTest : public testing::Test {
 
 TEST_F(MapParserTest, parseKvpString) {
   pair<string, string> kvp("one", "two");
-  ASSERT_EQ(kvp, parser::parseKvpString("one=two"));
+  ASSERT_EQ(kvp, parseKvpString("one=two"));
 }
 
 TEST_F(MapParserTest, constructPath) {
@@ -35,8 +37,8 @@ TEST_F(MapParserTest, constructPath) {
   XMLElement* e = doc.NewElement("path");
   e->SetAttribute("d", d.c_str());
 
-  parser::Path path;
-  parser::constructPath(*e, path);
+  Path path;
+  constructPath(*e, path);
 
   Point c;
   auto i = path.points.begin();
@@ -117,7 +119,7 @@ TEST_F(MapParserTest, constructPath) {
 }
 
 TEST_F(MapParserTest, transformFromTriangle_rightFacing) {
-  parser::Path path;
+  Path path;
   path.points.push_back(Point(-10, 10));
   path.points.push_back(Point(-10, -10));
   path.points.push_back(Point(20, 0));
@@ -129,7 +131,7 @@ TEST_F(MapParserTest, transformFromTriangle_rightFacing) {
 }
 
 TEST_F(MapParserTest, transformFromTriangle_leftFacing) {
-  parser::Path path;
+  Path path;
   path.points.push_back(Point(10, 10));
   path.points.push_back(Point(10, -10));
   path.points.push_back(Point(-20, 0));
@@ -138,4 +140,102 @@ TEST_F(MapParserTest, transformFromTriangle_leftFacing) {
   Matrix m = transformFromTriangle(path);
 
   ASSERT_DOUBLE_EQ(PI, m.a());
+}
+
+TEST_F(MapParserTest, constructObject_r_keyValuePairs) {
+  string xml =
+    "<g>"
+      "<text><tspan>key1=value1</tspan></text>"
+      "<text><tspan>key2=value2</tspan></text>"
+      "<text><tspan>key3=value3</tspan></text>"
+    "</g>";
+
+  XMLDocument doc;
+  doc.Parse(xml.c_str(), xml.size());
+
+  XMLElement* node = doc.FirstChildElement("g");
+  Object* obj = constructObject_r(*node);
+
+  auto it = obj->dict.find("key1");
+  ASSERT_TRUE(it != obj->dict.end());
+  ASSERT_EQ(it->second, "value1");
+
+  it = obj->dict.find("key2");
+  ASSERT_TRUE(it != obj->dict.end());
+  ASSERT_EQ(it->second, "value2");
+
+  it = obj->dict.find("key3");
+  ASSERT_TRUE(it != obj->dict.end());
+  ASSERT_EQ(it->second, "value3");
+}
+
+TEST_F(MapParserTest, constructObject_r_nestedObjects) {
+  string xml =
+    "<g>"
+      "<text><tspan>key1=value1</tspan></text>"
+      "<text><tspan>key2=value2</tspan></text>"
+      "<g>"
+        "<text><tspan>key3=value3</tspan></text>"
+        "<text><tspan>key4=value4</tspan></text>"
+      "</g>"
+    "</g>";
+
+  XMLDocument doc;
+  doc.Parse(xml.c_str(), xml.size());
+
+  XMLElement* node = doc.FirstChildElement("g");
+  Object* obj = constructObject_r(*node);
+
+  auto it = obj->dict.find("key1");
+  ASSERT_TRUE(it != obj->dict.end());
+  ASSERT_EQ(it->second, "value1");
+
+  it = obj->dict.find("key2");
+  ASSERT_TRUE(it != obj->dict.end());
+  ASSERT_EQ(it->second, "value2");
+
+  ASSERT_EQ(1, obj->children.size());
+
+  pObject_t& obj2 = *obj->children.begin();
+
+  it = obj2->dict.find("key3");
+  ASSERT_TRUE(it != obj2->dict.end());
+  ASSERT_EQ(it->second, "value3");
+
+  it = obj2->dict.find("key4");
+  ASSERT_TRUE(it != obj2->dict.end());
+  ASSERT_EQ(it->second, "value4");
+}
+
+TEST_F(MapParserTest, constructObject_r_testFile1) {
+  list<pObject_t> objects;
+  parse("tests/data/test_map1.svg", objects);
+
+  ASSERT_EQ(1, objects.size());
+
+  auto it = objects.begin();
+  const Object& obj = **it;
+
+  ASSERT_EQ("region", obj.dict.at("type"));
+  ASSERT_EQ("0", obj.dict.at("floor_height"));
+  ASSERT_EQ("140", obj.dict.at("ceiling_height"));
+  ASSERT_EQ("cracked_mud", obj.dict.at("floor_texture"));
+  ASSERT_EQ("grey_stone", obj.dict.at("ceiling_texture"));
+
+  ASSERT_EQ(1, obj.children.size());
+
+  const Object& subObj = **obj.children.begin();
+
+  ASSERT_EQ("wall", subObj.dict.at("type"));
+  ASSERT_EQ("light_bricks", subObj.dict.at("texture"));
+  ASSERT_EQ(4, subObj.path.points.size());
+
+  ASSERT_EQ(0, subObj.children.size());
+}
+
+TEST_F(MapParserTest, constructObject_r_testFile2) {
+  list<pObject_t> objects;
+  parse("tests/data/test_map2.svg", objects);
+
+  ASSERT_EQ(1, 1);
 }

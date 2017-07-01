@@ -17,7 +17,13 @@ using std::list;
 //===========================================
 // constructWalls
 //===========================================
-static void constructWalls(const parser::Object& obj, list<unique_ptr<Wall>>& walls) {
+static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
+  const Matrix& parentTransform) {
+
+  DBG_PRINT("Constructing Walls\n");
+
+  list<Wall*> walls;
+
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
 
@@ -34,20 +40,25 @@ static void constructWalls(const parser::Object& obj, list<unique_ptr<Wall>>& wa
 
     wall->lseg.A = obj.path.points[j];
     wall->lseg.B = obj.path.points[i];
-    wall->lseg = transform(wall->lseg, obj.transform);
+    wall->lseg = transform(wall->lseg, parentTransform * obj.transform);
 
+    wall->region = region;
     wall->texture = obj.dict.at("texture");
 
-    walls.push_back(unique_ptr<Wall>(wall));
+    walls.push_back(wall);
   }
+
+  return walls;
 }
 
 //===========================================
 // constructCamera
 //===========================================
-static Camera* constructCamera(const parser::Object& obj) {
+static Camera* constructCamera(const parser::Object& obj, const Matrix& parentTransform) {
+  DBG_PRINT("Constructing Camera\n");
+
   Camera* camera = new Camera;
-  camera->setTransform(obj.transform * transformFromTriangle(obj.path));
+  camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
 
   return camera;
 }
@@ -55,18 +66,20 @@ static Camera* constructCamera(const parser::Object& obj) {
 //===========================================
 // constructSprite
 //===========================================
-static Sprite* constructSprite(const parser::Object& obj) {
+static Sprite* constructSprite(const parser::Object& obj, const Matrix& parentTransform) {
+  DBG_PRINT("Constructing Sprite\n");
+
   if (obj.dict.at("subtype") == "bad_guy") {
     BadGuy* sprite = new BadGuy;
     Matrix m = transformFromTriangle(obj.path);
-    sprite->setTransform(obj.transform * m);
+    sprite->setTransform(parentTransform * obj.transform * m);
 
     return sprite;
   }
   else if (obj.dict.at("subtype") == "ammo") {
     Ammo* sprite = new Ammo;
     Matrix m = transformFromTriangle(obj.path);
-    sprite->setTransform(obj.transform * m);
+    sprite->setTransform(parentTransform * obj.transform * m);
 
     return sprite;
   }
@@ -74,123 +87,211 @@ static Sprite* constructSprite(const parser::Object& obj) {
   EXCEPTION("Error constructing sprite of unknown type");
 }
 
-static void populateScene(Scene& scene) {
-  scene.camera.reset(new Camera);
-  scene.camera->pos = Point(30, 30);
-  scene.camera->angle = DEG_TO_RAD(45);
+//===========================================
+// constructJoiningEdges
+//===========================================
+static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Region* region,
+  const Matrix& parentTransform) {
 
-  ConvexRegion* rootRegion = new ConvexRegion;
-  ConvexRegion* region1 = new ConvexRegion;
-  ConvexRegion* region2 = new ConvexRegion;
-  ConvexRegion* region3 = new ConvexRegion;
+  DBG_PRINT("Constructing JoiningEdges\n");
 
-  region1->floorHeight = 0;
-  region1->ceilingHeight = 120;
+  list<JoiningEdge*> joiningEdges;
 
-  region2->floorHeight = -20;
-  region2->ceilingHeight = 140;
+  for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
+    int j = i - 1;
 
-  region3->floorHeight = 10;
-  region3->ceilingHeight = 100;
+    if (i == 0) {
+      if (obj.path.closed) {
+        j = obj.path.points.size() - 1;
+      }
+      else {
+        continue;
+      }
+    }
 
-  Sprite* badGuy1 = new BadGuy;
-  badGuy1->setTransform(Matrix(DEG_TO_RAD(0), Vec2f(100, 100)));
-  badGuy1->region = region1;
-  region1->sprites.push_back(unique_ptr<Sprite>(badGuy1));
+    JoiningEdge* je = new JoiningEdge;
 
-  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region1));
-  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region2));
-  rootRegion->children.push_back(unique_ptr<ConvexRegion>(region3));
+    je->lseg.A = obj.path.points[j];
+    je->lseg.B = obj.path.points[i];
+    je->lseg = transform(je->lseg, parentTransform * obj.transform);
 
-  Wall* wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(0, 0), Point(200, 1));
-  wall->region = region1;
-  wall->texture = "light_bricks";
-  region1->edges.push_back(wall);
+    if (contains<string>(obj.dict, "top_texture")) {
+      je->topTexture = obj.dict.at("top_texture");
+    }
+    if (contains<string>(obj.dict, "bottom_texture")) {
+      je->bottomTexture = obj.dict.at("bottom_texture");
+    }
 
-  JoiningEdge* je1 = new JoiningEdge;
-  scene.edges.push_back(std::unique_ptr<JoiningEdge>(je1));
-  je1->lseg = LineSegment(Point(200, 1), Point(201, 201));
-  wall->region = region1;
-  je1->topTexture = "light_bricks";
-  je1->bottomTexture = "dark_bricks";
-  region1->edges.push_back(je1);
+    joiningEdges.push_back(je);
+  }
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(201, 201), Point(1, 200));
-  wall->region = region1;
-  wall->texture = "light_bricks";
-  region1->edges.push_back(wall);
+  return joiningEdges;
+}
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(1, 200), Point(0, 0));
-  wall->region = region1;
-  wall->texture = "light_bricks";
-  region1->edges.push_back(wall);
+//===========================================
+// similar
+//===========================================
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  double delta = 0.1;
+  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
+    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+}
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(200, 1), Point(400, 2));
-  wall->region = region2;
-  wall->texture = "light_bricks";
-  region2->edges.push_back(wall);
+//===========================================
+// areTwins
+//===========================================
+static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
+  return similar(je1.lseg, je2.lseg);
+}
 
-  JoiningEdge* je2 = new JoiningEdge;
-  scene.edges.push_back(std::unique_ptr<JoiningEdge>(je2));
-  je2->lseg = LineSegment(Point(400, 2), Point(401, 202));
-  wall->region = region2;
-  je2->topTexture = "light_bricks";
-  je2->bottomTexture = "dark_bricks";
-  region2->edges.push_back(je2);
+//===========================================
+// combine
+//===========================================
+static JoiningEdge* combine(const JoiningEdge& je1, const JoiningEdge& je2) {
+  JoiningEdge* je = new JoiningEdge(je1);
+  je->mergeIn(je2);
+  return je;
+}
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(401, 202), Point(201, 201));
-  wall->region = region2;
-  wall->texture = "light_bricks";
-  region2->edges.push_back(wall);
+//===========================================
+// connectSubregions_r
+//===========================================
+static void connectSubregions_r(Scene& scene, Region& region) {
+  if (region.children.size() == 0) {
+    return;
+  }
 
-  region2->edges.push_back(je1);
-  je1->regionA = region1;
-  je1->regionB = region2;
+  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+    connectSubregions_r(scene, **it);
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(400, 2), Point(600, 3));
-  wall->region = region3;
-  wall->texture = "light_bricks";
-  region3->edges.push_back(wall);
+    for (auto jt = (*it)->edges.begin(); jt != (*it)->edges.end(); ++jt) {
+      if ((*jt)->kind == EdgeKind::JOINING_EDGE) {
+        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(600, 3), Point(601, 203));
-  wall->region = region3;
-  wall->texture = "light_bricks";
-  region3->edges.push_back(wall);
+        bool hasTwin = false;
+        for (auto kt = region.children.begin(); kt != region.children.end(); ++kt) {
+          if (kt->get() == &region) {
+            continue;
+          }
 
-  wall = new Wall;
-  scene.edges.push_back(std::unique_ptr<Wall>(wall));
-  wall->lseg = LineSegment(Point(601, 203), Point(401, 202));
-  wall->region = region3;
-  wall->texture = "light_bricks";
-  region3->edges.push_back(wall);
+          for (auto lt = (*kt)->edges.begin(); lt != (*kt)->edges.end(); ++lt) {
+            if ((*lt)->kind == EdgeKind::JOINING_EDGE) {
+              JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
 
-  region3->edges.push_back(je2);
-  je2->regionA = region2;
-  je2->regionB = region3;
+              if (je == other) {
+                hasTwin = true;
+                break;
+              }
 
-  scene.currentRegion = region1;
+              if (areTwins(*je, *other)) {
+                hasTwin = true;
 
-  scene.rootRegion.reset(rootRegion);
+                JoiningEdge* combined = combine(*je, *other);
+                combined->regionA = it->get();
+                combined->regionB = kt->get();
+
+                delete je;
+                delete other;
+
+                *jt = combined;
+                *lt = combined;
+
+                scene.edges.push_back(pEdge_t(combined));
+                break;
+              }
+            }
+          }
+
+          if (hasTwin) {
+            break;
+          }
+        }
+
+        if (!hasTwin) {
+          EXCEPTION("Could not find twin for JoiningEdge");
+        }
+      }
+    }
+  }
+}
+
+//===========================================
+// constructRegion_r
+//===========================================
+static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
+  const Matrix& parentTransform) {
+
+  DBG_PRINT("Constructing Region\n");
+
+  Region* region = new Region;
+
+  try {
+    if (obj.dict.at("type") != "region") {
+      EXCEPTION("Object is not of type region");
+    }
+
+    if (obj.path.points.size() > 0) {
+      EXCEPTION("Region has unexpected path");
+    }
+
+    Matrix transform = parentTransform * obj.transform;
+
+    region->floorHeight = contains<string>(obj.dict, "floor_height") ?
+      std::stod(obj.dict.at("floor_height")) : scene.defaultFloorHeight;
+
+    region->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
+      std::stod(obj.dict.at("ceiling_height")) : scene.defaultCeilingHeight;
+
+    region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
+      obj.dict.at("floor_texture") : scene.defaultFloorTexture;
+
+    region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
+      obj.dict.at("ceiling_texture") : scene.defaultCeilingTexture;
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      const parser::Object& child = **it;
+      string type = child.dict.at("type");
+
+      if (type == "region") {
+        region->children.push_back(pRegion_t(constructRegion_r(scene, child, transform)));
+      }
+      else if (type == "wall") {
+        list<Wall*> walls = constructWalls(child, region, transform);
+        for (auto jt = walls.begin(); jt != walls.end(); ++jt) {
+          scene.edges.push_back(pEdge_t(*jt));
+          region->edges.push_back(*jt);
+        }
+      }
+      else if (type == "joining_edge") {
+        list<JoiningEdge*> joiningEdges = constructJoiningEdges(child, region, transform);
+        for (auto jt = joiningEdges.begin(); jt != joiningEdges.end(); ++jt) {
+          region->edges.push_back(*jt);
+        }
+      }
+      else if (type == "sprite") {
+        region->sprites.push_back(pSprite_t(constructSprite(child, transform)));
+      }
+      else if (type == "camera") {
+        if (scene.camera) {
+          EXCEPTION("Camera already exists");
+        }
+        scene.camera.reset(constructCamera(child, transform));
+        scene.currentRegion = region;
+      }
+    }
+  }
+  catch (const Exception& ex) {
+    delete region;
+    EXCEPTION("Error constructing region; " << ex.what());
+  }
+
+  return region;
 }
 
 //===========================================
 // intersectWall
 //===========================================
-static bool intersectWall(const ConvexRegion& region, const Circle& circle) {
+static bool intersectWall(const Region& region, const Circle& circle) {
   for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
     if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
       return true;
@@ -203,13 +304,23 @@ static bool intersectWall(const ConvexRegion& region, const Circle& circle) {
 // Scene::Scene
 //===========================================
 Scene::Scene(const string& mapFilePath) {
-  /*
-  list<parser::Object> objects = parser::parse(mapFilePath);
-  for (auto it = objects.begin(); it != objects.end(); ++it) {
-    addObject(*it);
-  }*/
+  defaultFloorHeight = 0;
+  defaultCeilingHeight = 100;
+  defaultFloorTexture = "cracked_mud";
+  defaultCeilingTexture = "grey_stone";
 
-  populateScene(*this);
+  list<parser::pObject_t> objects;
+  parser::parse(mapFilePath, objects);
+
+  for (auto it = objects.begin(); it != objects.end(); ++it) {
+    addObject(**it);
+  }
+
+  if (!camera) {
+    EXCEPTION("Scene must contain a camera");
+  }
+
+  connectSubregions_r(*this, *rootRegion);
 
   viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   viewport.y = 10.0;
@@ -290,13 +401,12 @@ void Scene::translateCamera(const Vec2f& dir) {
 // Scene::addObject
 //===========================================
 void Scene::addObject(const parser::Object& obj) {
-  if (obj.dict.at("type") == "wall") {
-    constructWalls(obj, walls);
-  }
-  else if (obj.dict.at("type") == "camera") {
-    camera.reset(constructCamera(obj));
-  }
-  else if (obj.dict.at("type") == "sprite") {
-    sprites.push_back(unique_ptr<Sprite>(constructSprite(obj)));
+  if (obj.dict.at("type") == "region") {
+    if (rootRegion) {
+      EXCEPTION("Root region already exists");
+    }
+
+    Matrix m;
+    rootRegion.reset(constructRegion_r(*this, obj, m));
   }
 }

@@ -21,7 +21,7 @@ using tinyxml2::XMLElement;
 //===========================================
 // isTriangle
 //===========================================
-static bool isTriangle(const parser::Path& path) {
+static bool isTriangle(const Path& path) {
   return path.points.size() == 3 && path.closed;
 }
 
@@ -64,7 +64,7 @@ PathStreamToken getNextToken(istream& is) {
     else if (s == "M" || s == "L") {
       result.kind = PathStreamToken::SET_ABSOLUTE;
     }
-    else if (s == "z") {
+    else if (s == "z" || s == "Z") {
       result.kind = PathStreamToken::CLOSE_PATH;
     }
     else {
@@ -255,13 +255,24 @@ void extractGeometry(const XMLElement& node, Path& path, Matrix& transform) {
 }
 
 //===========================================
-// constructObject
+// constructObject_r
 //===========================================
-Object constructObject(const XMLElement& node) {
-  Object obj;
+Object* constructObject_r(const XMLElement& node) {
+  Object* obj = new Object;
 
-  extractKvPairs(node, obj.dict);
-  extractGeometry(node, obj.path, obj.transform);
+  extractKvPairs(node, obj->dict);
+  extractGeometry(node, obj->path, obj->transform);
+
+  const XMLElement* e = node.FirstChildElement();
+  while (e != nullptr) {
+    string tag(e->Name());
+
+    if (tag == "g") {
+      obj->children.push_back(pObject_t(constructObject_r(*e)));
+    }
+
+    e = e->NextSiblingElement();
+  }
 
   return obj;
 }
@@ -269,11 +280,13 @@ Object constructObject(const XMLElement& node) {
 //===========================================
 // parse
 //===========================================
-list<Object> parse(const string& file) {
-  list<Object> objects;
-
+void parse(const string& file, list<pObject_t>& objects) {
   XMLDocument doc;
   doc.LoadFile(file.c_str());
+
+  if (doc.Error()) {
+    EXCEPTION("Error parsing map file " << file << "; ErrorID=" << doc.ErrorID());
+  }
 
   XMLElement* root = doc.FirstChildElement("svg");
   XMLElement* e = root->FirstChildElement();
@@ -282,13 +295,11 @@ list<Object> parse(const string& file) {
     string tag(e->Name());
 
     if (tag == "g") {
-      objects.push_back(constructObject(*e));
+      objects.push_back(pObject_t(constructObject_r(*e)));
     }
 
     e = e->NextSiblingElement();
   }
-
-  return objects;
 }
 
 
