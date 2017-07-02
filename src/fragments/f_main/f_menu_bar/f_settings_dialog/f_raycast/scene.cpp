@@ -54,11 +54,15 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 //===========================================
 // constructCamera
 //===========================================
-static Camera* constructCamera(const parser::Object& obj, const Matrix& parentTransform) {
+static Camera* constructCamera(const parser::Object& obj, const Region& region,
+  const Matrix& parentTransform) {
+
   DBG_PRINT("Constructing Camera\n");
 
   Camera* camera = new Camera;
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
+
+  camera->height = std::stod(obj.dict.at("height")) + region.floorHeight;
 
   return camera;
 }
@@ -66,13 +70,16 @@ static Camera* constructCamera(const parser::Object& obj, const Matrix& parentTr
 //===========================================
 // constructSprite
 //===========================================
-static Sprite* constructSprite(const parser::Object& obj, const Matrix& parentTransform) {
+static Sprite* constructSprite(const parser::Object& obj, Region& region,
+  const Matrix& parentTransform) {
+
   DBG_PRINT("Constructing Sprite\n");
 
   if (obj.dict.at("subtype") == "bad_guy") {
     BadGuy* sprite = new BadGuy;
     Matrix m = transformFromTriangle(obj.path);
     sprite->setTransform(parentTransform * obj.transform * m);
+    sprite->region = &region;
 
     return sprite;
   }
@@ -80,6 +87,7 @@ static Sprite* constructSprite(const parser::Object& obj, const Matrix& parentTr
     Ammo* sprite = new Ammo;
     Matrix m = transformFromTriangle(obj.path);
     sprite->setTransform(parentTransform * obj.transform * m);
+    sprite->region = &region;
 
     return sprite;
   }
@@ -269,13 +277,13 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
         }
       }
       else if (type == "sprite") {
-        region->sprites.push_back(pSprite_t(constructSprite(child, transform)));
+        region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
       }
       else if (type == "camera") {
         if (scene.camera) {
           EXCEPTION("Camera already exists");
         }
-        scene.camera.reset(constructCamera(child, transform));
+        scene.camera.reset(constructCamera(child, *region, transform));
         scene.currentRegion = region;
       }
     }
@@ -326,7 +334,6 @@ Scene::Scene(const string& mapFilePath) {
   viewport.y = 10.0;
   wallHeight = 100.0;
 
-  camera->height = wallHeight / 2;
   camera->F = computeF(viewport.x, camera->hFov);
 
   textures["light_bricks"] = QImage("data/light_bricks.png");

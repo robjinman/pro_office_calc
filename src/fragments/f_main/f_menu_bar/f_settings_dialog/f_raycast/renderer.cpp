@@ -600,10 +600,10 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
     castRay(Vec2f(cam.F, projX_wd), scene, result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
-      pIntersection_t& X = *it;
+      Intersection& X = **it;
 
-      if (X->kind == IntersectionKind::WALL) {
-        const WallX& wallX = dynamic_cast<const WallX&>(*X);
+      if (X.kind == IntersectionKind::WALL) {
+        const WallX& wallX = dynamic_cast<const WallX&>(X);
 
         ScreenSlice slice = drawSlice(painter, scene, cam.F, wallX.distanceAlongTarget, wallX.slice,
           wallX.wall->texture, screenX_px, viewport_px);
@@ -613,8 +613,8 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         drawCeilingSlice(target, scene, wallX.wall->region->ceilingHeight, wallX.point_world, slice,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
       }
-      else if (X->kind == IntersectionKind::JOINING_EDGE) {
-        const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(*X);
+      else if (X.kind == IntersectionKind::JOINING_EDGE) {
+        const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(X);
 
         ScreenSlice slice0 = drawSlice(painter, scene, cam.F, jeX.distanceAlongTarget, jeX.slice0,
           jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
@@ -628,8 +628,8 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         drawCeilingSlice(target, scene, jeX.nearRegion->ceilingHeight, jeX.point_world, slice1,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
       }
-      else if (X->kind == IntersectionKind::SPRITE) {
-        const SpriteX& spriteX = dynamic_cast<const SpriteX&>(*X);
+      else if (X.kind == IntersectionKind::SPRITE) {
+        const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
         drawSprite(painter, scene, viewport_px, spriteX, screenX_px);
       }
     }
