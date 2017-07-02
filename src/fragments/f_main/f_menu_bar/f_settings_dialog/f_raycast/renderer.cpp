@@ -174,8 +174,10 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   double subview1 = scene.viewport.y;
 
   const Region* region = scene.currentRegion;
-  int last = 0;
-  for (auto it = intersections.begin(); it != intersections.end(); ++it, ++last) {
+  int last = -1;
+  for (auto it = intersections.begin(); it != intersections.end(); ++it) {
+    ++last;
+
     if ((*it)->kind == IntersectionKind::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
