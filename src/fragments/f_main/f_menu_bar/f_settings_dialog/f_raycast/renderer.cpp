@@ -61,6 +61,14 @@ static double fastATan(const atanMap_t& atanMap, double x) {
 static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, const Size& texSz_px) {
   double nx = p.x * texSz_wd_rp.x;
   double ny = p.y * texSz_wd_rp.y;
+
+  if (nx < 0 || std::isinf(nx) || std::isnan(nx)) {
+    nx = 0;
+  }
+  if (ny < 0 || std::isinf(ny) || std::isnan(ny)) {
+    ny = 0;
+  }
+
   return Point((nx - floor(nx)) * texSz_px.x, (ny - floor(ny)) * texSz_px.y);
 }
 
@@ -196,11 +204,18 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       p = lineIntersect(wallRay1.line(), rotProjPlane.line());
       double proj_w1 = rotProjPlane.signedDistance(p.x);
 
+      if (!isBetween(proj_w0, subview0, subview1)) {
+        proj_w0 = subview0;
+      }
+      if (!isBetween(proj_w1, subview0, subview1)) {
+        proj_w1 = subview1;
+      }
+
+      X.slice.projSliceBottom_wd = proj_w0;
+      X.slice.projSliceTop_wd = proj_w1;
+
       X.slice.viewportBottom_wd = subview0;
       X.slice.viewportTop_wd = subview1;
-
-      X.slice.projSliceBottom_wd = clipNumber(proj_w0, Size(subview0, subview1));
-      X.slice.projSliceTop_wd = clipNumber(proj_w1, Size(subview0, subview1));
 
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
@@ -257,6 +272,26 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       double proj_tw0 = rotProjPlane.signedDistance(p.x);
       p = lineIntersect(topWallRay1.line(), rotProjPlane.line());
       double proj_tw1 = rotProjPlane.signedDistance(p.x);
+
+/*
+if (!isBetween(proj_bw0, subview0, subview1)) {
+  proj_bw0 = subview0;
+}
+if (!isBetween(proj_bw1, subview0, subview1)) {
+  proj_bw1 = subview0;
+}
+if (!isBetween(proj_tw0, subview0, subview1)) {
+  proj_tw0 = subview1;
+}
+if (!isBetween(proj_tw1, subview0, subview1)) {
+  proj_tw1 = subview1;
+}
+
+X.slice0.projSliceBottom_wd = proj_bw0;
+X.slice0.projSliceTop_wd = proj_bw1;
+X.slice1.projSliceBottom_wd = proj_tw0;
+X.slice1.projSliceTop_wd = proj_tw1;
+*/
 
       X.slice0.projSliceBottom_wd = clipNumber(proj_bw0, Size(subview0, subview1));
       X.slice0.projSliceTop_wd = clipNumber(proj_bw1, Size(subview0, subview1));
@@ -538,21 +573,6 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
 }
 
 //===========================================
-// Renderer::Renderer
-//===========================================
-Renderer::Renderer() {
-  for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
-    m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
-      / static_cast<double>(m_tanMap_rp.size()));
-  }
-
-  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(m_atanMap.size());
-  for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
-    m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
-  }
-}
-
-//===========================================
 // drawSprite
 //===========================================
 static void drawSprite(QPainter& painter, const Scene& scene, const Size& viewport_px,
@@ -577,6 +597,21 @@ static void drawSprite(QPainter& painter, const Scene& scene, const Size& viewpo
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
   painter.drawImage(trgRect, tex, srcRect);
+}
+
+//===========================================
+// Renderer::Renderer
+//===========================================
+Renderer::Renderer() {
+  for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
+    m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
+      / static_cast<double>(m_tanMap_rp.size()));
+  }
+
+  double dx = (ATAN_MAX - ATAN_MIN) / static_cast<double>(m_atanMap.size());
+  for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
+    m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
+  }
 }
 
 //===========================================

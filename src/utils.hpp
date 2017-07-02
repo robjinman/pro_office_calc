@@ -8,11 +8,11 @@
 #ifdef DEBUG
 #  include <iostream>
 #  define DBG_PRINT(msg) std::cout << msg;
+#  define DBG_PRINT_VAR(var) std::cout << #var" = " << var << "\n";
 #else
 #  define DBG_PRINT(msg)
 #endif
 #include "platform.hpp"
-
 
 #define PI 3.141592653589793
 #define DEG_TO_RAD(x) (x * PI / 180.0)
