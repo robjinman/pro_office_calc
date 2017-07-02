@@ -388,13 +388,17 @@ void Scene::translateCamera(const Vec2f& dir) {
       else if (edge.kind == EdgeKind::JOINING_EDGE) {
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-        double floorH = currentRegion->floorHeight;
-        currentRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
+        bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
+          * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
 
-        dv = dv * 10; // TODO
+        if (crossesLine) {
+          double floorH = currentRegion->floorHeight;
+          currentRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
 
-        cam.height += currentRegion->floorHeight - floorH;
-        break;
+          cam.height += currentRegion->floorHeight - floorH;
+
+          break;
+        }
       }
     }
   }
