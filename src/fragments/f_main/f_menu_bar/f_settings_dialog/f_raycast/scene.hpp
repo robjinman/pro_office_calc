@@ -174,16 +174,16 @@ struct JoiningEdge : public Edge {
   }
 
   void mergeIn(const JoiningEdge& other) {
-    if (other.topTexture.length() > 0) {
+    if (other.topTexture != "default") {
       topTexture = other.topTexture;
     }
-    if (other.bottomTexture.length() > 0) {
+    if (other.bottomTexture != "default") {
       bottomTexture = other.bottomTexture;
     }
   }
 
-  std::string topTexture = "";
-  std::string bottomTexture = "";
+  std::string topTexture = "default";
+  std::string bottomTexture = "default";
 
   Region* regionA = nullptr;
   Region* regionB = nullptr;

@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 #include <list>
+#include <set>
 #include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp>
 #include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp>
 #include <utils.hpp>
 
 
 using std::list;
+using std::set;
 using std::unique_ptr;
 
 
@@ -69,7 +71,8 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
-  findIntersections_r(camera, ray, *region, nullptr, result);
+  set<const Region*> visited;
+  findIntersections_r(camera, ray, *region, nullptr, result, visited);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -159,7 +162,8 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
-  findIntersections_r(camera, ray, *region, nullptr, result);
+  set<const Region*> visited;
+  findIntersections_r(camera, ray, *region, nullptr, result, visited);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -249,7 +253,8 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
-  findIntersections_r(camera, ray, *region1, nullptr, result);
+  set<const Region*> visited;
+  findIntersections_r(camera, ray, *region1, nullptr, result, visited);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;

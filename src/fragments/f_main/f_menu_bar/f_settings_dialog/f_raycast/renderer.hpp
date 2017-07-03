@@ -4,6 +4,7 @@
 
 #include <array>
 #include <list>
+#include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 
 
@@ -90,7 +91,7 @@ class Renderer {
 };
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  const Edge* exclude, CastResult& result);
+  const Edge* exclude, CastResult& result, std::set<const Region*>& visited);
 
 
 #endif

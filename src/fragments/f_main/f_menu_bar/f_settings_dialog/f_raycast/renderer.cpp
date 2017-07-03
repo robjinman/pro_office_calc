@@ -2,6 +2,7 @@
 #include <cassert>
 #include <limits>
 #include <list>
+#include <set>
 #include <vector>
 #include <QPainter>
 #include <QPaintDevice>
@@ -13,6 +14,7 @@
 
 using std::string;
 using std::list;
+using std::set;
 using std::vector;
 using std::array;
 using std::unique_ptr;
@@ -92,10 +94,13 @@ static Intersection* constructIntersection(EdgeKind kind) {
 // findIntersections_r
 //===========================================
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  const Edge* exclude, CastResult& result) {
+  const Edge* exclude, CastResult& result, set<const Region*>& visited) {
+
+  visited.insert(&region);
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    findIntersections_r(camera, ray, **it, nullptr, result);
+    assert(visited.find(it->get()) == visited.end());
+    findIntersections_r(camera, ray, **it, nullptr, result, visited);
   }
 
   Matrix invCamMatrix = camera.matrix().inverse();
@@ -148,7 +153,10 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
           jeX->joiningEdge = &je;
 
           const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
-          findIntersections_r(camera, ray, next, &edge, result);
+
+          if (visited.find(&next) == visited.end()) {
+            findIntersections_r(camera, ray, next, &edge, result, visited);
+          }
         }
       }
     }
@@ -164,7 +172,8 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   const Camera& cam = *scene.camera;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
-  findIntersections_r(cam, ray, *scene.currentRegion, nullptr, result);
+  set<const Region*> visited;
+  findIntersections_r(cam, ray, *scene.currentRegion, nullptr, result, visited);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;

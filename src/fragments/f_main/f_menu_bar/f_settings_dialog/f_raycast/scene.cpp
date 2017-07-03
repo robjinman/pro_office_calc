@@ -336,9 +336,11 @@ Scene::Scene(const string& mapFilePath) {
 
   camera->F = computeF(viewport.x, camera->hFov);
 
+  textures["default"] = QImage("data/default.png");
   textures["light_bricks"] = QImage("data/light_bricks.png");
   textures["dark_bricks"] = QImage("data/dark_bricks.png");
   textures["floor"] = QImage("data/floor.png");
+  textures["crate"] = QImage("data/crate.png");
   textures["ceiling"] = QImage("data/ceiling.png");
   textures["ammo"] = QImage("data/ammo.png");
   textures["bad_guy"] = QImage("data/bad_guy.png");
