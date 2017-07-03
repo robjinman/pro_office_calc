@@ -375,13 +375,13 @@ X.slice1.projSliceTop_wd = proj_tw1;
 //===========================================
 // drawCeilingSlice
 //===========================================
-static void drawCeilingSlice(QImage& target, const Scene& scene, double ceilingHeight,
+static void drawCeilingSlice(QImage& target, const Scene& scene, const Region* region,
   const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
   double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   double screenH_px = scene.viewport.y * vWorldUnit_px;
   const Camera& cam = *scene.camera;
-  const Texture& ceilingTex = scene.textures.at("ceiling");
+  const Texture& ceilingTex = scene.textures.at(region->ceilingTexture);
 
   double hAngle = atan(projX_wd / cam.F);
   LineSegment ray(cam.pos, collisionPoint);
@@ -398,7 +398,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, double ceilingH
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
     double projY_wd = (screenH_px * 0.5 - j) * vWorldUnit_px_rp;
     double vAngle = fastATan(atanMap, projY_wd * F_rp) + cam.vAngle;
-    double d_ = (ceilingHeight - cam.height) * fastTan_rp(tanMap_rp, vAngle);
+    double d_ = (region->ceilingHeight - cam.height) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
@@ -413,13 +413,13 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, double ceilingH
 //===========================================
 // drawFloorSlice
 //===========================================
-static void drawFloorSlice(QImage& target, const Scene& scene, double floorHeight,
+static void drawFloorSlice(QImage& target, const Scene& scene, const Region* region,
   const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
   double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   double screenH_px = scene.viewport.y * vWorldUnit_px;
   const Camera& cam = *scene.camera;
-  const Texture& floorTex = scene.textures.at("floor");
+  const Texture& floorTex = scene.textures.at(region->floorTexture);
 
   double hAngle = atan(projX_wd / scene.camera->F);
   LineSegment ray(cam.pos, collisionPoint);
@@ -436,7 +436,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, double floorHeigh
   for (int j = slice.sliceBottom_px; j < slice.viewportBottom_px; ++j) {
     double projY_wd = (j - screenH_px * 0.5) * vWorldUnit_px_rp;
     double vAngle = fastATan(atanMap, projY_wd * F_rp) - cam.vAngle;
-    double d_ = (cam.height - floorHeight) * fastTan_rp(tanMap_rp, vAngle);
+    double d_ = (cam.height - region->floorHeight) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
@@ -654,9 +654,9 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         ScreenSlice slice = drawSlice(painter, scene, cam.F, wallX.distanceAlongTarget, wallX.slice,
           wallX.wall->texture, screenX_px, viewport_px);
 
-        drawFloorSlice(target, scene, wallX.wall->region->floorHeight, wallX.point_world, slice,
+        drawFloorSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
-        drawCeilingSlice(target, scene, wallX.wall->region->ceilingHeight, wallX.point_world, slice,
+        drawCeilingSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
       }
       else if (X.kind == IntersectionKind::JOINING_EDGE) {
@@ -665,13 +665,13 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         ScreenSlice slice0 = drawSlice(painter, scene, cam.F, jeX.distanceAlongTarget, jeX.slice0,
           jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
 
-        drawFloorSlice(target, scene, jeX.nearRegion->floorHeight, jeX.point_world, slice0,
+        drawFloorSlice(target, scene, jeX.nearRegion, jeX.point_world, slice0,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         ScreenSlice slice1 = drawSlice(painter, scene, cam.F, jeX.distanceAlongTarget, jeX.slice1,
           jeX.joiningEdge->topTexture, screenX_px, viewport_px);
 
-        drawCeilingSlice(target, scene, jeX.nearRegion->ceilingHeight, jeX.point_world, slice1,
+        drawCeilingSlice(target, scene, jeX.nearRegion, jeX.point_world, slice1,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
       }
       else if (X.kind == IntersectionKind::SPRITE) {
