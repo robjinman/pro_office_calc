@@ -39,6 +39,11 @@ class Animation {
     int m_currentFrameIdx = 0;
 };
 
+struct Texture {
+  QImage image;
+  Size size;
+};
+
 class Region;
 
 class Sprite {
@@ -202,7 +207,7 @@ class Scene {
 
     Size viewport;
     std::unique_ptr<Camera> camera;
-    std::map<std::string, QImage> textures;
+    std::map<std::string, Texture> textures;
 
     pRegion_t rootRegion;
     std::list<pEdge_t> edges;

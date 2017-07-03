@@ -94,9 +94,10 @@ static Intersection* constructIntersection(EdgeKind kind) {
 // findIntersections_r
 //===========================================
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  const Edge* exclude, CastResult& result, set<const Region*>& visited) {
+  const Edge* exclude, CastResult& result, const set<const Region*>& visited) {
 
-  visited.insert(&region);
+  set<const Region*> visited_(visited.begin(), visited.end());
+  visited_.insert(&region);
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     assert(visited.find(it->get()) == visited.end());
@@ -133,8 +134,6 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
     if (lineSegmentIntersect(ray, lseg, pt)) {
       if (exclude != &edge) {
         Intersection* X = constructIntersection(edge.kind);
-        result.intersections.push_back(pIntersection_t(X));
-
         X->point_cam = pt;
         X->point_world = camera.matrix() * pt;
         X->distanceFromCamera = pt.x;
@@ -145,6 +144,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
           Wall& wall = dynamic_cast<Wall&>(edge);
 
           wallX->wall = &wall;
+          result.intersections.push_back(pIntersection_t(X));
         }
         else if (edge.kind == EdgeKind::JOINING_EDGE) {
           JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
@@ -155,7 +155,8 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
           const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
 
           if (visited.find(&next) == visited.end()) {
-            findIntersections_r(camera, ray, next, &edge, result, visited);
+            result.intersections.push_back(pIntersection_t(X));
+            findIntersections_r(camera, ray, next, nullptr, result, visited_);
           }
         }
       }
@@ -237,7 +238,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
     else if ((*it)->kind == IntersectionKind::JOINING_EDGE) {
       JoiningEdgeX& X = dynamic_cast<JoiningEdgeX&>(**it);
 
-      assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
+      //assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
       Region* nextRegion = region == X.joiningEdge->regionA ?
         X.joiningEdge->regionB : X.joiningEdge->regionA;
 
@@ -380,12 +381,12 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, double ceilingH
 
   double screenH_px = scene.viewport.y * vWorldUnit_px;
   const Camera& cam = *scene.camera;
-  const QImage& ceilingTex = scene.textures.at("ceiling");
+  const Texture& ceilingTex = scene.textures.at("ceiling");
 
   double hAngle = atan(projX_wd / cam.F);
   LineSegment ray(cam.pos, collisionPoint);
 
-  Size texSz_px(ceilingTex.rect().width(), ceilingTex.rect().height());
+  Size texSz_px(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
   double texelInWorldUnits = scene.wallHeight / texSz_px.y;
   Size texSz_wd_rp(1.0 / (texSz_px.x * texelInWorldUnits), 1.0 / (texSz_px.y * texelInWorldUnits));
 
@@ -405,7 +406,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, double ceilingH
     Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-    pixels[screenX_px] = ceilingTex.pixel(texel.x, texel.y);
+    pixels[screenX_px] = ceilingTex.image.pixel(texel.x, texel.y);
   }
 }
 
@@ -418,12 +419,12 @@ static void drawFloorSlice(QImage& target, const Scene& scene, double floorHeigh
 
   double screenH_px = scene.viewport.y * vWorldUnit_px;
   const Camera& cam = *scene.camera;
-  const QImage& floorTex = scene.textures.at("floor");
+  const Texture& floorTex = scene.textures.at("floor");
 
   double hAngle = atan(projX_wd / scene.camera->F);
   LineSegment ray(cam.pos, collisionPoint);
 
-  Size texSz_px(floorTex.rect().width(), floorTex.rect().height());
+  Size texSz_px(floorTex.image.rect().width(), floorTex.image.rect().height());
   double texelInWorldUnits = scene.wallHeight / texSz_px.y;
   Size texSz_wd_rp(1.0 / (texSz_px.x * texelInWorldUnits), 1.0 / (texSz_px.y * texelInWorldUnits));
 
@@ -443,7 +444,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, double floorHeigh
     Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-    pixels[screenX_px] = floorTex.pixel(texel.x, texel.y);
+    pixels[screenX_px] = floorTex.image.pixel(texel.x, texel.y);
   }
 }
 
@@ -452,19 +453,19 @@ static void drawFloorSlice(QImage& target, const Scene& scene, double floorHeigh
 //===========================================
 static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
   double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double distanceAlongTarget,
-  const Slice& slice, double width_wd, double height_wd, vector<QRectF>& trgRects,
+  const Slice& slice, const Size& texSz_wd, vector<QRectF>& trgRects,
   vector<QRect>& srcRects) {
 
   double H_tx = texRect.height();
   double W_tx = texRect.width();
 
-  double hWorldUnit_tx = W_tx / width_wd;
-  double vWorldUnit_tx = H_tx / height_wd;
+  double hWorldUnit_tx = W_tx / texSz_wd.x;
+  double vWorldUnit_tx = H_tx / texSz_wd.y;
 
   double projSliceH_wd = slice.projSliceTop_wd - slice.projSliceBottom_wd;
   double sliceH_wd = slice.sliceTop_wd - slice.sliceBottom_wd;
   double sliceToProjScale = projSliceH_wd / sliceH_wd;
-  double projTexH_wd = height_wd * sliceToProjScale;
+  double projTexH_wd = texSz_wd.y * sliceToProjScale;
 
   // World space
   double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd;
@@ -479,14 +480,14 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
-  double nx = distanceAlongTarget / width_wd;
-  double x = (nx - floor(nx)) * width_wd;
+  double nx = distanceAlongTarget / texSz_wd.x;
+  double x = (nx - floor(nx)) * texSz_wd.x;
 
-  int j0 = floor(sliceBottom_wd / height_wd);
-  int j1 = ceil(sliceTop_wd / height_wd);
+  int j0 = floor(sliceBottom_wd / texSz_wd.y);
+  int j1 = ceil(sliceTop_wd / texSz_wd.y);
 
-  double bottomOffset_wd = sliceBottom_wd - j0 * height_wd;
-  double topOffset_wd = j1 * height_wd - sliceTop_wd;
+  double bottomOffset_wd = sliceBottom_wd - j0 * texSz_wd.y;
+  double topOffset_wd = j1 * texSz_wd.y - sliceTop_wd;
 
   for (int j = j0; j < j1; ++j) {
     QRect srcRect;
@@ -495,7 +496,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     srcRect.setWidth(1);
     srcRect.setHeight(texRect.height());
 
-    double y = j * height_wd;
+    double y = j * texSz_wd.y;
 
     QRectF trgRect;
     trgRect.setX(screenX_px);
@@ -552,7 +553,7 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
   double hWorldUnit_px = viewport_px.x / scene.viewport.x;
   double vWorldUnit_px = viewport_px.y / scene.viewport.y;
 
-  const QImage& wallTex = scene.textures.at(texture);
+  const Texture& wallTex = scene.textures.at(texture);
 
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
@@ -562,14 +563,13 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
 
   vector<QRect> srcRects;
   vector<QRectF> trgRects;
-  sampleWallTexture(wallTex.rect(), scene.camera->height, viewport_px, screenX_px, hWorldUnit_px,
-    vWorldUnit_px, distanceAlongTarget, slice, scene.wallHeight, scene.wallHeight, trgRects,
-    srcRects);
+  sampleWallTexture(wallTex.image.rect(), scene.camera->height, viewport_px, screenX_px, hWorldUnit_px,
+    vWorldUnit_px, distanceAlongTarget, slice, wallTex.size, trgRects, srcRects);
 
   assert(srcRects.size() == trgRects.size());
 
   for (unsigned int i = 0; i < srcRects.size(); ++i) {
-    painter.drawImage(trgRects[i], wallTex, srcRects[i]);
+    painter.drawImage(trgRects[i], wallTex.image, srcRects[i]);
   }
 
   int viewportBottom_px = (scene.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
@@ -592,9 +592,9 @@ static void drawSprite(QPainter& painter, const Scene& scene, const Size& viewpo
   const Sprite& sprite = *spriteX.sprite;
   const Slice& slice = spriteX.slice;
 
-  const QImage& tex = scene.textures.at(sprite.texture);
+  const Texture& tex = scene.textures.at(sprite.texture);
   const QRectF& uv = sprite.textureRegion(scene.camera->pos);
-  QRect r = tex.rect();
+  QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());
 
@@ -605,7 +605,7 @@ static void drawSprite(QPainter& painter, const Scene& scene, const Size& viewpo
     sprite.size.y, sprite.region->floorHeight);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
-  painter.drawImage(trgRect, tex, srcRect);
+  painter.drawImage(trgRect, tex.image, srcRect);
 }
 
 //===========================================
