@@ -238,7 +238,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
     else if ((*it)->kind == IntersectionKind::JOINING_EDGE) {
       JoiningEdgeX& X = dynamic_cast<JoiningEdgeX&>(**it);
 
-      //assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
+      assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
       Region* nextRegion = region == X.joiningEdge->regionA ?
         X.joiningEdge->regionB : X.joiningEdge->regionA;
 
@@ -301,15 +301,19 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       }
       if (bWallBClip == CLIPPED_TO_BOTTOM) {
         proj_bw1 = subview0;
+        vw0 = rotProjPlane.A;
       }
       if (bWallBClip == CLIPPED_TO_TOP) {
         proj_bw1 = subview1;
+        vw0 = rotProjPlane.B;
       }
       if (tWallAClip == CLIPPED_TO_BOTTOM) {
         proj_tw0 = subview0;
+        vw1 = rotProjPlane.A;
       }
       if (tWallAClip == CLIPPED_TO_TOP) {
         proj_tw0 = subview1;
+        vw1 = rotProjPlane.B;
       }
       if (tWallBClip == CLIPPED_TO_BOTTOM) {
         proj_tw1 = subview0;
