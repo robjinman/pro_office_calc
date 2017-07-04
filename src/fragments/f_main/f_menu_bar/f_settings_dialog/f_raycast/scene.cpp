@@ -332,7 +332,6 @@ Scene::Scene(const string& mapFilePath) {
 
   viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   viewport.y = 10.0;
-  wallHeight = 100.0;
 
   camera->F = computeF(viewport.x, camera->hFov);
 
@@ -362,7 +361,7 @@ void Scene::translateCamera(const Vec2f& dir) {
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
-  double radius = wallHeight / 5.0;
+  double radius = 20.0;
 
   Circle circle{cam.pos + dv, radius};
   LineSegment ray(cam.pos, cam.pos + dv);

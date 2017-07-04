@@ -59,9 +59,7 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
   //buildPolygon(*region);
 
   int screenW_px = 640;
-  int screenH_px = 480;
   double hWorldUnitsInPx = screenW_px / viewport.x;
-  double vWorldUnitsInPx = screenH_px / viewport.y;
 
   double F = computeF(viewport.x, camera.hFov);
 
@@ -150,9 +148,7 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   //buildPolygon(*region);
 
   int screenW_px = 640;
-  int screenH_px = 480;
   double hWorldUnitsInPx = screenW_px / viewport.x;
-  double vWorldUnitsInPx = screenH_px / viewport.y;
 
   double F = computeF(viewport.x, camera.hFov);
 
@@ -241,9 +237,7 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   //buildPolygon(*region);
 
   int screenW_px = 640;
-  int screenH_px = 480;
   double hWorldUnitsInPx = screenW_px / viewport.x;
-  double vWorldUnitsInPx = screenH_px / viewport.y;
 
   double F = computeF(viewport.x, camera.hFov);
 

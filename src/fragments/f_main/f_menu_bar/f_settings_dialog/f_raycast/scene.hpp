@@ -41,7 +41,7 @@ class Animation {
 
 struct Texture {
   QImage image;
-  Size size;
+  Size size_wd;
 };
 
 class Region;
@@ -215,8 +215,6 @@ class Scene {
 
     void rotateCamera(double da);
     void translateCamera(const Vec2f& dir);
-
-    double wallHeight; // TODO: remove
 
   private:
     void addObject(const parser::Object& obj);

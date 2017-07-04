@@ -395,8 +395,7 @@ static void drawCeilingSlice(QImage& target, const Scene& scene, const Region* r
   LineSegment ray(cam.pos, collisionPoint);
 
   Size texSz_px(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
-  double texelInWorldUnits = scene.wallHeight / texSz_px.y;
-  Size texSz_wd_rp(1.0 / (texSz_px.x * texelInWorldUnits), 1.0 / (texSz_px.y * texelInWorldUnits));
+  Size texSz_wd_rp(1.0 / ceilingTex.size_wd.x, 1.0 / ceilingTex.size_wd.y);
 
   double vWorldUnit_px_rp = 1.0 / vWorldUnit_px;
   double F_rp = 1.0 / cam.F;
@@ -433,8 +432,7 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const Region* reg
   LineSegment ray(cam.pos, collisionPoint);
 
   Size texSz_px(floorTex.image.rect().width(), floorTex.image.rect().height());
-  double texelInWorldUnits = scene.wallHeight / texSz_px.y;
-  Size texSz_wd_rp(1.0 / (texSz_px.x * texelInWorldUnits), 1.0 / (texSz_px.y * texelInWorldUnits));
+  Size texSz_wd_rp(1.0 / floorTex.size_wd.x, 1.0 / floorTex.size_wd.y);
 
   double vWorldUnit_px_rp = 1.0 / vWorldUnit_px;
   double F_rp = 1.0 / scene.camera->F;
@@ -572,7 +570,7 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
   vector<QRect> srcRects;
   vector<QRectF> trgRects;
   sampleWallTexture(wallTex.image.rect(), scene.camera->height, viewport_px, screenX_px, hWorldUnit_px,
-    vWorldUnit_px, distanceAlongTarget, slice, wallTex.size, trgRects, srcRects);
+    vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects, srcRects);
 
   assert(srcRects.size() == trgRects.size());
 
