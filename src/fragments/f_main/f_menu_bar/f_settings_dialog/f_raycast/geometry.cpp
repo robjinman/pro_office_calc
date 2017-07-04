@@ -234,8 +234,26 @@ double clipNumber(double x, const Size& range) {
   if (x < range.x) {
     x = range.x;
   }
-  if (x > range.y) {
+  else if (x > range.y) {
     x = range.y;
   }
   return x;
+}
+
+//===========================================
+// clipNumber
+//===========================================
+clipResult_t clipNumber(double x, const Size& range, double& result) {
+  if (x < range.x) {
+    result = range.x;
+    return CLIPPED_TO_BOTTOM;
+  }
+  else if (x > range.y) {
+    result = range.y;
+    return CLIPPED_TO_TOP;
+  }
+  else {
+    result = x;
+    return NOT_CLIPPED;
+  }
 }

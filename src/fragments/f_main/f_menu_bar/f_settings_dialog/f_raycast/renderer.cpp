@@ -214,10 +214,16 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       p = lineIntersect(wallRay1.line(), rotProjPlane.line());
       double proj_w1 = rotProjPlane.signedDistance(p.x);
 
-      if (!isBetween(proj_w0, subview0, subview1)) {
+      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
+      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
+
+      auto wallAClip = clipNumber(wall.A.y, Size(wall_s0, wall_s1), X.slice.sliceBottom_wd);
+      auto wallBClip = clipNumber(wall.B.y, Size(wall_s0, wall_s1), X.slice.sliceTop_wd);
+
+      if (wallAClip == CLIPPED_TO_BOTTOM) {
         proj_w0 = subview0;
       }
-      if (!isBetween(proj_w1, subview0, subview1)) {
+      if (wallBClip == CLIPPED_TO_TOP) {
         proj_w1 = subview1;
       }
 
@@ -226,12 +232,6 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
 
       X.slice.viewportBottom_wd = subview0;
       X.slice.viewportTop_wd = subview1;
-
-      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
-      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
-
-      X.slice.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
-      X.slice.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
 
       break;
     }
@@ -272,6 +272,16 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       LineSegment topWallRay0(Point(0, 0), topWall.A);
       LineSegment topWallRay1(Point(0, 0), topWall.B);
 
+      LineSegment wall(Point(pt.x + 0.00001, bottomWallA), Point(pt.x, topWallB));
+      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
+      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
+
+      auto bWallAClip = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1), X.slice0.sliceBottom_wd);
+      auto bWallBClip = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1), X.slice0.sliceTop_wd);
+
+      auto tWallAClip = clipNumber(topWall.A.y, Size(wall_s0, wall_s1), X.slice1.sliceBottom_wd);
+      auto tWallBClip = clipNumber(topWall.B.y, Size(wall_s0, wall_s1), X.slice1.sliceTop_wd);
+
       Point p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
       double proj_bw0 = rotProjPlane.signedDistance(p.x);
       p = lineIntersect(bottomWallRay1.line(), rotProjPlane.line());
@@ -283,41 +293,35 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       p = lineIntersect(topWallRay1.line(), rotProjPlane.line());
       double proj_tw1 = rotProjPlane.signedDistance(p.x);
 
-/*
-if (!isBetween(proj_bw0, subview0, subview1)) {
-  proj_bw0 = subview0;
-}
-if (!isBetween(proj_bw1, subview0, subview1)) {
-  proj_bw1 = subview0;
-}
-if (!isBetween(proj_tw0, subview0, subview1)) {
-  proj_tw0 = subview1;
-}
-if (!isBetween(proj_tw1, subview0, subview1)) {
-  proj_tw1 = subview1;
-}
+      if (bWallAClip == CLIPPED_TO_BOTTOM) {
+        proj_bw0 = subview0;
+      }
+      if (bWallAClip == CLIPPED_TO_TOP) {
+        proj_bw0 = subview1;
+      }
+      if (bWallBClip == CLIPPED_TO_BOTTOM) {
+        proj_bw1 = subview0;
+      }
+      if (bWallBClip == CLIPPED_TO_TOP) {
+        proj_bw1 = subview1;
+      }
+      if (tWallAClip == CLIPPED_TO_BOTTOM) {
+        proj_tw0 = subview0;
+      }
+      if (tWallAClip == CLIPPED_TO_TOP) {
+        proj_tw0 = subview1;
+      }
+      if (tWallBClip == CLIPPED_TO_BOTTOM) {
+        proj_tw1 = subview0;
+      }
+      if (tWallBClip == CLIPPED_TO_TOP) {
+        proj_tw1 = subview1;
+      }
 
-X.slice0.projSliceBottom_wd = proj_bw0;
-X.slice0.projSliceTop_wd = proj_bw1;
-X.slice1.projSliceBottom_wd = proj_tw0;
-X.slice1.projSliceTop_wd = proj_tw1;
-*/
-
-      X.slice0.projSliceBottom_wd = clipNumber(proj_bw0, Size(subview0, subview1));
-      X.slice0.projSliceTop_wd = clipNumber(proj_bw1, Size(subview0, subview1));
-
-      X.slice1.projSliceBottom_wd = clipNumber(proj_tw0, Size(subview0, subview1));
-      X.slice1.projSliceTop_wd = clipNumber(proj_tw1, Size(subview0, subview1));
-
-      LineSegment wall(Point(pt.x + 0.00001, bottomWallA), Point(pt.x, topWallB));
-      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
-      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
-
-      X.slice0.sliceBottom_wd = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1));
-      X.slice0.sliceTop_wd = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1));
-
-      X.slice1.sliceBottom_wd = clipNumber(topWall.A.y, Size(wall_s0, wall_s1));
-      X.slice1.sliceTop_wd = clipNumber(topWall.B.y, Size(wall_s0, wall_s1));
+      X.slice0.projSliceBottom_wd = proj_bw0;
+      X.slice0.projSliceTop_wd = proj_bw1;
+      X.slice1.projSliceBottom_wd = proj_tw0;
+      X.slice1.projSliceTop_wd = proj_tw1;
 
       X.slice0.viewportBottom_wd = subview0;
       X.slice0.viewportTop_wd = subview1;
