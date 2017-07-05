@@ -301,7 +301,7 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
       }
     }
   }
-  catch (const Exception& ex) {
+  catch (const std::exception& ex) {
     delete region;
     EXCEPTION("Error constructing region; " << ex.what());
   }

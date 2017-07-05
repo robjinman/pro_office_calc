@@ -6,7 +6,6 @@ FEATURES
 - Rotated & translated floor textures
 - Collision with child regions
 - Animated wall/floor/ceiling textures
-- Outdoor environments (sky box/dome)
 - Gravity
 - 2D overlay
 - Bouncing gait
