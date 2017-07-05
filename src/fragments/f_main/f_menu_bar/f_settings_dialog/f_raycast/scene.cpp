@@ -356,6 +356,7 @@ Scene::Scene(const string& mapFilePath) {
   textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
   textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
   textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
+  textures["sky"] = Texture{QImage("data/sky.png"), Size()};
 }
 
 //===========================================

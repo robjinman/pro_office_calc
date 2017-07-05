@@ -383,10 +383,40 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
 //===========================================
 // drawSkySlice
 //===========================================
-static void drawSkySlice(QImage& target, const Scene& scene, const Region* region,
-  const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
-  double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+static void drawSkySlice(QImage& target, const Scene& scene, const ScreenSlice& slice,
+  int screenX_px) {
 
+  const Camera& cam = *scene.camera;
+
+  const Texture& skyTex = scene.textures.at("sky");
+  Size texSz_px(skyTex.image.rect().width(), skyTex.image.rect().height());
+
+  int W_px = target.rect().width();
+  int H_px = target.rect().height();
+
+  double hPxAngle = cam.hFov / W_px;
+  double vPxAngle = cam.vFov / H_px;
+
+  double hAngle = normaliseAngle(cam.angle - 0.5 * cam.hFov + hPxAngle * screenX_px);
+  double s = hAngle / (2.0 * PI);
+  assert(isBetween(s, 0.0, 1.0));
+
+  int x = texSz_px.x * s;
+
+  double maxPitch = DEG_TO_RAD(20.0); // TODO
+  double minVAngle = -0.5 * cam.vFov - maxPitch;
+  double maxVAngle = 0.5 * cam.vFov + maxPitch;
+  double vAngleRange = maxVAngle - minVAngle;
+  double viewportBottomAngle = cam.vAngle - 0.5 * cam.vFov;
+
+  for (int j = slice.viewportTop_px; j <= slice.sliceTop_px; ++j) {
+    double vAngle = viewportBottomAngle + (H_px - j) * vPxAngle;
+    double s = 1.0 - normaliseAngle(vAngle - minVAngle) / vAngleRange;
+    assert(isBetween(s, 0.0, 1.0));
+
+    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+    pixels[screenX_px] = skyTex.image.pixel(x, s * texSz_px.y);
+  }
 }
 
 //===========================================
@@ -677,8 +707,7 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
             screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
-          drawSkySlice(target, scene, wallX.wall->region, wallX.point_world, slice,
-            screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          drawSkySlice(target, scene, slice, screenX_px);
         }
       }
       else if (X.kind == IntersectionKind::JOINING_EDGE) {
@@ -698,8 +727,7 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
             projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
-          drawSkySlice(target, scene, jeX.nearRegion, jeX.point_world, slice1, screenX_px, projX_wd,
-            vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          drawSkySlice(target, scene, slice1, screenX_px);
         }
       }
       else if (X.kind == IntersectionKind::SPRITE) {
