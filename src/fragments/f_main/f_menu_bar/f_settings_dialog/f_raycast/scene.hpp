@@ -147,6 +147,7 @@ class Region;
 typedef std::unique_ptr<Region> pRegion_t;
 
 struct Region {
+  bool hasCeiling = true;
   double floorHeight = 0;
   double ceilingHeight = 100;
   std::string floorTexture;

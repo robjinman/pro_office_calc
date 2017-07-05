@@ -244,6 +244,19 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
 
     Matrix transform = parentTransform * obj.transform;
 
+    if (contains<string>(obj.dict, "has_ceiling")) {
+      string s = obj.dict.at("has_ceiling");
+      if (s == "true") {
+        region->hasCeiling = true;
+      }
+      else if (s == "false") {
+        region->hasCeiling = false;
+      }
+      else {
+        EXCEPTION("has_ceiling must be either 'true' or 'false'");
+      }
+    }
+
     region->floorHeight = contains<string>(obj.dict, "floor_height") ?
       std::stod(obj.dict.at("floor_height")) : scene.defaultFloorHeight;
 

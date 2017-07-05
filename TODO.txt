@@ -1,0 +1,18 @@
+BUGS
+- Wall texture slippage on camera pitch
+- Transitioning between regions
+
+FEATURES
+- Rotated & translated floor textures
+- Collision with child regions
+- Animated wall/floor/ceiling textures
+- Outdoor environments (sky box/dome)
+- Gravity
+- 2D overlay
+- Bouncing gait
+- Jump
+- Sprite animations
+- Moving floors/ceilings
+- Translucent walls & walls with holes
+- Sound
+- Sprite patrol paths

@@ -381,6 +381,15 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
 }
 
 //===========================================
+// drawSkySlice
+//===========================================
+static void drawSkySlice(QImage& target, const Scene& scene, const Region* region,
+  const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
+  double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+
+}
+
+//===========================================
 // drawCeilingSlice
 //===========================================
 static void drawCeilingSlice(QImage& target, const Scene& scene, const Region* region,
@@ -569,8 +578,8 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
 
   vector<QRect> srcRects;
   vector<QRectF> trgRects;
-  sampleWallTexture(wallTex.image.rect(), scene.camera->height, viewport_px, screenX_px, hWorldUnit_px,
-    vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects, srcRects);
+  sampleWallTexture(wallTex.image.rect(), scene.camera->height, viewport_px, screenX_px,
+    hWorldUnit_px, vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects, srcRects);
 
   assert(srcRects.size() == trgRects.size());
 
@@ -662,8 +671,15 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
 
         drawFloorSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
-        drawCeilingSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
-          screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+
+        if (wallX.wall->region->hasCeiling) {
+          drawCeilingSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
+            screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        }
+        else {
+          drawSkySlice(target, scene, wallX.wall->region, wallX.point_world, slice,
+            screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        }
       }
       else if (X.kind == IntersectionKind::JOINING_EDGE) {
         const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(X);
@@ -677,8 +693,14 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         ScreenSlice slice1 = drawSlice(painter, scene, cam.F, jeX.distanceAlongTarget, jeX.slice1,
           jeX.joiningEdge->topTexture, screenX_px, viewport_px);
 
-        drawCeilingSlice(target, scene, jeX.nearRegion, jeX.point_world, slice1,
-          screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        if (jeX.nearRegion->hasCeiling) {
+          drawCeilingSlice(target, scene, jeX.nearRegion, jeX.point_world, slice1, screenX_px,
+            projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        }
+        else {
+          drawSkySlice(target, scene, jeX.nearRegion, jeX.point_world, slice1, screenX_px, projX_wd,
+            vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        }
       }
       else if (X.kind == IntersectionKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
