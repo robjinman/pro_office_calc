@@ -110,7 +110,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
     Sprite& sprite = **it;
     Point pos = invCamMatrix * sprite.pos;
     double w = sprite.size.x;
-    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x * 1.00001, pos.y + 0.5 * w));
+    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x, pos.y + 0.5 * w));
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
@@ -180,7 +180,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
     return a->distanceFromCamera < b->distanceFromCamera;
   });
 
-  LineSegment projPlane(Point(cam.F, 0.00001 - scene.viewport.y / 2),
+  LineSegment projPlane(Point(cam.F, -scene.viewport.y / 2),
     Point(cam.F, scene.viewport.y * 0.5));
 
   Matrix m(cam.vAngle, Vec2f(0, 0));
@@ -203,7 +203,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       double targetHeight = X.wall->region->ceilingHeight - X.wall->region->floorHeight;
       const Point& pt = X.point_cam;
 
-      LineSegment wall(Point(pt.x + 0.00001, floorHeight - cam.height),
+      LineSegment wall(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + targetHeight));
 
       LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));
@@ -263,8 +263,8 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
         topWallA = topWallB;
       }
 
-      LineSegment bottomWall(Point(pt.x + 0.00001, bottomWallA), Point(pt.x, bottomWallB));
-      LineSegment topWall(Point(pt.x + 0.00001, topWallA), Point(pt.x, topWallB));
+      LineSegment bottomWall(Point(pt.x, bottomWallA), Point(pt.x, bottomWallB));
+      LineSegment topWall(Point(pt.x, topWallA), Point(pt.x, topWallB));
 
       LineSegment bottomWallRay0(Point(0, 0), bottomWall.A);
       LineSegment bottomWallRay1(Point(0, 0), bottomWall.B);
@@ -272,7 +272,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       LineSegment topWallRay0(Point(0, 0), topWall.A);
       LineSegment topWallRay1(Point(0, 0), topWall.B);
 
-      LineSegment wall(Point(pt.x + 0.00001, bottomWallA), Point(pt.x, topWallB));
+      LineSegment wall(Point(pt.x, bottomWallA), Point(pt.x, topWallB));
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
@@ -346,7 +346,7 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       double floorHeight = region->floorHeight;
       const Point& pt = X.point_cam;
 
-      LineSegment wall(Point(pt.x + 0.00001, floorHeight - cam.height),
+      LineSegment wall(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + X.sprite->size.y));
 
       LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));

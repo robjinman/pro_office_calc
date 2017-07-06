@@ -179,7 +179,7 @@ static void connectSubregions_r(Scene& scene, Region& region) {
 
         bool hasTwin = false;
         for (auto kt = region.children.begin(); kt != region.children.end(); ++kt) {
-          if (kt->get() == &region) {
+          if (kt->get() == it->get()) {
             continue;
           }
 

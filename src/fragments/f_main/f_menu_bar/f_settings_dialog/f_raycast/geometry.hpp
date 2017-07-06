@@ -9,7 +9,7 @@
 #include <vector>
 
 
-const double SMALL_DOUBLE = 0.001;
+const double SMALL_DOUBLE = 0.0001;
 
 
 struct Point {
@@ -109,21 +109,23 @@ struct Line {
 
 struct LineSegment {
   LineSegment()
-    : A(), B() {}
+    : A(0, 0),
+      B(SMALL_DOUBLE, 0) {}
 
-  LineSegment(const Point& A, const Point& B)
-    : A(A), B(B) {}
+  LineSegment(const Point& A_, const Point& B_) {
+    A = A_;
+    B = B_;
+
+    // Avoid vertical lines
+    if (fabs(B.x - A.x) < SMALL_DOUBLE) {
+      B.x += SMALL_DOUBLE;
+    }
+  }
 
   Line line() const {
     Line l;
 
-    // Avoid vertical lines
-    double bx = B.x;
-    if (fabs(bx - A.x) < SMALL_DOUBLE) {
-      bx = B.x + SMALL_DOUBLE;
-    }
-
-    l.m = (B.y - A.y) / (bx - A.x);
+    l.m = (B.y - A.y) / (B.x - A.x);
     l.c = A.y - l.m * A.x;
 
     return l;
