@@ -1,4 +1,5 @@
 #include <string>
+#include <cassert>
 #include <sstream>
 #include <list>
 #include <iterator>
@@ -333,9 +334,8 @@ Scene::Scene(const string& mapFilePath) {
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
-  for (auto it = objects.begin(); it != objects.end(); ++it) {
-    addObject(**it);
-  }
+  assert(objects.size() == 1);
+  addObject(**objects.begin());
 
   if (!camera) {
     EXCEPTION("Scene must contain a camera");

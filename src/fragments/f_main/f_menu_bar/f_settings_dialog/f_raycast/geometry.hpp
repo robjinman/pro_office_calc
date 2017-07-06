@@ -9,6 +9,9 @@
 #include <vector>
 
 
+const double SMALL_DOUBLE = 0.001;
+
+
 struct Point {
   Point()
     : x(0.0), y(0.0) {}
@@ -113,7 +116,14 @@ struct LineSegment {
 
   Line line() const {
     Line l;
-    l.m = (B.y - A.y) / (B.x - A.x);
+
+    // Avoid vertical lines
+    double bx = B.x;
+    if (fabs(bx - A.x) < SMALL_DOUBLE) {
+      bx = B.x + SMALL_DOUBLE;
+    }
+
+    l.m = (B.y - A.y) / (bx - A.x);
     l.c = A.y - l.m * A.x;
 
     return l;

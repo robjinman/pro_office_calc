@@ -78,7 +78,7 @@ PathStreamToken getNextToken(istream& is) {
     stringstream ss(s);
     ss >> result.p.x;
     ss >> comma;
-    ASSERT_EQ(comma, ',');
+    PC_ASSERT_EQ(comma, ',');
     ss >> result.p.y;
   }
 
@@ -106,7 +106,7 @@ void constructPath(const XMLElement& e, Path& path) {
     }
     else if (result.kind == PathStreamToken::CLOSE_PATH) {
       path.closed = true;
-      ASSERT(ss.eof());
+      PC_ASSERT(ss.eof());
       break;
     }
     else if (result.kind == PathStreamToken::POINT) {
@@ -148,7 +148,7 @@ void extractKvPairs(const XMLElement& node, map<string, string>& kv) {
 
     if (tag == "text") {
       const XMLElement* tspan = e->FirstChildElement();
-      ASSERT_EQ(string(tspan->Name()), "tspan");
+      PC_ASSERT_EQ(string(tspan->Name()), "tspan");
 
       kv.insert(parseKvpString(tspan->GetText()));
     }
@@ -165,14 +165,14 @@ Matrix parseTranslateTransform(const string& s) {
 
   string buf(10, '\0');
   ss.read(&buf[0], 10);
-  ASSERT_EQ(buf, "translate(");
+  PC_ASSERT_EQ(buf, "translate(");
 
   Matrix m;
   char comma;
   ss >> m[0][2] >> comma;
-  ASSERT_EQ(comma, ',');
+  PC_ASSERT_EQ(comma, ',');
   ss >> m[1][2] >> buf;
-  ASSERT_EQ(buf, ")");
+  PC_ASSERT_EQ(buf, ")");
 
   return m;
 }
@@ -185,22 +185,22 @@ Matrix parseMatrixTransform(const string& s) {
 
   string buf(7, '\0');
   ss.read(&buf[0], 7);
-  ASSERT_EQ(buf, "matrix(");
+  PC_ASSERT_EQ(buf, "matrix(");
 
   Matrix m;
   char comma;
   ss >> m[0][0] >> comma;
-  ASSERT_EQ(comma, ',');
+  PC_ASSERT_EQ(comma, ',');
   ss >> m[1][0] >> comma;
-  ASSERT_EQ(comma, ',');
+  PC_ASSERT_EQ(comma, ',');
   ss >> m[0][1] >> comma;
-  ASSERT_EQ(comma, ',');
+  PC_ASSERT_EQ(comma, ',');
   ss >> m[1][1] >> comma;
-  ASSERT_EQ(comma, ',');
+  PC_ASSERT_EQ(comma, ',');
   ss >> m[0][2] >> comma;
-  ASSERT_EQ(comma, ',');
+  PC_ASSERT_EQ(comma, ',');
   ss >> m[1][2] >> buf;
-  ASSERT_EQ(buf, ")");
+  PC_ASSERT_EQ(buf, ")");
 
   return m;
 }
@@ -209,7 +209,7 @@ Matrix parseMatrixTransform(const string& s) {
 // parseTransform
 //===========================================
 Matrix parseTransform(const string& s) {
-  ASSERT(s.length() > 0);
+  PC_ASSERT(s.length() > 0);
 
   if (s[0] == 't') {
     return parseTranslateTransform(s);
