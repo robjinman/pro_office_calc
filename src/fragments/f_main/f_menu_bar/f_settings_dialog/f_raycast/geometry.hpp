@@ -9,7 +9,7 @@
 #include <vector>
 
 
-const double SMALL_DOUBLE = 0.0001;
+const double SMALL_DOUBLE = 0.001;
 
 
 struct Point {

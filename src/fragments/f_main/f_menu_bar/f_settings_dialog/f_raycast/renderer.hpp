@@ -91,7 +91,8 @@ class Renderer {
 };
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  const Edge* exclude, CastResult& result, const std::set<const Region*>& visited);
+  CastResult& result, std::set<const Region*>& visitedRegions,
+  std::set<const JoiningEdge*>& visitedJoiningEdges);
 
 
 #endif

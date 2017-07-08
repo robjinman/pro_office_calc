@@ -16,6 +16,18 @@ using std::list;
 
 
 //===========================================
+// forEachConstRegion
+//===========================================
+static void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn) {
+  fn(region);
+  std::for_each(region.children.begin(), region.children.end(),
+    [&](const std::unique_ptr<Region>& r) {
+
+    forEachConstRegion(*r, fn);
+  });
+}
+
+//===========================================
 // constructWalls
 //===========================================
 static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
@@ -217,7 +229,8 @@ static void connectSubregions_r(Scene& scene, Region& region) {
         }
 
         if (!hasTwin) {
-          EXCEPTION("Could not find twin for JoiningEdge");
+          je->regionA = it->get();
+          je->regionB = &region;
         }
       }
     }
@@ -381,42 +394,45 @@ void Scene::translateCamera(const Vec2f& dir) {
   LineSegment ray(cam.pos, cam.pos + dv);
 
   bool collision = false;
-  for (auto it = currentRegion->edges.begin(); it != currentRegion->edges.end(); ++it) {
-    const Edge& edge = **it;
 
-    if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-      if (edge.kind == EdgeKind::WALL) {
-        collision = true;
+  forEachConstRegion(*currentRegion, [&](const Region& region) {
+    for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
+      const Edge& edge = **it;
 
-        Matrix m(-atan(edge.lseg.line().m), Vec2f());
-        Vec2f dv_ = m * dv;
-        dv_.y = 0;
-        dv_ = m.inverse() * dv_;
+      if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+        if (edge.kind == EdgeKind::WALL) {
+          collision = true;
 
-        Circle circle2{cam.pos + dv_, radius};
+          Matrix m(-atan(edge.lseg.line().m), Vec2f());
+          Vec2f dv_ = m * dv;
+          dv_.y = 0;
+          dv_ = m.inverse() * dv_;
 
-        if (!intersectWall(*currentRegion, circle2)) {
-          cam.pos = cam.pos + dv_;
-          return;
+          Circle circle2{cam.pos + dv_, radius};
+
+          if (!intersectWall(*currentRegion, circle2)) {
+            cam.pos = cam.pos + dv_;
+            return;
+          }
         }
-      }
-      else if (edge.kind == EdgeKind::JOINING_EDGE) {
-        const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+        else if (edge.kind == EdgeKind::JOINING_EDGE) {
+          const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-        bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
-          * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
+          bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
+            * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
 
-        if (crossesLine) {
-          double floorH = currentRegion->floorHeight;
-          currentRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
+          if (crossesLine) {
+            double floorH = currentRegion->floorHeight;
+            currentRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
 
-          cam.height += currentRegion->floorHeight - floorH;
+            cam.height += currentRegion->floorHeight - floorH;
 
-          break;
+            break;
+          }
         }
       }
     }
-  }
+  });
 
   if (!collision) {
     cam.pos = cam.pos + dv;

@@ -94,14 +94,15 @@ static Intersection* constructIntersection(EdgeKind kind) {
 // findIntersections_r
 //===========================================
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  const Edge* exclude, CastResult& result, const set<const Region*>& visited) {
+  CastResult& result, set<const Region*>& visitedRegions,
+  set<const JoiningEdge*>& visitedJoiningEdges) {
 
-  set<const Region*> visited_(visited.begin(), visited.end());
-  visited_.insert(&region);
+  visitedRegions.insert(&region);
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    assert(visited.find(it->get()) == visited.end());
-    findIntersections_r(camera, ray, **it, nullptr, result, visited);
+    if (visitedRegions.find(it->get()) == visitedRegions.end()) {
+      findIntersections_r(camera, ray, **it, result, visitedRegions, visitedJoiningEdges);
+    }
   }
 
   Matrix invCamMatrix = camera.matrix().inverse();
@@ -132,32 +133,34 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      if (exclude != &edge) {
-        Intersection* X = constructIntersection(edge.kind);
-        X->point_cam = pt;
-        X->point_world = camera.matrix() * pt;
-        X->distanceFromCamera = pt.x;
-        X->distanceAlongTarget = distance(lseg.A, pt);
+      Intersection* X = constructIntersection(edge.kind);
+      X->point_cam = pt;
+      X->point_world = camera.matrix() * pt;
+      X->distanceFromCamera = pt.x;
+      X->distanceAlongTarget = distance(lseg.A, pt);
 
-        if (edge.kind == EdgeKind::WALL) {
-          WallX* wallX = dynamic_cast<WallX*>(X);
-          Wall& wall = dynamic_cast<Wall&>(edge);
+      if (edge.kind == EdgeKind::WALL) {
+        WallX* wallX = dynamic_cast<WallX*>(X);
+        Wall& wall = dynamic_cast<Wall&>(edge);
 
-          wallX->wall = &wall;
+        wallX->wall = &wall;
+        result.intersections.push_back(pIntersection_t(X));
+      }
+      else if (edge.kind == EdgeKind::JOINING_EDGE) {
+        JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
+        JoiningEdge& je = dynamic_cast<JoiningEdge&>(edge);
+
+        jeX->joiningEdge = &je;
+
+        const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
+
+        if (visitedJoiningEdges.find(&je) == visitedJoiningEdges.end()) {
           result.intersections.push_back(pIntersection_t(X));
+          visitedJoiningEdges.insert(&je);
         }
-        else if (edge.kind == EdgeKind::JOINING_EDGE) {
-          JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
-          JoiningEdge& je = dynamic_cast<JoiningEdge&>(edge);
 
-          jeX->joiningEdge = &je;
-
-          const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
-
-          if (visited.find(&next) == visited.end()) {
-            result.intersections.push_back(pIntersection_t(X));
-            findIntersections_r(camera, ray, next, nullptr, result, visited_);
-          }
+        if (visitedRegions.find(&next) == visitedRegions.end()) {
+          findIntersections_r(camera, ray, next, result, visitedRegions, visitedJoiningEdges);
         }
       }
     }
@@ -173,8 +176,9 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
   const Camera& cam = *scene.camera;
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
-  set<const Region*> visited;
-  findIntersections_r(cam, ray, *scene.currentRegion, nullptr, result, visited);
+  set<const Region*> visitedRegions;
+  set<const JoiningEdge*> visitedJoiningEdges;
+  findIntersections_r(cam, ray, *scene.currentRegion, result, visitedRegions, visitedJoiningEdges);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;

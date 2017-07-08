@@ -69,8 +69,9 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
-  set<const Region*> visited;
-  findIntersections_r(camera, ray, *region, nullptr, result, visited);
+  set<const Region*> visitedRegions;
+  set<const JoiningEdge*> visitedJoiningEdges;
+  findIntersections_r(camera, ray, *region, result, visitedRegions, visitedJoiningEdges);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -158,8 +159,9 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
-  set<const Region*> visited;
-  findIntersections_r(camera, ray, *region, nullptr, result, visited);
+  set<const Region*> visitedRegions;
+  set<const JoiningEdge*> visitedJoiningEdges;
+  findIntersections_r(camera, ray, *region, result, visitedRegions, visitedJoiningEdges);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -247,8 +249,9 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
-  set<const Region*> visited;
-  findIntersections_r(camera, ray, *region1, nullptr, result, visited);
+  set<const Region*> visitedRegions;
+  set<const JoiningEdge*> visitedJoiningEdges;
+  findIntersections_r(camera, ray, *region1, result, visitedRegions, visitedJoiningEdges);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
