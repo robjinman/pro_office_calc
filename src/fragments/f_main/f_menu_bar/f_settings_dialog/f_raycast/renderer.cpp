@@ -227,6 +227,12 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       if (wallAClip == CLIPPED_TO_BOTTOM) {
         proj_w0 = subview0;
       }
+      if (wallAClip == CLIPPED_TO_TOP) {
+        proj_w0 = subview1;
+      }
+      if (wallBClip == CLIPPED_TO_BOTTOM) {
+        proj_w1 = subview0;
+      }
       if (wallBClip == CLIPPED_TO_TOP) {
         proj_w1 = subview1;
       }
