@@ -166,7 +166,6 @@ bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 double distanceFromLine(const Line& l, const Point& p);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
 Vec2f normalise(const Vec2f& v);
-double angleBetween(const Line& l0, const Line& l1);
 double normaliseAngle(double a);
 
 enum clipResult_t { CLIPPED_TO_TOP, CLIPPED_TO_BOTTOM, NOT_CLIPPED };

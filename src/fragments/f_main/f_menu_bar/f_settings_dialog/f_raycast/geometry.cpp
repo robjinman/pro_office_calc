@@ -219,7 +219,12 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 // distanceFromLine
 //===========================================
 double distanceFromLine(const Line& l, const Point& p) {
-  return (l.m * p.x - p.y + l.c) / sqrt(l.m * l.m + 1);
+  if (std::isinf(l.m)) {
+    return l.x - p.x;
+  }
+  else {
+    return (l.m * p.x - p.y + l.c) / sqrt(l.m * l.m + 1);
+  }
 }
 
 //===========================================
@@ -243,13 +248,6 @@ double normaliseAngle(double angle) {
   else {
     return angle;
   }
-}
-
-//===========================================
-// angleBetween
-//===========================================
-double angleBetween(const Line& l0, const Line& l1) {
-  return atan(l0.m) - atan(l1.m);
 }
 
 //===========================================
