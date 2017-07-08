@@ -15,8 +15,8 @@ namespace chrono = std::chrono;
 #endif
 
 
-const int SCREEN_WIDTH = 480;
-const int SCREEN_HEIGHT = 360;
+const int SCREEN_WIDTH = 400;
+const int SCREEN_HEIGHT = 300;
 const int FRAME_RATE = 60;
 
 
@@ -145,15 +145,15 @@ void FRaycast::tick() {
   }
 
   if (v.x != 0 || v.y != 0) {
-    double ds = 5;
+    double ds = 300 / FRAME_RATE;
     m_scene->translateCamera(normalise(v) * ds);
   }
 
   if (m_keyStates[Qt::Key_Left]) {
-    m_scene->rotateCamera(-0.02 * PI);
+    m_scene->rotateCamera(-(1.2 / FRAME_RATE) * PI);
   }
   if (m_keyStates[Qt::Key_Right]) {
-    m_scene->rotateCamera(0.02 * PI);
+    m_scene->rotateCamera((1.2 / FRAME_RATE) * PI);
   }
 
   if (m_cursorCaptured) {

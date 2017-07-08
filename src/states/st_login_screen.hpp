@@ -24,8 +24,8 @@ FMainSpec* makeFMainSpec(int stateId) {
     "<p align='center'></p>"
     "<p align='center'>C̸̡̖̔͂o̴̡͒̊p̷̼̏̆y̵̥͛r̶̭̘͑̋i̷̡͊͌ḡ̴̜h̴̖̚ẗ̷̯̳́ ̸̨͙̿(̷̹̯͗ć̸͔͋)̵̮̘͐͒ ̵̦̞͐̀2̷̩̫̈́͆0̷͍͔̀͑1̵̹͖̅7̵̤̟̽̍ ̷͓̐A̵̮̖̋c̷̞̾͘m̸̬͉̃é̴̡͐ ̷̮̟̄Ỉ̸̗̤̃n̵̦̊̃č̵̮̔ͅ.̴͇̙̀ ̴͇̚A̵̛̞̐ͅl̴͎̈́͘l̸̘̓͋ ̴̪͔̎r̸̩̠̐̄i̷̝͒g̶̡̦̍h̸̥̓̍ṯ̵̻͊̓s̷̰͂ ̵̘͐̊͜r̵̺̭̃e̷̱͇̔̚s̸͇͗̅e̴̜͝r̶̲̊̋v̵̧̦̈́̔e̷̤̭͑ḑ̷̉.̸̺̓͜</p>";
   mainSpec->menuBarSpec.settingsDialogSpec.setEnabled(true);
-  mainSpec->menuBarSpec.settingsDialogSpec.width = 800;
-  mainSpec->menuBarSpec.settingsDialogSpec.height = 600;
+  mainSpec->menuBarSpec.settingsDialogSpec.width = 640;
+  mainSpec->menuBarSpec.settingsDialogSpec.height = 480;
   mainSpec->menuBarSpec.settingsDialogSpec.raycastSpec.setEnabled(true);
 
   return mainSpec;
