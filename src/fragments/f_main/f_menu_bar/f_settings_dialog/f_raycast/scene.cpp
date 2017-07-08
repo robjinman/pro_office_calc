@@ -334,12 +334,17 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
 // intersectWall
 //===========================================
 static bool intersectWall(const Region& region, const Circle& circle) {
-  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
-    if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
-      return true;
+  bool b = false;
+
+  forEachConstRegion(region, [&](const Region& r) {
+    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+      if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
+        b = true;
+      }
     }
-  }
-  return false;
+  });
+
+  return b;
 }
 
 //===========================================
@@ -415,7 +420,7 @@ void Scene::translateCamera(const Vec2f& dir) {
           double floorH = currentRegion->floorHeight;
           double dy = nextRegion->floorHeight - floorH;
 
-          if (dy <= 15.0) {
+          if (dy <= 16.0) {
             bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
               * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
 

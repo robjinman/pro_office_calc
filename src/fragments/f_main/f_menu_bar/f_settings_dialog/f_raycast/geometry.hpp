@@ -9,9 +9,6 @@
 #include <vector>
 
 
-const double SMALL_DOUBLE = 0.001;
-
-
 struct Point {
   Point()
     : x(0.0), y(0.0) {}
@@ -94,7 +91,7 @@ Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
 struct Line {
   Line()
-    : m(0), c(0) {}
+    : m(0), c(0), x(0) {}
 
   Line(double m, double c)
     : m(m), c(c) {}
@@ -105,21 +102,19 @@ struct Line {
 
   double m;
   double c;
+
+  // For vertical lines (m == inf)
+  double x;
 };
 
 struct LineSegment {
   LineSegment()
     : A(0, 0),
-      B(SMALL_DOUBLE, 0) {}
+      B(0, 0) {}
 
   LineSegment(const Point& A_, const Point& B_) {
     A = A_;
     B = B_;
-
-    // Avoid vertical lines
-    if (fabs(B.x - A.x) < SMALL_DOUBLE) {
-      B.x += SMALL_DOUBLE;
-    }
   }
 
   Line line() const {
@@ -127,6 +122,10 @@ struct LineSegment {
 
     l.m = (B.y - A.y) / (B.x - A.x);
     l.c = A.y - l.m * A.x;
+
+    if (std::isinf(l.m)) {
+      l.x = A.x;
+    }
 
     return l;
   }

@@ -26,6 +26,13 @@ ostream& operator<<(ostream& os, const Matrix& mat) {
 #endif
 
 //===========================================
+// switchAxes
+//===========================================
+static Point switchAxes(const Point& p) {
+  return Point(p.y, p.x);
+}
+
+//===========================================
 // operator+
 //===========================================
 Point operator+(const Point& lhs, const Point& rhs) {
@@ -139,6 +146,16 @@ Point lineIntersect(const Line& l0, const Line& l1) {
   p.x = (l1.c - l0.c) / (l0.m - l1.m);
   p.y = l0.m * p.x + l0.c;
 
+  if (std::isinf(l0.m)) {
+    p.x = l0.x;
+    p.y = l1.m * p.x + l1.c;
+  }
+
+  if (std::isinf(l1.m)) {
+    p.x = l1.x;
+    p.y = l0.m * p.x + l0.c;
+  }
+
   return p;
 }
 
@@ -157,7 +174,8 @@ bool isBetween(double x, double a, double b) {
 //===========================================
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
   p = lineIntersect(l0.line(), l1.line());
-  return isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x);
+  return (isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x))
+    && (isBetween(p.y, l0.A.y, l0.B.y) && isBetween(p.y, l1.A.y, l1.B.y));
 }
 
 //===========================================
@@ -169,6 +187,13 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
   }
 
   Line l = lseg.line();
+
+  if (std::isinf(l.m)) {
+    Circle circ2{switchAxes(circ.pos), circ.radius};
+    LineSegment lseg2(switchAxes(lseg.A), switchAxes(lseg.B));
+
+    return lineSegmentCircleIntersect(circ2, lseg2);
+  }
 
   double a = pow(l.m, 2) + 1.0;
   double b = 2.0 * l.m * l.c - 2.0 * l.m * circ.pos.y - 2.0 * circ.pos.x;

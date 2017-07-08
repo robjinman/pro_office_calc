@@ -86,6 +86,14 @@ TEST_F(GeometryTest, lineSegmentIntersect_vert) {
   ASSERT_DOUBLE_EQ(2, p.y);
 }
 
+TEST_F(GeometryTest, lineSegmentIntersect_vert2) {
+  LineSegment l0(Point(2, -2), Point(2, 8));
+  LineSegment l1(Point(0, 7), Point(5, 20));
+
+  Point p;
+  ASSERT_FALSE(lineSegmentIntersect(l1, l0, p));
+}
+
 TEST_F(GeometryTest, lineSegmentCircleIntersect_hit0) {
   LineSegment l(Point(0, -2), Point(4, 6));
   Circle c{Point(3, 2), 2};
