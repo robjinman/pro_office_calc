@@ -407,35 +407,41 @@ void Scene::translateCamera(const Vec2f& dir) {
       const Edge& edge = **it;
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        if (edge.kind == EdgeKind::WALL) {
-          collision = true;
-
-          Matrix m(-atan(edge.lseg.line().m), Vec2f());
-          Vec2f dv_ = m * dv;
-          dv_.y = 0;
-          dv_ = m.inverse() * dv_;
-
-          Circle circle2{cam.pos + dv_, radius};
-
-          if (!intersectWall(*currentRegion, circle2)) {
-            cam.pos = cam.pos + dv_;
-            return;
-          }
-        }
-        else if (edge.kind == EdgeKind::JOINING_EDGE) {
+        if (edge.kind == EdgeKind::JOINING_EDGE) {
           const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-          bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
-            * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
+          Region* nextRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
 
-          if (crossesLine) {
-            double floorH = currentRegion->floorHeight;
-            currentRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
+          double floorH = currentRegion->floorHeight;
+          double dy = nextRegion->floorHeight - floorH;
 
-            cam.height += currentRegion->floorHeight - floorH;
+          if (dy <= 15.0) {
+            bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
+              * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
+
+            if (crossesLine) {
+              currentRegion = nextRegion;
+              cam.height += dy;
+              cam.pos = cam.pos + dv;
+              return;
+            }
 
             break;
           }
+        }
+
+        collision = true;
+
+        Matrix m(-atan(edge.lseg.line().m), Vec2f());
+        Vec2f dv_ = m * dv;
+        dv_.y = 0;
+        dv_ = m.inverse() * dv_;
+
+        Circle circle2{cam.pos + dv_, radius};
+
+        if (!intersectWall(*currentRegion, circle2)) {
+          cam.pos = cam.pos + dv_;
+          return;
         }
       }
     }
