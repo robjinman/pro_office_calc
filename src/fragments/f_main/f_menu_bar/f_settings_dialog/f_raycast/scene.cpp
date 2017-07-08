@@ -28,6 +28,18 @@ static void forEachConstRegion(const Region& region, std::function<void(const Re
 }
 
 //===========================================
+// forEachRegion
+//===========================================
+static void forEachRegion(Region& region, std::function<void(Region&)> fn) {
+  fn(region);
+  std::for_each(region.children.begin(), region.children.end(),
+    [&](std::unique_ptr<Region>& r) {
+
+    forEachRegion(*r, fn);
+  });
+}
+
+//===========================================
 // constructWalls
 //===========================================
 static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
@@ -153,7 +165,7 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
 // similar
 //===========================================
 static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 0.1;
+  double delta = 4.0;
   return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
     || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
 }
@@ -183,58 +195,53 @@ static void connectSubregions_r(Scene& scene, Region& region) {
   }
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    connectSubregions_r(scene, **it);
+    Region& r = **it;
+    connectSubregions_r(scene, r);
 
-    for (auto jt = (*it)->edges.begin(); jt != (*it)->edges.end(); ++jt) {
+    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
       if ((*jt)->kind == EdgeKind::JOINING_EDGE) {
         JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
 
         bool hasTwin = false;
-        for (auto kt = region.children.begin(); kt != region.children.end(); ++kt) {
-          if (kt->get() == it->get()) {
-            continue;
-          }
+        forEachRegion(region, [&](Region& r_) {
+          if (&r_ != &r) {
+            for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+              if ((*lt)->kind == EdgeKind::JOINING_EDGE) {
+                JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
 
-          for (auto lt = (*kt)->edges.begin(); lt != (*kt)->edges.end(); ++lt) {
-            if ((*lt)->kind == EdgeKind::JOINING_EDGE) {
-              JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+                if (je == other) {
+                  hasTwin = true;
+                  break;
+                }
 
-              if (je == other) {
-                hasTwin = true;
-                break;
-              }
+                if (areTwins(*je, *other)) {
+                  hasTwin = true;
 
-              if (areTwins(*je, *other)) {
-                hasTwin = true;
+                  JoiningEdge* combined = combine(*je, *other);
+                  combined->regionA = &r;
+                  combined->regionB = &r_;
 
-                JoiningEdge* combined = combine(*je, *other);
-                combined->regionA = it->get();
-                combined->regionB = kt->get();
+                  delete je;
+                  delete other;
 
-                delete je;
-                delete other;
+                  *jt = combined;
+                  *lt = combined;
 
-                *jt = combined;
-                *lt = combined;
-
-                scene.edges.push_back(pEdge_t(combined));
-                break;
+                  scene.edges.push_back(pEdge_t(combined));
+                  break;
+                }
               }
             }
           }
-
-          if (hasTwin) {
-            break;
-          }
-        }
+        });
 
         if (!hasTwin) {
-          je->regionA = it->get();
+          je->regionA = &r;
           je->regionB = &region;
         }
       }
     }
-  }
+  };
 }
 
 //===========================================

@@ -1,10 +1,7 @@
-BUGS
-- Wall texture slippage on camera pitch
-- Transitioning between regions
-
-FEATURES
+- Fix wall texture slippage on camera pitch
+- Fix transitioning between regions
+- Ignore ceiling height when has_ceiling=false
 - Rotated & translated floor textures
-- Collision with child regions
 - Animated wall/floor/ceiling textures
 - Gravity
 - 2D overlay
