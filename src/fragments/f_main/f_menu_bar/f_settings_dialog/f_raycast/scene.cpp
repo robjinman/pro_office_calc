@@ -337,9 +337,12 @@ static bool intersectWall(const Region& region, const Circle& circle) {
   bool b = false;
 
   forEachConstRegion(region, [&](const Region& r) {
-    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-      if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
-        b = true;
+    if (!b) {
+      for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+        if (lineSegmentCircleIntersect(circle, (*it)->lseg)) {
+          b = true;
+          break;
+        }
       }
     }
   });
@@ -392,6 +395,53 @@ void Scene::rotateCamera(double da) {
 }
 
 //===========================================
+// getDelta
+//===========================================
+static Vec2f getDelta(const Region& region, const Point& camPos, double radius, const Vec2f& dv) {
+  Circle circle{camPos + dv, radius};
+  LineSegment ray(camPos, camPos + dv);
+
+  bool collision = false;
+  Vec2f dv_ = dv;
+
+  forEachConstRegion(region, [&](const Region& r) {
+    if (collision == false) {
+      for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+        const Edge& edge = **it;
+
+        if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+          if (edge.kind == EdgeKind::JOINING_EDGE) {
+            const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+
+            //assert(&region == je.regionA || &region == je.regionB);
+            Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
+
+            if (nextRegion->floorHeight - region.floorHeight < 16.0) {
+              continue;
+            }
+          }
+
+          collision = true;
+
+          Matrix m(-atan(edge.lseg.line().m), Vec2f());
+          dv_ = m * dv;
+          dv_.y = 0;
+          dv_ = m.inverse() * dv_;
+
+          if (intersectWall(region, Circle{camPos + dv_, radius})) {
+            dv_ = Vec2f(0, 0);
+          }
+
+          break;
+        }
+      }
+    }
+  });
+
+  return dv_;
+}
+
+//===========================================
 // Scene::translateCamera
 //===========================================
 void Scene::translateCamera(const Vec2f& dir) {
@@ -402,62 +452,48 @@ void Scene::translateCamera(const Vec2f& dir) {
 
   double radius = 20.0;
 
+  dv = getDelta(*currentRegion, cam.pos, radius, dv);
   Circle circle{cam.pos + dv, radius};
-  LineSegment ray(cam.pos, cam.pos + dv);
 
-  bool collision = false;
-
+  bool abortLoop = false;
   forEachConstRegion(*currentRegion, [&](const Region& region) {
+    if (abortLoop) {
+      return;
+    }
+
     for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
       const Edge& edge = **it;
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        if (edge.kind == EdgeKind::JOINING_EDGE) {
-          const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+        assert(edge.kind == EdgeKind::JOINING_EDGE);
+        const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-          assert(currentRegion == je.regionA || currentRegion == je.regionB);
-          Region* nextRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
+        assert(currentRegion == je.regionA || currentRegion == je.regionB);
+        Region* nextRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
 
-          double floorH = currentRegion->floorHeight;
-          double dy = nextRegion->floorHeight - floorH;
+        double floorH = currentRegion->floorHeight;
+        double dy = nextRegion->floorHeight - floorH;
 
-          if (dy <= 16.0) {
-            bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
-              * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
+        if (dy <= 16.0) {
+          bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
+            * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
 
-            if (crossesLine) {
-              currentRegion = nextRegion;
-              cam.height += dy;
+          std::cout << cam.pos << ", " << cam.pos + dv << ", " << edge.lseg << "\n";
 
-              cam.pos = cam.pos + dv;
-              collision = true;
-              break;
-            }
+          if (crossesLine) {
+            std::cout << "Crossing region\n";
 
-            continue;
+            currentRegion = nextRegion;
+            cam.height += dy;
+            abortLoop = true;
+            break;
           }
-        }
-
-        collision = true;
-
-        Matrix m(-atan(edge.lseg.line().m), Vec2f());
-        Vec2f dv_ = m * dv;
-        dv_.y = 0;
-        dv_ = m.inverse() * dv_;
-
-        Circle circle2{cam.pos + dv_, radius};
-
-        if (!intersectWall(*currentRegion, circle2)) {
-          cam.pos = cam.pos + dv_;
-          return;
         }
       }
     }
   });
 
-  if (!collision) {
-    cam.pos = cam.pos + dv;
-  }
+  cam.pos = cam.pos + dv;
 }
 
 //===========================================
