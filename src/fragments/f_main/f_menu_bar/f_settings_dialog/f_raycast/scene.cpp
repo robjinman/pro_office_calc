@@ -15,6 +15,9 @@ using std::string;
 using std::list;
 
 
+const double PLAYER_STEP_HEIGHT = 16.0;
+
+
 //===========================================
 // forEachConstRegion
 //===========================================
@@ -347,7 +350,7 @@ static bool intersectWall(const Region& region, const Circle& circle) {
           //assert(&region == je.regionA || &region == je.regionB);
           Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
 
-          if (nextRegion->floorHeight - region.floorHeight < 16.0) {
+          if (fabs(nextRegion->floorHeight - region.floorHeight) <= PLAYER_STEP_HEIGHT) {
             continue;
           }
         }
@@ -429,7 +432,7 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double radius, 
             //assert(&region == je.regionA || &region == je.regionB);
             Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
 
-            if (nextRegion->floorHeight - region.floorHeight < 16.0) {
+            if (fabs(nextRegion->floorHeight - region.floorHeight) <= PLAYER_STEP_HEIGHT) {
               continue;
             }
           }
@@ -487,7 +490,7 @@ void Scene::translateCamera(const Vec2f& dir) {
         double floorH = currentRegion->floorHeight;
         double dy = nextRegion->floorHeight - floorH;
 
-        if (dy <= 16.0) {
+        if (fabs(dy) <= PLAYER_STEP_HEIGHT) {
           bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
             * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
 
