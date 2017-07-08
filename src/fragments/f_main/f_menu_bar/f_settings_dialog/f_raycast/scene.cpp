@@ -13,10 +13,23 @@
 using std::unique_ptr;
 using std::string;
 using std::list;
+using std::map;
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
 
+
+//===========================================
+// getValue
+//===========================================
+static const string& getValue(const map<string, string>& m, const string& key) {
+  try {
+    return m.at(key);
+  }
+  catch (std::out_of_range& ex) {
+    EXCEPTION("No '" << key << "' key in map");
+  }
+}
 
 //===========================================
 // forEachConstRegion
@@ -71,7 +84,7 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
     wall->lseg = transform(wall->lseg, parentTransform * obj.transform);
 
     wall->region = region;
-    wall->texture = obj.dict.at("texture");
+    wall->texture = getValue(obj.dict, "texture");
 
     walls.push_back(wall);
   }
@@ -90,7 +103,7 @@ static Camera* constructCamera(const parser::Object& obj, const Region& region,
   Camera* camera = new Camera;
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
 
-  camera->height = std::stod(obj.dict.at("height")) + region.floorHeight;
+  camera->height = std::stod(getValue(obj.dict, "height")) + region.floorHeight;
 
   return camera;
 }
@@ -103,7 +116,7 @@ static Sprite* constructSprite(const parser::Object& obj, Region& region,
 
   DBG_PRINT("Constructing Sprite\n");
 
-  if (obj.dict.at("subtype") == "bad_guy") {
+  if (getValue(obj.dict, "subtype") == "bad_guy") {
     BadGuy* sprite = new BadGuy;
     Matrix m = transformFromTriangle(obj.path);
     sprite->setTransform(parentTransform * obj.transform * m);
@@ -111,7 +124,7 @@ static Sprite* constructSprite(const parser::Object& obj, Region& region,
 
     return sprite;
   }
-  else if (obj.dict.at("subtype") == "ammo") {
+  else if (getValue(obj.dict, "subtype") == "ammo") {
     Ammo* sprite = new Ammo;
     Matrix m = transformFromTriangle(obj.path);
     sprite->setTransform(parentTransform * obj.transform * m);
@@ -152,10 +165,10 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
     je->lseg = transform(je->lseg, parentTransform * obj.transform);
 
     if (contains<string>(obj.dict, "top_texture")) {
-      je->topTexture = obj.dict.at("top_texture");
+      je->topTexture = getValue(obj.dict, "top_texture");
     }
     if (contains<string>(obj.dict, "bottom_texture")) {
-      je->bottomTexture = obj.dict.at("bottom_texture");
+      je->bottomTexture = getValue(obj.dict, "bottom_texture");
     }
 
     joiningEdges.push_back(je);
@@ -258,7 +271,7 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
   Region* region = new Region;
 
   try {
-    if (obj.dict.at("type") != "region") {
+    if (getValue(obj.dict, "type") != "region") {
       EXCEPTION("Object is not of type region");
     }
 
@@ -269,7 +282,7 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
     Matrix transform = parentTransform * obj.transform;
 
     if (contains<string>(obj.dict, "has_ceiling")) {
-      string s = obj.dict.at("has_ceiling");
+      string s = getValue(obj.dict, "has_ceiling");
       if (s == "true") {
         region->hasCeiling = true;
       }
@@ -282,20 +295,20 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
     }
 
     region->floorHeight = contains<string>(obj.dict, "floor_height") ?
-      std::stod(obj.dict.at("floor_height")) : scene.defaultFloorHeight;
+      std::stod(getValue(obj.dict, "floor_height")) : scene.defaultFloorHeight;
 
     region->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
-      std::stod(obj.dict.at("ceiling_height")) : scene.defaultCeilingHeight;
+      std::stod(getValue(obj.dict, "ceiling_height")) : scene.defaultCeilingHeight;
 
     region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
-      obj.dict.at("floor_texture") : scene.defaultFloorTexture;
+      getValue(obj.dict, "floor_texture") : scene.defaultFloorTexture;
 
     region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
-      obj.dict.at("ceiling_texture") : scene.defaultCeilingTexture;
+      getValue(obj.dict, "ceiling_texture") : scene.defaultCeilingTexture;
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       const parser::Object& child = **it;
-      string type = child.dict.at("type");
+      string type = getValue(child.dict, "type");
 
       if (type == "region") {
         region->children.push_back(pRegion_t(constructRegion_r(scene, child, transform)));
@@ -324,6 +337,11 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
         scene.currentRegion = region;
       }
     }
+  }
+  catch (Exception& ex) {
+    delete region;
+    ex.prepend("Error constructing region; ");
+    throw ex;
   }
   catch (const std::exception& ex) {
     delete region;
@@ -512,7 +530,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 // Scene::addObject
 //===========================================
 void Scene::addObject(const parser::Object& obj) {
-  if (obj.dict.at("type") == "region") {
+  if (getValue(obj.dict, "type") == "region") {
     if (rootRegion) {
       EXCEPTION("Root region already exists");
     }
