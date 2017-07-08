@@ -337,11 +337,15 @@ static void castRay(Vec2f r, const Scene& scene, CastResult& result) {
       X.slice1.viewportBottom_wd = subview0;
       X.slice1.viewportTop_wd = subview1;
 
-      subview0 = proj_bw1;
-      subview1 = proj_tw0;
+      if (proj_bw1 > subview0) {
+        subview0 = proj_bw1;
+        projRay0 = LineSegment(Point(0, 0), vw0 * 999.9);
+      }
 
-      projRay0 = LineSegment(Point(0, 0), vw0 * 999.9);
-      projRay1 = LineSegment(Point(0, 0), vw1 * 999.9);
+      if (proj_tw0 < subview1) {
+        subview1 = proj_tw0;
+        projRay1 = LineSegment(Point(0, 0), vw1 * 999.9);
+      }
 
       region = nextRegion;
     }
@@ -509,9 +513,6 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double H_tx = texRect.height();
   double W_tx = texRect.width();
 
-  double hWorldUnit_tx = W_tx / texSz_wd.x;
-  double vWorldUnit_tx = H_tx / texSz_wd.y;
-
   double projSliceH_wd = slice.projSliceTop_wd - slice.projSliceBottom_wd;
   double sliceH_wd = slice.sliceTop_wd - slice.sliceBottom_wd;
   double sliceToProjScale = projSliceH_wd / sliceH_wd;
@@ -525,6 +526,9 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   auto fnSliceToProjY = [&](double y) {
     return slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
   };
+
+  double hWorldUnit_tx = W_tx / texSz_wd.x;
+  double vWorldUnit_tx = H_tx / texSz_wd.y;
 
   auto fnProjToScreenY = [&](double y) {
     return viewport_px.y - (y * vWorldUnit_px);
@@ -608,25 +612,22 @@ static ScreenSlice drawSlice(QPainter& painter, const Scene& scene, double F,
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
 
-  screenSliceBottom_px = clipNumber(screenSliceBottom_px, Size(0, viewport_px.y - 1));
-  screenSliceTop_px = clipNumber(screenSliceTop_px, Size(0, viewport_px.y - 1));
+  if (screenSliceBottom_px - screenSliceTop_px > 0) {
+    vector<QRect> srcRects;
+    vector<QRectF> trgRects;
+    sampleWallTexture(wallTex.image.rect(), scene.camera->height, viewport_px, screenX_px,
+      hWorldUnit_px, vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects,
+      srcRects);
 
-  vector<QRect> srcRects;
-  vector<QRectF> trgRects;
-  sampleWallTexture(wallTex.image.rect(), scene.camera->height, viewport_px, screenX_px,
-    hWorldUnit_px, vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects, srcRects);
+    assert(srcRects.size() == trgRects.size());
 
-  assert(srcRects.size() == trgRects.size());
-
-  for (unsigned int i = 0; i < srcRects.size(); ++i) {
-    painter.drawImage(trgRects[i], wallTex.image, srcRects[i]);
+    for (unsigned int i = 0; i < srcRects.size(); ++i) {
+      painter.drawImage(trgRects[i], wallTex.image, srcRects[i]);
+    }
   }
 
   int viewportBottom_px = (scene.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
   int viewportTop_px = (scene.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
-
-  viewportBottom_px = clipNumber(viewportBottom_px, Size(0, viewport_px.y - 1));
-  viewportTop_px = clipNumber(viewportTop_px, Size(0, viewport_px.y - 1));
 
   return ScreenSlice{screenSliceBottom_px, screenSliceTop_px, viewportBottom_px, viewportTop_px};
 }
@@ -704,12 +705,12 @@ void Renderer::renderScene(QImage& target, const Scene& scene) {
         ScreenSlice slice = drawSlice(painter, scene, cam.F, wallX.distanceAlongTarget, wallX.slice,
           wallX.wall->texture, screenX_px, viewport_px);
 
-        drawFloorSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
-          screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        drawFloorSlice(target, scene, wallX.wall->region, wallX.point_world, slice, screenX_px,
+          projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (wallX.wall->region->hasCeiling) {
-          drawCeilingSlice(target, scene, wallX.wall->region, wallX.point_world, slice,
-            screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          drawCeilingSlice(target, scene, wallX.wall->region, wallX.point_world, slice, screenX_px,
+            projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
           drawSkySlice(target, scene, slice, screenX_px);
