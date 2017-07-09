@@ -517,7 +517,11 @@ void Scene::translateCamera(const Vec2f& dir) {
           Point p;
           bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p);
 
+          std::cout << ray << ", " << edge.lseg << "\n";
+
           if (crossesLine) {
+            std::cout << "Crossing region\n";
+
             currentRegion = nextRegion;
             cam.height += dy;
             abortLoop = true;

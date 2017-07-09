@@ -162,11 +162,11 @@ Point lineIntersect(const Line& l0, const Line& l1) {
 //===========================================
 // isBetween
 //===========================================
-bool isBetween(double x, double a, double b) {
+bool isBetween(double x, double a, double b, double delta) {
   if (a < b) {
-    return x >= a && x <= b;
+    return x >= a - delta && x <= b + delta;
   }
-  return x >= b && x <= a;
+  return x >= b - delta && x <= a + delta;
 }
 
 //===========================================

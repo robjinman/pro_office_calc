@@ -11,6 +11,14 @@ class GeometryTest : public testing::Test {
 };
 
 
+TEST_F(GeometryTest, isBetween_zeros) {
+  ASSERT_TRUE(isBetween(0, 0, 0));
+}
+
+TEST_F(GeometryTest, isBetween_tight) {
+  ASSERT_TRUE(isBetween(609.37900000001, 609.379, 609.379));
+}
+
 TEST_F(GeometryTest, matrix_angle0) {
   double a = DEG_TO_RAD(12.3);
 
@@ -66,7 +74,7 @@ TEST_F(GeometryTest, lineSegmentSignedDistance_2) {
   ASSERT_DOUBLE_EQ(-sqrt(2), lseg.signedDistance(3));
 }
 
-TEST_F(GeometryTest, lineSegmentIntersect) {
+TEST_F(GeometryTest, lineSegmentIntersect_1) {
   LineSegment l0(Point(0, -2), Point(4, 10));
   LineSegment l1(Point(0, 8), Point(4, 0));
 
@@ -74,6 +82,14 @@ TEST_F(GeometryTest, lineSegmentIntersect) {
   ASSERT_TRUE(lineSegmentIntersect(l0, l1, p));
   ASSERT_DOUBLE_EQ(2, p.x);
   ASSERT_DOUBLE_EQ(4, p.y);
+}
+
+TEST_F(GeometryTest, lineSegmentIntersect_2) {
+  LineSegment l0(Point(512.065, 606.501), Point(512.176, 611.499));
+  LineSegment l1(Point(489.175, 609.379), Point(517.175, 609.379));
+
+  Point p;
+  ASSERT_TRUE(lineSegmentIntersect(l0, l1, p));
 }
 
 TEST_F(GeometryTest, lineSegmentIntersect_vert) {

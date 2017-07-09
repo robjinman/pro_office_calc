@@ -160,7 +160,7 @@ struct Circle {
 };
 
 Point lineIntersect(const Line& l0, const Line& l1);
-bool isBetween(double x, double a, double b);
+bool isBetween(double x, double a, double b, double delta = 0.000001);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
