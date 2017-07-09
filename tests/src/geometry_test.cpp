@@ -32,58 +32,6 @@ TEST_F(GeometryTest, matrix_angle2) {
   ASSERT_DOUBLE_EQ(a, m.a());
 }
 
-TEST_F(GeometryTest, distanceFromLine) {
-  Line l(1.0 / 3.0, -7);
-  double d = distanceFromLine(l, Point(-1, 6));
-
-  ASSERT_DOUBLE_EQ(-4.0 * sqrt(10), d);
-}
-
-TEST_F(GeometryTest, distanceFromLine_vert0) {
-  LineSegment lseg(Point(4, -10), Point(4, 10));
-
-  double d = distanceFromLine(lseg.line(), Point(7, 6));
-
-  ASSERT_DOUBLE_EQ(-3, d);
-}
-
-TEST_F(GeometryTest, distanceFromLine_vert1) {
-  LineSegment lseg1(Point(4, -10), Point(4, 10));
-  LineSegment lseg2(Point(4.001, -10), Point(4, 10));
-
-  double d1 = distanceFromLine(lseg1.line(), Point(7, 6));
-  double d2 = distanceFromLine(lseg2.line(), Point(7, 6));
-
-  ASSERT_TRUE(fabs(d2 - d1) < 0.1);
-}
-
-TEST_F(GeometryTest, distanceFromLine_sign) {
-  {
-    LineSegment lseg(Point(2, -2), Point(2, 8));
-    ASSERT_TRUE(distanceFromLine(lseg.line(), Point(0, 7)) > 0);
-  }
-  {
-    LineSegment lseg(Point(2, -2), Point(2, 8));
-    ASSERT_TRUE(distanceFromLine(lseg.line(), Point(3, 7)) < 0);
-  }
-  {
-    LineSegment lseg(Point(2.1, -2), Point(2, 8));
-    ASSERT_TRUE(distanceFromLine(lseg.line(), Point(0, 7)) > 0);
-  }
-  {
-    LineSegment lseg(Point(2.1, -2), Point(2, 8));
-    ASSERT_TRUE(distanceFromLine(lseg.line(), Point(3, 7)) < 0);
-  }
-  {
-    LineSegment lseg(Point(-10, -2), Point(2, 8));
-    ASSERT_TRUE(distanceFromLine(lseg.line(), Point(3, 7)) > 0);
-  }
-  {
-    LineSegment lseg(Point(-10, -2), Point(2, 8));
-    ASSERT_TRUE(distanceFromLine(lseg.line(), Point(-2, 7)) < 0);
-  }
-}
-
 TEST_F(GeometryTest, lineSegmentSignedDistance_0) {
   LineSegment lseg(Point(-2, 1), Point(4, 1));
 

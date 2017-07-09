@@ -163,7 +163,6 @@ Point lineIntersect(const Line& l0, const Line& l1);
 bool isBetween(double x, double a, double b);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
-double distanceFromLine(const Line& l, const Point& p);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
 Vec2f normalise(const Vec2f& v);
 double normaliseAngle(double a);

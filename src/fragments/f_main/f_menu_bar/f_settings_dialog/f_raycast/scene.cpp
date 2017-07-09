@@ -509,8 +509,9 @@ void Scene::translateCamera(const Vec2f& dir) {
         double dy = nextRegion->floorHeight - floorH;
 
         if (fabs(dy) <= PLAYER_STEP_HEIGHT) {
-          bool crossesLine = distanceFromLine(edge.lseg.line(), cam.pos)
-            * distanceFromLine(edge.lseg.line(), cam.pos + dv) < 0;
+          LineSegment ray(cam.pos, cam.pos + dv);
+          Point p;
+          bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p);
 
           if (crossesLine) {
             currentRegion = nextRegion;
