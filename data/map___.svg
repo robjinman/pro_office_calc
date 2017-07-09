@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="232.65376"
-     inkscape:cy="627.95302"
+     inkscape:zoom="0.5"
+     inkscape:cx="651.223"
+     inkscape:cy="692.86436"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
      showgrid="false"
@@ -45,12 +45,12 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     id="g5485">
+     id="g5141">
     <g
        id="g4453">
       <path
@@ -137,7 +137,7 @@
          id="tspan4478"
          sodipodi:role="line">floor_texture=cracked_mud</tspan></text>
     <g
-       id="g5421">
+       id="g5077">
       <g
          id="g4737">
         <path
@@ -235,74 +235,75 @@
            x="194.38501"
            y="407.43481">ceiling_texture=grey_stone</tspan></text>
       <g
-         id="g4778">
+         id="g5038">
         <text
            sodipodi:linespacing="125%"
            id="text4460-3-0"
-           y="265.78784"
-           x="426.16467"
+           y="361.52795"
+           x="441.40222"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="265.78784"
-             x="426.16467"
+             y="361.52795"
+             x="441.40222"
              id="tspan4462-5-6"
              sodipodi:role="line">type=region</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4464-6-2"
-           y="274.78784"
-           x="427.16467"
+           y="370.52795"
+           x="442.40222"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="274.78784"
-             x="427.16467"
+             y="370.52795"
+             x="442.40222"
              id="tspan4466-2-6"
              sodipodi:role="line">has_ceiling=true</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4468-9-1"
-           y="285.03784"
-           x="427.66467"
+           y="380.77795"
+           x="442.90222"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="285.03784"
-             x="427.66467"
+             y="380.77795"
+             x="442.90222"
              id="tspan4470-1-8"
              sodipodi:role="line">floor_height=50</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4472-2-7"
-           y="296.03784"
-           x="428.16467"
+           y="391.77795"
+           x="443.40222"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="296.03784"
-             x="428.16467"
+             y="391.77795"
+             x="443.40222"
              id="tspan4474-7-9"
              sodipodi:role="line">ceiling_height=200</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4476-0-2"
-           y="304.78784"
-           x="429.66467"
+           y="400.52795"
+           x="444.90222"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="304.78784"
-             x="429.66467"
+             y="400.52795"
+             x="444.90222"
              id="tspan4478-9-0"
              sodipodi:role="line">floor_texture=grey_stone</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4480-3-2"
-           y="314.03784"
-           x="429.16467"
+           y="409.77795"
+           x="444.40222"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="314.03784"
-             x="429.16467"
+             y="409.77795"
+             x="444.40222"
              id="tspan4482-6-3"
              sodipodi:role="line">ceiling_texture=grey_stone</tspan></text>
         <g
+           transform="translate(-31.431455,30.686292)"
            id="g4744">
           <path
              style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -333,6 +334,7 @@
                y="571.97034">bottom_texture=grey_stone</tspan></text>
         </g>
         <g
+           transform="translate(64.80613,-50.58074)"
            id="g4758">
           <g
              id="g4751">

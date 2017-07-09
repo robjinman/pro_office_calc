@@ -488,7 +488,7 @@ void Scene::translateCamera(const Vec2f& dir) {
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
-  double radius = 20.0;
+  double radius = 5.0;
 
   dv = getDelta(*currentRegion, cam.pos, radius, dv);
   Circle circle{cam.pos + dv, radius};
@@ -499,6 +499,12 @@ void Scene::translateCamera(const Vec2f& dir) {
       return;
     }
 
+    int nIntersections = 0;
+    double nearestX = 999999.9;
+    Region* nextRegion = nullptr;
+    double dy = 0;
+    Point p;
+
     for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
       const Edge& edge = **it;
 
@@ -507,28 +513,38 @@ void Scene::translateCamera(const Vec2f& dir) {
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
         assert(currentRegion == je.regionA || currentRegion == je.regionB);
-        Region* nextRegion = je.regionA == currentRegion ? je.regionB : je.regionA;
+        Region* nextRegion_ = je.regionA == currentRegion ? je.regionB : je.regionA;
 
         double floorH = currentRegion->floorHeight;
-        double dy = nextRegion->floorHeight - floorH;
+        double dy_ = nextRegion_->floorHeight - floorH;
 
-        if (fabs(dy) <= PLAYER_STEP_HEIGHT) {
+        if (fabs(dy_) <= PLAYER_STEP_HEIGHT) {
           LineSegment ray(cam.pos, cam.pos + dv);
-          Point p;
-          bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p);
-
-          std::cout << ray << ", " << edge.lseg << "\n";
+          Point p_;
+          bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
 
           if (crossesLine) {
-            std::cout << "Crossing region\n";
+            ++nIntersections;
 
-            currentRegion = nextRegion;
-            cam.height += dy;
-            abortLoop = true;
-            break;
+            double dist = distance(cam.pos, p_);
+            if (dist < nearestX) {
+              nextRegion = nextRegion_;
+              dy = dy_;
+              p = p_;
+
+              nearestX = dist;
+            }
           }
         }
       }
+    }
+
+    if (nIntersections > 0) {
+      currentRegion = nextRegion;
+      cam.height += dy;
+      cam.pos = p;
+      dv = dv * 0.00001;
+      abortLoop = true;
     }
   });
 
