@@ -163,6 +163,9 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
           findIntersections_r(camera, ray, next, result, visitedRegions, visitedJoiningEdges);
         }
       }
+      else {
+        EXCEPTION("Unexpected intersection type");
+      }
     }
   }
 }

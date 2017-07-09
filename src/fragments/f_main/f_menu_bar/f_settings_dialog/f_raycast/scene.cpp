@@ -217,34 +217,38 @@ static void connectSubregions_r(Scene& scene, Region& region) {
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
       if ((*jt)->kind == EdgeKind::JOINING_EDGE) {
         JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
+        assert(je != nullptr);
 
         bool hasTwin = false;
         forEachRegion(region, [&](Region& r_) {
-          if (&r_ != &r) {
-            for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-              if ((*lt)->kind == EdgeKind::JOINING_EDGE) {
-                JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+          if (!hasTwin) {
+            if (&r_ != &r) {
+              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+                if ((*lt)->kind == EdgeKind::JOINING_EDGE) {
+                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+                  assert(other != nullptr);
 
-                if (je == other) {
-                  hasTwin = true;
-                  break;
-                }
+                  if (je == other) {
+                    hasTwin = true;
+                    break;
+                  }
 
-                if (areTwins(*je, *other)) {
-                  hasTwin = true;
+                  if (areTwins(*je, *other)) {
+                    hasTwin = true;
 
-                  JoiningEdge* combined = combine(*je, *other);
-                  combined->regionA = &r;
-                  combined->regionB = &r_;
+                    JoiningEdge* combined = combine(*je, *other);
+                    combined->regionA = &r;
+                    combined->regionB = &r_;
 
-                  delete je;
-                  delete other;
+                    delete je;
+                    delete other;
 
-                  *jt = combined;
-                  *lt = combined;
+                    *jt = combined;
+                    *lt = combined;
 
-                  scene.edges.push_back(pEdge_t(combined));
-                  break;
+                    scene.edges.push_back(pEdge_t(combined));
+                    break;
+                  }
                 }
               }
             }
