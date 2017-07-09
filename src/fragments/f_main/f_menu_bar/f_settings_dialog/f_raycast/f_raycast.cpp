@@ -15,8 +15,8 @@ namespace chrono = std::chrono;
 #endif
 
 
-const int SCREEN_WIDTH = 400;
-const int SCREEN_HEIGHT = 300;
+const int SCREEN_WIDTH = 320;
+const int SCREEN_HEIGHT = 200;
 const int FRAME_RATE = 60;
 
 
