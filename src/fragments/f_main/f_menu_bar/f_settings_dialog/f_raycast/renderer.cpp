@@ -154,8 +154,9 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
 
         const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
 
+        auto pX = pIntersection_t(X);
         if (visitedJoiningEdges.find(&je) == visitedJoiningEdges.end()) {
-          result.intersections.push_back(pIntersection_t(X));
+          result.intersections.push_back(std::move(pX));
           visitedJoiningEdges.insert(&je);
         }
 

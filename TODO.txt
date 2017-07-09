@@ -1,4 +1,3 @@
-- Fix memory leak
 - Ignore ceiling height when has_ceiling=false
 - Rotated & translated floor textures
 - Animated wall/floor/ceiling textures
