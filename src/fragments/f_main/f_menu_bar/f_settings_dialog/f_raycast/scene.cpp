@@ -17,6 +17,9 @@ using std::map;
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
+// World units per second
+const double PLAYER_VERTICAL_SPEED = 100.0;
+const double PLAYER_FALL_SPEED = 400.0;
 
 
 //===========================================
@@ -391,7 +394,9 @@ static bool intersectWall(const Region& region, const Circle& circle) {
 //===========================================
 // Scene::Scene
 //===========================================
-Scene::Scene(const string& mapFilePath) {
+Scene::Scene(const string& mapFilePath, double frameRate) {
+  m_frameRate = frameRate;
+
   defaultFloorHeight = 0;
   defaultCeilingHeight = 100;
   defaultFloorTexture = "cracked_mud";
@@ -547,15 +552,25 @@ void Scene::translateCamera(const Vec2f& dir) {
     if (nIntersections > 0) {
       currentRegion = nextRegion;
       double targetH = cam.height + dy;
-      int frames = 10;
-      double dy_ = dy / frames;
-      int i = 0;
+      int frames = 0;
 
-      // Warning: cam.height may accumulate inaccuracy
-      tweens.push_back(Tween{[&, targetH, dy_, i, frames]() mutable -> bool {
-        cam.height += dy_;
-        return i++ < frames;
-      }, []() {}});
+      if (dy < 0 && dy < -PLAYER_STEP_HEIGHT) {
+        frames = (fabs(dy) / PLAYER_FALL_SPEED) * m_frameRate;
+      }
+      else {
+        frames = (fabs(dy) / PLAYER_VERTICAL_SPEED) * m_frameRate;
+      }
+
+      if (frames > 0) {
+        double dy_ = dy / frames;
+        int i = 0;
+
+        // Warning: cam.height may accumulate inaccuracy
+        tweens.push_back(Tween{[&, targetH, dy_, i, frames]() mutable -> bool {
+          cam.height += dy_;
+          return ++i < frames;
+        }, []() {}});
+      }
 
       cam.pos = p;
       dv = dv * 0.00001;

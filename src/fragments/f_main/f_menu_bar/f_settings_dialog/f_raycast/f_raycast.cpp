@@ -46,7 +46,7 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 void FRaycast::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FRaycastSpec&>(spec_);
 
-  m_scene.reset(new Scene("data/map.svg"));
+  m_scene.reset(new Scene("data/map.svg", FRAME_RATE));
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

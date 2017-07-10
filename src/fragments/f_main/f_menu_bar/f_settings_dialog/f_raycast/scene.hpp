@@ -206,7 +206,7 @@ struct Tween {
 
 class Scene {
   public:
-    Scene(const std::string& mapFilePath);
+    Scene(const std::string& mapFilePath, double frameRate);
 
     double defaultFloorHeight;
     double defaultCeilingHeight;
@@ -229,6 +229,8 @@ class Scene {
 
   private:
     void addObject(const parser::Object& obj);
+
+    double m_frameRate;
 };
 
 
