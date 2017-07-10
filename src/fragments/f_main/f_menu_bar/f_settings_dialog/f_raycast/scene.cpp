@@ -541,7 +541,22 @@ void Scene::translateCamera(const Vec2f& dir) {
 
     if (nIntersections > 0) {
       currentRegion = nextRegion;
-      cam.height += dy;
+      double targetH = cam.height + dy;
+      static const int FRAMES = 10;
+      double dy_ = dy / FRAMES;
+
+      tweens.push_back(Tween{[&, targetH, dy_]() -> bool {
+        cam.height += dy_;
+        if (dy_ < 0) {
+          return cam.height > targetH;
+        }
+        else {
+          return cam.height < targetH;
+        }
+      }, [&, targetH]() {
+        cam.height = targetH;
+      }});
+
       cam.pos = p;
       dv = dv * 0.00001;
       abortLoop = true;
@@ -549,6 +564,21 @@ void Scene::translateCamera(const Vec2f& dir) {
   });
 
   cam.pos = cam.pos + dv;
+}
+
+//===========================================
+// Scene::update
+//===========================================
+void Scene::update() {
+  for (auto it = tweens.begin(); it != tweens.end();) {
+    if (!it->tick()) {
+      it->finish();
+      tweens.erase(it++);
+    }
+    else {
+      ++it;
+    }
+  }
 }
 
 //===========================================

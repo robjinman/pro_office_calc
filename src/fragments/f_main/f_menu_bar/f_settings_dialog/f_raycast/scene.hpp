@@ -197,6 +197,13 @@ struct JoiningEdge : public Edge {
   virtual ~JoiningEdge() {}
 };
 
+struct Tween {
+  std::function<bool()> tick;
+  std::function<void()> finish;
+};
+
+//typedef std::unique_ptr<Tween> pTween_t;
+
 class Scene {
   public:
     Scene(const std::string& mapFilePath);
@@ -214,6 +221,9 @@ class Scene {
     std::list<pEdge_t> edges;
     const Region* currentRegion;
 
+    std::list<Tween> tweens;
+
+    void update();
     void rotateCamera(double da);
     void translateCamera(const Vec2f& dir);
 
