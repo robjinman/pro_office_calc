@@ -372,7 +372,7 @@ static bool intersectWall(const Region& region, const Circle& circle) {
           //assert(&region == je.regionA || &region == je.regionB);
           Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
 
-          if (fabs(nextRegion->floorHeight - region.floorHeight) <= PLAYER_STEP_HEIGHT) {
+          if (nextRegion->floorHeight - region.floorHeight <= PLAYER_STEP_HEIGHT) {
             continue;
           }
         }
@@ -448,13 +448,18 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double radius, 
         const Edge& edge = **it;
 
         if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+          Point p = lineIntersect(ray.line(), edge.lseg.line());
+          if (distance(camPos + dv_, p) > distance(camPos, p)) {
+            continue;
+          }
+
           if (edge.kind == EdgeKind::JOINING_EDGE) {
             const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
             //assert(&region == je.regionA || &region == je.regionB);
             Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
 
-            if (fabs(nextRegion->floorHeight - region.floorHeight) <= PLAYER_STEP_HEIGHT) {
+            if (nextRegion->floorHeight - region.floorHeight <= PLAYER_STEP_HEIGHT) {
               continue;
             }
           }
@@ -518,7 +523,7 @@ void Scene::translateCamera(const Vec2f& dir) {
         double floorH = currentRegion->floorHeight;
         double dy_ = nextRegion_->floorHeight - floorH;
 
-        if (fabs(dy_) <= PLAYER_STEP_HEIGHT) {
+        if (dy_ <= PLAYER_STEP_HEIGHT) {
           LineSegment ray(cam.pos, cam.pos + dv);
           Point p_;
           bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);

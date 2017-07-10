@@ -3,7 +3,6 @@
 - Ceiling decals
 - Sprites at different heights (possibly attached to wall/ceiling)
 - Animated wall/floor/ceiling textures/decals
-- Gravity
 - 2D overlay
 - Bouncing gait
 - Jump
