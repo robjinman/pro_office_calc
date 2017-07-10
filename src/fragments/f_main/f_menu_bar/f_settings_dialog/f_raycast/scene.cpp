@@ -449,7 +449,7 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double radius, 
 
         if (lineSegmentCircleIntersect(circle, edge.lseg)) {
           Point p = lineIntersect(ray.line(), edge.lseg.line());
-          if (distance(camPos + dv_, p) > distance(camPos, p)) {
+          if (distance(camPos + dv_ * 0.00001, p) > distance(camPos, p)) {
             continue;
           }
 
