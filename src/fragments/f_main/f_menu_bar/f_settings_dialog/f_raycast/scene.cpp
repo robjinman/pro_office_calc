@@ -269,10 +269,27 @@ static void connectSubregions_r(Scene& scene, Region& region) {
 }
 
 //===========================================
+// snapEndpoint
+//===========================================
+static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
+  const double SNAP_DISTANCE = 4.0;
+
+  for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
+    if (distance(pt, it->first) <= SNAP_DISTANCE) {
+      pt = it->first;
+      it->second = true;
+      return;
+    }
+  }
+
+  endpoints[pt] = false;
+};
+
+//===========================================
 // constructRegion_r
 //===========================================
 static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
-  const Matrix& parentTransform) {
+  const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   DBG_PRINT("Constructing Region\n");
 
@@ -319,7 +336,8 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        region->children.push_back(pRegion_t(constructRegion_r(scene, child, transform)));
+        region->children.push_back(pRegion_t(constructRegion_r(scene, child, transform,
+          endpoints)));
       }
       else if (type == "wall") {
         list<Wall*> walls = constructWalls(child, region, transform);
@@ -327,12 +345,16 @@ static Region* constructRegion_r(Scene& scene, const parser::Object& obj,
           scene.edges.push_back(pEdge_t(*jt));
           region->edges.push_back(*jt);
         }
+        snapEndpoint(endpoints, walls.front()->lseg.A);
+        snapEndpoint(endpoints, walls.back()->lseg.B);
       }
       else if (type == "joining_edge") {
         list<JoiningEdge*> joiningEdges = constructJoiningEdges(child, region, transform);
         for (auto jt = joiningEdges.begin(); jt != joiningEdges.end(); ++jt) {
           region->edges.push_back(*jt);
         }
+        snapEndpoint(endpoints, joiningEdges.front()->lseg.A);
+        snapEndpoint(endpoints, joiningEdges.back()->lseg.B);
       }
       else if (type == "sprite") {
         region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
@@ -671,7 +693,14 @@ void Scene::addObject(const parser::Object& obj) {
       EXCEPTION("Root region already exists");
     }
 
+    map<Point, bool> endpoints;
     Matrix m;
-    rootRegion.reset(constructRegion_r(*this, obj, m));
+    rootRegion.reset(constructRegion_r(*this, obj, m, endpoints));
+
+    for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
+      if (it->second == false) {
+        EXCEPTION("There are unconnected endpoints");
+      }
+    }
   }
 }
