@@ -202,7 +202,10 @@ struct Tween {
   std::function<void()> finish;
 };
 
-//typedef std::unique_ptr<Tween> pTween_t;
+struct Player {
+  bool isJumping = false;
+  double height = 50.0; // Eye level
+};
 
 class Scene {
   public:
@@ -221,9 +224,12 @@ class Scene {
     std::list<pEdge_t> edges;
     const Region* currentRegion;
 
+    Player m_player;
+
     void update();
     void rotateCamera(double da);
     void translateCamera(const Vec2f& dir);
+    void jump();
     void addTween(const Tween& tween, const char* name = nullptr);
 
   private:

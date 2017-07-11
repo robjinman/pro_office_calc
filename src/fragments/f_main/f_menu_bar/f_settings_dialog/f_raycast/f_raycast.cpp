@@ -132,6 +132,10 @@ void FRaycast::tick() {
 
   m_scene->update();
 
+  if (m_keyStates[Qt::Key_Space]) {
+    m_scene->jump();
+  }
+
   Vec2f v; // The vector is in camera space
   if (m_keyStates[Qt::Key_A]) {
     v.y -= 1;

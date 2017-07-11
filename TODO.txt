@@ -4,7 +4,6 @@
 - Sprites at different heights (possibly attached to wall/ceiling)
 - Animated wall/floor/ceiling textures/decals
 - 2D overlay
-- Jump
 - Sprite animations
 - Moving floors/ceilings
 - Translucent walls & walls with holes

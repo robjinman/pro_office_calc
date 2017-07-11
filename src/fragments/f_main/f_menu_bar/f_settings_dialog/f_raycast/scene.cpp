@@ -424,8 +424,10 @@ Scene::Scene(const string& mapFilePath, double frameRate) {
   textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
   textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
   textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
+  textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
   textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
   textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
+  textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
   textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
   textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
   textures["sky"] = Texture{QImage("data/sky.png"), Size()};
@@ -441,7 +443,9 @@ void Scene::rotateCamera(double da) {
 //===========================================
 // getDelta
 //===========================================
-static Vec2f getDelta(const Region& region, const Point& camPos, double radius, const Vec2f& dv) {
+static Vec2f getDelta(const Region& region, const Point& camPos, double playerH, double radius,
+  const Vec2f& dv) {
+
   Circle circle{camPos + dv, radius};
   LineSegment ray(camPos, camPos + dv);
 
@@ -465,7 +469,7 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double radius, 
             //assert(&region == je.regionA || &region == je.regionB);
             Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
 
-            if (nextRegion->floorHeight - region.floorHeight <= PLAYER_STEP_HEIGHT) {
+            if (nextRegion->floorHeight - playerH <= PLAYER_STEP_HEIGHT) {
               continue;
             }
           }
@@ -500,8 +504,9 @@ void Scene::translateCamera(const Vec2f& dir) {
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
   double radius = 5.0;
+  double playerH = cam.height - m_player.height;
 
-  dv = getDelta(*currentRegion, cam.pos, radius, dv);
+  dv = getDelta(*currentRegion, cam.pos, playerH, radius, dv);
   Circle circle{cam.pos + dv, radius};
 
   bool abortLoop = false;
@@ -527,9 +532,11 @@ void Scene::translateCamera(const Vec2f& dir) {
         Region* nextRegion_ = je.regionA == currentRegion ? je.regionB : je.regionA;
 
         double floorH = currentRegion->floorHeight;
-        double dy_ = nextRegion_->floorHeight - floorH;
+        double floorDiff = nextRegion_->floorHeight - floorH;
+        double playerH = cam.height - m_player.height;
+        double stepH = nextRegion_->floorHeight - playerH;
 
-        if (dy_ <= PLAYER_STEP_HEIGHT) {
+        if (stepH <= PLAYER_STEP_HEIGHT) {
           LineSegment ray(cam.pos, cam.pos + dv);
           Point p_;
           bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
@@ -540,7 +547,7 @@ void Scene::translateCamera(const Vec2f& dir) {
             double dist = distance(cam.pos, p_);
             if (dist < nearestX) {
               nextRegion = nextRegion_;
-              dy = dy_;
+              dy = floorDiff;
               p = p_;
 
               nearestX = dist;
@@ -592,6 +599,31 @@ void Scene::translateCamera(const Vec2f& dir) {
   }, []() {}}, "playerBounce");
 
   cam.pos = cam.pos + dv;
+}
+
+//===========================================
+// Scene::jump
+//===========================================
+void Scene::jump() {
+  if (m_player.isJumping) {
+    return;
+  }
+
+  Camera& cam = *camera;
+
+  double dy = 80.0;
+  double frames = 30;
+  double dy_ = dy / frames;
+  int i = 0;
+  addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+    if (i < frames / 2) {
+      cam.height += dy_;
+    }
+    else {
+      cam.height -= dy_;
+    }
+    return ++i < frames;
+  }, []() {}}, "playerJump");
 }
 
 //===========================================
