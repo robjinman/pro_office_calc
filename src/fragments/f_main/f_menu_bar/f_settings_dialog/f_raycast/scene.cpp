@@ -10,6 +10,7 @@
 #include "utils.hpp"
 
 
+using std::stringstream;
 using std::unique_ptr;
 using std::string;
 using std::list;
@@ -551,7 +552,6 @@ void Scene::translateCamera(const Vec2f& dir) {
 
     if (nIntersections > 0) {
       currentRegion = nextRegion;
-      double targetH = cam.height + dy;
       int frames = 0;
 
       if (dy < 0 && dy < -PLAYER_STEP_HEIGHT) {
@@ -565,8 +565,7 @@ void Scene::translateCamera(const Vec2f& dir) {
         double dy_ = dy / frames;
         int i = 0;
 
-        // Warning: cam.height may accumulate inaccuracy
-        tweens.push_back(Tween{[&, targetH, dy_, i, frames]() mutable -> bool {
+        addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
           cam.height += dy_;
           return ++i < frames;
         }, []() {}});
@@ -578,17 +577,52 @@ void Scene::translateCamera(const Vec2f& dir) {
     }
   });
 
+  double dy = 10.0;
+  double frames = 20;
+  double dy_ = dy / frames;
+  int i = 0;
+  addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+    if (i < frames / 2) {
+      cam.height += dy_;
+    }
+    else {
+      cam.height -= dy_;
+    }
+    return ++i < frames;
+  }, []() {}}, "playerBounce");
+
   cam.pos = cam.pos + dv;
+}
+
+//===========================================
+// Scene::addTween
+//===========================================
+void Scene::addTween(const Tween& tween, const char* name) {
+  string s;
+  if (name != nullptr) {
+    s.assign(name);
+  }
+  else {
+    stringstream ss;
+    ss << "tween" << rand();
+    s = ss.str();
+  }
+
+  if (m_tweens.find(s) == m_tweens.end()) {
+    m_tweens[s] = tween;
+  }
 }
 
 //===========================================
 // Scene::update
 //===========================================
 void Scene::update() {
-  for (auto it = tweens.begin(); it != tweens.end();) {
-    if (!it->tick()) {
-      it->finish();
-      tweens.erase(it++);
+  for (auto it = m_tweens.begin(); it != m_tweens.end();) {
+    const Tween& tween = it->second;
+
+    if (!tween.tick()) {
+      tween.finish();
+      m_tweens.erase(it++);
     }
     else {
       ++it;

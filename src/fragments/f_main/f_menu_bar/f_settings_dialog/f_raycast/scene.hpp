@@ -221,16 +221,16 @@ class Scene {
     std::list<pEdge_t> edges;
     const Region* currentRegion;
 
-    std::list<Tween> tweens;
-
     void update();
     void rotateCamera(double da);
     void translateCamera(const Vec2f& dir);
+    void addTween(const Tween& tween, const char* name = nullptr);
 
   private:
     void addObject(const parser::Object& obj);
 
     double m_frameRate;
+    std::map<std::string, Tween> m_tweens;
 };
 
 
