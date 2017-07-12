@@ -5,7 +5,7 @@
 #include <array>
 #include <list>
 #include <set>
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_data.hpp"
 
 
 class QImage;
@@ -83,7 +83,7 @@ typedef std::array<double, 10000> atanMap_t;
 class Renderer {
   public:
     Renderer();
-    void renderScene(QImage& target, const Scene& scene);
+    void renderScene(QImage& target, const SceneData& sceneData);
 
   private:
     tanMap_t m_tanMap_rp;

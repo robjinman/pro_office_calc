@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <tinyxml2.h>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 
 

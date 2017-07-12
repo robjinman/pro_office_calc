@@ -1,6 +1,5 @@
 #include <string>
 #include <sstream>
-#include <tinyxml2.h>
 #include "exception.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 
