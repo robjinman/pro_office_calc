@@ -67,7 +67,7 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  m_renderer.renderScene(m_buffer, m_scene->data);
+  m_renderer.renderScene(m_buffer, m_scene->sg);
 
   QPainter painter;
   painter.begin(this);
@@ -179,8 +179,8 @@ void FRaycast::tick() {
     if (fabs(v.y) > 0) {
       double da = 0.0008 * PI * v.y;
 
-      if (fabs(m_scene->data.camera->vAngle + da) < fabs(DEG_TO_RAD(20))) {
-        m_scene->data.camera->vAngle += da;
+      if (fabs(m_scene->sg.camera->vAngle + da) < fabs(DEG_TO_RAD(20))) {
+        m_scene->sg.camera->vAngle += da;
       }
     }
   }

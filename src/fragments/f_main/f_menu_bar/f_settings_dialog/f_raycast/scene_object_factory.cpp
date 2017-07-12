@@ -4,7 +4,7 @@
 #include <list>
 #include <iterator>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_data.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "exception.hpp"
@@ -59,14 +59,14 @@ static JoiningEdge* combine(const JoiningEdge& je1, const JoiningEdge& je2) {
 //===========================================
 // connectSubregions_r
 //===========================================
-static void connectSubregions_r(SceneData& sceneData, Region& region) {
+static void connectSubregions_r(SceneGraph& sg, Region& region) {
   if (region.children.size() == 0) {
     return;
   }
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     Region& r = **it;
-    connectSubregions_r(sceneData, r);
+    connectSubregions_r(sg, r);
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
       if ((*jt)->kind == EdgeKind::JOINING_EDGE) {
@@ -100,7 +100,7 @@ static void connectSubregions_r(SceneData& sceneData, Region& region) {
                     *jt = combined;
                     *lt = combined;
 
-                    sceneData.edges.push_back(pEdge_t(combined));
+                    sg.edges.push_back(pEdge_t(combined));
                     break;
                   }
                 }
@@ -258,7 +258,7 @@ list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Region* regi
 //===========================================
 // constructRegion_r
 //===========================================
-Region* constructRegion_r(SceneData& sceneData, const parser::Object& obj,
+Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
   const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   DBG_PRINT("Constructing Region\n");
@@ -290,29 +290,29 @@ Region* constructRegion_r(SceneData& sceneData, const parser::Object& obj,
     }
 
     region->floorHeight = contains<string>(obj.dict, "floor_height") ?
-      std::stod(getValue(obj.dict, "floor_height")) : sceneData.defaults.floorHeight;
+      std::stod(getValue(obj.dict, "floor_height")) : sg.defaults.floorHeight;
 
     region->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
-      std::stod(getValue(obj.dict, "ceiling_height")) : sceneData.defaults.ceilingHeight;
+      std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
 
     region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
-      getValue(obj.dict, "floor_texture") : sceneData.defaults.floorTexture;
+      getValue(obj.dict, "floor_texture") : sg.defaults.floorTexture;
 
     region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
-      getValue(obj.dict, "ceiling_texture") : sceneData.defaults.ceilingTexture;
+      getValue(obj.dict, "ceiling_texture") : sg.defaults.ceilingTexture;
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       const parser::Object& child = **it;
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        region->children.push_back(pRegion_t(constructRegion_r(sceneData, child, transform,
+        region->children.push_back(pRegion_t(constructRegion_r(sg, child, transform,
           endpoints)));
       }
       else if (type == "wall") {
         list<Wall*> walls = constructWalls(child, region, transform);
         for (auto jt = walls.begin(); jt != walls.end(); ++jt) {
-          sceneData.edges.push_back(pEdge_t(*jt));
+          sg.edges.push_back(pEdge_t(*jt));
           region->edges.push_back(*jt);
         }
         snapEndpoint(endpoints, walls.front()->lseg.A);
@@ -330,11 +330,11 @@ Region* constructRegion_r(SceneData& sceneData, const parser::Object& obj,
         region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
       }
       else if (type == "camera") {
-        if (sceneData.camera) {
+        if (sg.camera) {
           EXCEPTION("Camera already exists");
         }
-        sceneData.camera.reset(constructCamera(child, *region, transform));
-        sceneData.currentRegion = region;
+        sg.camera.reset(constructCamera(child, *region, transform));
+        sg.currentRegion = region;
       }
     }
   }
@@ -354,18 +354,18 @@ Region* constructRegion_r(SceneData& sceneData, const parser::Object& obj,
 //===========================================
 // constructRootRegion
 //===========================================
-void constructRootRegion(SceneData& sceneData, const parser::Object& obj) {
+void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
   if (getValue(obj.dict, "type") != "region") {
     EXCEPTION("Expected object of type 'region'");
   }
 
-  if (sceneData.rootRegion) {
+  if (sg.rootRegion) {
     EXCEPTION("Root region already exists");
   }
 
   map<Point, bool> endpoints;
   Matrix m;
-  sceneData.rootRegion.reset(constructRegion_r(sceneData, obj, m, endpoints));
+  sg.rootRegion.reset(constructRegion_r(sg, obj, m, endpoints));
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -373,29 +373,29 @@ void constructRootRegion(SceneData& sceneData, const parser::Object& obj) {
     }
   }
 
-  if (!sceneData.camera) {
+  if (!sg.camera) {
     EXCEPTION("Scene must contain a camera");
   }
 
   // TODO
-  sceneData.player.reset(new Player);
+  sg.player.reset(new Player);
 
-  connectSubregions_r(sceneData, *sceneData.rootRegion);
+  connectSubregions_r(sg, *sg.rootRegion);
 
-  sceneData.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
-  sceneData.viewport.y = 10.0;
+  sg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
+  sg.viewport.y = 10.0;
 
-  sceneData.camera->F = computeF(sceneData.viewport.x, sceneData.camera->hFov);
+  sg.camera->F = computeF(sg.viewport.x, sg.camera->hFov);
 
-  sceneData.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
-  sceneData.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
-  sceneData.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
-  sceneData.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
-  sceneData.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
-  sceneData.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
-  sceneData.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
-  sceneData.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
-  sceneData.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
-  sceneData.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
-  sceneData.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
+  sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
+  sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
+  sg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
+  sg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
+  sg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
+  sg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
+  sg.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
+  sg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
+  sg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
+  sg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
+  sg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
 }

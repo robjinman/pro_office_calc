@@ -92,14 +92,14 @@ Scene::Scene(const string& mapFilePath, double frameRate) {
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(data, **objects.begin());
+  constructRootRegion(sg, **objects.begin());
 }
 
 //===========================================
 // Scene::rotateCamera
 //===========================================
 void Scene::rotateCamera(double da) {
-  data.camera->angle += da;
+  sg.camera->angle += da;
 }
 
 //===========================================
@@ -160,19 +160,19 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double playerH,
 // Scene::translateCamera
 //===========================================
 void Scene::translateCamera(const Vec2f& dir) {
-  Camera& cam = *data.camera;
+  Camera& cam = *sg.camera;
 
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
   double radius = 5.0;
-  double playerH = cam.height - data.player->height;
+  double playerH = cam.height - sg.player->height;
 
-  dv = getDelta(*data.currentRegion, cam.pos, playerH, radius, dv);
+  dv = getDelta(*sg.currentRegion, cam.pos, playerH, radius, dv);
   Circle circle{cam.pos + dv, radius};
 
   bool abortLoop = false;
-  forEachConstRegion(*data.currentRegion, [&](const Region& region) {
+  forEachConstRegion(*sg.currentRegion, [&](const Region& region) {
     if (abortLoop) {
       return;
     }
@@ -190,12 +190,12 @@ void Scene::translateCamera(const Vec2f& dir) {
         assert(edge.kind == EdgeKind::JOINING_EDGE);
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-        //assert(data.currentRegion == je.regionA || data.currentRegion == je.regionB);
-        Region* nextRegion_ = je.regionA == data.currentRegion ? je.regionB : je.regionA;
+        //assert(sg.currentRegion == je.regionA || sg.currentRegion == je.regionB);
+        Region* nextRegion_ = je.regionA == sg.currentRegion ? je.regionB : je.regionA;
 
-        double floorH = data.currentRegion->floorHeight;
+        double floorH = sg.currentRegion->floorHeight;
         double floorDiff = nextRegion_->floorHeight - floorH;
-        double playerH = cam.height - data.player->height;
+        double playerH = cam.height - sg.player->height;
         double stepH = nextRegion_->floorHeight - playerH;
 
         if (stepH <= PLAYER_STEP_HEIGHT) {
@@ -220,7 +220,7 @@ void Scene::translateCamera(const Vec2f& dir) {
     }
 
     if (nIntersections > 0) {
-      data.currentRegion = nextRegion;
+      sg.currentRegion = nextRegion;
       int frames = 0;
 
       if (dy < 0 && dy < -PLAYER_STEP_HEIGHT) {
@@ -246,7 +246,7 @@ void Scene::translateCamera(const Vec2f& dir) {
     }
   });
 
-  if (!data.player->isJumping) {
+  if (!sg.player->isJumping) {
     double dy = 10.0;
     double frames = 20;
     double dy_ = dy / frames;
@@ -269,11 +269,11 @@ void Scene::translateCamera(const Vec2f& dir) {
 // Scene::jump
 //===========================================
 void Scene::jump() {
-  if (data.player->isJumping) {
+  if (sg.player->isJumping) {
     return;
   }
 
-  Camera& cam = *data.camera;
+  Camera& cam = *sg.camera;
 
   double dy = 80.0;
   double frames = 30;

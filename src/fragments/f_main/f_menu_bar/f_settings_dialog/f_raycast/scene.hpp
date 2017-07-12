@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 #include <QImage>
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_data.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
 
 
 namespace tinyxml2 { class XMLElement; }
@@ -23,7 +23,7 @@ class Scene {
   public:
     Scene(const std::string& mapFilePath, double frameRate);
 
-    SceneData data;
+    SceneGraph sg;
 
     void update();
     void rotateCamera(double da);
