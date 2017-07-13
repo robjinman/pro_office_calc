@@ -16,7 +16,6 @@ struct SceneGraph {
   SceneDefaults defaults;
 
   Size viewport;
-  std::unique_ptr<Camera> camera;
   std::map<std::string, Texture> textures;
 
   pRegion_t rootRegion;

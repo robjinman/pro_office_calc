@@ -138,7 +138,7 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 //===========================================
 // constructWalls
 //===========================================
-list<Wall*> constructWalls(const parser::Object& obj, Region* region,
+static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
   const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing Walls\n");
@@ -173,25 +173,27 @@ list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 }
 
 //===========================================
-// constructCamera
+// constructPlayer
 //===========================================
-Camera* constructCamera(const parser::Object& obj, const Region& region,
-  const Matrix& parentTransform) {
+static Player* constructPlayer(const parser::Object& obj, const Region& region,
+  const Matrix& parentTransform, const Size& viewport) {
 
-  DBG_PRINT("Constructing Camera\n");
+  DBG_PRINT("Constructing Player\n");
 
-  Camera* camera = new Camera;
+  double tallness = std::stod(getValue(obj.dict, "tallness"));
+
+  Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
+  camera->height = tallness + region.floorHeight;
 
-  camera->height = std::stod(getValue(obj.dict, "height")) + region.floorHeight;
-
-  return camera;
+  Player* player = new Player(tallness, unique_ptr<Camera>(camera));
+  return player;
 }
 
 //===========================================
 // constructSprite
 //===========================================
-Sprite* constructSprite(const parser::Object& obj, Region& region, const Matrix& parentTransform) {
+static Sprite* constructSprite(const parser::Object& obj, Region& region, const Matrix& parentTransform) {
   DBG_PRINT("Constructing Sprite\n");
 
   if (getValue(obj.dict, "subtype") == "bad_guy") {
@@ -217,7 +219,7 @@ Sprite* constructSprite(const parser::Object& obj, Region& region, const Matrix&
 //===========================================
 // constructJoiningEdges
 //===========================================
-list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Region* region,
+static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Region* region,
   const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing JoiningEdges\n");
@@ -258,7 +260,7 @@ list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Region* regi
 //===========================================
 // constructRegion_r
 //===========================================
-Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
+static Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
   const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   DBG_PRINT("Constructing Region\n");
@@ -329,11 +331,11 @@ Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
       else if (type == "sprite") {
         region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
       }
-      else if (type == "camera") {
-        if (sg.camera) {
-          EXCEPTION("Camera already exists");
+      else if (type == "player") {
+        if (sg.player) {
+          EXCEPTION("Player already exists");
         }
-        sg.camera.reset(constructCamera(child, *region, transform));
+        sg.player.reset(constructPlayer(child, *region, transform, sg.viewport));
         sg.currentRegion = region;
       }
     }
@@ -363,6 +365,9 @@ void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
     EXCEPTION("Root region already exists");
   }
 
+  sg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
+  sg.viewport.y = 10.0;
+
   map<Point, bool> endpoints;
   Matrix m;
   sg.rootRegion.reset(constructRegion_r(sg, obj, m, endpoints));
@@ -373,19 +378,11 @@ void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
     }
   }
 
-  if (!sg.camera) {
-    EXCEPTION("Scene must contain a camera");
+  if (!sg.player) {
+    EXCEPTION("Scene must contain the player");
   }
 
-  // TODO
-  sg.player.reset(new Player);
-
   connectSubregions_r(sg, *sg.rootRegion);
-
-  sg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
-  sg.viewport.y = 10.0;
-
-  sg.camera->F = computeF(sg.viewport.x, sg.camera->hFov);
 
   sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};

@@ -21,14 +21,14 @@ class RendererTest : public testing::Test {
 TEST_F(RendererTest, findIntersections_r_singleRegion) {
   list<unique_ptr<Edge>> edges;
 
-  Camera camera;
-  camera.pos = Point(100, 100);
-  camera.angle = DEG_TO_RAD(89.9);
-  camera.height = 50;
-
   Size viewport;
   viewport.x = 10.0 * 320.0 / 240.0;
   viewport.y = 10.0;
+
+  Camera camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
+  camera.pos = Point(100, 100);
+  camera.angle = DEG_TO_RAD(89.9);
+  camera.height = 50;
 
   Region* region = new Region;
 
@@ -61,11 +61,9 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
   int screenW_px = 640;
   double hWorldUnitsInPx = screenW_px / viewport.x;
 
-  double F = computeF(viewport.x, camera.hFov);
-
   int screenX_px = 321;
   double projX_wd = static_cast<double>(screenX_px - screenW_px / 2) / hWorldUnitsInPx;
-  Vec2f r(F, projX_wd);
+  Vec2f r(camera.F, projX_wd);
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
@@ -83,14 +81,14 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
 TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   list<unique_ptr<Edge>> edges;
 
-  Camera camera;
-  camera.pos = Point(10, 10);
-  camera.angle = DEG_TO_RAD(45);
-  camera.height = 50;
-
   Size viewport;
   viewport.x = 10.0 * 320.0 / 240.0;
   viewport.y = 10.0;
+
+  Camera camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
+  camera.pos = Point(10, 10);
+  camera.angle = DEG_TO_RAD(45);
+  camera.height = 50;
 
   Region* region = new Region;
 
@@ -151,11 +149,9 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   int screenW_px = 640;
   double hWorldUnitsInPx = screenW_px / viewport.x;
 
-  double F = computeF(viewport.x, camera.hFov);
-
   int screenX_px = 321;
   double projX_wd = static_cast<double>(screenX_px - screenW_px / 2) / hWorldUnitsInPx;
-  Vec2f r(F, projX_wd);
+  Vec2f r(camera.F, projX_wd);
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;
@@ -173,14 +169,14 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
 TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   list<unique_ptr<Edge>> edges;
 
-  Camera camera;
-  camera.pos = Point(100, 100);
-  camera.angle = DEG_TO_RAD(0.1);
-  camera.height = 50;
-
   Size viewport;
   viewport.x = 10.0 * 320.0 / 240.0;
   viewport.y = 10.0;
+
+  Camera camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
+  camera.pos = Point(100, 100);
+  camera.angle = DEG_TO_RAD(0.1);
+  camera.height = 50;
 
   Region* rootRegion = new Region;
   Region* region1 = new Region;
@@ -241,11 +237,9 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   int screenW_px = 640;
   double hWorldUnitsInPx = screenW_px / viewport.x;
 
-  double F = computeF(viewport.x, camera.hFov);
-
   int screenX_px = 321;
   double projX_wd = static_cast<double>(screenX_px - screenW_px / 2) / hWorldUnitsInPx;
-  Vec2f r(F, projX_wd);
+  Vec2f r(camera.F, projX_wd);
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   CastResult result;

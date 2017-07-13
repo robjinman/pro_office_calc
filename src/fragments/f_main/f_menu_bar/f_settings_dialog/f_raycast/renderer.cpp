@@ -177,7 +177,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
 static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
   auto& intersections = result.intersections;
 
-  const Camera& cam = *sg.camera;
+  const Camera& cam = sg.player->camera();
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   set<const Region*> visitedRegions;
@@ -405,7 +405,7 @@ static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
 static void drawSkySlice(QImage& target, const SceneGraph& sg, const ScreenSlice& slice,
   int screenX_px) {
 
-  const Camera& cam = *sg.camera;
+  const Camera& cam = sg.player->camera();
 
   const Texture& skyTex = sg.textures.at("sky");
   Size texSz_px(skyTex.image.rect().width(), skyTex.image.rect().height());
@@ -446,7 +446,7 @@ static void drawCeilingSlice(QImage& target, const SceneGraph& sg, const Region*
   double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   double screenH_px = sg.viewport.y * vWorldUnit_px;
-  const Camera& cam = *sg.camera;
+  const Camera& cam = sg.player->camera();
   const Texture& ceilingTex = sg.textures.at(region->ceilingTexture);
 
   double hAngle = atan(projX_wd / cam.F);
@@ -482,18 +482,19 @@ static void drawFloorSlice(QImage& target, const SceneGraph& sg, const Region* r
   const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
   double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
+  const Camera& cam = sg.player->camera();
+
   double screenH_px = sg.viewport.y * vWorldUnit_px;
-  const Camera& cam = *sg.camera;
   const Texture& floorTex = sg.textures.at(region->floorTexture);
 
-  double hAngle = atan(projX_wd / sg.camera->F);
+  double hAngle = atan(projX_wd / cam.F);
   LineSegment ray(cam.pos, collisionPoint);
 
   Size texSz_px(floorTex.image.rect().width(), floorTex.image.rect().height());
   Size texSz_wd_rp(1.0 / floorTex.size_wd.x, 1.0 / floorTex.size_wd.y);
 
   double vWorldUnit_px_rp = 1.0 / vWorldUnit_px;
-  double F_rp = 1.0 / sg.camera->F;
+  double F_rp = 1.0 / cam.F;
   double rayLen_rp = 1.0 / ray.length();
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
@@ -625,7 +626,7 @@ static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
   if (screenSliceBottom_px - screenSliceTop_px > 0) {
     vector<QRect> srcRects;
     vector<QRectF> trgRects;
-    sampleWallTexture(wallTex.image.rect(), sg.camera->height, viewport_px, screenX_px,
+    sampleWallTexture(wallTex.image.rect(), sg.player->camera().height, viewport_px, screenX_px,
       hWorldUnit_px, vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects,
       srcRects);
 
@@ -648,13 +649,15 @@ static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
 static void drawSprite(QPainter& painter, const SceneGraph& sg, const Size& viewport_px,
   const SpriteX& spriteX, double screenX_px) {
 
+  const Camera& cam = sg.player->camera();
+
   double vWorldUnit_px = viewport_px.y / sg.viewport.y;
 
   const Sprite& sprite = *spriteX.sprite;
   const Slice& slice = spriteX.slice;
 
   const Texture& tex = sg.textures.at(sprite.texture);
-  const QRectF& uv = sprite.textureRegion(sg.camera->pos);
+  const QRectF& uv = sprite.textureRegion(cam.pos);
   QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());
@@ -662,7 +665,7 @@ static void drawSprite(QPainter& painter, const SceneGraph& sg, const Size& view
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
 
-  QRect srcRect = sampleSpriteTexture(frame, spriteX, sg.camera->height, sprite.size.x,
+  QRect srcRect = sampleSpriteTexture(frame, spriteX, cam.height, sprite.size.x,
     sprite.size.y, sprite.region->floorHeight);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
@@ -692,7 +695,7 @@ void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
   painter.begin(&target);
 
   Size viewport_px(target.width(), target.height());
-  const Camera& cam = *sg.camera;
+  const Camera& cam = sg.player->camera();
 
   double hWorldUnit_px = viewport_px.x / sg.viewport.x;
   double vWorldUnit_px = viewport_px.y / sg.viewport.y;

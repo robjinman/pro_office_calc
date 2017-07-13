@@ -27,9 +27,9 @@
      inkscape:window-height="975"
      id="namedview65"
      showgrid="false"
-     inkscape:zoom="4"
-     inkscape:cx="650.7197"
-     inkscape:cy="661.01552"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="634.69267"
+     inkscape:cy="648.92913"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -1116,7 +1116,7 @@
              y="110.73225"
              x="691.70416"
              id="tspan4615"
-             sodipodi:role="line">type=camera</tspan></text>
+             sodipodi:role="line">type=player</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5515"
@@ -1126,8 +1126,8 @@
            xml:space="preserve"><tspan
              y="117.74526"
              x="692.08075"
-             id="tspan5517"
-             sodipodi:role="line">height=50</tspan></text>
+             sodipodi:role="line"
+             id="tspan4507">tallness=50</tspan></text>
       </g>
       <text
          xml:space="preserve"

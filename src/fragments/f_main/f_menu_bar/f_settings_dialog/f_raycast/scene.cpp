@@ -21,8 +21,8 @@ using std::map;
 
 const double PLAYER_STEP_HEIGHT = 16.0;
 // World units per second
-const double PLAYER_VERTICAL_SPEED = 100.0;
-const double PLAYER_FALL_SPEED = 400.0;
+const double PLAYER_VERTICAL_SPEED = 200.0;
+const double PLAYER_FALL_SPEED = 250.0;
 
 
 //===========================================
@@ -96,10 +96,17 @@ Scene::Scene(const string& mapFilePath, double frameRate) {
 }
 
 //===========================================
-// Scene::rotateCamera
+// Scene::vRotateCamera
 //===========================================
-void Scene::rotateCamera(double da) {
-  sg.camera->angle += da;
+void Scene::vRotateCamera(double da) {
+  sg.player->vRotate(da);
+}
+
+//===========================================
+// Scene::hRotateCamera
+//===========================================
+void Scene::hRotateCamera(double da) {
+  sg.player->hRotate(da);
 }
 
 //===========================================
@@ -160,15 +167,14 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double playerH,
 // Scene::translateCamera
 //===========================================
 void Scene::translateCamera(const Vec2f& dir) {
-  Camera& cam = *sg.camera;
+  const Camera& cam = sg.player->camera();
 
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
   double radius = 5.0;
-  double playerH = cam.height - sg.player->height;
 
-  dv = getDelta(*sg.currentRegion, cam.pos, playerH, radius, dv);
+  dv = getDelta(*sg.currentRegion, cam.pos, sg.player->feetHeight(), radius, dv);
   Circle circle{cam.pos + dv, radius};
 
   bool abortLoop = false;
@@ -195,8 +201,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 
         double floorH = sg.currentRegion->floorHeight;
         double floorDiff = nextRegion_->floorHeight - floorH;
-        double playerH = cam.height - sg.player->height;
-        double stepH = nextRegion_->floorHeight - playerH;
+        double stepH = nextRegion_->floorHeight - sg.player->feetHeight();
 
         if (stepH <= PLAYER_STEP_HEIGHT) {
           LineSegment ray(cam.pos, cam.pos + dv);
@@ -223,71 +228,59 @@ void Scene::translateCamera(const Vec2f& dir) {
       sg.currentRegion = nextRegion;
       int frames = 0;
 
-      if (dy < 0 && dy < -PLAYER_STEP_HEIGHT) {
-        frames = (fabs(dy) / PLAYER_FALL_SPEED) * m_frameRate;
-      }
-      else {
+      if (dy > 0) {
         frames = (fabs(dy) / PLAYER_VERTICAL_SPEED) * m_frameRate;
+
+        if (frames > 0) {
+          double dy_ = dy / frames;
+          int i = 0;
+
+          addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+            sg.player->changeHeight(*sg.currentRegion, dy_);
+            return ++i < frames;
+          }, []() {}});
+        }
       }
 
-      if (frames > 0) {
-        double dy_ = dy / frames;
-        int i = 0;
-
-        addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-          cam.height += dy_;
-          return ++i < frames;
-        }, []() {}});
-      }
-
-      cam.pos = p;
+      sg.player->setPosition(p);
       dv = dv * 0.00001;
       abortLoop = true;
     }
   });
 
-  if (!sg.player->isJumping) {
-    double dy = 10.0;
-    double frames = 20;
-    double dy_ = dy / frames;
-    int i = 0;
-    addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-      if (i < frames / 2) {
-        cam.height += dy_;
-      }
-      else {
-        cam.height -= dy_;
-      }
-      return ++i < frames;
-    }, []() {}}, "playerBounce");
-  }
+  double dy = 5.0;
+  double frames = 20;
+  double dy_ = dy / (frames / 2);
+  int i = 0;
+  addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+    if (i < frames / 2) {
+      sg.player->changeTallness(dy_);
+    }
+    else {
+      sg.player->changeTallness(-dy_);
+    }
+    return ++i < frames;
+  }, []() {}}, "playerBounce");
 
-  cam.pos = cam.pos + dv;
+  sg.player->move(dv);
 }
 
 //===========================================
 // Scene::jump
 //===========================================
 void Scene::jump() {
-  if (sg.player->isJumping) {
+  if (!sg.player->isGrounded(*sg.currentRegion)) {
     return;
   }
 
-  Camera& cam = *sg.camera;
-
-  double dy = 80.0;
-  double frames = 30;
-  double dy_ = dy / frames;
+  double jumpH = 50.0;
+  double dy_ = 2.0 * PLAYER_FALL_SPEED / m_frameRate;
+  int frames = (jumpH / dy_) * 2; // Times 2 because we're fighting gravity
   int i = 0;
   addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-    if (i < frames / 2) {
-      cam.height += dy_;
-    }
-    else {
-      cam.height -= dy_;
-    }
+    sg.player->changeHeight(*sg.currentRegion, dy_);
     return ++i < frames;
-  }, []() {}}, "playerJump");
+  }, [&]() {}}, "playerJump");
 }
 
 //===========================================
@@ -310,6 +303,16 @@ void Scene::addTween(const Tween& tween, const char* name) {
 }
 
 //===========================================
+// Scene::gravity
+//===========================================
+void Scene::gravity() {
+  if (!sg.player->isGrounded(*sg.currentRegion)) {
+    double dy = -PLAYER_FALL_SPEED / m_frameRate;
+    sg.player->changeHeight(*sg.currentRegion, dy);
+  }
+}
+
+//===========================================
 // Scene::update
 //===========================================
 void Scene::update() {
@@ -324,4 +327,6 @@ void Scene::update() {
       ++it;
     }
   }
+
+  gravity();
 }

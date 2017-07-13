@@ -156,10 +156,10 @@ void FRaycast::tick() {
   }
 
   if (m_keyStates[Qt::Key_Left]) {
-    m_scene->rotateCamera(-(1.2 / FRAME_RATE) * PI);
+    m_scene->hRotateCamera(-(1.2 / FRAME_RATE) * PI);
   }
   if (m_keyStates[Qt::Key_Right]) {
-    m_scene->rotateCamera((1.2 / FRAME_RATE) * PI);
+    m_scene->hRotateCamera((1.2 / FRAME_RATE) * PI);
   }
 
   if (m_cursorCaptured) {
@@ -173,15 +173,12 @@ void FRaycast::tick() {
 
     if (fabs(v.x) > 0) {
       double da = 0.0008 * PI * v.x;
-      m_scene->rotateCamera(da);
+      m_scene->hRotateCamera(da);
     }
 
     if (fabs(v.y) > 0) {
       double da = 0.0008 * PI * v.y;
-
-      if (fabs(m_scene->sg.camera->vAngle + da) < fabs(DEG_TO_RAD(20))) {
-        m_scene->sg.camera->vAngle += da;
-      }
+      m_scene->vRotateCamera(da);
     }
   }
 

@@ -26,7 +26,8 @@ class Scene {
     SceneGraph sg;
 
     void update();
-    void rotateCamera(double da);
+    void vRotateCamera(double da);
+    void hRotateCamera(double da);
     void translateCamera(const Vec2f& dir);
     void jump();
     void addTween(const Tween& tween, const char* name = nullptr);
@@ -34,6 +35,8 @@ class Scene {
   private:
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
+
+    void gravity();
 };
 
 
