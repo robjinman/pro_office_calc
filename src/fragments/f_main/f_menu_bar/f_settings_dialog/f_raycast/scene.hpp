@@ -36,6 +36,7 @@ class Scene {
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
 
+    void buoyancy();
     void gravity();
 };
 

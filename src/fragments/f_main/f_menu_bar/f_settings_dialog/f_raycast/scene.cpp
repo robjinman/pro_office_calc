@@ -19,12 +19,6 @@ using std::list;
 using std::map;
 
 
-const double PLAYER_STEP_HEIGHT = 16.0;
-// World units per second
-const double PLAYER_VERTICAL_SPEED = 200.0;
-const double PLAYER_FALL_SPEED = 250.0;
-
-
 //===========================================
 // forEachConstRegion
 //===========================================
@@ -186,7 +180,6 @@ void Scene::translateCamera(const Vec2f& dir) {
     int nIntersections = 0;
     double nearestX = 999999.9;
     Region* nextRegion = nullptr;
-    double dy = 0;
     Point p;
 
     for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
@@ -198,9 +191,6 @@ void Scene::translateCamera(const Vec2f& dir) {
 
         //assert(sg.currentRegion == je.regionA || sg.currentRegion == je.regionB);
         Region* nextRegion_ = je.regionA == sg.currentRegion ? je.regionB : je.regionA;
-
-        double floorH = sg.currentRegion->floorHeight;
-        double floorDiff = nextRegion_->floorHeight - floorH;
         double stepH = nextRegion_->floorHeight - sg.player->feetHeight();
 
         if (stepH <= PLAYER_STEP_HEIGHT) {
@@ -214,7 +204,6 @@ void Scene::translateCamera(const Vec2f& dir) {
             double dist = distance(cam.pos, p_);
             if (dist < nearestX) {
               nextRegion = nextRegion_;
-              dy = floorDiff;
               p = p_;
 
               nearestX = dist;
@@ -226,27 +215,13 @@ void Scene::translateCamera(const Vec2f& dir) {
 
     if (nIntersections > 0) {
       sg.currentRegion = nextRegion;
-      int frames = 0;
-
-      if (dy > 0) {
-        frames = (fabs(dy) / PLAYER_VERTICAL_SPEED) * m_frameRate;
-
-        if (frames > 0) {
-          double dy_ = dy / frames;
-          int i = 0;
-
-          addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-            sg.player->changeHeight(*sg.currentRegion, dy_);
-            return ++i < frames;
-          }, []() {}});
-        }
-      }
-
       sg.player->setPosition(p);
       dv = dv * 0.00001;
       abortLoop = true;
     }
   });
+
+  sg.player->move(dv);
 
   double dy = 5.0;
   double frames = 20;
@@ -261,26 +236,28 @@ void Scene::translateCamera(const Vec2f& dir) {
     }
     return ++i < frames;
   }, []() {}}, "playerBounce");
-
-  sg.player->move(dv);
 }
 
 //===========================================
 // Scene::jump
 //===========================================
 void Scene::jump() {
-  if (!sg.player->isGrounded(*sg.currentRegion)) {
+  if (sg.player->feetHeight() - 0.1 > sg.currentRegion->floorHeight) {
     return;
   }
 
   double jumpH = 50.0;
-  double dy_ = 2.0 * PLAYER_FALL_SPEED / m_frameRate;
-  int frames = (jumpH / dy_) * 2; // Times 2 because we're fighting gravity
+  double dy_ = PLAYER_FALL_SPEED / m_frameRate;
+  int frames = jumpH / dy_;
+
+  sg.player->heavy = false;
   int i = 0;
   addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
     sg.player->changeHeight(*sg.currentRegion, dy_);
     return ++i < frames;
-  }, [&]() {}}, "playerJump");
+  }, [&]() {
+    sg.player->heavy = true;
+  }}, "playerJump");
 }
 
 //===========================================
@@ -306,8 +283,22 @@ void Scene::addTween(const Tween& tween, const char* name) {
 // Scene::gravity
 //===========================================
 void Scene::gravity() {
-  if (!sg.player->isGrounded(*sg.currentRegion)) {
+  if (!sg.player->heavy) {
+    return;
+  }
+
+  if (sg.player->feetHeight() - 0.1 > sg.currentRegion->floorHeight) {
     double dy = -PLAYER_FALL_SPEED / m_frameRate;
+    sg.player->changeHeight(*sg.currentRegion, dy);
+  }
+}
+
+//===========================================
+// Scene::buoyancy
+//===========================================
+void Scene::buoyancy() {
+  if (sg.player->feetHeight() + 0.1 < sg.currentRegion->floorHeight) {
+    double dy = PLAYER_FALL_SPEED / m_frameRate;
     sg.player->changeHeight(*sg.currentRegion, dy);
   }
 }
@@ -328,5 +319,6 @@ void Scene::update() {
     }
   }
 
+  buoyancy();
   gravity();
 }

@@ -3,6 +3,7 @@
 
 
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/player.hpp"
 
 
 struct SceneDefaults {
