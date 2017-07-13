@@ -243,30 +243,9 @@ void Scene::translateCamera(const Vec2f& dir) {
 // Scene::jump
 //===========================================
 void Scene::jump() {
-  if (sg.player->feetHeight() - 0.1 > sg.currentRegion->floorHeight) {
-    return;
+  if (!sg.player->aboveGround(*sg.currentRegion)) {
+    sg.player->vVelocity = 220;
   }
-
-  double h = sg.player->feetHeight();
-  double jumpH = 50.0;
-  double t = 0.4;
-  int frames = m_frameRate * t;
-
-  auto tweenCurve = cubicOut(h, h + jumpH, frames);
-
-  sg.player->heavy = false;
-  int i = 0;
-
-  addTween(Tween{[&, i, tweenCurve, frames]() mutable -> bool {
-    double h_ = sg.player->feetHeight();
-    double h = tweenCurve(i);
-
-    sg.player->changeHeight(*sg.currentRegion, h - h_);
-
-    return ++i < frames;
-  }, [&]() {
-    sg.player->heavy = true;
-  }}, "playerJump");
 }
 
 //===========================================
@@ -292,20 +271,17 @@ void Scene::addTween(const Tween& tween, const char* name) {
 // Scene::gravity
 //===========================================
 void Scene::gravity() {
-  if (!sg.player->heavy) {
-    return;
-  }
-
-  if (sg.player->aboveGround(*sg.currentRegion)) {
-    double a = 600.0;
-    double v = sg.player->airTime * a;
-    double dy = -v / m_frameRate;
+  if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(*sg.currentRegion)) {
+    double a = -600.0;
+    double dt = 1.0 / m_frameRate;
+    double dv = dt * a;
+    sg.player->vVelocity += dv;
+    double dy = sg.player->vVelocity * dt;
 
     sg.player->changeHeight(*sg.currentRegion, dy);
-    sg.player->airTime += 1.0 / m_frameRate;
 
     if (!sg.player->aboveGround(*sg.currentRegion)) {
-      sg.player->airTime = 0.1;
+      sg.player->vVelocity = 0;
     }
   }
 }
@@ -315,7 +291,7 @@ void Scene::gravity() {
 //===========================================
 void Scene::buoyancy() {
   if (sg.player->feetHeight() + 0.1 < sg.currentRegion->floorHeight) {
-    double dy = PLAYER_FALL_SPEED / m_frameRate;
+    double dy = 250.0 / m_frameRate;
     sg.player->changeHeight(*sg.currentRegion, dy);
   }
 }

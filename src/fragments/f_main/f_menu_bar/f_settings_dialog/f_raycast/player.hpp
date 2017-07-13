@@ -7,8 +7,6 @@
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
-// World units per second
-const double PLAYER_FALL_SPEED = 250.0;
 
 
 class Player {
@@ -17,8 +15,7 @@ class Player {
       : m_camera(std::move(camera)),
         m_tallness(tallness) {}
 
-    bool heavy = true;
-    double airTime = 0.1;
+    double vVelocity = 0;
 
     bool aboveGround(const Region& region) const {
       return feetHeight() - 0.1 > region.floorHeight;
