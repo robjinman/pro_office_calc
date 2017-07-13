@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="2343.2324"
-     inkscape:cy="2970.4988"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="1762.1004"
+     inkscape:cy="2010.8929"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
      showgrid="false"
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -154,7 +154,7 @@
            sodipodi:role="line"
            id="tspan4730"
            x="163.19522"
-           y="633.62042">type=camera</tspan></text>
+           y="633.62042">type=player</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -165,7 +165,7 @@
            sodipodi:role="line"
            id="tspan5412"
            x="164.25"
-           y="643">height=50</tspan></text>
+           y="643">tallness=50</tspan></text>
     </g>
     <g
        id="g7815">
