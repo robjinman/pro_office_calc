@@ -193,7 +193,9 @@ static Player* constructPlayer(const parser::Object& obj, const Region& region,
 //===========================================
 // constructSprite
 //===========================================
-static Sprite* constructSprite(const parser::Object& obj, Region& region, const Matrix& parentTransform) {
+static Sprite* constructSprite(const parser::Object& obj, Region& region,
+  const Matrix& parentTransform) {
+
   DBG_PRINT("Constructing Sprite\n");
 
   if (getValue(obj.dict, "subtype") == "bad_guy") {

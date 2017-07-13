@@ -7,6 +7,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/tween_curves.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -246,14 +247,22 @@ void Scene::jump() {
     return;
   }
 
+  double h = sg.player->feetHeight();
   double jumpH = 50.0;
-  double dy_ = PLAYER_FALL_SPEED / m_frameRate;
-  int frames = jumpH / dy_;
+  double t = 0.4;
+  int frames = m_frameRate * t;
+
+  auto tweenCurve = cubicOut(h, h + jumpH, frames);
 
   sg.player->heavy = false;
   int i = 0;
-  addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-    sg.player->changeHeight(*sg.currentRegion, dy_);
+
+  addTween(Tween{[&, i, tweenCurve, frames]() mutable -> bool {
+    double h_ = sg.player->feetHeight();
+    double h = tweenCurve(i);
+
+    sg.player->changeHeight(*sg.currentRegion, h - h_);
+
     return ++i < frames;
   }, [&]() {
     sg.player->heavy = true;
@@ -287,9 +296,17 @@ void Scene::gravity() {
     return;
   }
 
-  if (sg.player->feetHeight() - 0.1 > sg.currentRegion->floorHeight) {
-    double dy = -PLAYER_FALL_SPEED / m_frameRate;
+  if (sg.player->aboveGround(*sg.currentRegion)) {
+    double a = 600.0;
+    double v = sg.player->airTime * a;
+    double dy = -v / m_frameRate;
+
     sg.player->changeHeight(*sg.currentRegion, dy);
+    sg.player->airTime += 1.0 / m_frameRate;
+
+    if (!sg.player->aboveGround(*sg.currentRegion)) {
+      sg.player->airTime = 0.1;
+    }
   }
 }
 

@@ -8,7 +8,6 @@
 
 const double PLAYER_STEP_HEIGHT = 16.0;
 // World units per second
-const double PLAYER_VERTICAL_SPEED = 200.0;
 const double PLAYER_FALL_SPEED = 250.0;
 
 
@@ -19,12 +18,21 @@ class Player {
         m_tallness(tallness) {}
 
     bool heavy = true;
+    double airTime = 0.1;
 
-    double feetHeight() {
+    bool aboveGround(const Region& region) const {
+      return feetHeight() - 0.1 > region.floorHeight;
+    }
+
+    bool belowGround(const Region& region) const {
+      return feetHeight() + 0.1 < region.floorHeight;
+    }
+
+    double feetHeight() const {
       return m_camera->height - m_tallness;
     }
 
-    double headHeight() {
+    double headHeight() const {
       return m_camera->height;
     }
 
