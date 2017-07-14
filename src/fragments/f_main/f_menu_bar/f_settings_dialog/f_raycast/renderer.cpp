@@ -476,6 +476,27 @@ static void drawCeilingSlice(QImage& target, const SceneGraph& sg, const Region*
 }
 
 //===========================================
+// getFloorDecal
+//
+// x is set to the point inside decal space
+//===========================================
+static const FloorDecal* getFloorDecal(const Region* region, const Point& pt, Point& x) {
+  for (auto it = region->floorDecals.begin(); it != region->floorDecals.end(); ++it) {
+    const FloorDecal& decal = **it;
+
+    x = decal.transform.inverse() * pt;
+
+    if (isBetween(x.x, 0, decal.size.x)
+      && isBetween(x.y, 0, decal.size.y)) {
+
+      return &decal;
+    }
+  }
+
+  return nullptr;
+}
+
+//===========================================
 // drawFloorSlice
 //===========================================
 static void drawFloorSlice(QImage& target, const SceneGraph& sg, const Region* region,
@@ -506,10 +527,22 @@ static void drawFloorSlice(QImage& target, const SceneGraph& sg, const Region* r
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
-    Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
+    Point decalPt;
+    const FloorDecal* decal = getFloorDecal(region, p, decalPt);
 
-    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-    pixels[screenX_px] = floorTex.image.pixel(texel.x, texel.y);
+    if (decal != nullptr) {
+      const Texture& decalTex = sg.textures.at(decal->texture);
+      Size texSz_px(decalTex.image.rect().width(), decalTex.image.rect().height());
+
+      Point texel(texSz_px.x * decalPt.x / decal->size.x, texSz_px.y * decalPt.y / decal->size.y);
+      QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+      pixels[screenX_px] = decalTex.image.pixel(texel.x, texel.y);
+    }
+    else {
+      Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
+      QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+      pixels[screenX_px] = floorTex.image.pixel(texel.x, texel.y);
+    }
   }
 }
 

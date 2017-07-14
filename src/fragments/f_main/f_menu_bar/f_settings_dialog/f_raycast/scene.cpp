@@ -291,7 +291,7 @@ void Scene::gravity() {
 //===========================================
 void Scene::buoyancy() {
   if (sg.player->feetHeight() + 0.1 < sg.currentRegion->floorHeight) {
-    double dy = 250.0 / m_frameRate;
+    double dy = 150.0 / m_frameRate;
     sg.player->changeHeight(*sg.currentRegion, dy);
   }
 }

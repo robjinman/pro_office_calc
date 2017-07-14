@@ -125,6 +125,22 @@ void constructPath(const XMLElement& e, Path& path) {
 }
 
 //===========================================
+// constructPathFromRect
+//===========================================
+void constructPathFromRect(const XMLElement& e, Path& path) {
+  double x = std::stod(e.Attribute("x"));
+  double y = std::stod(e.Attribute("y"));
+  double w = std::stod(e.Attribute("width"));
+  double h = std::stod(e.Attribute("height"));
+
+  path.points.push_back(Point(x, y));
+  path.points.push_back(Point(x + w, y));
+  path.points.push_back(Point(x + w, y + h));
+  path.points.push_back(Point(x, y + h));
+  path.closed = true;
+}
+
+//===========================================
 // parseKvpString
 //===========================================
 pair<string, string> parseKvpString(const string& s) {
@@ -236,8 +252,13 @@ void extractGeometry(const XMLElement& node, Path& path, Matrix& transform) {
   while (e != nullptr) {
     string tag(e->Name());
 
-    if (tag == "path") {
-      constructPath(*e, path);
+    if (tag == "path" || tag == "rect") {
+      if (tag == "path") {
+        constructPath(*e, path);
+      }
+      else if (tag == "rect") {
+        constructPathFromRect(*e, path);
+      }
 
       const char* trans = e->Attribute("transform");
       if (trans) {

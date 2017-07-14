@@ -173,6 +173,27 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 }
 
 //===========================================
+// constructFloorDecal
+//===========================================
+static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& parentTransform) {
+  string texture = getValue(obj.dict, "texture");
+
+  Point pos = obj.path.points[0];
+  Size size = obj.path.points[2] - obj.path.points[0];
+
+  assert(size.x > 0);
+  assert(size.y > 0);
+
+  Matrix m(0, pos);
+
+  return new FloorDecal{
+    texture,
+    size,
+    parentTransform * obj.transform * m
+  };
+}
+
+//===========================================
 // constructPlayer
 //===========================================
 static Player* constructPlayer(const parser::Object& obj, const Region& region,
@@ -332,6 +353,9 @@ static Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
       }
       else if (type == "sprite") {
         region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
+      }
+      else if (type == "floor_decal") {
+        region->floorDecals.push_back(pFloorDecal_t(constructFloorDecal(child, transform)));
       }
       else if (type == "player") {
         if (sg.player) {

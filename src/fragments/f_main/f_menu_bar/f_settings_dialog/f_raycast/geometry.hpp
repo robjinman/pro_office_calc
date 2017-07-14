@@ -7,6 +7,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <limits>
 
 
 struct Point {
@@ -123,7 +124,9 @@ struct LineSegment {
     l.m = (B.y - A.y) / (B.x - A.x);
     l.c = A.y - l.m * A.x;
 
-    if (std::isinf(l.m)) {
+    // Treat the line as vertical for very steep gradients
+    if (fabs(l.m) > 1000000000000000) {
+      l.m = std::numeric_limits<double>::infinity();
       l.x = A.x;
     }
 
@@ -175,6 +178,7 @@ clipResult_t clipNumber(double x, const Size& range, double& result);
 #include <ostream>
 std::ostream& operator<<(std::ostream& os, const Point& lseg);
 std::ostream& operator<<(std::ostream& os, const LineSegment& lseg);
+std::ostream& operator<<(std::ostream& os, const Circle& circ);
 std::ostream& operator<<(std::ostream& os, const Matrix& mat);
 #endif
 

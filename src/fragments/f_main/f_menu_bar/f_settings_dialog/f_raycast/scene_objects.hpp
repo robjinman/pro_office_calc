@@ -139,6 +139,14 @@ struct Edge {
 
 typedef std::unique_ptr<Edge> pEdge_t;
 
+struct FloorDecal {
+  std::string texture;
+  Size size;
+  Matrix transform;
+};
+
+typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
+
 class Region;
 typedef std::unique_ptr<Region> pRegion_t;
 
@@ -151,6 +159,7 @@ struct Region {
   std::list<pRegion_t> children;
   std::list<Edge*> edges;
   std::list<pSprite_t> sprites;
+  std::list<pFloorDecal_t> floorDecals;
 };
 
 void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn);

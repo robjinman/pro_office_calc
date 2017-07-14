@@ -16,6 +16,12 @@ ostream& operator<<(ostream& os, const LineSegment& lseg) {
   return os;
 }
 
+ostream& operator<<(ostream& os, const Circle& circ) {
+  os.precision(std::numeric_limits<double>::max_digits10);
+  os << "Circle " << std::fixed << circ.pos << ", " << circ.radius;
+  return os;
+}
+
 ostream& operator<<(ostream& os, const Matrix& mat) {
   os << "Matrix " << mat[0][0] << " " << mat[0][1] << " " << mat[0][2] << "\n";
   os << "       " << mat[1][0] << " " << mat[1][1] << " " << mat[1][2] << "\n";

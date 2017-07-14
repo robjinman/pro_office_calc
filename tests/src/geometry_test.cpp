@@ -145,6 +145,13 @@ TEST_F(GeometryTest, lineSegmentCircleIntersect_vert0) {
   ASSERT_TRUE(lineSegmentCircleIntersect(c, l));
 }
 
+TEST_F(GeometryTest, lineSegmentCircleIntersect_vert1) {
+  LineSegment l(Point(327.93653399999993781, 1351.23379999999974643), Point(327.93653399999999465, 278.98349999999982174));
+  Circle c{Point(707.63005676416514689, 574.89931701693569721), 5};
+
+  ASSERT_FALSE(lineSegmentCircleIntersect(c, l));
+}
+
 TEST_F(GeometryTest, normaliseAngle_neg0) {
   ASSERT_DOUBLE_EQ(2.0 * PI - 1.23, normaliseAngle(-1.23));
 }
