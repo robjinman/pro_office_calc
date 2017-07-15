@@ -706,6 +706,66 @@ static void drawSprite(QPainter& painter, const SceneGraph& sg, const Size& view
 }
 
 //===========================================
+// drawWallDecal
+//===========================================
+static void drawWallDecal(QPainter& painter, const SceneGraph& sg, const WallDecal& decal,
+  const WallX& wallX, int screenX_px, const Size& viewport_px, double camHeight,
+  double vWorldUnit_px) {
+
+  const Texture& decalTex = sg.textures.at(decal.texture);
+
+  double projSliceH_wd = wallX.slice.projSliceTop_wd - wallX.slice.projSliceBottom_wd;
+  double sliceH_wd = wallX.slice.sliceTop_wd - wallX.slice.sliceBottom_wd;
+  double sliceToProjScale = projSliceH_wd / sliceH_wd;
+
+  // World space
+  double sliceBottom_wd = wallX.slice.sliceBottom_wd + camHeight;
+
+  // World space (not camera space)
+  auto fnSliceToProjY = [&](double y) {
+    return wallX.slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
+  };
+
+  auto fnProjToScreenY = [&](double y) {
+    return viewport_px.y - (y * vWorldUnit_px);
+  };
+
+  double floorH = wallX.wall->region->floorHeight;
+
+  double x = wallX.distanceAlongTarget - decal.pos.x;
+  int i = decalTex.image.width() * x / decal.size.x;
+
+  double y0 = floorH + decal.pos.y;
+  double y1 = floorH + decal.pos.y + decal.size.y;
+
+  int y0_px = fnProjToScreenY(fnSliceToProjY(y0));
+  int y1_px = fnProjToScreenY(fnSliceToProjY(y1));
+
+  QRect srcRect(i, 0, 1, decalTex.image.height());
+  QRect trgRect(screenX_px, y1_px, 1, y0_px - y1_px);
+
+  painter.drawImage(trgRect, decalTex.image, srcRect);
+}
+
+//===========================================
+// Renderer::getWallDecal
+//===========================================
+static WallDecal* getWallDecal(const Wall& wall, double x) {
+  for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
+    WallDecal* decal = it->get();
+
+    double x0 = decal->pos.x;
+    double x1 = decal->pos.x + decal->size.x;
+
+    if (isBetween(x, x0, x1)) {
+      return decal;
+    }
+  }
+
+  return nullptr;
+}
+
+//===========================================
 // Renderer::Renderer
 //===========================================
 Renderer::Renderer() {
@@ -750,6 +810,12 @@ void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
 
         ScreenSlice slice = drawSlice(painter, sg, cam.F, wallX.distanceAlongTarget, wallX.slice,
           wallX.wall->texture, screenX_px, viewport_px);
+
+        WallDecal* decal = getWallDecal(*wallX.wall, wallX.distanceAlongTarget);
+        if (decal != nullptr) {
+          drawWallDecal(painter, sg, *decal, wallX, screenX_px, viewport_px, cam.height,
+            vWorldUnit_px);
+        }
 
         drawFloorSlice(target, sg, wallX.wall->region, wallX.point_world, slice, screenX_px,
           projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);

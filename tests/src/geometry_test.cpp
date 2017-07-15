@@ -40,6 +40,13 @@ TEST_F(GeometryTest, matrix_angle2) {
   ASSERT_DOUBLE_EQ(a, m.a());
 }
 
+TEST_F(GeometryTest, distanceFromLine_0) {
+  Line l(2.0 / 3.0, -4.0 / 3.0);
+  Point p(5, 6);
+
+  ASSERT_NEAR(3.328, distanceFromLine(l, p), 0.001);
+}
+
 TEST_F(GeometryTest, lineSegmentSignedDistance_0) {
   LineSegment lseg(Point(-2, 1), Point(4, 1));
 

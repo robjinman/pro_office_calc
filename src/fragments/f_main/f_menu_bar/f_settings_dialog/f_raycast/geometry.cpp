@@ -222,6 +222,18 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 }
 
 //===========================================
+// distanceFromLine
+//===========================================
+double distanceFromLine(const Line& l, const Point& p) {
+  if (std::isinf(l.m)) {
+    return fabs(p.x - l.x);
+  }
+  else {
+    return fabs(l.m * p.x - p.y + l.c) / sqrt(l.m * l.m + 1.0);
+  }
+}
+
+//===========================================
 // normalise
 //===========================================
 Vec2f normalise(const Vec2f& v) {

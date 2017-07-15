@@ -19,6 +19,9 @@ using std::list;
 using std::map;
 
 
+const double SNAP_DISTANCE = 4.0;
+
+
 //===========================================
 // getValue
 //===========================================
@@ -122,8 +125,6 @@ static void connectSubregions_r(SceneGraph& sg, Region& region) {
 // snapEndpoint
 //===========================================
 static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
-  const double SNAP_DISTANCE = 4.0;
-
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (distance(pt, it->first) <= SNAP_DISTANCE) {
       pt = it->first;
@@ -136,12 +137,61 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 };
 
 //===========================================
+// constructWallDecal
+//
+// wall is the wall's transformed line segment
+//===========================================
+static WallDecal* constructWallDecal(const parser::Object& obj, const Matrix& parentTransform,
+  const LineSegment& wall) {
+
+  Point A = parentTransform * obj.transform * obj.path.points[0];
+  Point B = parentTransform * obj.transform * obj.path.points[1];
+
+  double a_ = distance(wall.A, A);
+  double b_ = distance(wall.A, B);
+
+  double a = smallest(a_, b_);
+  double b = largest(a_, b_);
+  double w = b - a;
+
+  if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
+    || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
+
+    return nullptr;
+  }
+  if (a < 0 || b < 0) {
+    return nullptr;
+  }
+  if (a > wall.length() || b > wall.length()) {
+    return nullptr;
+  }
+
+  DBG_PRINT("Constructing WallDecal\n");
+
+  double r = std::stod(getValue(obj.dict, "aspect_ratio"));
+  Size size(w, w / r);
+
+  double y = std::stod(getValue(obj.dict, "y"));
+  Point pos(a, y);
+
+  string texture = getValue(obj.dict, "texture");
+
+  return new WallDecal{
+    texture,
+    size,
+    pos
+  };
+}
+
+//===========================================
 // constructWalls
 //===========================================
 static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
   const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing Walls\n");
+
+  Matrix m = parentTransform * obj.transform;
 
   list<Wall*> walls;
 
@@ -161,7 +211,16 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 
     wall->lseg.A = obj.path.points[j];
     wall->lseg.B = obj.path.points[i];
-    wall->lseg = transform(wall->lseg, parentTransform * obj.transform);
+    wall->lseg = transform(wall->lseg, m);
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      if (getValue((*it)->dict, "type") == "wall_decal") {
+        WallDecal* decal = constructWallDecal(**it, m, wall->lseg);
+        if (decal != nullptr) {
+          wall->decals.push_back(pWallDecal_t(decal));
+        }
+      }
+    }
 
     wall->region = region;
     wall->texture = getValue(obj.dict, "texture");
@@ -176,6 +235,8 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 // constructFloorDecal
 //===========================================
 static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& parentTransform) {
+  DBG_PRINT("Constructing FloorDecal\n");
+
   string texture = getValue(obj.dict, "texture");
 
   Point pos = obj.path.points[0];
@@ -421,4 +482,5 @@ void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
   sg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
   sg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
   sg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
+  sg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
 }

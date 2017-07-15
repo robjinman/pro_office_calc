@@ -32,6 +32,11 @@ T smallest(T a, T b) {
   return a < b ? a : b;
 }
 
+template<class T>
+T largest(T a, T b) {
+  return a > b ? a : b;
+}
+
 template<class T, class U>
 bool contains(const std::map<T, U>& map, const T& key) {
   return map.find(key) != map.end();

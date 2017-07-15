@@ -165,11 +165,20 @@ struct Region {
 void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn);
 void forEachRegion(Region& region, std::function<void(Region&)> fn);
 
+struct WallDecal {
+  std::string texture;
+  Size size;
+  Point pos;
+};
+
+typedef std::unique_ptr<WallDecal> pWallDecal_t;
+
 struct Wall : public Edge {
   Wall() : Edge(EdgeKind::WALL) {}
 
   std::string texture;
   Region* region;
+  std::list<pWallDecal_t> decals;
 
   double height() const {
     return region->ceilingHeight - region->floorHeight;
