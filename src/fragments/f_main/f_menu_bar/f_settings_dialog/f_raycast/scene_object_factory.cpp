@@ -474,6 +474,7 @@ void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
   sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
   sg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
+  sg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
   sg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
   sg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
   sg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
