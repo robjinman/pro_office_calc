@@ -7,6 +7,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -31,6 +32,20 @@ static const string& getValue(const map<string, string>& m, const string& key) {
   }
   catch (std::out_of_range& ex) {
     EXCEPTION("No '" << key << "' key in map");
+  }
+}
+
+//===========================================
+// getValue
+//===========================================
+static const string& getValue(const map<string, string>& m, const string& key,
+  const string& default_) {
+
+  if (m.find(key) != m.end()) {
+    return m.at(key);
+  }
+  else {
+    return default_;
   }
 }
 
@@ -342,10 +357,24 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
 }
 
 //===========================================
+// constructDoor
+//===========================================
+static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object& obj) {
+  CBehaviour* behaviour = new CBehaviour(Component::getNextId());
+  behaviour->fnHandleEvent = [](const Event& e) {
+
+  };
+  behaviour->fnUpdate = []() {
+    std::cout << ".\n";
+  };
+  behaviourSystem.addComponent(pComponent_t(behaviour));
+}
+
+//===========================================
 // constructRegion_r
 //===========================================
-static Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
-  const Matrix& parentTransform, map<Point, bool>& endpoints) {
+static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSystem,
+  const parser::Object& obj, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   DBG_PRINT("Constructing Region\n");
 
@@ -392,8 +421,8 @@ static Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        region->children.push_back(pRegion_t(constructRegion_r(sg, child, transform,
-          endpoints)));
+        region->children.push_back(pRegion_t(constructRegion_r(sg, behaviourSystem, child,
+          transform, endpoints)));
       }
       else if (type == "wall") {
         list<Wall*> walls = constructWalls(child, region, transform);
@@ -426,6 +455,10 @@ static Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
         sg.currentRegion = region;
       }
     }
+
+    if (getValue(obj.dict, "subtype", "") == "door") {
+      constructDoor(behaviourSystem, obj);
+    }
   }
   catch (Exception& ex) {
     delete region;
@@ -443,7 +476,9 @@ static Region* constructRegion_r(SceneGraph& sg, const parser::Object& obj,
 //===========================================
 // constructRootRegion
 //===========================================
-void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
+void constructRootRegion(SceneGraph& sg, BehaviourSystem& behaviourSystem,
+  const parser::Object& obj) {
+
   if (getValue(obj.dict, "type") != "region") {
     EXCEPTION("Expected object of type 'region'");
   }
@@ -457,7 +492,7 @@ void constructRootRegion(SceneGraph& sg, const parser::Object& obj) {
 
   map<Point, bool> endpoints;
   Matrix m;
-  sg.rootRegion.reset(constructRegion_r(sg, obj, m, endpoints));
+  sg.rootRegion.reset(constructRegion_r(sg, behaviourSystem, obj, m, endpoints));
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {

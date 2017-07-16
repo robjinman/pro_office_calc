@@ -78,33 +78,6 @@ static bool intersectWall(const Region& region, const Circle& circle) {
 }
 
 //===========================================
-// Scene::Scene
-//===========================================
-Scene::Scene(const string& mapFilePath, double frameRate) {
-  m_frameRate = frameRate;
-
-  list<parser::pObject_t> objects;
-  parser::parse(mapFilePath, objects);
-
-  assert(objects.size() == 1);
-  constructRootRegion(sg, **objects.begin());
-}
-
-//===========================================
-// Scene::vRotateCamera
-//===========================================
-void Scene::vRotateCamera(double da) {
-  sg.player->vRotate(da);
-}
-
-//===========================================
-// Scene::hRotateCamera
-//===========================================
-void Scene::hRotateCamera(double da) {
-  sg.player->hRotate(da);
-}
-
-//===========================================
 // getDelta
 //===========================================
 static Vec2f getDelta(const Region& region, const Point& camPos, double playerH, double radius,
@@ -156,6 +129,33 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double playerH,
   });
 
   return dv_;
+}
+
+//===========================================
+// Scene::Scene
+//===========================================
+Scene::Scene(const string& mapFilePath, double frameRate) {
+  m_frameRate = frameRate;
+
+  list<parser::pObject_t> objects;
+  parser::parse(mapFilePath, objects);
+
+  assert(objects.size() == 1);
+  constructRootRegion(sg, m_behaviourSystem, **objects.begin());
+}
+
+//===========================================
+// Scene::vRotateCamera
+//===========================================
+void Scene::vRotateCamera(double da) {
+  sg.player->vRotate(da);
+}
+
+//===========================================
+// Scene::hRotateCamera
+//===========================================
+void Scene::hRotateCamera(double da) {
+  sg.player->hRotate(da);
 }
 
 //===========================================
@@ -314,4 +314,6 @@ void Scene::update() {
 
   buoyancy();
   gravity();
+
+  m_behaviourSystem.update();
 }

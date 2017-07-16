@@ -8,6 +8,7 @@
 #include <memory>
 #include <QImage>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 
 
 namespace tinyxml2 { class XMLElement; }
@@ -35,6 +36,7 @@ class Scene {
   private:
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
+    BehaviourSystem m_behaviourSystem;
 
     void buoyancy();
     void gravity();
