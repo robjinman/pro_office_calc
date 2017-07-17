@@ -10,7 +10,10 @@
 #include "fragment.hpp"
 
 
+class EventSystem;
+
 struct FMenuBarData : public FragmentData {
+  EventSystem* eventSystem;
   std::unique_ptr<QMenu> mnuFile;
   std::unique_ptr<QMenu> mnuHelp;
   std::unique_ptr<QAction> actAbout;

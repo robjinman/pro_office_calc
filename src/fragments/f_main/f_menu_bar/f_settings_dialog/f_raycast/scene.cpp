@@ -10,6 +10,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/tween_curves.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
+#include "event_system.hpp"
 
 
 using std::stringstream;
@@ -134,7 +135,9 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double playerH,
 //===========================================
 // Scene::Scene
 //===========================================
-Scene::Scene(const string& mapFilePath, double frameRate) {
+Scene::Scene(EventSystem& eventSystem, const string& mapFilePath, double frameRate)
+  : m_eventSystem(eventSystem) {
+
   m_frameRate = frameRate;
 
   list<parser::pObject_t> objects;
@@ -142,6 +145,19 @@ Scene::Scene(const string& mapFilePath, double frameRate) {
 
   assert(objects.size() == 1);
   constructRootRegion(sg, m_behaviourSystem, **objects.begin());
+
+  m_eventIds.push_back(m_eventSystem.listen("", [&](const Event& e) {
+    m_behaviourSystem.handleEvent(e);
+  }));
+}
+
+//===========================================
+// Scene::~Scene
+//===========================================
+Scene::~Scene() {
+  for (auto it = m_eventIds.begin(); it != m_eventIds.end(); ++it) {
+    m_eventSystem.forget(*it);
+  }
 }
 
 //===========================================

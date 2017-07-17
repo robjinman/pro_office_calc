@@ -5,6 +5,7 @@
 #include <istream>
 #include <string>
 #include <map>
+#include <vector>
 #ifdef DEBUG
 #  include <iostream>
 #  define DBG_PRINT(msg) std::cout << msg;
@@ -21,6 +22,8 @@
 
 std::string readString(std::istream& is);
 void writeString(std::ostream& os, const std::string& s);
+
+std::vector<std::string> splitString(const std::string& s, char delim);
 
 template<class T>
 bool ltelte(T a, T b, T c) {

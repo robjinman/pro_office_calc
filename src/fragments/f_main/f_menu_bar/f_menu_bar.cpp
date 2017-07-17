@@ -12,6 +12,9 @@ FMenuBar::FMenuBar(Fragment& parent_, FragmentData& parentData_)
   : Fragment("FMenuBar", parent_, parentData_, m_data) {
 
   auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<FMainData>();
+
+  m_data.eventSystem = &parentData.eventSystem;
 
   m_data.mnuFile.reset(parent.menuBar()->addMenu("File"));
   m_data.actQuit.reset(new QAction("Quit", this));

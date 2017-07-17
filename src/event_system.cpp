@@ -2,9 +2,9 @@
 #include "utils.hpp"
 
 
-using std::make_pair;
 using std::string;
-using std::list;
+using std::map;
+using std::vector;
 
 
 //===========================================
@@ -13,15 +13,36 @@ using std::list;
 int EventSystem::listen(const string& name, handlerFunc_t fn) {
   static int nextId = 0;
 
-  m_handlers[name].push_back(EventHandler{nextId, fn});
+  m_handlers[name][nextId] = fn;
+
   return nextId++;
 }
 
 //===========================================
 // EventSystem::forget
 //===========================================
-void EventSystem::forget(const string& name, int id) {
-  m_handlers[name].remove_if([=](const EventHandler& l) { return l.id == id; });
+void EventSystem::forget(int id) {
+
+  for (auto it = m_handlers.begin(); it != m_handlers.end(); ++it) {
+    map<int, handlerFunc_t>& fns = it->second;
+    fns.erase(id);
+  }
+}
+
+//===========================================
+// EventSystem::fire
+//===========================================
+void EventSystem::fire(const string& name, const Event& event) {
+  DBG_PRINT("Calling handlers for: " << name << "\n");
+
+  auto it = m_handlers.find(name);
+  if (it != m_handlers.end()) {
+    const map<int, handlerFunc_t>& fns = it->second;
+
+    for (auto jt = fns.begin(); jt != fns.end(); ++jt) {
+      jt->second(event);
+    }
+  }
 }
 
 //===========================================
@@ -30,8 +51,17 @@ void EventSystem::forget(const string& name, int id) {
 void EventSystem::fire(const Event& event) {
   DBG_PRINT("Event: " << event.name << "\n");
 
-  const list<EventHandler>& fns = m_handlers[event.name];
-  for (auto it = fns.begin(); it != fns.end(); ++it) {
-    it->handler(event);
+  vector<string> v = splitString(event.name, '.');
+  string name;
+
+  fire(name, event);
+
+  for (auto it = v.begin(); it != v.end(); ++it) {
+    if (name.length() > 0) {
+      name.append(".");
+    }
+    name.append(*it);
+
+    fire(name, event);
   }
 }

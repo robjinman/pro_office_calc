@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QBrush>
 #include <QPaintEvent>
+#include "event_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast.hpp"
@@ -29,6 +30,8 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
 
+  m_eventSystem = parentData.eventSystem;
+
   parentData.vbox->addWidget(this);
   setMouseTracking(true);
 
@@ -46,7 +49,7 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 void FRaycast::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FRaycastSpec&>(spec_);
 
-  m_scene.reset(new Scene("data/map.svg", FRAME_RATE));
+  m_scene.reset(new Scene(*m_eventSystem, "data/map.svg", FRAME_RATE));
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
@@ -134,6 +137,13 @@ void FRaycast::tick() {
 
   if (m_keyStates[Qt::Key_Space]) {
     m_scene->jump();
+  }
+
+  if (m_keyStates[Qt::Key_X]) {
+    Event e("raycast.playerActivate");
+    m_eventSystem->fire(e);
+
+    m_keyStates[Qt::Key_X] = false;
   }
 
   Vec2f v; // The vector is in camera space

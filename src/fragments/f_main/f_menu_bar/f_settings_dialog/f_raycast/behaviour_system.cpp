@@ -8,7 +8,7 @@
 //===========================================
 void BehaviourSystem::update() {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    it->second->fnUpdate();
+    it->second->update();
   }
 }
 
@@ -17,7 +17,7 @@ void BehaviourSystem::update() {
 //===========================================
 void BehaviourSystem::handleEvent(const Event& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    it->second->fnHandleEvent(event);
+    it->second->handleEvent(event);
   }
 }
 

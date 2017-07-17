@@ -9,7 +9,10 @@
 #include "fragment.hpp"
 
 
+class EventSystem;
+
 struct FSettingsDialogData : public FragmentData {
+  EventSystem* eventSystem;
   std::unique_ptr<QAction> actSettings;
   std::unique_ptr<QVBoxLayout> vbox;
 };

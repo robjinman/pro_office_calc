@@ -8,6 +8,8 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
+#include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -359,14 +361,10 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object& obj) {
-  CBehaviour* behaviour = new CBehaviour(Component::getNextId());
-  behaviour->fnHandleEvent = [](const Event& e) {
+static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object& obj,
+  Region& region) {
 
-  };
-  behaviour->fnUpdate = []() {
-    std::cout << ".\n";
-  };
+  CDoorBehaviour* behaviour = new CDoorBehaviour(Component::getNextId(), region);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
@@ -457,7 +455,7 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(behaviourSystem, obj);
+      constructDoor(behaviourSystem, obj, *region);
     }
   }
   catch (Exception& ex) {

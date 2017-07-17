@@ -32,8 +32,10 @@ struct CBehaviour : public Component {
   CBehaviour(entityId_t entityId)
     : Component(entityId, ComponentKind::C_BEHAVIOUR) {}
 
-  std::function<void()> fnUpdate;
-  std::function<void(const Event&)> fnHandleEvent;
+  virtual void update() = 0;
+  virtual void handleEvent(const Event& e) = 0;
+
+  virtual ~CBehaviour() override {}
 };
 
 

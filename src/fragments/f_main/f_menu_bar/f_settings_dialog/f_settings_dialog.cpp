@@ -15,6 +15,8 @@ FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_)
   auto& parent = parentFrag<FMenuBar>();
   auto& parentData = parentFragData<FMenuBarData>();
 
+  m_data.eventSystem = parentData.eventSystem;
+
   m_data.actSettings.reset(new QAction("Settings", this));
   m_data.vbox.reset(new QVBoxLayout);
   setLayout(m_data.vbox.get());

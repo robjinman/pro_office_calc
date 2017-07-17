@@ -28,8 +28,8 @@
      id="namedview65"
      showgrid="false"
      inkscape:zoom="16"
-     inkscape:cx="566.24511"
-     inkscape:cy="1093.5025"
+     inkscape:cx="567.45706"
+     inkscape:cy="1090.2641"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2556,7 +2556,7 @@
            sodipodi:linespacing="125%"><tspan
              id="tspan4195-4"
              x="623.69879"
-             y="158.85747">ceiling_height=100.001</tspan></text>
+             y="158.85747">ceiling_height=200</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.00490606px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"

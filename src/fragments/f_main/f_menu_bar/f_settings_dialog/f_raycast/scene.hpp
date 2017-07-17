@@ -20,9 +20,11 @@ struct Tween {
   std::function<void()> finish;
 };
 
+class EventSystem;
+
 class Scene {
   public:
-    Scene(const std::string& mapFilePath, double frameRate);
+    Scene(EventSystem& eventSystem, const std::string& mapFilePath, double frameRate);
 
     SceneGraph sg;
 
@@ -33,7 +35,12 @@ class Scene {
     void jump();
     void addTween(const Tween& tween, const char* name = nullptr);
 
+    ~Scene();
+
   private:
+    EventSystem& m_eventSystem;
+    std::list<int> m_eventIds;
+
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
     BehaviourSystem m_behaviourSystem;

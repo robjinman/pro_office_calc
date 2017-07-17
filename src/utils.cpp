@@ -1,13 +1,17 @@
 #include <cmath>
 #include <limits>
+#include <vector>
+#include <sstream>
 #include <QRect>
 #include <QRectF>
 #include "utils.hpp"
 
 
 using std::string;
+using std::stringstream;
 using std::istream;
 using std::ostream;
+using std::vector;
 
 
 #ifdef DEBUG
@@ -36,4 +40,16 @@ void writeString(ostream& os, const string& s) {
 
   os.write(reinterpret_cast<const char*>(&nBytes), sizeof(nBytes));
   os.write(s.data(), nBytes);
+}
+
+vector<string> splitString(const string& s, char delim) {
+  vector<string> v;
+  stringstream ss(s);
+
+  string tok;
+  while (std::getline(ss, tok, delim)) {
+    v.push_back(tok);
+  }
+
+  return v;
 }

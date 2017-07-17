@@ -4,7 +4,6 @@
 
 #include <functional>
 #include <map>
-#include <list>
 #include "event.hpp"
 
 
@@ -14,16 +13,13 @@ typedef std::function<void(const Event&)> handlerFunc_t;
 class EventSystem {
   public:
     int listen(const std::string& name, handlerFunc_t fn);
-    void forget(const std::string& name, int id);
+    void forget(int id);
     void fire(const Event& event);
 
   private:
-    struct EventHandler {
-      int id;
-      handlerFunc_t handler;
-    };
+    void fire(const std::string& name, const Event& event);
 
-    std::map<std::string, std::list<EventHandler>> m_handlers;
+    std::map<std::string, std::map<int, handlerFunc_t>> m_handlers;
 };
 
 

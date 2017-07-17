@@ -16,6 +16,7 @@
 
 
 class QPaintEvent;
+class EventSystem;
 
 struct FRaycastData : public FragmentData {};
 
@@ -41,6 +42,7 @@ class FRaycast : public QWidget, public Fragment {
   private:
     FRaycastData m_data;
 
+    EventSystem* m_eventSystem;
     Renderer m_renderer;
     std::unique_ptr<QTimer> m_timer;
     std::unique_ptr<Scene> m_scene;
