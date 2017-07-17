@@ -81,8 +81,8 @@ static bool intersectWall(const Region& region, const Circle& circle) {
 //===========================================
 // getDelta
 //===========================================
-static Vec2f getDelta(const Region& region, const Point& camPos, double playerH, double radius,
-  const Vec2f& dv) {
+static Vec2f getDelta(const Region& region, const Point& camPos, const Player& player,
+  double radius, const Vec2f& dv) {
 
   Circle circle{camPos + dv, radius};
   LineSegment ray(camPos, camPos + dv);
@@ -104,10 +104,13 @@ static Vec2f getDelta(const Region& region, const Point& camPos, double playerH,
           if (edge.kind == EdgeKind::JOINING_EDGE) {
             const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-            //assert(&region == je.regionA || &region == je.regionB);
+            assert(&region == je.regionA || &region == je.regionB);
             Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
 
-            if (nextRegion->floorHeight - playerH <= PLAYER_STEP_HEIGHT) {
+            bool canStep = nextRegion->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
+            bool hasHeadroom = player.headHeight() < nextRegion->ceilingHeight;
+
+            if (canStep && hasHeadroom) {
               continue;
             }
           }
@@ -185,7 +188,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 
   double radius = 5.0;
 
-  dv = getDelta(*sg.currentRegion, cam.pos, sg.player->feetHeight(), radius, dv);
+  dv = getDelta(*sg.currentRegion, cam.pos, *sg.player, radius, dv);
   Circle circle{cam.pos + dv, radius};
 
   bool abortLoop = false;
