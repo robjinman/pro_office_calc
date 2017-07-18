@@ -46,9 +46,30 @@ void forEachRegion(Region& region, function<void(Region&)> fn) {
 }
 
 //===========================================
+// getNextRegion
+//===========================================
+static Region* getNextRegion(const Region& current, const JoiningEdge& je) {
+  return je.regionA == &current ? je.regionB : je.regionA;
+}
+
+//===========================================
+// canStepAcross
+//===========================================
+static bool canStepAcross(const Player& player, const Region& currentRegion,
+  const JoiningEdge& je) {
+
+  Region* nextRegion = getNextRegion(currentRegion, je);
+
+  bool canStep = nextRegion->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
+  bool hasHeadroom = player.headHeight() < nextRegion->ceilingHeight;
+
+  return canStep && hasHeadroom;
+}
+
+//===========================================
 // intersectWall
 //===========================================
-static bool intersectWall(const Region& region, const Circle& circle) {
+static bool intersectWall(const Region& region, const Circle& circle, const Player& player) {
   bool b = false;
 
   forEachConstRegion(region, [&](const Region& r) {
@@ -60,9 +81,11 @@ static bool intersectWall(const Region& region, const Circle& circle) {
           const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
           //assert(&region == je.regionA || &region == je.regionB);
-          Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
+          if (&region != je.regionA && &region != je.regionB) {
+            continue;
+          }
 
-          if (nextRegion->floorHeight - region.floorHeight <= PLAYER_STEP_HEIGHT) {
+          if (canStepAcross(player, region, je)) {
             continue;
           }
         }
@@ -80,6 +103,9 @@ static bool intersectWall(const Region& region, const Circle& circle) {
 
 //===========================================
 // getDelta
+//
+// Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
+// allow the player within radius units of a wall.
 //===========================================
 static Vec2f getDelta(const Region& region, const Point& camPos, const Player& player,
   double radius, const Vec2f& dv) {
@@ -87,16 +113,20 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
   Circle circle{camPos + dv, radius};
   LineSegment ray(camPos, camPos + dv);
 
-  bool collision = false;
   Vec2f dv_ = dv;
 
-  forEachConstRegion(region, [&](const Region& r) {
-    if (collision == false) {
+  assert(region.parent != nullptr);
+
+  bool abortLoop = false;
+  forEachConstRegion(*region.parent, [&](const Region& r) {
+    if (abortLoop == false) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
 
+        // If moving by dv will intersect something
         if (lineSegmentCircleIntersect(circle, edge.lseg)) {
           Point p = lineIntersect(ray.line(), edge.lseg.line());
+          // If we're moving away from the wall
           if (distance(camPos + dv_ * 0.00001, p) > distance(camPos, p)) {
             continue;
           }
@@ -104,27 +134,26 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
           if (edge.kind == EdgeKind::JOINING_EDGE) {
             const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-            assert(&region == je.regionA || &region == je.regionB);
-            Region* nextRegion = je.regionA == &region ? je.regionB : je.regionA;
+            if (&region != je.regionA && &region != je.regionB) {
+              continue;
+            }
 
-            bool canStep = nextRegion->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
-            bool hasHeadroom = player.headHeight() < nextRegion->ceilingHeight;
-
-            if (canStep && hasHeadroom) {
+            if (canStepAcross(player, region, je)) {
               continue;
             }
           }
 
+          // Erase component in direction of wall
           Matrix m(-atan(edge.lseg.line().m), Vec2f());
           dv_ = m * dv;
           dv_.y = 0;
           dv_ = m.inverse() * dv_;
 
-          if (intersectWall(region, Circle{camPos + dv_, radius})) {
+          if (intersectWall(region, Circle{camPos + dv_, radius}, player)) {
             dv_ = Vec2f(0, 0);
           }
           else {
-            collision = true;
+            abortLoop = true;
             break;
           }
         }
@@ -133,6 +162,25 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
   });
 
   return dv_;
+}
+
+//===========================================
+// playerBounce
+//===========================================
+static void playerBounce(Scene& scene) {
+  double dy = 5.0;
+  double frames = 20;
+  double dy_ = dy / (frames / 2);
+  int i = 0;
+  scene.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+    if (i < frames / 2) {
+      scene.sg.player->changeTallness(dy_);
+    }
+    else {
+      scene.sg.player->changeTallness(-dy_);
+    }
+    return ++i < frames;
+  }, []() {}}, "playerBounce");
 }
 
 //===========================================
@@ -191,8 +239,10 @@ void Scene::translateCamera(const Vec2f& dir) {
   dv = getDelta(*sg.currentRegion, cam.pos, *sg.player, radius, dv);
   Circle circle{cam.pos + dv, radius};
 
+  assert(sg.currentRegion->parent != nullptr);
+
   bool abortLoop = false;
-  forEachConstRegion(*sg.currentRegion, [&](const Region& region) {
+  forEachConstRegion(*sg.currentRegion->parent, [&](const Region& region) {
     if (abortLoop) {
       return;
     }
@@ -209,25 +259,19 @@ void Scene::translateCamera(const Vec2f& dir) {
         assert(edge.kind == EdgeKind::JOINING_EDGE);
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-        //assert(sg.currentRegion == je.regionA || sg.currentRegion == je.regionB);
-        Region* nextRegion_ = je.regionA == sg.currentRegion ? je.regionB : je.regionA;
-        double stepH = nextRegion_->floorHeight - sg.player->feetHeight();
+        LineSegment ray(cam.pos, cam.pos + dv);
+        Point p_;
+        bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
 
-        if (stepH <= PLAYER_STEP_HEIGHT) {
-          LineSegment ray(cam.pos, cam.pos + dv);
-          Point p_;
-          bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
+        if (crossesLine) {
+          ++nIntersections;
 
-          if (crossesLine) {
-            ++nIntersections;
+          double dist = distance(cam.pos, p_);
+          if (dist < nearestX) {
+            nextRegion = getNextRegion(*sg.currentRegion, je);
+            p = p_;
 
-            double dist = distance(cam.pos, p_);
-            if (dist < nearestX) {
-              nextRegion = nextRegion_;
-              p = p_;
-
-              nearestX = dist;
-            }
+            nearestX = dist;
           }
         }
       }
@@ -242,20 +286,7 @@ void Scene::translateCamera(const Vec2f& dir) {
   });
 
   sg.player->move(dv);
-
-  double dy = 5.0;
-  double frames = 20;
-  double dy_ = dy / (frames / 2);
-  int i = 0;
-  addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-    if (i < frames / 2) {
-      sg.player->changeTallness(dy_);
-    }
-    else {
-      sg.player->changeTallness(-dy_);
-    }
-    return ++i < frames;
-  }, []() {}}, "playerBounce");
+  playerBounce(*this);
 }
 
 //===========================================

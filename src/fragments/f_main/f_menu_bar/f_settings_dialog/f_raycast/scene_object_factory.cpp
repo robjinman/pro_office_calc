@@ -372,11 +372,13 @@ static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object
 // constructRegion_r
 //===========================================
 static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSystem,
-  const parser::Object& obj, const Matrix& parentTransform, map<Point, bool>& endpoints) {
+  const parser::Object& obj, Region* parent, const Matrix& parentTransform, map<Point,
+  bool>& endpoints) {
 
   DBG_PRINT("Constructing Region\n");
 
   Region* region = new Region;
+  region->parent = parent;
 
   try {
     if (getValue(obj.dict, "type") != "region") {
@@ -420,7 +422,7 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
 
       if (type == "region") {
         region->children.push_back(pRegion_t(constructRegion_r(sg, behaviourSystem, child,
-          transform, endpoints)));
+          region, transform, endpoints)));
       }
       else if (type == "wall") {
         list<Wall*> walls = constructWalls(child, region, transform);
@@ -490,7 +492,7 @@ void constructRootRegion(SceneGraph& sg, BehaviourSystem& behaviourSystem,
 
   map<Point, bool> endpoints;
   Matrix m;
-  sg.rootRegion.reset(constructRegion_r(sg, behaviourSystem, obj, m, endpoints));
+  sg.rootRegion.reset(constructRegion_r(sg, behaviourSystem, obj, nullptr, m, endpoints));
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {

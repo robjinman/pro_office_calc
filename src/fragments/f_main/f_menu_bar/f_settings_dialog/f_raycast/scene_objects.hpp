@@ -160,6 +160,7 @@ struct Region {
   std::list<Edge*> edges;
   std::list<pSprite_t> sprites;
   std::list<pFloorDecal_t> floorDecals;
+  Region* parent = nullptr;
 };
 
 void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn);

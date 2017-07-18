@@ -27,9 +27,9 @@
      inkscape:window-height="975"
      id="namedview65"
      showgrid="false"
-     inkscape:zoom="16"
-     inkscape:cx="567.45706"
-     inkscape:cy="1090.2641"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="567.90366"
+     inkscape:cy="1062.6538"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -61,7 +61,7 @@
        x="752.125"
        y="695.6875" /></text>
   <g
-     id="g30644">
+     id="g6154">
     <g
        transform="matrix(1.5383265,0,0,1.660481,-101.7071,-12.874932)"
        id="g4206">
@@ -130,7 +130,7 @@
          id="tspan4223"
          sodipodi:role="line">ceiling_height=300</tspan></text>
     <g
-       id="g30256">
+       id="g5851">
       <g
          id="g9284">
         <g
@@ -478,37 +478,6 @@
              id="tspan6194-5"
              x="921.48279"
              y="536.37732">has_ceiling=false</tspan></text>
-      </g>
-      <g
-         id="g5519"
-         transform="translate(-88.75527,511.81893)">
-        <path
-           inkscape:connector-curvature="0"
-           id="path4611"
-           d="m 705.65552,129.93286 -10.71749,3.66146 -0.32901,-6.78437 z"
-           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <text
-           sodipodi:linespacing="125%"
-           id="text4613"
-           y="110.73225"
-           x="691.70416"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="110.73225"
-             x="691.70416"
-             id="tspan4615"
-             sodipodi:role="line">type=player</tspan></text>
-        <text
-           sodipodi:linespacing="125%"
-           id="text5515"
-           y="117.74526"
-           x="692.08075"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="117.74526"
-             x="692.08075"
-             sodipodi:role="line"
-             id="tspan4507">tallness=50</tspan></text>
       </g>
       <text
          xml:space="preserve"
@@ -2443,7 +2412,7 @@
       </g>
     </g>
     <g
-       id="g28951">
+       id="g6107">
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -2526,7 +2495,7 @@
       </g>
       <g
          id="g27247"
-         transform="translate(-61.871844,-0.35355339)">
+         transform="matrix(1,0,0,0.4038743,-61.871844,90.37406)">
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.00490606px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -2581,8 +2550,8 @@
         <g
            id="g27238">
           <path
-             style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             d="m 619.8006,112.79551 24.04163,0 0,97.05041 -24.04163,0 z"
+             style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.96692121;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m 619.8006,58.299479 24.04163,0 0,234.459991 -24.04163,0 z"
              id="rect23659"
              inkscape:connector-curvature="0" />
           <text
@@ -2638,6 +2607,37 @@
              x="605.53821"
              id="tspan23711-8"
              sodipodi:role="line">type=joining_edge</tspan></text>
+      </g>
+      <g
+         id="g5519"
+         transform="translate(-87.594451,51.77483)">
+        <path
+           inkscape:connector-curvature="0"
+           id="path4611"
+           d="m 705.65552,129.93286 -10.71749,3.66146 -0.32901,-6.78437 z"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text4613"
+           y="110.73225"
+           x="691.70416"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="110.73225"
+             x="691.70416"
+             id="tspan4615"
+             sodipodi:role="line">type=player</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text5515"
+           y="117.74526"
+           x="692.08075"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="117.74526"
+             x="692.08075"
+             sodipodi:role="line"
+             id="tspan4507">tallness=50</tspan></text>
       </g>
     </g>
   </g>
