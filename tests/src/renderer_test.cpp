@@ -30,27 +30,27 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
   camera.angle = DEG_TO_RAD(89.9);
   camera.height = 50;
 
-  Region* region = new Region;
+  Region* region = new Region(Component::getNextId(), -1);
 
-  Wall* wall = new Wall;
+  Wall* wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(1, 1), Point(200, 1));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(200, 1), Point(200, 200));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(200, 200), Point(0, 200));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(0, 200), Point(1, 1));
   wall->texture = "light_bricks";
@@ -90,53 +90,53 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
   camera.angle = DEG_TO_RAD(45);
   camera.height = 50;
 
-  Region* region = new Region;
+  Region* region = new Region(Component::getNextId(), -1);
 
-  Wall* wall = new Wall;
+  Wall* wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(1, 1), Point(200, 1));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(200, 1), Point(200, 200));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(200, 200), Point(0, 200));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(0, 200), Point(1, 1));
   wall->texture = "light_bricks";
   region->edges.push_back(wall);
 
-  Region* subregion = new Region;
+  Region* subregion = new Region(Component::getNextId(), region->entityId());
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), subregion->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(51, 51), Point(150, 1));
   wall->texture = "light_bricks";
   subregion->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), subregion->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(150, 51), Point(150, 150));
   wall->texture = "light_bricks";
   subregion->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), subregion->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(150, 150), Point(50, 150));
   wall->texture = "light_bricks";
   subregion->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), subregion->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(50, 150), Point(51, 51));
   wall->texture = "light_bricks";
@@ -178,51 +178,51 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   camera.angle = DEG_TO_RAD(0.1);
   camera.height = 50;
 
-  Region* rootRegion = new Region;
-  Region* region1 = new Region;
-  Region* region2 = new Region;
+  Region* rootRegion = new Region(Component::getNextId(), -1);
+  Region* region1 = new Region(Component::getNextId(), rootRegion->entityId());
+  Region* region2 = new Region(Component::getNextId(), rootRegion->entityId());
 
   rootRegion->children.push_back(unique_ptr<Region>(region1));
   rootRegion->children.push_back(unique_ptr<Region>(region2));
 
-  Wall* wall = new Wall;
+  Wall* wall = new Wall(Component::getNextId(), region1->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(0, 0), Point(200, 1));
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
-  JoiningEdge* je = new JoiningEdge;
+  JoiningEdge* je = new JoiningEdge(Component::getNextId(), region1->entityId());
   edges.push_back(std::unique_ptr<JoiningEdge>(je));
   je->lseg = LineSegment(Point(200, 1), Point(201, 201));
   je->topTexture = "light_bricks";
   je->bottomTexture = "dark_bricks";
   region1->edges.push_back(je);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region1->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(201, 201), Point(1, 200));
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region1->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(1, 200), Point(0, 0));
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region2->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(200, 1), Point(400, 2));
   wall->texture = "light_bricks";
   region2->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region2->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(400, 2), Point(401, 202));
   wall->texture = "light_bricks";
   region2->edges.push_back(wall);
 
-  wall = new Wall;
+  wall = new Wall(Component::getNextId(), region2->entityId());
   edges.push_back(std::unique_ptr<Wall>(wall));
   wall->lseg = LineSegment(Point(401, 202), Point(201, 201));
   wall->texture = "light_bricks";

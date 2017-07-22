@@ -9,6 +9,7 @@
 #include <QImage>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
 struct AnimationFrame {
@@ -40,12 +41,41 @@ struct Texture {
   Size size_wd;
 };
 
+enum class CRenderSpatialKind {
+  REGION,
+  WALL,
+  JOINING_EDGE,
+  SPRITE,
+  FLOOR_DECAL,
+  WALL_DECAL
+};
+
+struct CRenderSpatial : public Component {
+  CRenderSpatial(CRenderSpatialKind kind, entityId_t entityId, entityId_t parentId)
+    : Component(entityId, ComponentKind::C_RENDER_SPATIAL),
+      kind(kind),
+      parentId(parentId) {}
+
+  CRenderSpatial(const CRenderSpatial& cpy)
+    : Component(cpy),
+      kind(cpy.kind),
+      parentId(-1) {}
+
+  CRenderSpatialKind kind;
+  entityId_t parentId;
+
+  virtual ~CRenderSpatial() override {}
+};
+
+typedef std::unique_ptr<CRenderSpatial> pCRenderSpatial_t;
+
 class Region;
 
-class Sprite {
+class Sprite : public CRenderSpatial {
   public:
-    Sprite(const Size& size, const std::string& texture)
-      : texture(texture),
+    Sprite(entityId_t entityId, entityId_t parentId, const Size& size, const std::string& texture)
+      : CRenderSpatial(CRenderSpatialKind::SPRITE, entityId, parentId),
+        texture(texture),
         size(size) {}
 
     void setTransform(const Matrix& m) {
@@ -68,13 +98,15 @@ class Sprite {
 
     void playAnimation(const std::string& name);
 
-    virtual ~Sprite() {}
+    virtual ~Sprite() override {}
 };
 
 typedef std::unique_ptr<Sprite> pSprite_t;
 
 struct Ammo : public Sprite {
-  Ammo() : Sprite(Size(30, 15), "ammo") {
+  Ammo(entityId_t entityId, entityId_t parentId)
+    : Sprite(entityId, parentId, Size(30, 15), "ammo") {
+
     Animation anim;
     anim.fps = 0;
 
@@ -96,7 +128,9 @@ struct Ammo : public Sprite {
 };
 
 struct BadGuy : public Sprite {
-  BadGuy() : Sprite(Size(70, 70), "bad_guy") {
+  BadGuy(entityId_t entityId, entityId_t parentId)
+    : Sprite(entityId, parentId, Size(70, 70), "bad_guy") {
+
     Animation anim;
     anim.fps = 0;
 
@@ -117,21 +151,16 @@ struct BadGuy : public Sprite {
   virtual ~BadGuy() override {}
 };
 
-enum class EdgeKind {
-  JOINING_EDGE,
-  WALL
-};
+struct Edge : public CRenderSpatial {
+  Edge(CRenderSpatialKind kind, entityId_t entityId, entityId_t parentId)
+    : CRenderSpatial(kind, entityId, parentId) {}
 
-struct Edge {
-  Edge(EdgeKind kind)
-    : kind(kind) {}
+  Edge(const Edge& cpy)
+    : CRenderSpatial(cpy) {
 
-  Edge(const Edge& cpy) {
-    kind = cpy.kind;
     lseg = cpy.lseg;
   }
 
-  EdgeKind kind;
   LineSegment lseg;
 
   virtual ~Edge() {}
@@ -139,7 +168,10 @@ struct Edge {
 
 typedef std::unique_ptr<Edge> pEdge_t;
 
-struct FloorDecal {
+struct FloorDecal : public CRenderSpatial {
+  FloorDecal(entityId_t entityId, entityId_t parentId)
+    : CRenderSpatial(CRenderSpatialKind::FLOOR_DECAL, entityId, parentId) {}
+
   std::string texture;
   Size size;
   Matrix transform;
@@ -150,7 +182,10 @@ typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
 class Region;
 typedef std::unique_ptr<Region> pRegion_t;
 
-struct Region {
+struct Region : public CRenderSpatial {
+  Region(entityId_t entityId, entityId_t parentId)
+    : CRenderSpatial(CRenderSpatialKind::REGION, entityId, parentId) {}
+
   bool hasCeiling = true;
   double floorHeight = 0;
   double ceilingHeight = 100;
@@ -166,7 +201,10 @@ struct Region {
 void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn);
 void forEachRegion(Region& region, std::function<void(Region&)> fn);
 
-struct WallDecal {
+struct WallDecal : public CRenderSpatial {
+  WallDecal(entityId_t entityId, entityId_t parentId)
+    : CRenderSpatial(CRenderSpatialKind::WALL_DECAL, entityId, parentId) {}
+
   std::string texture;
   Size size;
   Point pos;
@@ -175,7 +213,8 @@ struct WallDecal {
 typedef std::unique_ptr<WallDecal> pWallDecal_t;
 
 struct Wall : public Edge {
-  Wall() : Edge(EdgeKind::WALL) {}
+  Wall(entityId_t entityId, entityId_t parentId)
+    : Edge(CRenderSpatialKind::WALL, entityId, parentId) {}
 
   std::string texture;
   Region* region;
@@ -189,8 +228,12 @@ struct Wall : public Edge {
 };
 
 struct JoiningEdge : public Edge {
-  JoiningEdge() : Edge(EdgeKind::JOINING_EDGE) {}
-  JoiningEdge(const JoiningEdge& cpy) : Edge(cpy) {
+  JoiningEdge(entityId_t entityId, entityId_t parentId)
+    : Edge(CRenderSpatialKind::JOINING_EDGE, entityId, parentId) {}
+
+  JoiningEdge(const JoiningEdge& cpy)
+    : Edge(cpy) {
+
     topTexture = cpy.topTexture;
     bottomTexture = cpy.bottomTexture;
     regionA = cpy.regionA;

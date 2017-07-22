@@ -20,7 +20,7 @@ class BehaviourSystem : public System {
     virtual void handleEvent(const Event& event) override;
 
     virtual void addComponent(pComponent_t component) override;
-    virtual void removeComponent(entityId_t id) override;
+    virtual void removeEntity(entityId_t id) override;
 
     virtual ~BehaviourSystem() override {}
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <set>
 #include <memory>
 #include <QImage>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
@@ -22,20 +23,27 @@ struct Tween {
 
 class EventSystem;
 
-class Scene {
+class Scene : public System {
   public:
     Scene(EventSystem& eventSystem, const std::string& mapFilePath, double frameRate);
 
     SceneGraph sg;
 
-    void update();
+    virtual void update() override;
+    virtual void handleEvent(const Event& event) override;
+
+    virtual void addComponent(pComponent_t component) override;
+    virtual void removeEntity(entityId_t id) override;
+
+    std::set<entityId_t> getEntitiesInRadius(double radius) const;
+
     void vRotateCamera(double da);
     void hRotateCamera(double da);
     void translateCamera(const Vec2f& dir);
     void jump();
     void addTween(const Tween& tween, const char* name = nullptr);
 
-    ~Scene();
+    virtual ~Scene() override;
 
   private:
     EventSystem& m_eventSystem;
@@ -44,6 +52,12 @@ class Scene {
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
     BehaviourSystem m_behaviourSystem;
+
+    std::map<entityId_t, CRenderSpatial*> m_components;
+    std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
+
+    bool isRoot(const CRenderSpatial& c) const;
+    void removeEntity_r(entityId_t id);
 
     void buoyancy();
     void gravity();

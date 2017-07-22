@@ -89,7 +89,7 @@ static void connectSubregions_r(SceneGraph& sg, Region& region) {
     connectSubregions_r(sg, r);
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == EdgeKind::JOINING_EDGE) {
+      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
         JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
         assert(je != nullptr);
 
@@ -98,7 +98,7 @@ static void connectSubregions_r(SceneGraph& sg, Region& region) {
           if (!hasTwin) {
             if (&r_ != &r) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == EdgeKind::JOINING_EDGE) {
+                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
                   JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
                   assert(other != nullptr);
 
@@ -159,7 +159,7 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 // wall is the wall's transformed line segment
 //===========================================
 static WallDecal* constructWallDecal(const parser::Object& obj, const Matrix& parentTransform,
-  const LineSegment& wall) {
+  entityId_t parentId, const LineSegment& wall) {
 
   Point A = parentTransform * obj.transform * obj.path.points[0];
   Point B = parentTransform * obj.transform * obj.path.points[1];
@@ -193,11 +193,12 @@ static WallDecal* constructWallDecal(const parser::Object& obj, const Matrix& pa
 
   string texture = getValue(obj.dict, "texture");
 
-  return new WallDecal{
-    texture,
-    size,
-    pos
-  };
+  WallDecal* decal = new WallDecal(Component::getNextId(), parentId);
+  decal->texture = texture;
+  decal->size = size;
+  decal->pos = pos;
+
+  return decal;
 }
 
 //===========================================
@@ -224,7 +225,7 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
       }
     }
 
-    Wall* wall = new Wall;
+    Wall* wall = new Wall(Component::getNextId(), region->entityId());
 
     wall->lseg.A = obj.path.points[j];
     wall->lseg.B = obj.path.points[i];
@@ -232,7 +233,7 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       if (getValue((*it)->dict, "type") == "wall_decal") {
-        WallDecal* decal = constructWallDecal(**it, m, wall->lseg);
+        WallDecal* decal = constructWallDecal(**it, m, wall->entityId(), wall->lseg);
         if (decal != nullptr) {
           wall->decals.push_back(pWallDecal_t(decal));
         }
@@ -251,7 +252,9 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
 //===========================================
 // constructFloorDecal
 //===========================================
-static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& parentTransform) {
+static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& parentTransform,
+  entityId_t parentId) {
+
   DBG_PRINT("Constructing FloorDecal\n");
 
   string texture = getValue(obj.dict, "texture");
@@ -264,11 +267,12 @@ static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& 
 
   Matrix m(0, pos);
 
-  return new FloorDecal{
-    texture,
-    size,
-    parentTransform * obj.transform * m
-  };
+  FloorDecal* decal = new FloorDecal(Component::getNextId(), parentId);
+  decal->texture = texture;
+  decal->size = size;
+  decal->transform = parentTransform * obj.transform * m;
+
+  return decal;
 }
 
 //===========================================
@@ -298,7 +302,7 @@ static Sprite* constructSprite(const parser::Object& obj, Region& region,
   DBG_PRINT("Constructing Sprite\n");
 
   if (getValue(obj.dict, "subtype") == "bad_guy") {
-    BadGuy* sprite = new BadGuy;
+    BadGuy* sprite = new BadGuy(Component::getNextId(), region.entityId());
     Matrix m = transformFromTriangle(obj.path);
     sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
@@ -306,7 +310,7 @@ static Sprite* constructSprite(const parser::Object& obj, Region& region,
     return sprite;
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
-    Ammo* sprite = new Ammo;
+    Ammo* sprite = new Ammo(Component::getNextId(), region.entityId());
     Matrix m = transformFromTriangle(obj.path);
     sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
@@ -339,7 +343,7 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
       }
     }
 
-    JoiningEdge* je = new JoiningEdge;
+    JoiningEdge* je = new JoiningEdge(Component::getNextId(), region->entityId());
 
     je->lseg.A = obj.path.points[j];
     je->lseg.B = obj.path.points[i];
@@ -362,9 +366,9 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
 // constructDoor
 //===========================================
 static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object& obj,
-  Region& region) {
+  entityId_t entityId, Region& region) {
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(Component::getNextId(), region);
+  CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, region);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
@@ -377,7 +381,10 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
 
   DBG_PRINT("Constructing Region\n");
 
-  Region* region = new Region;
+  entityId_t entityId = Component::getNextId();
+  entityId_t parentId = parent == nullptr ? -1 : parent->entityId();
+
+  Region* region = new Region(entityId, parentId);
   region->parent = parent;
 
   try {
@@ -445,7 +452,8 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
         region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
       }
       else if (type == "floor_decal") {
-        region->floorDecals.push_back(pFloorDecal_t(constructFloorDecal(child, transform)));
+        region->floorDecals.push_back(pFloorDecal_t(constructFloorDecal(child, transform,
+          entityId)));
       }
       else if (type == "player") {
         if (sg.player) {
@@ -457,7 +465,7 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(behaviourSystem, obj, *region);
+      constructDoor(behaviourSystem, obj, entityId, *region);
     }
   }
   catch (Exception& ex) {

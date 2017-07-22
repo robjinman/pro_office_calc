@@ -17,6 +17,10 @@ class Component {
       : m_entityId(entityId),
         m_kind(kind) {}
 
+    Component(const Component& cpy)
+      : m_entityId(cpy.m_entityId),
+        m_kind(cpy.m_kind) {}
+
     entityId_t entityId() const {
       return m_entityId;
     }

@@ -1,6 +1,7 @@
 #include <string>
 #include <cassert>
 #include <sstream>
+#include <ostream>
 #include <list>
 #include <iterator>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
@@ -19,6 +20,8 @@ using std::function;
 using std::string;
 using std::list;
 using std::map;
+using std::set;
+using std::ostream;
 
 
 //===========================================
@@ -77,7 +80,7 @@ static bool intersectWall(const Region& region, const Circle& circle, const Play
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
 
-        if (edge.kind == EdgeKind::JOINING_EDGE) {
+        if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
           const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
           //assert(&region == je.regionA || &region == je.regionB);
@@ -131,7 +134,7 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
             continue;
           }
 
-          if (edge.kind == EdgeKind::JOINING_EDGE) {
+          if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
             const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
             if (&region != je.regionA && &region != je.regionB) {
@@ -203,6 +206,13 @@ Scene::Scene(EventSystem& eventSystem, const string& mapFilePath, double frameRa
 }
 
 //===========================================
+// Scene::handleEvent
+//===========================================
+void Scene::handleEvent(const Event& event) {
+
+}
+
+//===========================================
 // Scene::~Scene
 //===========================================
 Scene::~Scene() {
@@ -256,7 +266,7 @@ void Scene::translateCamera(const Vec2f& dir) {
       const Edge& edge = **it;
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        assert(edge.kind == EdgeKind::JOINING_EDGE);
+        assert(edge.kind == CRenderSpatialKind::JOINING_EDGE);
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
         LineSegment ray(cam.pos, cam.pos + dv);
@@ -347,6 +357,17 @@ void Scene::buoyancy() {
 }
 
 //===========================================
+// Scene::getEntitiesInRadius
+//===========================================
+set<entityId_t> getEntitiesInRadius(double radius) {
+  set<entityId_t> entities;
+
+  // TODO
+
+  return entities;
+}
+
+//===========================================
 // Scene::update
 //===========================================
 void Scene::update() {
@@ -366,4 +387,267 @@ void Scene::update() {
   gravity();
 
   m_behaviourSystem.update();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
+  switch (kind) {
+    case CRenderSpatialKind::REGION: os << "REGION"; break;
+    case CRenderSpatialKind::WALL: os << "WALL"; break;
+    case CRenderSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
+    case CRenderSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
+    case CRenderSpatialKind::WALL_DECAL: os << "WALL_DECAL"; break;
+    case CRenderSpatialKind::SPRITE: os << "SPRITE"; break;
+  }
+  return os;
+}
+
+//===========================================
+// addToRegion
+//===========================================
+static void addToRegion(SceneGraph& sg, Region& region, pCRenderSpatial_t child) {
+  switch (child->kind) {
+    case CRenderSpatialKind::REGION: {
+      pRegion_t ptr(dynamic_cast<Region*>(child.release()));
+      ptr->parent = &region;
+      region.children.push_back(std::move(ptr));
+      break;
+    }
+    case CRenderSpatialKind::JOINING_EDGE:
+    case CRenderSpatialKind::WALL: {
+      pEdge_t ptr(dynamic_cast<Edge*>(child.release()));
+      region.edges.push_back(ptr.get());
+      sg.edges.push_back(std::move(ptr));
+      break;
+    }
+    case CRenderSpatialKind::FLOOR_DECAL: {
+      pFloorDecal_t ptr(dynamic_cast<FloorDecal*>(child.release()));
+      region.floorDecals.push_back(std::move(ptr));
+      break;
+    }
+    case CRenderSpatialKind::SPRITE: {
+      pSprite_t ptr(dynamic_cast<Sprite*>(child.release()));
+      region.sprites.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to region");
+  }
+}
+
+//===========================================
+// addToWall
+//===========================================
+static void addToWall(Wall& edge, pCRenderSpatial_t child) {
+  switch (child->kind) {
+    case CRenderSpatialKind::WALL_DECAL: {
+      pWallDecal_t ptr(dynamic_cast<WallDecal*>(child.release()));
+      edge.decals.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to Wall");
+  }
+}
+
+//===========================================
+// addChildToComponent
+//===========================================
+static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRenderSpatial_t child) {
+  switch (parent.kind) {
+    case CRenderSpatialKind::REGION:
+      addToRegion(sg, dynamic_cast<Region&>(parent), std::move(child));
+      break;
+    case CRenderSpatialKind::WALL:
+      addToWall(dynamic_cast<Wall&>(parent), std::move(child));
+      break;
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
+// removeFromRegion
+//===========================================
+static void removeFromRegion(SceneGraph& sg, Region& region, const CRenderSpatial& child) {
+  switch (child.kind) {
+    case CRenderSpatialKind::REGION: {
+      region.children.remove_if([&](const pRegion_t& e) {
+        return e.get() == dynamic_cast<const Region*>(&child);
+      });
+      break;
+    }
+    case CRenderSpatialKind::JOINING_EDGE:
+    case CRenderSpatialKind::WALL: {
+      region.edges.remove_if([&](const Edge* e) {
+        return e == dynamic_cast<const Edge*>(&child);
+      });
+      sg.edges.remove_if([&](const pEdge_t& e) {
+        return e.get() == dynamic_cast<const Edge*>(&child);
+      });
+      break;
+    }
+    case CRenderSpatialKind::FLOOR_DECAL: {
+      region.floorDecals.remove_if([&](const pFloorDecal_t& e) {
+        return e.get() == dynamic_cast<const FloorDecal*>(&child);
+      });
+      break;
+    }
+    case CRenderSpatialKind::SPRITE: {
+      region.sprites.remove_if([&](const pSprite_t& e) {
+        return e.get() == dynamic_cast<const Sprite*>(&child);
+      });
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child.kind << " to region");
+  }
+}
+
+//===========================================
+// removeFromWall
+//===========================================
+static void removeFromWall(Wall& edge, const CRenderSpatial& child) {
+  switch (child.kind) {
+    case CRenderSpatialKind::WALL_DECAL: {
+      edge.decals.remove_if([&](const pWallDecal_t& e) {
+        return e.get() == dynamic_cast<const WallDecal*>(&child);
+      });
+      break;
+    }
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from Wall");
+  }
+}
+
+//===========================================
+// removeChildFromComponent
+//===========================================
+static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent, const CRenderSpatial& child) {
+  switch (parent.kind) {
+    case CRenderSpatialKind::REGION:
+      removeFromRegion(sg, dynamic_cast<Region&>(parent), child);
+      break;
+    case CRenderSpatialKind::WALL:
+      removeFromWall(dynamic_cast<Wall&>(parent), child);
+      break;
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
+// Scene::addComponent
+//===========================================
+void Scene::addComponent(pComponent_t component) {
+  if (component->kind() != ComponentKind::C_SPATIAL) {
+    EXCEPTION("Component is not of kind C_SPATIAL");
+  }
+
+  CRenderSpatial* ptr = dynamic_cast<CRenderSpatial*>(component.release());
+  pCRenderSpatial_t c(ptr);
+
+  if (c->parentId == -1) {
+    if (sg.rootRegion) {
+      EXCEPTION("Root region already set");
+    }
+
+    if (c->kind != CRenderSpatialKind::REGION) {
+      EXCEPTION("Component has no parent; Only regions can be root");
+    }
+
+    pRegion_t z(dynamic_cast<Region*>(c.release()));
+
+    sg.rootRegion = std::move(z);
+    m_components.clear();
+  }
+  else {
+    auto it = m_components.find(c->parentId);
+    if (it == m_components.end()) {
+      EXCEPTION("Could not find parent component with id " << c->parentId);
+    }
+
+    CRenderSpatial* parent = it->second;
+    assert(parent->entityId() == c->parentId);
+
+    m_entityChildren[c->parentId].insert(c->entityId());
+    //addChildToComponent(sg, *parent, std::move(c));
+  }
+
+  m_components.insert(std::make_pair(c->entityId(), ptr));
+}
+
+//===========================================
+// Scene::isRoot
+//===========================================
+bool Scene::isRoot(const CRenderSpatial& c) const {
+  if (c.kind != CRenderSpatialKind::REGION) {
+    return false;
+  }
+  if (sg.rootRegion == nullptr) {
+    return false;
+  }
+  const Region* ptr = dynamic_cast<const Region*>(&c);
+  return ptr == sg.rootRegion.get();
+}
+
+//===========================================
+// Scene::removeEntity_r
+//===========================================
+void Scene::removeEntity_r(entityId_t id) {
+  m_components.erase(id);
+
+  auto it = m_entityChildren.find(id);
+  if (it != m_entityChildren.end()) {
+    set<entityId_t>& children = it->second;
+
+    for (auto jt = children.begin(); jt != children.end(); ++jt) {
+      removeEntity_r(*jt);
+    }
+  }
+
+  m_entityChildren.erase(id);
+}
+
+//===========================================
+// Scene::removeEntity
+//===========================================
+void Scene::removeEntity(entityId_t id) {
+  auto it = m_components.find(id);
+  if (it == m_components.end()) {
+    return;
+  }
+
+  CRenderSpatial& c = *it->second;
+  auto jt = m_components.find(c.parentId);
+
+  if (jt != m_components.end()) {
+    CRenderSpatial& parent = *jt->second;
+    removeChildFromComponent(sg, parent, c);
+  }
+  else {
+    assert(isRoot(c));
+  }
+
+  removeEntity_r(id);
 }

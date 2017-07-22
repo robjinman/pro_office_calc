@@ -77,12 +77,12 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 //===========================================
 // constructIntersection
 //===========================================
-static Intersection* constructIntersection(EdgeKind kind) {
+static Intersection* constructIntersection(CRenderSpatialKind kind) {
   switch (kind) {
-    case EdgeKind::WALL:
+    case CRenderSpatialKind::WALL:
       return new WallX;
       break;
-    case EdgeKind::JOINING_EDGE:
+    case CRenderSpatialKind::JOINING_EDGE:
       return new JoiningEdgeX;
       break;
     default:
@@ -139,14 +139,14 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
       X->distanceFromCamera = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
 
-      if (edge.kind == EdgeKind::WALL) {
+      if (edge.kind == CRenderSpatialKind::WALL) {
         WallX* wallX = dynamic_cast<WallX*>(X);
         Wall& wall = dynamic_cast<Wall&>(edge);
 
         wallX->wall = &wall;
         result.intersections.push_back(pIntersection_t(X));
       }
-      else if (edge.kind == EdgeKind::JOINING_EDGE) {
+      else if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
         JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
         JoiningEdge& je = dynamic_cast<JoiningEdge&>(edge);
 

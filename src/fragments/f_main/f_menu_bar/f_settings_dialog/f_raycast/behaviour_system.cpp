@@ -34,8 +34,8 @@ void BehaviourSystem::addComponent(pComponent_t component) {
 }
 
 //===========================================
-// BehaviourSystem::removeComponent
+// BehaviourSystem::removeEntity
 //===========================================
-void BehaviourSystem::removeComponent(entityId_t entityId) {
+void BehaviourSystem::removeEntity(entityId_t entityId) {
   m_components.erase(entityId);
 }

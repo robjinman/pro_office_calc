@@ -65,6 +65,10 @@ class Player {
       m_camera->height += deltaH;
     }
 
+    const Point& pos() const {
+      return m_camera->pos;
+    }
+
     void setPosition(const Point& pos) {
       m_camera->pos = pos;
     }
