@@ -21,16 +21,18 @@ struct Tween {
   std::function<void()> finish;
 };
 
+class EntityManager;
 class EventSystem;
 
 class Scene : public System {
   public:
-    Scene(EventSystem& eventSystem, const std::string& mapFilePath, double frameRate);
+    Scene(EntityManager& entityManager, const std::string& mapFilePath,
+      double frameRate);
 
     SceneGraph sg;
 
     virtual void update() override;
-    virtual void handleEvent(const Event& event) override;
+    virtual void handleEvent(const GameEvent& event) override;
 
     virtual void addComponent(pComponent_t component) override;
     virtual void removeEntity(entityId_t id) override;
@@ -46,12 +48,10 @@ class Scene : public System {
     virtual ~Scene() override;
 
   private:
-    EventSystem& m_eventSystem;
-    std::list<int> m_eventIds;
+    EntityManager& m_entityManager;
 
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
-    BehaviourSystem m_behaviourSystem;
 
     std::map<entityId_t, CRenderSpatial*> m_components;
     std::map<entityId_t, std::set<entityId_t>> m_entityChildren;

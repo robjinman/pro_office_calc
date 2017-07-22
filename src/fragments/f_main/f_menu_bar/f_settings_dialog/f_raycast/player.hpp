@@ -16,6 +16,7 @@ class Player {
         m_tallness(tallness) {}
 
     double vVelocity = 0;
+    double activationRadius = 100.0;
 
     bool aboveGround(const Region& region) const {
       return feetHeight() - 0.1 > region.floorHeight;

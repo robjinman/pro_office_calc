@@ -550,8 +550,8 @@ static void drawFloorSlice(QImage& target, const SceneGraph& sg, const Region* r
 // sampleWallTexture
 //===========================================
 static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
-  double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double distanceAlongTarget,
-  const Slice& slice, const Size& texSz_wd, vector<QRectF>& trgRects,
+  double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double targetH_wd,
+  double distanceAlongTarget, const Slice& slice, const Size& texSz_wd, vector<QRectF>& trgRects,
   vector<QRect>& srcRects) {
 
   double H_tx = texRect.height();
@@ -563,7 +563,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double projTexH_wd = texSz_wd.y * sliceToProjScale;
 
   // World space
-  double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd;
+  double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd - targetH_wd;
   double sliceTop_wd = slice.sliceTop_wd + camHeight_wd;
 
   // World space (not camera space)
@@ -646,7 +646,7 @@ static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double cam
 //===========================================
 static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
   double distanceAlongTarget, const Slice& slice, const string& texture, double screenX_px,
-  const Size& viewport_px) {
+  const Size& viewport_px, double targetH_wd = 0) {
 
   double hWorldUnit_px = viewport_px.x / sg.viewport.x;
   double vWorldUnit_px = viewport_px.y / sg.viewport.y;
@@ -660,8 +660,8 @@ static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
     vector<QRect> srcRects;
     vector<QRectF> trgRects;
     sampleWallTexture(wallTex.image.rect(), sg.player->camera().height, viewport_px, screenX_px,
-      hWorldUnit_px, vWorldUnit_px, distanceAlongTarget, slice, wallTex.size_wd, trgRects,
-      srcRects);
+      hWorldUnit_px, vWorldUnit_px, targetH_wd, distanceAlongTarget, slice, wallTex.size_wd,
+      trgRects, srcRects);
 
     assert(srcRects.size() == trgRects.size());
 
@@ -837,8 +837,9 @@ void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
         drawFloorSlice(target, sg, jeX.nearRegion, jeX.point_world, slice0,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
+        // TODO: Make use of jeX.farRegion->ceilingHeight optional
         ScreenSlice slice1 = drawSlice(painter, sg, cam.F, jeX.distanceAlongTarget, jeX.slice1,
-          jeX.joiningEdge->topTexture, screenX_px, viewport_px);
+          jeX.joiningEdge->topTexture, screenX_px, viewport_px, jeX.farRegion->ceilingHeight);
 
         if (jeX.nearRegion->hasCeiling) {
           drawCeilingSlice(target, sg, jeX.nearRegion, jeX.point_world, slice1, screenX_px,

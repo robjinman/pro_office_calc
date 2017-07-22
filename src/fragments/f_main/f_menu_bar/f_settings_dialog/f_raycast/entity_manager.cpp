@@ -25,6 +25,16 @@ void EntityManager::deleteEntity(entityId_t entityId) {
 
 }
 
-void EntityManager::sendEventToEntity(entityId_t entityId, const Event& event) const {
+void EntityManager::update() {
+  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+    System& system = *it->second;
+    system.update();
+  }
+}
 
+void EntityManager::broadcastEvent(const GameEvent& event) const {
+  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+    System& system = *it->second;
+    system.handleEvent(event);
+  }
 }

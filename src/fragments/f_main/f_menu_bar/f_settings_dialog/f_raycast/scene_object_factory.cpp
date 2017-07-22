@@ -366,9 +366,9 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
 // constructDoor
 //===========================================
 static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object& obj,
-  entityId_t entityId, Region& region) {
+  Region& region) {
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, region);
+  CDoorBehaviour* behaviour = new CDoorBehaviour(region.entityId(), region);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
@@ -465,7 +465,7 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(behaviourSystem, obj, entityId, *region);
+      constructDoor(behaviourSystem, obj, *region);
     }
   }
   catch (Exception& ex) {

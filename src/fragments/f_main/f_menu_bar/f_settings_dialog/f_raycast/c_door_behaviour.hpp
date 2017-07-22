@@ -12,7 +12,7 @@ class CDoorBehaviour : public CBehaviour {
     CDoorBehaviour(entityId_t entityId, Region& region);
 
     virtual void update() override;
-    virtual void handleEvent(const Event& e) override;
+    virtual void handleEvent(const GameEvent& e) override;
 
   private:
     enum state_t {

@@ -49,7 +49,11 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 void FRaycast::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FRaycastSpec&>(spec_);
 
-  m_scene.reset(new Scene(*m_eventSystem, "data/map.svg", FRAME_RATE));
+  BehaviourSystem* behaviourSystem = new BehaviourSystem;
+  m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
+
+  Scene* scene = new Scene(m_entityManager, "data/map.svg", FRAME_RATE);
+  m_entityManager.addSystem(ComponentKind::C_RENDER_SPATIAL, pSystem_t(scene));
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
@@ -70,7 +74,8 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  m_renderer.renderScene(m_buffer, m_scene->sg);
+  Scene& scene = dynamic_cast<Scene&>(m_entityManager.system(ComponentKind::C_RENDER_SPATIAL));
+  m_renderer.renderScene(m_buffer, scene.sg);
 
   QPainter painter;
   painter.begin(this);
@@ -133,15 +138,17 @@ void FRaycast::tick() {
   ++m_frame;
 #endif
 
-  m_scene->update();
+  Scene& scene = dynamic_cast<Scene&>(m_entityManager.system(ComponentKind::C_RENDER_SPATIAL));
+
+  m_entityManager.update();
 
   if (m_keyStates[Qt::Key_Space]) {
-    m_scene->jump();
+    scene.jump();
   }
 
   if (m_keyStates[Qt::Key_X]) {
-    Event e("raycast.playerActivate");
-    m_eventSystem->fire(e);
+    GameEvent e("playerActivate");
+    scene.handleEvent(e);
 
     m_keyStates[Qt::Key_X] = false;
   }
@@ -162,14 +169,14 @@ void FRaycast::tick() {
 
   if (v.x != 0 || v.y != 0) {
     double ds = 300 / FRAME_RATE;
-    m_scene->translateCamera(normalise(v) * ds);
+    scene.translateCamera(normalise(v) * ds);
   }
 
   if (m_keyStates[Qt::Key_Left]) {
-    m_scene->hRotateCamera(-(1.2 / FRAME_RATE) * PI);
+    scene.hRotateCamera(-(1.2 / FRAME_RATE) * PI);
   }
   if (m_keyStates[Qt::Key_Right]) {
-    m_scene->hRotateCamera((1.2 / FRAME_RATE) * PI);
+    scene.hRotateCamera((1.2 / FRAME_RATE) * PI);
   }
 
   if (m_cursorCaptured) {
@@ -183,12 +190,12 @@ void FRaycast::tick() {
 
     if (fabs(v.x) > 0) {
       double da = 0.0008 * PI * v.x;
-      m_scene->hRotateCamera(da);
+      scene.hRotateCamera(da);
     }
 
     if (fabs(v.y) > 0) {
       double da = 0.0008 * PI * v.y;
-      m_scene->vRotateCamera(da);
+      scene.vRotateCamera(da);
     }
   }
 

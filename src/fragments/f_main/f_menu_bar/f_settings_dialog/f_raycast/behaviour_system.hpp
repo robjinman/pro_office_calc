@@ -9,7 +9,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
-class Event;
 class CBehaviour;
 
 typedef std::unique_ptr<CBehaviour> pCBehaviour_t;
@@ -17,7 +16,7 @@ typedef std::unique_ptr<CBehaviour> pCBehaviour_t;
 class BehaviourSystem : public System {
   public:
     virtual void update() override;
-    virtual void handleEvent(const Event& event) override;
+    virtual void handleEvent(const GameEvent& event) override;
 
     virtual void addComponent(pComponent_t component) override;
     virtual void removeEntity(entityId_t id) override;
@@ -33,7 +32,7 @@ struct CBehaviour : public Component {
     : Component(entityId, ComponentKind::C_BEHAVIOUR) {}
 
   virtual void update() = 0;
-  virtual void handleEvent(const Event& e) = 0;
+  virtual void handleEvent(const GameEvent& e) = 0;
 
   virtual ~CBehaviour() override {}
 };

@@ -3,11 +3,22 @@
 
 
 #include <memory>
+#include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component_kinds.hpp"
 
 
 typedef long entityId_t;
 
+
+struct GameEvent {
+  GameEvent(const std::string& name)
+    : name(name) {}
+
+  std::string name;
+  std::set<entityId_t> entitiesInRange;
+
+  virtual ~GameEvent() {}
+};
 
 class Component {
   public:

@@ -161,7 +161,7 @@ void SpatialSystem::update() {
 //===========================================
 // SpatialSystem::handleEvent
 //===========================================
-void SpatialSystem::handleEvent(const Event& event) {
+void SpatialSystem::handleEvent(const GameEvent& event) {
 
 }
 

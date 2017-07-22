@@ -15,9 +15,12 @@ void BehaviourSystem::update() {
 //===========================================
 // BehaviourSystem::handleEvent
 //===========================================
-void BehaviourSystem::handleEvent(const Event& event) {
+void BehaviourSystem::handleEvent(const GameEvent& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    it->second->handleEvent(event);
+    CBehaviour& c = *it->second;
+    if (event.entitiesInRange.count(c.entityId()) == 1) {
+      c.handleEvent(event);
+    }
   }
 }
 

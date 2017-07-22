@@ -115,12 +115,10 @@ struct CSoftEdge : public CEdge {
 
 typedef std::unique_ptr<CSoftEdge> pCSoftEdge_t;
 
-class Event;
-
 class SpatialSystem : public System {
   public:
     virtual void update() override;
-    virtual void handleEvent(const Event& event) override;
+    virtual void handleEvent(const GameEvent& event) override;
 
     virtual void addComponent(pComponent_t component) override;
     virtual void removeEntity(entityId_t id) override;

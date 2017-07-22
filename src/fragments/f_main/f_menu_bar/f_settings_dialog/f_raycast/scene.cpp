@@ -9,6 +9,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/tween_curves.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
@@ -189,37 +190,37 @@ static void playerBounce(Scene& scene) {
 //===========================================
 // Scene::Scene
 //===========================================
-Scene::Scene(EventSystem& eventSystem, const string& mapFilePath, double frameRate)
-  : m_eventSystem(eventSystem) {
+Scene::Scene(EntityManager& entityManager, const string& mapFilePath, double frameRate)
+  : m_entityManager(entityManager) {
 
   m_frameRate = frameRate;
 
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
-  assert(objects.size() == 1);
-  constructRootRegion(sg, m_behaviourSystem, **objects.begin());
+  BehaviourSystem& behaviourSystem = dynamic_cast<BehaviourSystem&>(m_entityManager
+    .system(ComponentKind::C_BEHAVIOUR));
 
-  m_eventIds.push_back(m_eventSystem.listen("", [&](const Event& e) {
-    m_behaviourSystem.handleEvent(e);
-  }));
+  assert(objects.size() == 1);
+  constructRootRegion(sg, behaviourSystem, **objects.begin());
 }
 
 //===========================================
 // Scene::handleEvent
 //===========================================
-void Scene::handleEvent(const Event& event) {
+void Scene::handleEvent(const GameEvent& event) {
+  if (event.name == "playerActivate") {
+    GameEvent e("activateEntity");
+    e.entitiesInRange = getEntitiesInRadius(sg.player->activationRadius);
 
+    m_entityManager.broadcastEvent(e);
+  }
 }
 
 //===========================================
 // Scene::~Scene
 //===========================================
-Scene::~Scene() {
-  for (auto it = m_eventIds.begin(); it != m_eventIds.end(); ++it) {
-    m_eventSystem.forget(*it);
-  }
-}
+Scene::~Scene() {}
 
 //===========================================
 // Scene::vRotateCamera
@@ -357,12 +358,70 @@ void Scene::buoyancy() {
 }
 
 //===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const Edge& edge) {
+  return lineSegmentCircleIntersect(circle, edge.lseg); // TODO
+}
+
+//===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const Sprite& sprite) {
+  return distance(circle.pos, sprite.pos) <= circle.radius;
+}
+
+//===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const FloorDecal& decal) {
+  // TODO
+
+  return false;
+}
+
+//===========================================
+// getEntitiesInRadius
+//===========================================
+static void getEntitiesInRadius_r(const Region& region, const Circle& circle,
+  set<entityId_t>& entities) {
+
+  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+      entities.insert(region.entityId());
+    }
+  }
+
+  for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+    }
+  }
+
+  for (auto it = region.floorDecals.begin(); it != region.floorDecals.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+    }
+  }
+
+  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+    getEntitiesInRadius_r(**it, circle, entities);
+  }
+}
+
+//===========================================
 // Scene::getEntitiesInRadius
 //===========================================
-set<entityId_t> getEntitiesInRadius(double radius) {
+set<entityId_t> Scene::getEntitiesInRadius(double radius) const {
   set<entityId_t> entities;
 
-  // TODO
+  const Point& pos = sg.player->pos();
+  Circle circle{pos, radius};
+
+  forEachConstRegion(*sg.currentRegion->parent, [&](const Region& region) {
+    getEntitiesInRadius_r(region, circle, entities);
+  });
 
   return entities;
 }
@@ -385,28 +444,7 @@ void Scene::update() {
 
   buoyancy();
   gravity();
-
-  m_behaviourSystem.update();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
   switch (kind) {
@@ -542,7 +580,9 @@ static void removeFromWall(Wall& edge, const CRenderSpatial& child) {
 //===========================================
 // removeChildFromComponent
 //===========================================
-static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent, const CRenderSpatial& child) {
+static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent,
+  const CRenderSpatial& child) {
+
   switch (parent.kind) {
     case CRenderSpatialKind::REGION:
       removeFromRegion(sg, dynamic_cast<Region&>(parent), child);
