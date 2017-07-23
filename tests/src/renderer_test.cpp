@@ -68,7 +68,7 @@ TEST_F(RendererTest, findIntersections_r_singleRegion) {
 
   CastResult result;
   set<const Region*> visitedRegions;
-  set<const JoiningEdge*> visitedJoiningEdges;
+  set<entityId_t> visitedJoiningEdges;
   findIntersections_r(camera, ray, *region, result, visitedRegions, visitedJoiningEdges);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
@@ -156,7 +156,7 @@ TEST_F(RendererTest, findIntersections_r_nestedRegions) {
 
   CastResult result;
   set<const Region*> visitedRegions;
-  set<const JoiningEdge*> visitedJoiningEdges;
+  set<entityId_t> visitedJoiningEdges;
   findIntersections_r(camera, ray, *region, result, visitedRegions, visitedJoiningEdges);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
@@ -191,7 +191,8 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
   wall->texture = "light_bricks";
   region1->edges.push_back(wall);
 
-  JoiningEdge* je = new JoiningEdge(Component::getNextId(), region1->entityId());
+  JoiningEdge* je = new JoiningEdge(Component::getNextId(), region1->entityId(),
+    Component::getNextId());
   edges.push_back(std::unique_ptr<JoiningEdge>(je));
   je->lseg = LineSegment(Point(200, 1), Point(201, 201));
   je->topTexture = "light_bricks";
@@ -244,7 +245,7 @@ TEST_F(RendererTest, findIntersections_r_joinedRegions) {
 
   CastResult result;
   set<const Region*> visitedRegions;
-  set<const JoiningEdge*> visitedJoiningEdges;
+  set<entityId_t> visitedJoiningEdges;
   findIntersections_r(camera, ray, *region1, result, visitedRegions, visitedJoiningEdges);
 
   result.intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {

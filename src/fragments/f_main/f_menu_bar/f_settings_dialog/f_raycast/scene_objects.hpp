@@ -229,11 +229,13 @@ struct Wall : public Edge {
 };
 
 struct JoiningEdge : public Edge {
-  JoiningEdge(entityId_t entityId, entityId_t parentId)
-    : Edge(CRenderSpatialKind::JOINING_EDGE, entityId, parentId) {}
+  JoiningEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : Edge(CRenderSpatialKind::JOINING_EDGE, entityId, parentId),
+      joinId(joinId) {}
 
-  JoiningEdge(const JoiningEdge& cpy, entityId_t entityId, entityId_t parentId)
-    : Edge(cpy, entityId, parentId) {
+  JoiningEdge(const JoiningEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : Edge(cpy, entityId, parentId),
+      joinId(joinId) {
 
     topTexture = cpy.topTexture;
     bottomTexture = cpy.bottomTexture;
@@ -249,6 +251,8 @@ struct JoiningEdge : public Edge {
       bottomTexture = other.bottomTexture;
     }
   }
+
+  entityId_t joinId = 0;
 
   std::string topTexture = "default";
   std::string bottomTexture = "default";

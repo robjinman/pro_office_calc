@@ -109,7 +109,7 @@ static Intersection* constructIntersection(CRenderSpatialKind kind) {
 //===========================================
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
   CastResult& result, set<const Region*>& visitedRegions,
-  set<const JoiningEdge*>& visitedJoiningEdges) {
+  set<entityId_t>& visitedJoiningEdges) {
 
   visitedRegions.insert(&region);
 
@@ -169,9 +169,9 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
         const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
 
         auto pX = pIntersection_t(X);
-        if (visitedJoiningEdges.find(&je) == visitedJoiningEdges.end()) {
+        if (visitedJoiningEdges.find(je.joinId) == visitedJoiningEdges.end()) {
           result.intersections.push_back(std::move(pX));
-          visitedJoiningEdges.insert(&je);
+          visitedJoiningEdges.insert(je.joinId);
         }
 
         if (visitedRegions.find(&next) == visitedRegions.end()) {
@@ -195,7 +195,7 @@ static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   set<const Region*> visitedRegions;
-  set<const JoiningEdge*> visitedJoiningEdges;
+  set<entityId_t> visitedJoiningEdges;
   findIntersections_r(cam, ray, *sg.currentRegion, result, visitedRegions, visitedJoiningEdges);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {

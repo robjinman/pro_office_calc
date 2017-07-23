@@ -110,7 +110,7 @@ class Renderer : public System {
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
   CastResult& result, std::set<const Region*>& visitedRegions,
-  std::set<const JoiningEdge*>& visitedJoiningEdges);
+  std::set<entityId_t>& visitedJoiningEdges);
 
 
 #endif

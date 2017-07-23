@@ -322,9 +322,10 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
       }
     }
 
-    entityId_t id = Component::getNextId();
+    entityId_t entityId = Component::getNextId();
+    entityId_t joinId = Component::getNextId();
 
-    JoiningEdge* edge = new JoiningEdge(id, parentId);
+    JoiningEdge* edge = new JoiningEdge(entityId, parentId, joinId);
 
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
@@ -341,7 +342,7 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 
     scene.addComponent(pComponent_t(edge));
 
-    CJoiningEdge* boundary = new CJoiningEdge(id, parentId);
+    CJoiningEdge* boundary = new CJoiningEdge(entityId, parentId);
 
     boundary->lseg.A = obj.path.points[j];
     boundary->lseg.B = obj.path.points[i];
@@ -491,18 +492,6 @@ static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
 }
 
 //===========================================
-// combine
-//===========================================
-static JoiningEdge* combine(const JoiningEdge& je1, const JoiningEdge& je2, entityId_t entityId,
-  entityId_t parentId) {
-
-  JoiningEdge* je = new JoiningEdge(je1, entityId, parentId);
-  je->mergeIn(je2);
-
-  return je;
-}
-
-//===========================================
 // connectSubregions_r
 //===========================================
 static void connectSubregions_r(Scene& scene, Region& region) {
@@ -536,26 +525,13 @@ static void connectSubregions_r(Scene& scene, Region& region) {
                   if (areTwins(*je, *other)) {
                     hasTwin = true;
 
-                    entityId_t id = Component::getNextId();
-                    entityId_t parent1id = r.entityId();
-                    entityId_t parent2id = r_.entityId();
+                    je->joinId = other->joinId;
+                    je->regionA = other->regionA = &r;
+                    je->regionB = other->regionB = &r_;
 
-                    JoiningEdge* combined = combine(*je, *other, id, parent1id);
-                    combined->regionA = &r;
-                    combined->regionB = &r_;
+                    je->mergeIn(*other);
+                    other->mergeIn(*je);
 
-                    //scene.removeEntity(je->entityId());
-                    //scene.removeEntity(other->entityId());
-
-                    //scene.addComponent(pComponent_t(combined));
-
-                    //delete je;
-                    //delete other;
-
-                    *jt = combined;
-                    *lt = combined;
-
-                    scene.sg.edges.push_back(pEdge_t(combined));
                     break;
                   }
                 }
