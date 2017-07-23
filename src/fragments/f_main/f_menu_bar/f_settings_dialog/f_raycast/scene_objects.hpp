@@ -175,6 +175,8 @@ struct FloorDecal : public CRenderSpatial {
   std::string texture;
   Size size;
   Matrix transform;
+
+  virtual ~FloorDecal() override {}
 };
 
 typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
@@ -196,6 +198,8 @@ struct Region : public CRenderSpatial {
   std::list<pSprite_t> sprites;
   std::list<pFloorDecal_t> floorDecals;
   Region* parent = nullptr;
+
+  virtual ~Region() override {}
 };
 
 void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn);
@@ -208,6 +212,8 @@ struct WallDecal : public CRenderSpatial {
   std::string texture;
   Size size;
   Point pos;
+
+  virtual ~WallDecal() {}
 };
 
 typedef std::unique_ptr<WallDecal> pWallDecal_t;

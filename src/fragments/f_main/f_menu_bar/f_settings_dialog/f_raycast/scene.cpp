@@ -25,6 +25,19 @@ using std::set;
 using std::ostream;
 
 
+ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
+  switch (kind) {
+    case CRenderSpatialKind::REGION: os << "REGION"; break;
+    case CRenderSpatialKind::WALL: os << "WALL"; break;
+    case CRenderSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
+    case CRenderSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
+    case CRenderSpatialKind::WALL_DECAL: os << "WALL_DECAL"; break;
+    case CRenderSpatialKind::SPRITE: os << "SPRITE"; break;
+  }
+  return os;
+}
+
+
 //===========================================
 // forEachConstRegion
 //===========================================
@@ -202,7 +215,7 @@ Scene::Scene(EntityManager& entityManager, const string& mapFilePath, double fra
     .system(ComponentKind::C_BEHAVIOUR));
 
   assert(objects.size() == 1);
-  constructRootRegion(sg, behaviourSystem, **objects.begin());
+  constructRootRegion(*this, behaviourSystem, **objects.begin());
 }
 
 //===========================================
@@ -446,18 +459,6 @@ void Scene::update() {
   gravity();
 }
 
-ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
-  switch (kind) {
-    case CRenderSpatialKind::REGION: os << "REGION"; break;
-    case CRenderSpatialKind::WALL: os << "WALL"; break;
-    case CRenderSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
-    case CRenderSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
-    case CRenderSpatialKind::WALL_DECAL: os << "WALL_DECAL"; break;
-    case CRenderSpatialKind::SPRITE: os << "SPRITE"; break;
-  }
-  return os;
-}
-
 //===========================================
 // addToRegion
 //===========================================
@@ -597,11 +598,105 @@ static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent,
 }
 
 //===========================================
+// similar
+//===========================================
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  double delta = 4.0;
+  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
+    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+}
+
+//===========================================
+// areTwins
+//===========================================
+static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
+  return similar(je1.lseg, je2.lseg);
+}
+
+//===========================================
+// combine
+//===========================================
+static JoiningEdge* combine(const JoiningEdge& je1, const JoiningEdge& je2) {
+  JoiningEdge* je = new JoiningEdge(je1);
+  je->mergeIn(je2);
+  return je;
+}
+
+//===========================================
+// connectSubregions_r
+//===========================================
+static void connectSubregions_r(SceneGraph& sg, Region& region) {
+  if (region.children.size() == 0) {
+    return;
+  }
+
+  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+    Region& r = **it;
+    connectSubregions_r(sg, r);
+
+    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
+      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
+        assert(je != nullptr);
+
+        bool hasTwin = false;
+        forEachRegion(region, [&](Region& r_) {
+          if (!hasTwin) {
+            if (&r_ != &r) {
+              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+                  assert(other != nullptr);
+
+                  if (je == other) {
+                    hasTwin = true;
+                    break;
+                  }
+
+                  if (areTwins(*je, *other)) {
+                    hasTwin = true;
+
+                    JoiningEdge* combined = combine(*je, *other);
+                    combined->regionA = &r;
+                    combined->regionB = &r_;
+
+                    //delete je;
+                    //delete other;
+
+                    *jt = combined;
+                    *lt = combined;
+
+                    sg.edges.push_back(pEdge_t(combined));
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        if (!hasTwin) {
+          je->regionA = &r;
+          je->regionB = &region;
+        }
+      }
+    }
+  };
+}
+
+//===========================================
+// Scene::connectRegions
+//===========================================
+void Scene::connectRegions() {
+  connectSubregions_r(sg, *sg.rootRegion);
+}
+
+//===========================================
 // Scene::addComponent
 //===========================================
 void Scene::addComponent(pComponent_t component) {
-  if (component->kind() != ComponentKind::C_SPATIAL) {
-    EXCEPTION("Component is not of kind C_SPATIAL");
+  if (component->kind() != ComponentKind::C_RENDER_SPATIAL) {
+    EXCEPTION("Component is not of kind C_RENDER_SPATIAL");
   }
 
   CRenderSpatial* ptr = dynamic_cast<CRenderSpatial*>(component.release());
@@ -631,10 +726,10 @@ void Scene::addComponent(pComponent_t component) {
     assert(parent->entityId() == c->parentId);
 
     m_entityChildren[c->parentId].insert(c->entityId());
-    //addChildToComponent(sg, *parent, std::move(c));
+    addChildToComponent(sg, *parent, std::move(c));
   }
 
-  m_components.insert(std::make_pair(c->entityId(), ptr));
+  m_components.insert(std::make_pair(ptr->entityId(), ptr));
 }
 
 //===========================================

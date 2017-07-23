@@ -9,6 +9,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -52,93 +53,6 @@ static const string& getValue(const map<string, string>& m, const string& key,
 }
 
 //===========================================
-// similar
-//===========================================
-static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 4.0;
-  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
-    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
-}
-
-//===========================================
-// areTwins
-//===========================================
-static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
-  return similar(je1.lseg, je2.lseg);
-}
-
-//===========================================
-// combine
-//===========================================
-static JoiningEdge* combine(const JoiningEdge& je1, const JoiningEdge& je2) {
-  JoiningEdge* je = new JoiningEdge(je1);
-  je->mergeIn(je2);
-  return je;
-}
-
-//===========================================
-// connectSubregions_r
-//===========================================
-static void connectSubregions_r(SceneGraph& sg, Region& region) {
-  if (region.children.size() == 0) {
-    return;
-  }
-
-  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    Region& r = **it;
-    connectSubregions_r(sg, r);
-
-    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
-        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
-        assert(je != nullptr);
-
-        bool hasTwin = false;
-        forEachRegion(region, [&](Region& r_) {
-          if (!hasTwin) {
-            if (&r_ != &r) {
-              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
-                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
-                  assert(other != nullptr);
-
-                  if (je == other) {
-                    hasTwin = true;
-                    break;
-                  }
-
-                  if (areTwins(*je, *other)) {
-                    hasTwin = true;
-
-                    JoiningEdge* combined = combine(*je, *other);
-                    combined->regionA = &r;
-                    combined->regionB = &r_;
-
-                    delete je;
-                    delete other;
-
-                    *jt = combined;
-                    *lt = combined;
-
-                    sg.edges.push_back(pEdge_t(combined));
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        if (!hasTwin) {
-          je->regionA = &r;
-          je->regionB = &region;
-        }
-      }
-    }
-  };
-}
-
-//===========================================
 // snapEndpoint
 //===========================================
 static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
@@ -158,8 +72,8 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 //
 // wall is the wall's transformed line segment
 //===========================================
-static WallDecal* constructWallDecal(const parser::Object& obj, const Matrix& parentTransform,
-  entityId_t parentId, const LineSegment& wall) {
+static void constructWallDecal(Scene& scene, const parser::Object& obj,
+  const Matrix& parentTransform, entityId_t parentId, const LineSegment& wall) {
 
   Point A = parentTransform * obj.transform * obj.path.points[0];
   Point B = parentTransform * obj.transform * obj.path.points[1];
@@ -174,13 +88,13 @@ static WallDecal* constructWallDecal(const parser::Object& obj, const Matrix& pa
   if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
     || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
 
-    return nullptr;
+    return;
   }
   if (a < 0 || b < 0) {
-    return nullptr;
+    return;
   }
   if (a > wall.length() || b > wall.length()) {
-    return nullptr;
+    return;
   }
 
   DBG_PRINT("Constructing WallDecal\n");
@@ -198,14 +112,14 @@ static WallDecal* constructWallDecal(const parser::Object& obj, const Matrix& pa
   decal->size = size;
   decal->pos = pos;
 
-  return decal;
+  scene.addComponent(pComponent_t(decal));
 }
 
 //===========================================
 // constructWalls
 //===========================================
-static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
-  const Matrix& parentTransform) {
+static void constructWalls(Scene& scene, map<Point, bool>& endpoints, const parser::Object& obj,
+  Region& region, const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing Walls\n");
 
@@ -225,35 +139,35 @@ static list<Wall*> constructWalls(const parser::Object& obj, Region* region,
       }
     }
 
-    Wall* wall = new Wall(Component::getNextId(), region->entityId());
+    Wall* wall = new Wall(Component::getNextId(), region.entityId());
 
     wall->lseg.A = obj.path.points[j];
     wall->lseg.B = obj.path.points[i];
     wall->lseg = transform(wall->lseg, m);
 
-    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
-      if (getValue((*it)->dict, "type") == "wall_decal") {
-        WallDecal* decal = constructWallDecal(**it, m, wall->entityId(), wall->lseg);
-        if (decal != nullptr) {
-          wall->decals.push_back(pWallDecal_t(decal));
-        }
-      }
-    }
-
-    wall->region = region;
+    wall->region = &region;
     wall->texture = getValue(obj.dict, "texture");
 
     walls.push_back(wall);
+
+    scene.addComponent(pComponent_t(wall));
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      if (getValue((*it)->dict, "type") == "wall_decal") {
+        constructWallDecal(scene, **it, m, wall->entityId(), wall->lseg);
+      }
+    }
   }
 
-  return walls;
+  snapEndpoint(endpoints, walls.front()->lseg.A);
+  snapEndpoint(endpoints, walls.back()->lseg.B);
 }
 
 //===========================================
 // constructFloorDecal
 //===========================================
-static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& parentTransform,
-  entityId_t parentId) {
+static void constructFloorDecal(Scene& scene, const parser::Object& obj,
+  const Matrix& parentTransform, entityId_t parentId) {
 
   DBG_PRINT("Constructing FloorDecal\n");
 
@@ -272,7 +186,7 @@ static FloorDecal* constructFloorDecal(const parser::Object& obj, const Matrix& 
   decal->size = size;
   decal->transform = parentTransform * obj.transform * m;
 
-  return decal;
+  scene.addComponent(pComponent_t(decal));
 }
 
 //===========================================
@@ -296,7 +210,7 @@ static Player* constructPlayer(const parser::Object& obj, const Region& region,
 //===========================================
 // constructSprite
 //===========================================
-static Sprite* constructSprite(const parser::Object& obj, Region& region,
+static void constructSprite(Scene& scene, const parser::Object& obj, Region& region,
   const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing Sprite\n");
@@ -307,7 +221,7 @@ static Sprite* constructSprite(const parser::Object& obj, Region& region,
     sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
 
-    return sprite;
+    scene.addComponent(pComponent_t(sprite));
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
     Ammo* sprite = new Ammo(Component::getNextId(), region.entityId());
@@ -315,17 +229,18 @@ static Sprite* constructSprite(const parser::Object& obj, Region& region,
     sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
 
-    return sprite;
+    scene.addComponent(pComponent_t(sprite));
   }
-
-  EXCEPTION("Error constructing sprite of unknown type");
+  else {
+    EXCEPTION("Error constructing sprite of unknown type");
+  }
 }
 
 //===========================================
 // constructJoiningEdges
 //===========================================
-static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Region* region,
-  const Matrix& parentTransform) {
+static void constructJoiningEdges(Scene& scene, map<Point, bool>& endpoints,
+  const parser::Object& obj, Region* region, const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing JoiningEdges\n");
 
@@ -357,9 +272,12 @@ static list<JoiningEdge*> constructJoiningEdges(const parser::Object& obj, Regio
     }
 
     joiningEdges.push_back(je);
+
+    scene.addComponent(pComponent_t(je));
   }
 
-  return joiningEdges;
+  snapEndpoint(endpoints, joiningEdges.front()->lseg.A);
+  snapEndpoint(endpoints, joiningEdges.back()->lseg.B);
 }
 
 //===========================================
@@ -375,7 +293,7 @@ static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object
 //===========================================
 // constructRegion_r
 //===========================================
-static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSystem,
+static void constructRegion_r(Scene& scene, SceneGraph& sg, BehaviourSystem& behaviourSystem,
   const parser::Object& obj, Region* parent, const Matrix& parentTransform, map<Point,
   bool>& endpoints) {
 
@@ -388,6 +306,8 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
   region->parent = parent;
 
   try {
+    scene.addComponent(pComponent_t(region));
+
     if (getValue(obj.dict, "type") != "region") {
       EXCEPTION("Object is not of type region");
     }
@@ -428,32 +348,19 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        region->children.push_back(pRegion_t(constructRegion_r(sg, behaviourSystem, child,
-          region, transform, endpoints)));
+        constructRegion_r(scene, sg, behaviourSystem, child, region, transform, endpoints);
       }
       else if (type == "wall") {
-        list<Wall*> walls = constructWalls(child, region, transform);
-        for (auto jt = walls.begin(); jt != walls.end(); ++jt) {
-          sg.edges.push_back(pEdge_t(*jt));
-          region->edges.push_back(*jt);
-        }
-        snapEndpoint(endpoints, walls.front()->lseg.A);
-        snapEndpoint(endpoints, walls.back()->lseg.B);
+        constructWalls(scene, endpoints, child, *region, transform);
       }
       else if (type == "joining_edge") {
-        list<JoiningEdge*> joiningEdges = constructJoiningEdges(child, region, transform);
-        for (auto jt = joiningEdges.begin(); jt != joiningEdges.end(); ++jt) {
-          region->edges.push_back(*jt);
-        }
-        snapEndpoint(endpoints, joiningEdges.front()->lseg.A);
-        snapEndpoint(endpoints, joiningEdges.back()->lseg.B);
+        constructJoiningEdges(scene, endpoints, child, region, transform);
       }
       else if (type == "sprite") {
-        region->sprites.push_back(pSprite_t(constructSprite(child, *region, transform)));
+        constructSprite(scene, child, *region, transform);
       }
       else if (type == "floor_decal") {
-        region->floorDecals.push_back(pFloorDecal_t(constructFloorDecal(child, transform,
-          entityId)));
+        constructFloorDecal(scene, child, transform, entityId);
       }
       else if (type == "player") {
         if (sg.player) {
@@ -469,23 +376,23 @@ static Region* constructRegion_r(SceneGraph& sg, BehaviourSystem& behaviourSyste
     }
   }
   catch (Exception& ex) {
-    delete region;
+    //delete region;
     ex.prepend("Error constructing region; ");
     throw ex;
   }
   catch (const std::exception& ex) {
-    delete region;
+    //delete region;
     EXCEPTION("Error constructing region; " << ex.what());
   }
-
-  return region;
 }
 
 //===========================================
 // constructRootRegion
 //===========================================
-void constructRootRegion(SceneGraph& sg, BehaviourSystem& behaviourSystem,
+void constructRootRegion(Scene& scene, BehaviourSystem& behaviourSystem,
   const parser::Object& obj) {
+
+  SceneGraph& sg = scene.sg;
 
   if (getValue(obj.dict, "type") != "region") {
     EXCEPTION("Expected object of type 'region'");
@@ -500,7 +407,8 @@ void constructRootRegion(SceneGraph& sg, BehaviourSystem& behaviourSystem,
 
   map<Point, bool> endpoints;
   Matrix m;
-  sg.rootRegion.reset(constructRegion_r(sg, behaviourSystem, obj, nullptr, m, endpoints));
+
+  constructRegion_r(scene, sg, behaviourSystem, obj, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -512,7 +420,7 @@ void constructRootRegion(SceneGraph& sg, BehaviourSystem& behaviourSystem,
     EXCEPTION("Scene must contain the player");
   }
 
-  connectSubregions_r(sg, *sg.rootRegion);
+  scene.connectRegions();
 
   sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};

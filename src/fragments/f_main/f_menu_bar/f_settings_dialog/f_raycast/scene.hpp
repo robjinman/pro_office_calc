@@ -37,6 +37,8 @@ class Scene : public System {
     virtual void addComponent(pComponent_t component) override;
     virtual void removeEntity(entityId_t id) override;
 
+    void connectRegions();
+
     std::set<entityId_t> getEntitiesInRadius(double radius) const;
 
     void vRotateCamera(double da);
