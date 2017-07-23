@@ -203,19 +203,21 @@ static void playerBounce(Scene& scene) {
 //===========================================
 // Scene::Scene
 //===========================================
-Scene::Scene(EntityManager& entityManager, const string& mapFilePath, double frameRate)
+Scene::Scene(EntityManager& entityManager, double frameRate)
   : m_entityManager(entityManager) {
 
   m_frameRate = frameRate;
+}
 
+//===========================================
+// Scene::loadMap
+//===========================================
+void Scene::loadMap(const string& mapFilePath) {
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
-  BehaviourSystem& behaviourSystem = dynamic_cast<BehaviourSystem&>(m_entityManager
-    .system(ComponentKind::C_BEHAVIOUR));
-
   assert(objects.size() == 1);
-  constructRootRegion(*this, behaviourSystem, **objects.begin());
+  constructRootRegion(m_entityManager, **objects.begin());
 }
 
 //===========================================

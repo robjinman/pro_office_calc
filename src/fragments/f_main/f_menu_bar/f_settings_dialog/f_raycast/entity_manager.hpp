@@ -19,8 +19,9 @@ class EntityManager {
     void broadcastEvent(const GameEvent& event) const;
     void update();
 
-    System& system(ComponentKind kind) const {
-      return *m_systems.at(kind);
+    template<class T>
+    T& system(ComponentKind kind) const {
+      return dynamic_cast<T&>(*m_systems.at(kind));
     }
 
   private:

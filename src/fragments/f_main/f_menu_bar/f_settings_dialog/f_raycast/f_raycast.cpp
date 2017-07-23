@@ -56,8 +56,10 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   Renderer* renderer = new Renderer;
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderer));
 
-  Scene* scene = new Scene(m_entityManager, "data/map.svg", FRAME_RATE);
+  Scene* scene = new Scene(m_entityManager, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_RENDER_SPATIAL, pSystem_t(scene));
+
+  scene->loadMap("data/map.svg");
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
@@ -78,8 +80,8 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  Scene& scene = dynamic_cast<Scene&>(m_entityManager.system(ComponentKind::C_RENDER_SPATIAL));
-  Renderer& renderer = dynamic_cast<Renderer&>(m_entityManager.system(ComponentKind::C_RENDER));
+  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Renderer& renderer = m_entityManager.system<Renderer>(ComponentKind::C_RENDER);
 
   renderer.renderScene(m_buffer, scene.sg);
 
@@ -144,7 +146,7 @@ void FRaycast::tick() {
   ++m_frame;
 #endif
 
-  Scene& scene = dynamic_cast<Scene&>(m_entityManager.system(ComponentKind::C_RENDER_SPATIAL));
+  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
 
   m_entityManager.update();
 

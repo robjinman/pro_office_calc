@@ -2,13 +2,11 @@
 #define __PROCALC_FRAGMENTS_F_RAYCAST_SCENE_OBJECT_FACTORY_HPP__
 
 
-class Scene;
-class BehaviourSystem;
+class EntityManager;
 namespace parser { class Object; }
 
 
-void constructRootRegion(Scene& scene, BehaviourSystem& behaviourSystem,
-  const parser::Object& obj);
+void constructRootRegion(EntityManager& em, const parser::Object& obj);
 
 
 #endif

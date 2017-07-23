@@ -10,6 +10,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -389,8 +390,9 @@ static void constructRegion_r(Scene& scene, SceneGraph& sg, BehaviourSystem& beh
 //===========================================
 // constructRootRegion
 //===========================================
-void constructRootRegion(Scene& scene, BehaviourSystem& behaviourSystem,
-  const parser::Object& obj) {
+void constructRootRegion(EntityManager& em, const parser::Object& obj) {
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
   SceneGraph& sg = scene.sg;
 

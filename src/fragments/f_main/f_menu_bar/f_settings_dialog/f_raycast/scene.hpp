@@ -26,10 +26,11 @@ class EventSystem;
 
 class Scene : public System {
   public:
-    Scene(EntityManager& entityManager, const std::string& mapFilePath,
-      double frameRate);
+    Scene(EntityManager& entityManager, double frameRate);
 
     SceneGraph sg;
+
+    void loadMap(const std::string& mapFilePath);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;

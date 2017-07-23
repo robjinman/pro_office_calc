@@ -7,6 +7,7 @@
 #include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
 
 
 class QImage;
