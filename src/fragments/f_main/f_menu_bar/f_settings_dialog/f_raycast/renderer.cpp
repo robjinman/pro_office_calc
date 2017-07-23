@@ -858,3 +858,31 @@ void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
 
   painter.end();
 }
+
+//===========================================
+// Renderer::update
+//===========================================
+void Renderer::update() {
+
+}
+
+//===========================================
+// Renderer::handleEvent
+//===========================================
+void Renderer::handleEvent(const GameEvent& event) {
+
+}
+
+//===========================================
+// Renderer::addComponent
+//===========================================
+void Renderer::addComponent(pComponent_t component) {
+
+}
+
+//===========================================
+// Renderer::removeEntity
+//===========================================
+void Renderer::removeEntity(entityId_t id) {
+
+}

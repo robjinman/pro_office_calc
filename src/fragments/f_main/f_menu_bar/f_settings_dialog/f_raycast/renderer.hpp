@@ -5,6 +5,7 @@
 #include <array>
 #include <list>
 #include <set>
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
 
 
@@ -81,9 +82,16 @@ struct CastResult {
 typedef std::array<double, 10000> tanMap_t;
 typedef std::array<double, 10000> atanMap_t;
 
-class Renderer {
+class Renderer : public System {
   public:
     Renderer();
+
+    virtual void update() override;
+    virtual void handleEvent(const GameEvent& event) override;
+
+    virtual void addComponent(pComponent_t component) override;
+    virtual void removeEntity(entityId_t id) override;
+
     void renderScene(QImage& target, const SceneGraph& sg);
 
   private:
