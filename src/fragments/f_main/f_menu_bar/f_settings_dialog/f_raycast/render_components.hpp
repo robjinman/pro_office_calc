@@ -28,11 +28,6 @@ struct CRender : public Component {
       kind(kind),
       parentId(parentId) {}
 
-  CRender(const CRender& cpy)
-    : Component(cpy),
-      kind(cpy.kind),
-      parentId(-1) {}
-
   CRenderKind kind;
   entityId_t parentId;
 
@@ -127,8 +122,8 @@ struct CEdge : public CRender {
   CEdge(CRenderKind kind, entityId_t entityId, entityId_t parentId)
     : CRender(kind, entityId, parentId) {}
 
-  CEdge(const CEdge& cpy)
-    : CRender(cpy) {
+  CEdge(const CEdge& cpy, entityId_t entityId, entityId_t parentId)
+    : CRender(cpy.kind, entityId, parentId) {
 
     lseg = cpy.lseg;
   }
@@ -209,8 +204,8 @@ struct CJoiningEdge : public CEdge {
   CJoiningEdge(entityId_t entityId, entityId_t parentId)
     : CEdge(CRenderKind::JOINING_EDGE, entityId, parentId) {}
 
-  CJoiningEdge(const CJoiningEdge& cpy)
-    : CEdge(cpy) {
+  CJoiningEdge(const CJoiningEdge& cpy, entityId_t entityId, entityId_t parentId)
+    : CEdge(cpy, entityId, parentId) {
 
     topTexture = cpy.topTexture;
     bottomTexture = cpy.bottomTexture;

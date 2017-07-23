@@ -56,11 +56,6 @@ struct CRenderSpatial : public Component {
       kind(kind),
       parentId(parentId) {}
 
-  CRenderSpatial(const CRenderSpatial& cpy)
-    : Component(cpy),
-      kind(cpy.kind),
-      parentId(-1) {}
-
   CRenderSpatialKind kind;
   entityId_t parentId;
 
@@ -155,8 +150,8 @@ struct Edge : public CRenderSpatial {
   Edge(CRenderSpatialKind kind, entityId_t entityId, entityId_t parentId)
     : CRenderSpatial(kind, entityId, parentId) {}
 
-  Edge(const Edge& cpy)
-    : CRenderSpatial(cpy) {
+  Edge(const Edge& cpy, entityId_t entityId, entityId_t parentId)
+    : CRenderSpatial(cpy.kind, entityId, parentId) {
 
     lseg = cpy.lseg;
   }
@@ -237,8 +232,8 @@ struct JoiningEdge : public Edge {
   JoiningEdge(entityId_t entityId, entityId_t parentId)
     : Edge(CRenderSpatialKind::JOINING_EDGE, entityId, parentId) {}
 
-  JoiningEdge(const JoiningEdge& cpy)
-    : Edge(cpy) {
+  JoiningEdge(const JoiningEdge& cpy, entityId_t entityId, entityId_t parentId)
+    : Edge(cpy, entityId, parentId) {
 
     topTexture = cpy.topTexture;
     bottomTexture = cpy.bottomTexture;

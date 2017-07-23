@@ -112,34 +112,37 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 
   string texture = getValue(obj.dict, "texture");
 
-  WallDecal* vRect = new WallDecal(Component::getNextId(), parentId);
+  entityId_t id = Component::getNextId();
+
+  WallDecal* vRect = new WallDecal(id, parentId);
   vRect->texture = texture;
   vRect->size = size;
   vRect->pos = pos;
 
   scene.addComponent(pComponent_t(vRect));
 
-  CWallDecal* decal = new CWallDecal(Component::getNextId(), parentId);
+  CWallDecal* decal = new CWallDecal(id, parentId);
   decal->texture = texture;
   decal->size = size;
   decal->pos = pos;
 
-  //renderer.addComponent(pComponent_t(decal));
+  renderer.addComponent(pComponent_t(decal));
 }
 
 //===========================================
 // constructWalls
 //===========================================
 static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
-  const parser::Object& obj, Region& region, const Matrix& parentTransform) {
+  const parser::Object& obj, Region& zone, CRegion& region, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Walls\n");
 
   Matrix m = parentTransform * obj.transform;
 
-  list<Wall*> walls;
+  list<Wall*> edges;
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
@@ -153,7 +156,22 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
       }
     }
 
-    Wall* wall = new Wall(Component::getNextId(), region.entityId());
+    entityId_t id = Component::getNextId();
+
+    Wall* edge = new Wall(id, zone.entityId());
+
+    edge->lseg.A = obj.path.points[j];
+    edge->lseg.B = obj.path.points[i];
+    edge->lseg = transform(edge->lseg, m);
+
+    edge->region = &zone;
+    edge->texture = getValue(obj.dict, "texture");
+
+    edges.push_back(edge);
+
+    scene.addComponent(pComponent_t(edge));
+
+    CWall* wall = new CWall(id, region.entityId());
 
     wall->lseg.A = obj.path.points[j];
     wall->lseg.B = obj.path.points[i];
@@ -162,19 +180,17 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
     wall->region = &region;
     wall->texture = getValue(obj.dict, "texture");
 
-    walls.push_back(wall);
-
-    scene.addComponent(pComponent_t(wall));
+    renderer.addComponent(pComponent_t(wall));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       if (getValue((*it)->dict, "type") == "wall_decal") {
-        constructWallDecal(em, **it, m, wall->entityId(), wall->lseg);
+        constructWallDecal(em, **it, m, id, edge->lseg);
       }
     }
   }
 
-  snapEndpoint(endpoints, walls.front()->lseg.A);
-  snapEndpoint(endpoints, walls.back()->lseg.B);
+  snapEndpoint(endpoints, edges.front()->lseg.A);
+  snapEndpoint(endpoints, edges.back()->lseg.B);
 }
 
 //===========================================
@@ -184,6 +200,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing FloorDecal\n");
 
@@ -197,12 +214,21 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 
   Matrix m(0, pos);
 
-  FloorDecal* decal = new FloorDecal(Component::getNextId(), parentId);
+  entityId_t id = Component::getNextId();
+
+  FloorDecal* hRect = new FloorDecal(id, parentId);
+  hRect->texture = texture;
+  hRect->size = size;
+  hRect->transform = parentTransform * obj.transform * m;
+
+  scene.addComponent(pComponent_t(hRect));
+
+  CFloorDecal* decal = new CFloorDecal(id, parentId);
   decal->texture = texture;
   decal->size = size;
   decal->transform = parentTransform * obj.transform * m;
 
-  scene.addComponent(pComponent_t(decal));
+  renderer.addComponent(pComponent_t(decal));
 }
 
 //===========================================
@@ -226,28 +252,45 @@ static Player* constructPlayer(const parser::Object& obj, const Region& region,
 //===========================================
 // constructSprite
 //===========================================
-static void constructSprite(EntityManager& em, const parser::Object& obj, Region& region,
-  const Matrix& parentTransform) {
+static void constructSprite(EntityManager& em, const parser::Object& obj, Region& zone,
+  CRegion& region, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Sprite\n");
 
   if (getValue(obj.dict, "subtype") == "bad_guy") {
-    BadGuy* sprite = new BadGuy(Component::getNextId(), region.entityId());
+    entityId_t id = Component::getNextId();
+
+    BadGuy* vRect = new BadGuy(id, zone.entityId());
     Matrix m = transformFromTriangle(obj.path);
+    vRect->setTransform(parentTransform * obj.transform * m);
+    vRect->region = &zone;
+
+    scene.addComponent(pComponent_t(vRect));
+
+    CBadGuy* sprite = new CBadGuy(id, zone.entityId());
     sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
 
-    scene.addComponent(pComponent_t(sprite));
+    renderer.addComponent(pComponent_t(sprite));
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
-    Ammo* sprite = new Ammo(Component::getNextId(), region.entityId());
+    entityId_t id = Component::getNextId();
+
+    Ammo* vRect = new Ammo(id, zone.entityId());
     Matrix m = transformFromTriangle(obj.path);
+    vRect->setTransform(parentTransform * obj.transform * m);
+    vRect->region = &zone;
+
+    scene.addComponent(pComponent_t(vRect));
+
+    CAmmo* sprite = new CAmmo(id, zone.entityId());
     sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
 
-    scene.addComponent(pComponent_t(sprite));
+    renderer.addComponent(pComponent_t(sprite));
   }
   else {
     EXCEPTION("Error constructing sprite of unknown type");
@@ -258,13 +301,14 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
 // constructJoiningEdges
 //===========================================
 static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints,
-  const parser::Object& obj, Region* region, const Matrix& parentTransform) {
+  const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing JoiningEdges\n");
 
-  list<JoiningEdge*> joiningEdges;
+  list<JoiningEdge*> edges;
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
@@ -278,26 +322,43 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
       }
     }
 
-    JoiningEdge* je = new JoiningEdge(Component::getNextId(), region->entityId());
+    entityId_t id = Component::getNextId();
 
-    je->lseg.A = obj.path.points[j];
-    je->lseg.B = obj.path.points[i];
-    je->lseg = transform(je->lseg, parentTransform * obj.transform);
+    JoiningEdge* edge = new JoiningEdge(id, parentId);
+
+    edge->lseg.A = obj.path.points[j];
+    edge->lseg.B = obj.path.points[i];
+    edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
 
     if (contains<string>(obj.dict, "top_texture")) {
-      je->topTexture = getValue(obj.dict, "top_texture");
+      edge->topTexture = getValue(obj.dict, "top_texture");
     }
     if (contains<string>(obj.dict, "bottom_texture")) {
-      je->bottomTexture = getValue(obj.dict, "bottom_texture");
+      edge->bottomTexture = getValue(obj.dict, "bottom_texture");
     }
 
-    joiningEdges.push_back(je);
+    edges.push_back(edge);
 
-    scene.addComponent(pComponent_t(je));
+    scene.addComponent(pComponent_t(edge));
+
+    CJoiningEdge* boundary = new CJoiningEdge(id, parentId);
+
+    boundary->lseg.A = obj.path.points[j];
+    boundary->lseg.B = obj.path.points[i];
+    boundary->lseg = transform(boundary->lseg, parentTransform * obj.transform);
+
+    if (contains<string>(obj.dict, "top_texture")) {
+      boundary->topTexture = getValue(obj.dict, "top_texture");
+    }
+    if (contains<string>(obj.dict, "bottom_texture")) {
+      boundary->bottomTexture = getValue(obj.dict, "bottom_texture");
+    }
+
+    renderer.addComponent(pComponent_t(boundary));
   }
 
-  snapEndpoint(endpoints, joiningEdges.front()->lseg.A);
-  snapEndpoint(endpoints, joiningEdges.back()->lseg.B);
+  snapEndpoint(endpoints, edges.front()->lseg.A);
+  snapEndpoint(endpoints, edges.back()->lseg.B);
 }
 
 //===========================================
@@ -313,22 +374,27 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, Region& 
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(EntityManager& em, const parser::Object& obj, Region* parent,
-  const Matrix& parentTransform, map<Point, bool>& endpoints) {
+static void constructRegion_r(EntityManager& em, const parser::Object& obj, Region* parentZone,
+  CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
+  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
   SceneGraph& sg = scene.sg;
 
   DBG_PRINT("Constructing Region\n");
 
   entityId_t entityId = Component::getNextId();
-  entityId_t parentId = parent == nullptr ? -1 : parent->entityId();
+  entityId_t parentId = parentZone == nullptr ? -1 : parentZone->entityId();
 
-  Region* region = new Region(entityId, parentId);
-  region->parent = parent;
+  Region* zone = new Region(entityId, parentId);
+  zone->parent = parentZone;
+
+  CRegion* region = new CRegion(entityId, parentId);
+  region->parent = parentRegion;
 
   try {
-    scene.addComponent(pComponent_t(region));
+    scene.addComponent(pComponent_t(zone));
+    renderer.addComponent(pComponent_t(region));
 
     if (getValue(obj.dict, "type") != "region") {
       EXCEPTION("Object is not of type region");
@@ -343,26 +409,26 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
     if (contains<string>(obj.dict, "has_ceiling")) {
       string s = getValue(obj.dict, "has_ceiling");
       if (s == "true") {
-        region->hasCeiling = true;
+        zone->hasCeiling = true;
       }
       else if (s == "false") {
-        region->hasCeiling = false;
+        zone->hasCeiling = false;
       }
       else {
         EXCEPTION("has_ceiling must be either 'true' or 'false'");
       }
     }
 
-    region->floorHeight = contains<string>(obj.dict, "floor_height") ?
+    zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
       std::stod(getValue(obj.dict, "floor_height")) : sg.defaults.floorHeight;
 
-    region->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
+    zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
       std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
 
-    region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
+    zone->floorTexture = contains<string>(obj.dict, "floor_texture") ?
       getValue(obj.dict, "floor_texture") : sg.defaults.floorTexture;
 
-    region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
+    zone->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
       getValue(obj.dict, "ceiling_texture") : sg.defaults.ceilingTexture;
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
@@ -370,16 +436,16 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(em, child, region, transform, endpoints);
+        constructRegion_r(em, child, zone, region, transform, endpoints);
       }
       else if (type == "wall") {
-        constructWalls(em, endpoints, child, *region, transform);
+        constructWalls(em, endpoints, child, *zone, *region, transform);
       }
       else if (type == "joining_edge") {
-        constructJoiningEdges(em, endpoints, child, region, transform);
+        constructJoiningEdges(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
-        constructSprite(em, child, *region, transform);
+        constructSprite(em, child, *zone, *region, transform);
       }
       else if (type == "floor_decal") {
         constructFloorDecal(em, child, transform, entityId);
@@ -388,24 +454,123 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(child, *region, transform, sg.viewport));
-        sg.currentRegion = region;
+        sg.player.reset(constructPlayer(child, *zone, transform, sg.viewport));
+        sg.currentRegion = zone;
       }
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(em, obj, *region);
+      constructDoor(em, obj, *zone);
     }
   }
   catch (Exception& ex) {
-    //delete region;
+    //delete zone;
     ex.prepend("Error constructing region; ");
     throw ex;
   }
   catch (const std::exception& ex) {
-    //delete region;
+    //delete zone;
     EXCEPTION("Error constructing region; " << ex.what());
   }
+}
+
+//===========================================
+// similar
+//===========================================
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  double delta = 4.0;
+  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
+    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+}
+
+//===========================================
+// areTwins
+//===========================================
+static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
+  return similar(je1.lseg, je2.lseg);
+}
+
+//===========================================
+// combine
+//===========================================
+static JoiningEdge* combine(const JoiningEdge& je1, const JoiningEdge& je2, entityId_t entityId,
+  entityId_t parentId) {
+
+  JoiningEdge* je = new JoiningEdge(je1, entityId, parentId);
+  je->mergeIn(je2);
+
+  return je;
+}
+
+//===========================================
+// connectSubregions_r
+//===========================================
+static void connectSubregions_r(Scene& scene, Region& region) {
+  if (region.children.size() == 0) {
+    return;
+  }
+
+  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+    Region& r = **it;
+    connectSubregions_r(scene, r);
+
+    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
+      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
+        assert(je != nullptr);
+
+        bool hasTwin = false;
+        forEachRegion(region, [&](Region& r_) {
+          if (!hasTwin) {
+            if (&r_ != &r) {
+              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+                  assert(other != nullptr);
+
+                  if (je == other) {
+                    hasTwin = true;
+                    break;
+                  }
+
+                  if (areTwins(*je, *other)) {
+                    hasTwin = true;
+
+                    entityId_t id = Component::getNextId();
+                    entityId_t parent1id = r.entityId();
+                    entityId_t parent2id = r_.entityId();
+
+                    JoiningEdge* combined = combine(*je, *other, id, parent1id);
+                    combined->regionA = &r;
+                    combined->regionB = &r_;
+
+                    //scene.removeEntity(je->entityId());
+                    //scene.removeEntity(other->entityId());
+
+                    //scene.addComponent(pComponent_t(combined));
+
+                    //delete je;
+                    //delete other;
+
+                    *jt = combined;
+                    *lt = combined;
+
+                    scene.sg.edges.push_back(pEdge_t(combined));
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        if (!hasTwin) {
+          je->regionA = &r;
+          je->regionB = &region;
+        }
+      }
+    }
+  };
 }
 
 //===========================================
@@ -429,7 +594,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(em, obj, nullptr, m, endpoints);
+  constructRegion_r(em, obj, nullptr, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -441,7 +606,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
     EXCEPTION("Scene must contain the player");
   }
 
-  scene.connectRegions();
+  connectSubregions_r(scene, *sg.rootRegion);
 
   sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
