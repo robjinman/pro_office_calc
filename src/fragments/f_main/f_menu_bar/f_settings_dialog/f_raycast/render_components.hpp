@@ -14,12 +14,12 @@
 
 
 enum class CRenderKind {
-  C_REGION,
-  C_WALL,
-  C_JOINING_EDGE,
-  C_SPRITE,
-  C_FLOOR_DECAL,
-  C_WALL_DECAL
+  REGION,
+  WALL,
+  JOINING_EDGE,
+  SPRITE,
+  FLOOR_DECAL,
+  WALL_DECAL
 };
 
 struct CRender : public Component {
@@ -46,7 +46,7 @@ class CRegion;
 class CSprite : public CRender {
   public:
     CSprite(entityId_t entityId, entityId_t parentId, const Size& size, const std::string& texture)
-      : CRender(CRenderKind::C_SPRITE, entityId, parentId),
+      : CRender(CRenderKind::SPRITE, entityId, parentId),
         texture(texture),
         size(size) {}
 
@@ -142,7 +142,7 @@ typedef std::unique_ptr<CEdge> pCEdge_t;
 
 struct CFloorDecal : public CRender {
   CFloorDecal(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::C_FLOOR_DECAL, entityId, parentId) {}
+    : CRender(CRenderKind::FLOOR_DECAL, entityId, parentId) {}
 
   std::string texture;
   Size size;
@@ -158,7 +158,7 @@ typedef std::unique_ptr<CRegion> pCRegion_t;
 
 struct CRegion : public CRender {
   CRegion(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::C_REGION, entityId, parentId) {}
+    : CRender(CRenderKind::REGION, entityId, parentId) {}
 
   bool hasCeiling = true;
   double floorHeight = 0;
@@ -179,7 +179,7 @@ void forEachCRegion(CRegion& region, std::function<void(CRegion&)> fn);
 
 struct CWallDecal : public CRender {
   CWallDecal(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::C_WALL_DECAL, entityId, parentId) {}
+    : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
 
   std::string texture;
   Size size;
@@ -192,7 +192,7 @@ typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
 
 struct CWall : public CEdge {
   CWall(entityId_t entityId, entityId_t parentId)
-    : CEdge(CRenderKind::C_WALL, entityId, parentId) {}
+    : CEdge(CRenderKind::WALL, entityId, parentId) {}
 
   std::string texture;
   CRegion* region;
@@ -207,7 +207,7 @@ struct CWall : public CEdge {
 
 struct CJoiningEdge : public CEdge {
   CJoiningEdge(entityId_t entityId, entityId_t parentId)
-    : CEdge(CRenderKind::C_JOINING_EDGE, entityId, parentId) {}
+    : CEdge(CRenderKind::JOINING_EDGE, entityId, parentId) {}
 
   CJoiningEdge(const CJoiningEdge& cpy)
     : CEdge(cpy) {

@@ -4,6 +4,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <ostream>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QBrush>
@@ -18,6 +19,7 @@ using std::set;
 using std::vector;
 using std::array;
 using std::unique_ptr;
+using std::ostream;
 
 
 static const double ATAN_MIN = -10.0;
@@ -30,6 +32,18 @@ struct ScreenSlice {
   int viewportBottom_px;
   int viewportTop_px;
 };
+
+ostream& operator<<(ostream& os, CRenderKind kind) {
+  switch (kind) {
+    case CRenderKind::REGION: os << "REGION"; break;
+    case CRenderKind::WALL: os << "WALL"; break;
+    case CRenderKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
+    case CRenderKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
+    case CRenderKind::WALL_DECAL: os << "WALL_DECAL"; break;
+    case CRenderKind::SPRITE: os << "SPRITE"; break;
+  }
+  return os;
+}
 
 //===========================================
 // fastTan_rp
@@ -874,15 +888,235 @@ void Renderer::handleEvent(const GameEvent& event) {
 }
 
 //===========================================
+// addToRegion
+//===========================================
+static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
+  switch (child->kind) {
+    case CRenderKind::REGION: {
+      pCRegion_t ptr(dynamic_cast<CRegion*>(child.release()));
+      ptr->parent = &region;
+      region.children.push_back(std::move(ptr));
+      break;
+    }
+    case CRenderKind::JOINING_EDGE:
+    case CRenderKind::WALL: {
+      pCEdge_t ptr(dynamic_cast<CEdge*>(child.release()));
+      region.edges.push_back(ptr.get());
+      rg.edges.push_back(std::move(ptr));
+      break;
+    }
+    case CRenderKind::FLOOR_DECAL: {
+      pCFloorDecal_t ptr(dynamic_cast<CFloorDecal*>(child.release()));
+      region.floorDecals.push_back(std::move(ptr));
+      break;
+    }
+    case CRenderKind::SPRITE: {
+      pCSprite_t ptr(dynamic_cast<CSprite*>(child.release()));
+      region.sprites.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to region");
+  }
+}
+
+//===========================================
+// addToWall
+//===========================================
+static void addToWall(CWall& edge, pCRender_t child) {
+  switch (child->kind) {
+    case CRenderKind::WALL_DECAL: {
+      pCWallDecal_t ptr(dynamic_cast<CWallDecal*>(child.release()));
+      edge.decals.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to Wall");
+  }
+}
+
+//===========================================
+// addChildToComponent
+//===========================================
+static void addChildToComponent(RenderGraph& rg, CRender& parent, pCRender_t child) {
+  switch (parent.kind) {
+    case CRenderKind::REGION:
+      addToRegion(rg, dynamic_cast<CRegion&>(parent), std::move(child));
+      break;
+    case CRenderKind::WALL:
+      addToWall(dynamic_cast<CWall&>(parent), std::move(child));
+      break;
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
+// removeFromRegion
+//===========================================
+static void removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& child) {
+  switch (child.kind) {
+    case CRenderKind::REGION: {
+      region.children.remove_if([&](const pCRegion_t& e) {
+        return e.get() == dynamic_cast<const CRegion*>(&child);
+      });
+      break;
+    }
+    case CRenderKind::JOINING_EDGE:
+    case CRenderKind::WALL: {
+      region.edges.remove_if([&](const CEdge* e) {
+        return e == dynamic_cast<const CEdge*>(&child);
+      });
+      rg.edges.remove_if([&](const pCEdge_t& e) {
+        return e.get() == dynamic_cast<const CEdge*>(&child);
+      });
+      break;
+    }
+    case CRenderKind::FLOOR_DECAL: {
+      region.floorDecals.remove_if([&](const pCFloorDecal_t& e) {
+        return e.get() == dynamic_cast<const CFloorDecal*>(&child);
+      });
+      break;
+    }
+    case CRenderKind::SPRITE: {
+      region.sprites.remove_if([&](const pCSprite_t& e) {
+        return e.get() == dynamic_cast<const CSprite*>(&child);
+      });
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child.kind << " to region");
+  }
+}
+
+//===========================================
+// removeFromWall
+//===========================================
+static void removeFromWall(CWall& edge, const CRender& child) {
+  switch (child.kind) {
+    case CRenderKind::WALL_DECAL: {
+      edge.decals.remove_if([&](const pCWallDecal_t& e) {
+        return e.get() == dynamic_cast<const CWallDecal*>(&child);
+      });
+      break;
+    }
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from Wall");
+  }
+}
+
+//===========================================
+// removeChildFromComponent
+//===========================================
+static void removeChildFromComponent(RenderGraph& rg, CRender& parent,
+  const CRender& child) {
+
+  switch (parent.kind) {
+    case CRenderKind::REGION:
+      removeFromRegion(rg, dynamic_cast<CRegion&>(parent), child);
+      break;
+    case CRenderKind::WALL:
+      removeFromWall(dynamic_cast<CWall&>(parent), child);
+      break;
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
 // Renderer::addComponent
 //===========================================
 void Renderer::addComponent(pComponent_t component) {
+  if (component->kind() != ComponentKind::C_RENDER) {
+    EXCEPTION("Component is not of kind C_RENDER");
+  }
 
+  CRender* ptr = dynamic_cast<CRender*>(component.release());
+  pCRender_t c(ptr);
+
+  if (c->parentId == -1) {
+    if (rg.rootRegion) {
+      EXCEPTION("Root region already set");
+    }
+
+    if (c->kind != CRenderKind::REGION) {
+      EXCEPTION("Component has no parent; Only regions can be root");
+    }
+
+    pCRegion_t z(dynamic_cast<CRegion*>(c.release()));
+
+    rg.rootRegion = std::move(z);
+    m_components.clear();
+  }
+  else {
+    auto it = m_components.find(c->parentId);
+    if (it == m_components.end()) {
+      EXCEPTION("Could not find parent component with id " << c->parentId);
+    }
+
+    CRender* parent = it->second;
+    assert(parent->entityId() == c->parentId);
+
+    m_entityChildren[c->parentId].insert(c->entityId());
+    addChildToComponent(rg, *parent, std::move(c));
+  }
+
+  m_components.insert(std::make_pair(ptr->entityId(), ptr));
+}
+
+//===========================================
+// Renderer::isRoot
+//===========================================
+bool Renderer::isRoot(const CRender& c) const {
+  if (c.kind != CRenderKind::REGION) {
+    return false;
+  }
+  if (rg.rootRegion == nullptr) {
+    return false;
+  }
+  const CRegion* ptr = dynamic_cast<const CRegion*>(&c);
+  return ptr == rg.rootRegion.get();
+}
+
+//===========================================
+// Renderer::removeEntity_r
+//===========================================
+void Renderer::removeEntity_r(entityId_t id) {
+  m_components.erase(id);
+
+  auto it = m_entityChildren.find(id);
+  if (it != m_entityChildren.end()) {
+    set<entityId_t>& children = it->second;
+
+    for (auto jt = children.begin(); jt != children.end(); ++jt) {
+      removeEntity_r(*jt);
+    }
+  }
+
+  m_entityChildren.erase(id);
 }
 
 //===========================================
 // Renderer::removeEntity
 //===========================================
 void Renderer::removeEntity(entityId_t id) {
+  auto it = m_components.find(id);
+  if (it == m_components.end()) {
+    return;
+  }
 
+  CRender& c = *it->second;
+  auto jt = m_components.find(c.parentId);
+
+  if (jt != m_components.end()) {
+    CRender& parent = *jt->second;
+    removeChildFromComponent(rg, parent, c);
+  }
+  else {
+    assert(isRoot(c));
+  }
+
+  removeEntity_r(id);
 }

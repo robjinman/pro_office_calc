@@ -124,7 +124,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   decal->size = size;
   decal->pos = pos;
 
-  renderer.addComponent(pComponent_t(decal));
+  //renderer.addComponent(pComponent_t(decal));
 }
 
 //===========================================

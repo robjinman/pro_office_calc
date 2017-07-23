@@ -7,7 +7,7 @@
 #include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_graph.hpp"
 
 
 class QImage;
@@ -98,6 +98,14 @@ class Renderer : public System {
   private:
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
+
+    std::map<entityId_t, CRender*> m_components;
+    std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
+
+    RenderGraph rg;
+
+    bool isRoot(const CRender& c) const;
+    void removeEntity_r(entityId_t id);
 };
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
