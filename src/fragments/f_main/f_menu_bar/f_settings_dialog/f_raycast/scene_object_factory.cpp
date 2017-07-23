@@ -11,6 +11,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -73,8 +74,11 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 //
 // wall is the wall's transformed line segment
 //===========================================
-static void constructWallDecal(Scene& scene, const parser::Object& obj,
+static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId, const LineSegment& wall) {
+
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Renderer& renderer = em.system<Renderer&>(ComponentKind::C_RENDER);
 
   Point A = parentTransform * obj.transform * obj.path.points[0];
   Point B = parentTransform * obj.transform * obj.path.points[1];
@@ -108,19 +112,28 @@ static void constructWallDecal(Scene& scene, const parser::Object& obj,
 
   string texture = getValue(obj.dict, "texture");
 
-  WallDecal* decal = new WallDecal(Component::getNextId(), parentId);
+  WallDecal* vRect = new WallDecal(Component::getNextId(), parentId);
+  vRect->texture = texture;
+  vRect->size = size;
+  vRect->pos = pos;
+
+  scene.addComponent(pComponent_t(vRect));
+
+  CWallDecal* decal = new CWallDecal(Component::getNextId(), parentId);
   decal->texture = texture;
   decal->size = size;
   decal->pos = pos;
 
-  scene.addComponent(pComponent_t(decal));
+  renderer.addComponent(pComponent_t(decal));
 }
 
 //===========================================
 // constructWalls
 //===========================================
-static void constructWalls(Scene& scene, map<Point, bool>& endpoints, const parser::Object& obj,
-  Region& region, const Matrix& parentTransform) {
+static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
+  const parser::Object& obj, Region& region, const Matrix& parentTransform) {
+
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
 
   DBG_PRINT("Constructing Walls\n");
 
@@ -155,7 +168,7 @@ static void constructWalls(Scene& scene, map<Point, bool>& endpoints, const pars
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       if (getValue((*it)->dict, "type") == "wall_decal") {
-        constructWallDecal(scene, **it, m, wall->entityId(), wall->lseg);
+        constructWallDecal(em, **it, m, wall->entityId(), wall->lseg);
       }
     }
   }
@@ -167,8 +180,10 @@ static void constructWalls(Scene& scene, map<Point, bool>& endpoints, const pars
 //===========================================
 // constructFloorDecal
 //===========================================
-static void constructFloorDecal(Scene& scene, const parser::Object& obj,
+static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId) {
+
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
 
   DBG_PRINT("Constructing FloorDecal\n");
 
@@ -211,8 +226,10 @@ static Player* constructPlayer(const parser::Object& obj, const Region& region,
 //===========================================
 // constructSprite
 //===========================================
-static void constructSprite(Scene& scene, const parser::Object& obj, Region& region,
+static void constructSprite(EntityManager& em, const parser::Object& obj, Region& region,
   const Matrix& parentTransform) {
+
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
 
   DBG_PRINT("Constructing Sprite\n");
 
@@ -240,8 +257,10 @@ static void constructSprite(Scene& scene, const parser::Object& obj, Region& reg
 //===========================================
 // constructJoiningEdges
 //===========================================
-static void constructJoiningEdges(Scene& scene, map<Point, bool>& endpoints,
+static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, Region* region, const Matrix& parentTransform) {
+
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
 
   DBG_PRINT("Constructing JoiningEdges\n");
 
@@ -284,8 +303,8 @@ static void constructJoiningEdges(Scene& scene, map<Point, bool>& endpoints,
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object& obj,
-  Region& region) {
+static void constructDoor(EntityManager& em, const parser::Object& obj, Region& region) {
+  BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
   CDoorBehaviour* behaviour = new CDoorBehaviour(region.entityId(), region);
   behaviourSystem.addComponent(pComponent_t(behaviour));
@@ -294,9 +313,11 @@ static void constructDoor(BehaviourSystem& behaviourSystem, const parser::Object
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(Scene& scene, SceneGraph& sg, BehaviourSystem& behaviourSystem,
-  const parser::Object& obj, Region* parent, const Matrix& parentTransform, map<Point,
-  bool>& endpoints) {
+static void constructRegion_r(EntityManager& em, const parser::Object& obj, Region* parent,
+  const Matrix& parentTransform, map<Point, bool>& endpoints) {
+
+  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  SceneGraph& sg = scene.sg;
 
   DBG_PRINT("Constructing Region\n");
 
@@ -349,19 +370,19 @@ static void constructRegion_r(Scene& scene, SceneGraph& sg, BehaviourSystem& beh
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(scene, sg, behaviourSystem, child, region, transform, endpoints);
+        constructRegion_r(em, child, region, transform, endpoints);
       }
       else if (type == "wall") {
-        constructWalls(scene, endpoints, child, *region, transform);
+        constructWalls(em, endpoints, child, *region, transform);
       }
       else if (type == "joining_edge") {
-        constructJoiningEdges(scene, endpoints, child, region, transform);
+        constructJoiningEdges(em, endpoints, child, region, transform);
       }
       else if (type == "sprite") {
-        constructSprite(scene, child, *region, transform);
+        constructSprite(em, child, *region, transform);
       }
       else if (type == "floor_decal") {
-        constructFloorDecal(scene, child, transform, entityId);
+        constructFloorDecal(em, child, transform, entityId);
       }
       else if (type == "player") {
         if (sg.player) {
@@ -373,7 +394,7 @@ static void constructRegion_r(Scene& scene, SceneGraph& sg, BehaviourSystem& beh
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(behaviourSystem, obj, *region);
+      constructDoor(em, obj, *region);
     }
   }
   catch (Exception& ex) {
@@ -392,8 +413,6 @@ static void constructRegion_r(Scene& scene, SceneGraph& sg, BehaviourSystem& beh
 //===========================================
 void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
-  BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
-
   SceneGraph& sg = scene.sg;
 
   if (getValue(obj.dict, "type") != "region") {
@@ -410,7 +429,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(scene, sg, behaviourSystem, obj, nullptr, m, endpoints);
+  constructRegion_r(em, obj, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
