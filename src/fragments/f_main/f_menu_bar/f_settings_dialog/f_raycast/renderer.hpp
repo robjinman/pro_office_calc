@@ -87,6 +87,8 @@ class Renderer : public System {
   public:
     Renderer();
 
+    void connectRegions();
+
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;
 

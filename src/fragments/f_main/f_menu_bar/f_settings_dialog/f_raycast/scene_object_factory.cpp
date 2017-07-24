@@ -323,9 +323,8 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
     }
 
     entityId_t entityId = Component::getNextId();
-    entityId_t joinId = Component::getNextId();
 
-    JoiningEdge* edge = new JoiningEdge(entityId, parentId, joinId);
+    JoiningEdge* edge = new JoiningEdge(entityId, parentId, Component::getNextId());
 
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
@@ -342,7 +341,7 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 
     scene.addComponent(pComponent_t(edge));
 
-    CJoiningEdge* boundary = new CJoiningEdge(entityId, parentId);
+    CJoiningEdge* boundary = new CJoiningEdge(entityId, parentId, Component::getNextId());
 
     boundary->lseg.A = obj.path.points[j];
     boundary->lseg.B = obj.path.points[i];
@@ -476,83 +475,10 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
 }
 
 //===========================================
-// similar
-//===========================================
-static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 4.0;
-  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
-    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
-}
-
-//===========================================
-// areTwins
-//===========================================
-static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
-  return similar(je1.lseg, je2.lseg);
-}
-
-//===========================================
-// connectSubregions_r
-//===========================================
-static void connectSubregions_r(Scene& scene, Region& region) {
-  if (region.children.size() == 0) {
-    return;
-  }
-
-  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    Region& r = **it;
-    connectSubregions_r(scene, r);
-
-    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
-        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
-        assert(je != nullptr);
-
-        bool hasTwin = false;
-        forEachRegion(region, [&](Region& r_) {
-          if (!hasTwin) {
-            if (&r_ != &r) {
-              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
-                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
-                  assert(other != nullptr);
-
-                  if (je == other) {
-                    hasTwin = true;
-                    break;
-                  }
-
-                  if (areTwins(*je, *other)) {
-                    hasTwin = true;
-
-                    je->joinId = other->joinId;
-                    je->regionA = other->regionA = &r;
-                    je->regionB = other->regionB = &r_;
-
-                    je->mergeIn(*other);
-                    other->mergeIn(*je);
-
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        if (!hasTwin) {
-          je->regionA = &r;
-          je->regionB = &region;
-        }
-      }
-    }
-  };
-}
-
-//===========================================
 // constructRootRegion
 //===========================================
 void constructRootRegion(EntityManager& em, const parser::Object& obj) {
+  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
   SceneGraph& sg = scene.sg;
 
@@ -582,7 +508,8 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
     EXCEPTION("Scene must contain the player");
   }
 
-  connectSubregions_r(scene, *sg.rootRegion);
+  scene.connectRegions();
+  renderer.connectRegions();
 
   sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};

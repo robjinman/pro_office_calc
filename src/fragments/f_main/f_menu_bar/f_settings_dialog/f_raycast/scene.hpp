@@ -31,6 +31,7 @@ class Scene : public System {
     SceneGraph sg;
 
     void loadMap(const std::string& mapFilePath);
+    void connectRegions();
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;

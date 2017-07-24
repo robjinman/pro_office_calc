@@ -426,6 +426,87 @@ static void getEntitiesInRadius_r(const Region& region, const Circle& circle,
 }
 
 //===========================================
+// similar
+//===========================================
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  double delta = 4.0;
+  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
+    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+}
+
+//===========================================
+// areTwins
+//===========================================
+static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
+  return similar(je1.lseg, je2.lseg);
+}
+
+//===========================================
+// connectSubregions_r
+//===========================================
+static void connectSubregions_r(Region& region) {
+  if (region.children.size() == 0) {
+    return;
+  }
+
+  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+    Region& r = **it;
+    connectSubregions_r(r);
+
+    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
+      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
+        assert(je != nullptr);
+
+        bool hasTwin = false;
+        forEachRegion(region, [&](Region& r_) {
+          if (!hasTwin) {
+            if (&r_ != &r) {
+              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+                  assert(other != nullptr);
+
+                  if (je == other) {
+                    hasTwin = true;
+                    break;
+                  }
+
+                  if (areTwins(*je, *other)) {
+                    hasTwin = true;
+
+                    je->joinId = other->joinId;
+                    je->regionA = other->regionA = &r;
+                    je->regionB = other->regionB = &r_;
+
+                    je->mergeIn(*other);
+                    other->mergeIn(*je);
+
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        if (!hasTwin) {
+          je->regionA = &r;
+          je->regionB = &region;
+        }
+      }
+    }
+  };
+}
+
+//===========================================
+// Scene::connectRegions
+//===========================================
+void Scene::connectRegions() {
+  connectSubregions_r(*sg.rootRegion);
+}
+
+//===========================================
 // Scene::getEntitiesInRadius
 //===========================================
 set<entityId_t> Scene::getEntitiesInRadius(double radius) const {

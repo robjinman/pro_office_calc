@@ -201,11 +201,13 @@ struct CWall : public CEdge {
 };
 
 struct CJoiningEdge : public CEdge {
-  CJoiningEdge(entityId_t entityId, entityId_t parentId)
-    : CEdge(CRenderKind::JOINING_EDGE, entityId, parentId) {}
+  CJoiningEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : CEdge(CRenderKind::JOINING_EDGE, entityId, parentId),
+      joinId(joinId) {}
 
-  CJoiningEdge(const CJoiningEdge& cpy, entityId_t entityId, entityId_t parentId)
-    : CEdge(cpy, entityId, parentId) {
+  CJoiningEdge(const CJoiningEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : CEdge(cpy, entityId, parentId),
+      joinId(joinId) {
 
     topTexture = cpy.topTexture;
     bottomTexture = cpy.bottomTexture;
@@ -221,6 +223,8 @@ struct CJoiningEdge : public CEdge {
       bottomTexture = other.bottomTexture;
     }
   }
+
+  entityId_t joinId = 0;
 
   std::string topTexture = "default";
   std::string bottomTexture = "default";

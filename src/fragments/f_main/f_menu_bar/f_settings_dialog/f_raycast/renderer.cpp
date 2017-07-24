@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <ostream>
+#include <functional>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QBrush>
@@ -20,6 +21,7 @@ using std::vector;
 using std::array;
 using std::unique_ptr;
 using std::ostream;
+using std::function;
 
 
 static const double ATAN_MIN = -10.0;
@@ -43,6 +45,30 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
     case CRenderKind::SPRITE: os << "SPRITE"; break;
   }
   return os;
+}
+
+//===========================================
+// forEachConstCRegion
+//===========================================
+void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> fn) {
+  fn(region);
+  std::for_each(region.children.begin(), region.children.end(),
+    [&](const unique_ptr<CRegion>& r) {
+
+    forEachConstCRegion(*r, fn);
+  });
+}
+
+//===========================================
+// forEachCRegion
+//===========================================
+void forEachCRegion(CRegion& region, function<void(CRegion&)> fn) {
+  fn(region);
+  std::for_each(region.children.begin(), region.children.end(),
+    [&](unique_ptr<CRegion>& r) {
+
+    forEachCRegion(*r, fn);
+  });
 }
 
 //===========================================
@@ -885,6 +911,87 @@ void Renderer::update() {
 //===========================================
 void Renderer::handleEvent(const GameEvent& event) {
 
+}
+
+//===========================================
+// similar
+//===========================================
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  double delta = 4.0;
+  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
+    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+}
+
+//===========================================
+// areTwins
+//===========================================
+static bool areTwins(const CJoiningEdge& je1, const CJoiningEdge& je2) {
+  return similar(je1.lseg, je2.lseg);
+}
+
+//===========================================
+// connectSubregions_r
+//===========================================
+static void connectSubregions_r(CRegion& region) {
+  if (region.children.size() == 0) {
+    return;
+  }
+
+  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+    CRegion& r = **it;
+    connectSubregions_r(r);
+
+    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
+      if ((*jt)->kind == CRenderKind::JOINING_EDGE) {
+        CJoiningEdge* je = dynamic_cast<CJoiningEdge*>(*jt);
+        assert(je != nullptr);
+
+        bool hasTwin = false;
+        forEachCRegion(region, [&](CRegion& r_) {
+          if (!hasTwin) {
+            if (&r_ != &r) {
+              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+                if ((*lt)->kind == CRenderKind::JOINING_EDGE) {
+                  CJoiningEdge* other = dynamic_cast<CJoiningEdge*>(*lt);
+                  assert(other != nullptr);
+
+                  if (je == other) {
+                    hasTwin = true;
+                    break;
+                  }
+
+                  if (areTwins(*je, *other)) {
+                    hasTwin = true;
+
+                    je->joinId = other->joinId;
+                    je->regionA = other->regionA = &r;
+                    je->regionB = other->regionB = &r_;
+
+                    je->mergeIn(*other);
+                    other->mergeIn(*je);
+
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        if (!hasTwin) {
+          je->regionA = &r;
+          je->regionB = &region;
+        }
+      }
+    }
+  };
+}
+
+//===========================================
+// Renderer::connectRegions
+//===========================================
+void Renderer::connectRegions() {
+  connectSubregions_r(*rg.rootRegion);
 }
 
 //===========================================
