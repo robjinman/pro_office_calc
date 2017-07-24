@@ -115,7 +115,6 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   entityId_t id = Component::getNextId();
 
   WallDecal* vRect = new WallDecal(id, parentId);
-  vRect->texture = texture;
   vRect->size = size;
   vRect->pos = pos;
 
@@ -123,8 +122,6 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 
   CWallDecal* decal = new CWallDecal(id, parentId);
   decal->texture = texture;
-  decal->size = size;
-  decal->pos = pos;
 
   renderer.addComponent(pComponent_t(decal));
 }
@@ -163,19 +160,13 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
     edge->lseg = transform(edge->lseg, m);
-
     edge->region = &zone;
-    edge->texture = getValue(obj.dict, "texture");
 
     edges.push_back(edge);
 
     scene.addComponent(pComponent_t(edge));
 
     CWall* wall = new CWall(id, region.entityId());
-
-    wall->lseg.A = obj.path.points[j];
-    wall->lseg.B = obj.path.points[i];
-    wall->lseg = transform(wall->lseg, m);
 
     wall->region = &region;
     wall->texture = getValue(obj.dict, "texture");
@@ -217,7 +208,6 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   entityId_t id = Component::getNextId();
 
   FloorDecal* hRect = new FloorDecal(id, parentId);
-  hRect->texture = texture;
   hRect->size = size;
   hRect->transform = parentTransform * obj.transform * m;
 
@@ -225,8 +215,6 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 
   CFloorDecal* decal = new CFloorDecal(id, parentId);
   decal->texture = texture;
-  decal->size = size;
-  decal->transform = parentTransform * obj.transform * m;
 
   renderer.addComponent(pComponent_t(decal));
 }
@@ -263,7 +251,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
   if (getValue(obj.dict, "subtype") == "bad_guy") {
     entityId_t id = Component::getNextId();
 
-    BadGuy* vRect = new BadGuy(id, zone.entityId());
+    Sprite* vRect = new Sprite(id, zone.entityId(), Size(70, 70));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->region = &zone;
@@ -271,7 +259,6 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
     scene.addComponent(pComponent_t(vRect));
 
     CBadGuy* sprite = new CBadGuy(id, zone.entityId());
-    sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
 
     renderer.addComponent(pComponent_t(sprite));
@@ -279,7 +266,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
   else if (getValue(obj.dict, "subtype") == "ammo") {
     entityId_t id = Component::getNextId();
 
-    Ammo* vRect = new Ammo(id, zone.entityId());
+    Sprite* vRect = new Sprite(id, zone.entityId(), Size(30, 15));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->region = &zone;
@@ -287,7 +274,6 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
     scene.addComponent(pComponent_t(vRect));
 
     CAmmo* sprite = new CAmmo(id, zone.entityId());
-    sprite->setTransform(parentTransform * obj.transform * m);
     sprite->region = &region;
 
     renderer.addComponent(pComponent_t(sprite));
@@ -330,22 +316,11 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
     edge->lseg.B = obj.path.points[i];
     edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
 
-    if (contains<string>(obj.dict, "top_texture")) {
-      edge->topTexture = getValue(obj.dict, "top_texture");
-    }
-    if (contains<string>(obj.dict, "bottom_texture")) {
-      edge->bottomTexture = getValue(obj.dict, "bottom_texture");
-    }
-
     edges.push_back(edge);
 
     scene.addComponent(pComponent_t(edge));
 
     CJoiningEdge* boundary = new CJoiningEdge(entityId, parentId, Component::getNextId());
-
-    boundary->lseg.A = obj.path.points[j];
-    boundary->lseg.B = obj.path.points[i];
-    boundary->lseg = transform(boundary->lseg, parentTransform * obj.transform);
 
     if (contains<string>(obj.dict, "top_texture")) {
       boundary->topTexture = getValue(obj.dict, "top_texture");
@@ -379,9 +354,8 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
 
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
-
-  RenderGraph& rg = renderer.rg;
   SceneGraph& sg = scene.sg;
+  RenderGraph& rg = renderer.rg;
 
   DBG_PRINT("Constructing Region\n");
 
@@ -427,10 +401,10 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
       std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
 
     region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
-      getValue(obj.dict, "floor_texture") : sg.defaults.floorTexture;
+      getValue(obj.dict, "floor_texture") : rg.defaults.floorTexture;
 
     region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
-      getValue(obj.dict, "ceiling_texture") : sg.defaults.ceilingTexture;
+      getValue(obj.dict, "ceiling_texture") : rg.defaults.ceilingTexture;
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       const parser::Object& child = **it;
@@ -455,7 +429,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(child, *zone, transform, sg.viewport));
+        sg.player.reset(constructPlayer(child, *zone, transform, rg.viewport));
         sg.player->currentRegion = entityId;
       }
     }
@@ -493,10 +467,8 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
     EXCEPTION("Root region already exists");
   }
 
-  sg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
-  sg.viewport.y = 10.0;
-
-  rg.viewport = sg.viewport; // TODO
+  rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
+  rg.viewport.y = 10.0;
 
   map<Point, bool> endpoints;
   Matrix m;
@@ -529,19 +501,4 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   rg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
   rg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
   rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
-
-  // TODO
-  sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
-  sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
-  sg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
-  sg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
-  sg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
-  sg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
-  sg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
-  sg.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
-  sg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
-  sg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
-  sg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
-  sg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
-  sg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
 }

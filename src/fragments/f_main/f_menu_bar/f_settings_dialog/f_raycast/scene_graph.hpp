@@ -9,15 +9,10 @@
 struct SceneDefaults {
   double floorHeight = 0;
   double ceilingHeight = 100;
-  std::string floorTexture = "cracked_mud";
-  std::string ceilingTexture = "grey_stone";
 };
 
 struct SceneGraph {
   SceneDefaults defaults;
-
-  Size viewport;
-  std::map<std::string, Texture> textures;
 
   pRegion_t rootRegion;
   std::list<pEdge_t> edges;

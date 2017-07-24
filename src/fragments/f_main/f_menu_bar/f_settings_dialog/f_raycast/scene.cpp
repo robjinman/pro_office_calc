@@ -485,9 +485,6 @@ static void connectSubregions_r(Region& region) {
                     je->regionA = other->regionA = &r;
                     je->regionB = other->regionB = &r_;
 
-                    je->mergeIn(*other);
-                    other->mergeIn(*je);
-
                     break;
                   }
                 }

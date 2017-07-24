@@ -13,6 +13,35 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
 
 
+struct AnimationFrame {
+  std::array<QRectF, 8> parts;
+
+  const QRectF& part(double angle) const {
+    double da = PI * 0.25;
+    return parts[static_cast<int>(round(normaliseAngle(angle) / da)) % 8];
+  }
+};
+
+class Animation {
+  public:
+    int fps = 0;
+    std::vector<AnimationFrame> frames;
+
+    void update();
+    const AnimationFrame& currentFrame() const {
+      return frames[m_currentFrameIdx];
+    }
+
+  private:
+    double m_elapsed = 0.0;
+    int m_currentFrameIdx = 0;
+};
+
+struct Texture {
+  QImage image;
+  Size size_wd;
+};
+
 enum class CRenderKind {
   REGION,
   WALL,
@@ -40,27 +69,17 @@ class CRegion;
 
 class CSprite : public CRender {
   public:
-    CSprite(entityId_t entityId, entityId_t parentId, const Size& size, const std::string& texture)
+    CSprite(entityId_t entityId, entityId_t parentId, const std::string& texture)
       : CRender(CRenderKind::SPRITE, entityId, parentId),
-        texture(texture),
-        size(size) {}
+        texture(texture) {}
 
-    void setTransform(const Matrix& m) {
-      pos.x = m.tx();
-      pos.y = m.ty();
-      angle = m.a();
-    }
-
-    const QRectF& textureRegion(const Point& camPos) const {
-      Vec2f v = pos - camPos;
-      return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + angle);
+    const QRectF& textureRegion(const Sprite& sprite, const Point& camPos) const {
+      Vec2f v = sprite.pos - camPos;
+      return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + sprite.angle);
     }
 
     CRegion* region;
     std::string texture;
-    Vec2f pos;
-    double angle;
-    Size size;
     std::map<std::string, Animation> animations;
 
     void playAnimation(const std::string& name);
@@ -72,7 +91,7 @@ typedef std::unique_ptr<CSprite> pCSprite_t;
 
 struct CAmmo : public CSprite {
   CAmmo(entityId_t entityId, entityId_t parentId)
-    : CSprite(entityId, parentId, Size(30, 15), "ammo") {
+    : CSprite(entityId, parentId, "ammo") {
 
     Animation anim;
     anim.fps = 0;
@@ -96,7 +115,7 @@ struct CAmmo : public CSprite {
 
 struct CBadGuy : public CSprite {
   CBadGuy(entityId_t entityId, entityId_t parentId)
-    : CSprite(entityId, parentId, Size(70, 70), "bad_guy") {
+    : CSprite(entityId, parentId, "bad_guy") {
 
     Animation anim;
     anim.fps = 0;
@@ -123,12 +142,7 @@ struct CEdge : public CRender {
     : CRender(kind, entityId, parentId) {}
 
   CEdge(const CEdge& cpy, entityId_t entityId, entityId_t parentId)
-    : CRender(cpy.kind, entityId, parentId) {
-
-    lseg = cpy.lseg;
-  }
-
-  LineSegment lseg;
+    : CRender(cpy.kind, entityId, parentId) {}
 
   virtual ~CEdge() {}
 };
@@ -140,8 +154,6 @@ struct CFloorDecal : public CRender {
     : CRender(CRenderKind::FLOOR_DECAL, entityId, parentId) {}
 
   std::string texture;
-  Size size;
-  Matrix transform;
 
   virtual ~CFloorDecal() override {}
 };
@@ -174,8 +186,6 @@ struct CWallDecal : public CRender {
     : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
 
   std::string texture;
-  Size size;
-  Point pos;
 
   virtual ~CWallDecal() {}
 };

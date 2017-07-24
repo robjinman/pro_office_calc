@@ -6,8 +6,6 @@
 
 
 struct RenderDefaults {
-  double floorHeight = 0;
-  double ceilingHeight = 100;
   std::string floorTexture = "cracked_mud";
   std::string ceilingTexture = "grey_stone";
 };
