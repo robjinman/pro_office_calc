@@ -56,10 +56,10 @@ class Scene : public System {
     double m_frameRate;
     std::map<std::string, Tween> m_tweens;
 
-    std::map<entityId_t, CRenderSpatial*> m_components;
+    std::map<entityId_t, CSpatial*> m_components;
     std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
 
-    bool isRoot(const CRenderSpatial& c) const;
+    bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
 
     inline CZone& getCurrentZone() const {

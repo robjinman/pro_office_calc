@@ -12,7 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
-enum class CRenderSpatialKind {
+enum class CSpatialKind {
   ZONE,
   WALL,
   JOINING_EDGE,
@@ -21,26 +21,26 @@ enum class CRenderSpatialKind {
   WALL_DECAL
 };
 
-struct CRenderSpatial : public Component {
-  CRenderSpatial(CRenderSpatialKind kind, entityId_t entityId, entityId_t parentId)
-    : Component(entityId, ComponentKind::C_RENDER_SPATIAL),
+struct CSpatial : public Component {
+  CSpatial(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
+    : Component(entityId, ComponentKind::C_SPATIAL),
       kind(kind),
       parentId(parentId) {}
 
-  CRenderSpatialKind kind;
+  CSpatialKind kind;
   entityId_t parentId;
 
-  virtual ~CRenderSpatial() override {}
+  virtual ~CSpatial() override {}
 };
 
-typedef std::unique_ptr<CRenderSpatial> pCRenderSpatial_t;
+typedef std::unique_ptr<CSpatial> pCSpatial_t;
 
 class CZone;
 
-class Sprite : public CRenderSpatial {
+class Sprite : public CSpatial {
   public:
     Sprite(entityId_t entityId, entityId_t parentId, const Size& size)
-      : CRenderSpatial(CRenderSpatialKind::SPRITE, entityId, parentId),
+      : CSpatial(CSpatialKind::SPRITE, entityId, parentId),
         size(size) {}
 
     void setTransform(const Matrix& m) {
@@ -59,12 +59,12 @@ class Sprite : public CRenderSpatial {
 
 typedef std::unique_ptr<Sprite> pSprite_t;
 
-struct Edge : public CRenderSpatial {
-  Edge(CRenderSpatialKind kind, entityId_t entityId, entityId_t parentId)
-    : CRenderSpatial(kind, entityId, parentId) {}
+struct Edge : public CSpatial {
+  Edge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
+    : CSpatial(kind, entityId, parentId) {}
 
   Edge(const Edge& cpy, entityId_t entityId, entityId_t parentId)
-    : CRenderSpatial(cpy.kind, entityId, parentId) {
+    : CSpatial(cpy.kind, entityId, parentId) {
 
     lseg = cpy.lseg;
   }
@@ -76,9 +76,9 @@ struct Edge : public CRenderSpatial {
 
 typedef std::unique_ptr<Edge> pEdge_t;
 
-struct FloorDecal : public CRenderSpatial {
+struct FloorDecal : public CSpatial {
   FloorDecal(entityId_t entityId, entityId_t parentId)
-    : CRenderSpatial(CRenderSpatialKind::FLOOR_DECAL, entityId, parentId) {}
+    : CSpatial(CSpatialKind::FLOOR_DECAL, entityId, parentId) {}
 
   Size size;
   Matrix transform;
@@ -90,9 +90,9 @@ typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
 
 typedef std::unique_ptr<CZone> pCZone_t;
 
-struct CZone : public CRenderSpatial {
+struct CZone : public CSpatial {
   CZone(entityId_t entityId, entityId_t parentId)
-    : CRenderSpatial(CRenderSpatialKind::ZONE, entityId, parentId) {}
+    : CSpatial(CSpatialKind::ZONE, entityId, parentId) {}
 
   double floorHeight = 0;
   double ceilingHeight = 100;
@@ -108,9 +108,9 @@ struct CZone : public CRenderSpatial {
 void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
 void forEachZone(CZone& zone, std::function<void(CZone&)> fn);
 
-struct WallDecal : public CRenderSpatial {
+struct WallDecal : public CSpatial {
   WallDecal(entityId_t entityId, entityId_t parentId)
-    : CRenderSpatial(CRenderSpatialKind::WALL_DECAL, entityId, parentId) {}
+    : CSpatial(CSpatialKind::WALL_DECAL, entityId, parentId) {}
 
   Size size;
   Point pos;
@@ -122,7 +122,7 @@ typedef std::unique_ptr<WallDecal> pWallDecal_t;
 
 struct Wall : public Edge {
   Wall(entityId_t entityId, entityId_t parentId)
-    : Edge(CRenderSpatialKind::WALL, entityId, parentId) {}
+    : Edge(CSpatialKind::WALL, entityId, parentId) {}
 
   CZone* zone;
   std::list<pWallDecal_t> decals;
@@ -136,7 +136,7 @@ struct Wall : public Edge {
 
 struct JoiningEdge : public Edge {
   JoiningEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : Edge(CRenderSpatialKind::JOINING_EDGE, entityId, parentId),
+    : Edge(CSpatialKind::JOINING_EDGE, entityId, parentId),
       joinId(joinId) {}
 
   JoiningEdge(const JoiningEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)

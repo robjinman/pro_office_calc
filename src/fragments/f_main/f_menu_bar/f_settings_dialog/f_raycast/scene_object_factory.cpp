@@ -77,7 +77,7 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId, const LineSegment& wall) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer&>(ComponentKind::C_RENDER);
 
   Point A = parentTransform * obj.transform * obj.path.points[0];
@@ -132,7 +132,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Walls\n");
@@ -190,7 +190,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
 static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing FloorDecal\n");
@@ -243,7 +243,7 @@ static Player* constructPlayer(const parser::Object& obj, const CZone& zone,
 static void constructSprite(EntityManager& em, const parser::Object& obj, CZone& zone,
   CRegion& region, const Matrix& parentTransform) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Sprite\n");
@@ -289,7 +289,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
 static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing JoiningEdges\n");
@@ -353,7 +353,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
   CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
   SceneGraph& sg = scene.sg;
   RenderGraph& rg = renderer.rg;
 
@@ -454,7 +454,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
 //===========================================
 void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
-  Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
 
   RenderGraph& rg = renderer.rg;
   SceneGraph& sg = scene.sg;

@@ -25,14 +25,14 @@ using std::set;
 using std::ostream;
 
 
-ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
+ostream& operator<<(ostream& os, CSpatialKind kind) {
   switch (kind) {
-    case CRenderSpatialKind::ZONE: os << "ZONE"; break;
-    case CRenderSpatialKind::WALL: os << "WALL"; break;
-    case CRenderSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
-    case CRenderSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
-    case CRenderSpatialKind::WALL_DECAL: os << "WALL_DECAL"; break;
-    case CRenderSpatialKind::SPRITE: os << "SPRITE"; break;
+    case CSpatialKind::ZONE: os << "ZONE"; break;
+    case CSpatialKind::WALL: os << "WALL"; break;
+    case CSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
+    case CSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
+    case CSpatialKind::WALL_DECAL: os << "WALL_DECAL"; break;
+    case CSpatialKind::SPRITE: os << "SPRITE"; break;
   }
   return os;
 }
@@ -94,7 +94,7 @@ static bool intersectWall(const CZone& zone, const Circle& circle, const Player&
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
 
-        if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
+        if (edge.kind == CSpatialKind::JOINING_EDGE) {
           const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
           //assert(&zone == je.zoneA || &zone == je.zoneB);
@@ -148,7 +148,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
             continue;
           }
 
-          if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
+          if (edge.kind == CSpatialKind::JOINING_EDGE) {
             const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
             if (&zone != je.zoneA && &zone != je.zoneB) {
@@ -284,7 +284,7 @@ void Scene::translateCamera(const Vec2f& dir) {
       const Edge& edge = **it;
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        assert(edge.kind == CRenderSpatialKind::JOINING_EDGE);
+        assert(edge.kind == CSpatialKind::JOINING_EDGE);
         const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
         LineSegment ray(cam.pos, cam.pos + dv);
@@ -460,7 +460,7 @@ static void connectSubzones_r(CZone& zone) {
     connectSubzones_r(r);
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+      if ((*jt)->kind == CSpatialKind::JOINING_EDGE) {
         JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
         assert(je != nullptr);
 
@@ -469,7 +469,7 @@ static void connectSubzones_r(CZone& zone) {
           if (!hasTwin) {
             if (&r_ != &r) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CRenderSpatialKind::JOINING_EDGE) {
+                if ((*lt)->kind == CSpatialKind::JOINING_EDGE) {
                   JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
                   assert(other != nullptr);
 
@@ -548,27 +548,27 @@ void Scene::update() {
 //===========================================
 // addToZone
 //===========================================
-static void addToZone(SceneGraph& sg, CZone& zone, pCRenderSpatial_t child) {
+static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
   switch (child->kind) {
-    case CRenderSpatialKind::ZONE: {
+    case CSpatialKind::ZONE: {
       pCZone_t ptr(dynamic_cast<CZone*>(child.release()));
       ptr->parent = &zone;
       zone.children.push_back(std::move(ptr));
       break;
     }
-    case CRenderSpatialKind::JOINING_EDGE:
-    case CRenderSpatialKind::WALL: {
+    case CSpatialKind::JOINING_EDGE:
+    case CSpatialKind::WALL: {
       pEdge_t ptr(dynamic_cast<Edge*>(child.release()));
       zone.edges.push_back(ptr.get());
       sg.edges.push_back(std::move(ptr));
       break;
     }
-    case CRenderSpatialKind::FLOOR_DECAL: {
+    case CSpatialKind::FLOOR_DECAL: {
       pFloorDecal_t ptr(dynamic_cast<FloorDecal*>(child.release()));
       zone.floorDecals.push_back(std::move(ptr));
       break;
     }
-    case CRenderSpatialKind::SPRITE: {
+    case CSpatialKind::SPRITE: {
       pSprite_t ptr(dynamic_cast<Sprite*>(child.release()));
       zone.sprites.push_back(std::move(ptr));
       break;
@@ -581,9 +581,9 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCRenderSpatial_t child) {
 //===========================================
 // addToWall
 //===========================================
-static void addToWall(Wall& edge, pCRenderSpatial_t child) {
+static void addToWall(Wall& edge, pCSpatial_t child) {
   switch (child->kind) {
-    case CRenderSpatialKind::WALL_DECAL: {
+    case CSpatialKind::WALL_DECAL: {
       pWallDecal_t ptr(dynamic_cast<WallDecal*>(child.release()));
       edge.decals.push_back(std::move(ptr));
       break;
@@ -596,12 +596,12 @@ static void addToWall(Wall& edge, pCRenderSpatial_t child) {
 //===========================================
 // addChildToComponent
 //===========================================
-static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRenderSpatial_t child) {
+static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t child) {
   switch (parent.kind) {
-    case CRenderSpatialKind::ZONE:
+    case CSpatialKind::ZONE:
       addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
       break;
-    case CRenderSpatialKind::WALL:
+    case CSpatialKind::WALL:
       addToWall(dynamic_cast<Wall&>(parent), std::move(child));
       break;
     default:
@@ -613,16 +613,16 @@ static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRender
 //===========================================
 // removeFromZone
 //===========================================
-static void removeFromZone(SceneGraph& sg, CZone& zone, const CRenderSpatial& child) {
+static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
   switch (child.kind) {
-    case CRenderSpatialKind::ZONE: {
+    case CSpatialKind::ZONE: {
       zone.children.remove_if([&](const pCZone_t& e) {
         return e.get() == dynamic_cast<const CZone*>(&child);
       });
       break;
     }
-    case CRenderSpatialKind::JOINING_EDGE:
-    case CRenderSpatialKind::WALL: {
+    case CSpatialKind::JOINING_EDGE:
+    case CSpatialKind::WALL: {
       zone.edges.remove_if([&](const Edge* e) {
         return e == dynamic_cast<const Edge*>(&child);
       });
@@ -631,13 +631,13 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CRenderSpatial& ch
       });
       break;
     }
-    case CRenderSpatialKind::FLOOR_DECAL: {
+    case CSpatialKind::FLOOR_DECAL: {
       zone.floorDecals.remove_if([&](const pFloorDecal_t& e) {
         return e.get() == dynamic_cast<const FloorDecal*>(&child);
       });
       break;
     }
-    case CRenderSpatialKind::SPRITE: {
+    case CSpatialKind::SPRITE: {
       zone.sprites.remove_if([&](const pSprite_t& e) {
         return e.get() == dynamic_cast<const Sprite*>(&child);
       });
@@ -651,9 +651,9 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CRenderSpatial& ch
 //===========================================
 // removeFromWall
 //===========================================
-static void removeFromWall(Wall& edge, const CRenderSpatial& child) {
+static void removeFromWall(Wall& edge, const CSpatial& child) {
   switch (child.kind) {
-    case CRenderSpatialKind::WALL_DECAL: {
+    case CSpatialKind::WALL_DECAL: {
       edge.decals.remove_if([&](const pWallDecal_t& e) {
         return e.get() == dynamic_cast<const WallDecal*>(&child);
       });
@@ -667,14 +667,14 @@ static void removeFromWall(Wall& edge, const CRenderSpatial& child) {
 //===========================================
 // removeChildFromComponent
 //===========================================
-static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent,
-  const CRenderSpatial& child) {
+static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent,
+  const CSpatial& child) {
 
   switch (parent.kind) {
-    case CRenderSpatialKind::ZONE:
+    case CSpatialKind::ZONE:
       removeFromZone(sg, dynamic_cast<CZone&>(parent), child);
       break;
-    case CRenderSpatialKind::WALL:
+    case CSpatialKind::WALL:
       removeFromWall(dynamic_cast<Wall&>(parent), child);
       break;
     default:
@@ -694,19 +694,19 @@ Component& Scene::getComponent(entityId_t entityId) const {
 // Scene::addComponent
 //===========================================
 void Scene::addComponent(pComponent_t component) {
-  if (component->kind() != ComponentKind::C_RENDER_SPATIAL) {
-    EXCEPTION("Component is not of kind C_RENDER_SPATIAL");
+  if (component->kind() != ComponentKind::C_SPATIAL) {
+    EXCEPTION("Component is not of kind C_SPATIAL");
   }
 
-  CRenderSpatial* ptr = dynamic_cast<CRenderSpatial*>(component.release());
-  pCRenderSpatial_t c(ptr);
+  CSpatial* ptr = dynamic_cast<CSpatial*>(component.release());
+  pCSpatial_t c(ptr);
 
   if (c->parentId == -1) {
     if (sg.rootZone) {
       EXCEPTION("Root zone already set");
     }
 
-    if (c->kind != CRenderSpatialKind::ZONE) {
+    if (c->kind != CSpatialKind::ZONE) {
       EXCEPTION("Component has no parent; Only zones can be root");
     }
 
@@ -721,7 +721,7 @@ void Scene::addComponent(pComponent_t component) {
       EXCEPTION("Could not find parent component with id " << c->parentId);
     }
 
-    CRenderSpatial* parent = it->second;
+    CSpatial* parent = it->second;
     assert(parent->entityId() == c->parentId);
 
     m_entityChildren[c->parentId].insert(c->entityId());
@@ -734,8 +734,8 @@ void Scene::addComponent(pComponent_t component) {
 //===========================================
 // Scene::isRoot
 //===========================================
-bool Scene::isRoot(const CRenderSpatial& c) const {
-  if (c.kind != CRenderSpatialKind::ZONE) {
+bool Scene::isRoot(const CSpatial& c) const {
+  if (c.kind != CSpatialKind::ZONE) {
     return false;
   }
   if (sg.rootZone == nullptr) {
@@ -772,11 +772,11 @@ void Scene::removeEntity(entityId_t id) {
     return;
   }
 
-  CRenderSpatial& c = *it->second;
+  CSpatial& c = *it->second;
   auto jt = m_components.find(c.parentId);
 
   if (jt != m_components.end()) {
-    CRenderSpatial& parent = *jt->second;
+    CSpatial& parent = *jt->second;
     removeChildFromComponent(sg, parent, c);
   }
   else {

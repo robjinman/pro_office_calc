@@ -57,7 +57,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderer));
 
   Scene* scene = new Scene(m_entityManager, FRAME_RATE);
-  m_entityManager.addSystem(ComponentKind::C_RENDER_SPATIAL, pSystem_t(scene));
+  m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(scene));
 
   scene->loadMap("data/map.svg");
 
@@ -80,7 +80,7 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
   Renderer& renderer = m_entityManager.system<Renderer>(ComponentKind::C_RENDER);
 
   renderer.renderScene(m_buffer, *scene.sg.player);
@@ -146,7 +146,7 @@ void FRaycast::tick() {
   ++m_frame;
 #endif
 
-  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
 
   m_entityManager.update();
 

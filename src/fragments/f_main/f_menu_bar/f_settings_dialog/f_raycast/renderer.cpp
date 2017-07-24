@@ -874,7 +874,7 @@ Renderer::Renderer(EntityManager& entityManager)
 // Renderer::renderScene
 //===========================================
 void Renderer::renderScene(QImage& target, const Player& player) {
-  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
 
   QPainter painter;
   painter.begin(&target);
@@ -1051,7 +1051,7 @@ static void connectSubregions_r(const Scene& scene, CRegion& region) {
 // Renderer::connectRegions
 //===========================================
 void Renderer::connectRegions() {
-  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
 
   connectSubregions_r(scene, *rg.rootRegion);
 }

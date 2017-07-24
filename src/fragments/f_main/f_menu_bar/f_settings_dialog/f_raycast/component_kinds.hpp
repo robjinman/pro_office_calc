@@ -5,8 +5,7 @@
 enum class ComponentKind {
   C_BEHAVIOUR,
   C_SPATIAL,
-  C_RENDER,
-  C_RENDER_SPATIAL
+  C_RENDER
 };
 
 
