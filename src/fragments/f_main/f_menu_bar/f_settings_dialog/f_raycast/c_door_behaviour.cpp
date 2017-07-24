@@ -1,18 +1,21 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
 #include "event.hpp"
 
 
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, Region& region)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, Region& zone, CRegion& region)
   : CBehaviour(entityId),
+    m_zone(zone),
     m_region(region) {
 
-  m_y0 = region.floorHeight;
-  m_y1 = region.ceilingHeight;
+  m_y0 = zone.floorHeight;
+  m_y1 = zone.ceilingHeight;
 
+  zone.ceilingHeight = zone.floorHeight + 0.1;
   region.ceilingHeight = region.floorHeight + 0.1;
 }
 
@@ -28,6 +31,7 @@ void CDoorBehaviour::update() {
     case ST_OPEN:
       return;
     case ST_OPENING:
+      m_zone.ceilingHeight += dy;
       m_region.ceilingHeight += dy;
 
       if (m_region.ceilingHeight + dy >= m_y1) {
@@ -35,6 +39,7 @@ void CDoorBehaviour::update() {
       }
       break;
     case ST_CLOSING:
+      m_zone.ceilingHeight -= dy;
       m_region.ceilingHeight -= dy;
 
       if (m_region.ceilingHeight - dy <= m_y0) {

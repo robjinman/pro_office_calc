@@ -21,7 +21,6 @@ struct SceneGraph {
 
   pRegion_t rootRegion;
   std::list<pEdge_t> edges;
-  const Region* currentRegion;
 
   std::unique_ptr<Player> player;
 };

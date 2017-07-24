@@ -117,12 +117,12 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 //===========================================
 // constructIntersection
 //===========================================
-static Intersection* constructIntersection(CRenderSpatialKind kind) {
+static Intersection* constructIntersection(CRenderKind kind) {
   switch (kind) {
-    case CRenderSpatialKind::WALL:
+    case CRenderKind::WALL:
       return new WallX;
       break;
-    case CRenderSpatialKind::JOINING_EDGE:
+    case CRenderKind::JOINING_EDGE:
       return new JoiningEdgeX;
       break;
     default:
@@ -133,8 +133,8 @@ static Intersection* constructIntersection(CRenderSpatialKind kind) {
 //===========================================
 // findIntersections_r
 //===========================================
-void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  CastResult& result, set<const Region*>& visitedRegions,
+void findIntersections_r(const Camera& camera, const LineSegment& ray, const CRegion& region,
+  CastResult& result, set<const CRegion*>& visitedRegions,
   set<entityId_t>& visitedJoiningEdges) {
 
   visitedRegions.insert(&region);
@@ -148,7 +148,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
   Matrix invCamMatrix = camera.matrix().inverse();
 
   for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
-    Sprite& sprite = **it;
+    CSprite& sprite = **it;
     Point pos = invCamMatrix * sprite.pos;
     double w = sprite.size.x;
     LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x, pos.y + 0.5 * w));
@@ -167,7 +167,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
   }
 
   for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
-    Edge& edge = **it;
+    CEdge& edge = **it;
 
     LineSegment lseg = transform(edge.lseg, invCamMatrix);
 
@@ -179,20 +179,20 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
       X->distanceFromCamera = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
 
-      if (edge.kind == CRenderSpatialKind::WALL) {
+      if (edge.kind == CRenderKind::WALL) {
         WallX* wallX = dynamic_cast<WallX*>(X);
-        Wall& wall = dynamic_cast<Wall&>(edge);
+        CWall& wall = dynamic_cast<CWall&>(edge);
 
         wallX->wall = &wall;
         result.intersections.push_back(pIntersection_t(X));
       }
-      else if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
+      else if (edge.kind == CRenderKind::JOINING_EDGE) {
         JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
-        JoiningEdge& je = dynamic_cast<JoiningEdge&>(edge);
+        CJoiningEdge& je = dynamic_cast<CJoiningEdge&>(edge);
 
         jeX->joiningEdge = &je;
 
-        const Region& next = je.regionA == &region ? *je.regionB : *je.regionA;
+        const CRegion& next = je.regionA == &region ? *je.regionB : *je.regionA;
 
         auto pX = pIntersection_t(X);
         if (visitedJoiningEdges.find(je.joinId) == visitedJoiningEdges.end()) {
@@ -214,22 +214,24 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const Reg
 //===========================================
 // castRay
 //===========================================
-static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
+static void castRay(Vec2f r, const RenderGraph& rg, const Player& player,
+  const CRegion& currentRegion, CastResult& result) {
+
   auto& intersections = result.intersections;
 
-  const Camera& cam = sg.player->camera();
+  const Camera& cam = player.camera();
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
-  set<const Region*> visitedRegions;
+  set<const CRegion*> visitedRegions;
   set<entityId_t> visitedJoiningEdges;
-  findIntersections_r(cam, ray, *sg.currentRegion, result, visitedRegions, visitedJoiningEdges);
+  findIntersections_r(cam, ray, currentRegion, result, visitedRegions, visitedJoiningEdges);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
   });
 
-  LineSegment projPlane(Point(cam.F, -sg.viewport.y / 2),
-    Point(cam.F, sg.viewport.y * 0.5));
+  LineSegment projPlane(Point(cam.F, -rg.viewport.y / 2),
+    Point(cam.F, rg.viewport.y * 0.5));
 
   Matrix m(cam.vAngle, Vec2f(0, 0));
   LineSegment rotProjPlane = transform(projPlane, m);
@@ -237,9 +239,9 @@ static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
   LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
   LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
   double subview0 = 0;
-  double subview1 = sg.viewport.y;
+  double subview1 = rg.viewport.y;
 
-  const Region* region = sg.currentRegion;
+  const CRegion* region = &currentRegion;
   int last = -1;
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
     ++last;
@@ -294,7 +296,7 @@ static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
 
       // TODO: Fix
       //assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
-      Region* nextRegion = region == X.joiningEdge->regionA ?
+      CRegion* nextRegion = region == X.joiningEdge->regionA ?
         X.joiningEdge->regionB : X.joiningEdge->regionA;
 
       X.nearRegion = region;
@@ -442,12 +444,12 @@ static void castRay(Vec2f r, const SceneGraph& sg, CastResult& result) {
 //===========================================
 // drawSkySlice
 //===========================================
-static void drawSkySlice(QImage& target, const SceneGraph& sg, const ScreenSlice& slice,
-  int screenX_px) {
+static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& player,
+  const ScreenSlice& slice, int screenX_px) {
 
-  const Camera& cam = sg.player->camera();
+  const Camera& cam = player.camera();
 
-  const Texture& skyTex = sg.textures.at("sky");
+  const Texture& skyTex = rg.textures.at("sky");
   Size texSz_px(skyTex.image.rect().width(), skyTex.image.rect().height());
 
   int W_px = target.rect().width();
@@ -481,13 +483,13 @@ static void drawSkySlice(QImage& target, const SceneGraph& sg, const ScreenSlice
 //===========================================
 // drawCeilingSlice
 //===========================================
-static void drawCeilingSlice(QImage& target, const SceneGraph& sg, const Region* region,
-  const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
-  double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player& player,
+  const CRegion* region, const Point& collisionPoint, const ScreenSlice& slice, int screenX_px,
+  double projX_wd, double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
-  double screenH_px = sg.viewport.y * vWorldUnit_px;
-  const Camera& cam = sg.player->camera();
-  const Texture& ceilingTex = sg.textures.at(region->ceilingTexture);
+  double screenH_px = rg.viewport.y * vWorldUnit_px;
+  const Camera& cam = player.camera();
+  const Texture& ceilingTex = rg.textures.at(region->ceilingTexture);
 
   double hAngle = atan(projX_wd / cam.F);
   LineSegment ray(cam.pos, collisionPoint);
@@ -520,9 +522,9 @@ static void drawCeilingSlice(QImage& target, const SceneGraph& sg, const Region*
 //
 // x is set to the point inside decal space
 //===========================================
-static const FloorDecal* getFloorDecal(const Region* region, const Point& pt, Point& x) {
+static const CFloorDecal* getFloorDecal(const CRegion* region, const Point& pt, Point& x) {
   for (auto it = region->floorDecals.begin(); it != region->floorDecals.end(); ++it) {
-    const FloorDecal& decal = **it;
+    const CFloorDecal& decal = **it;
 
     x = decal.transform.inverse() * pt;
 
@@ -539,14 +541,14 @@ static const FloorDecal* getFloorDecal(const Region* region, const Point& pt, Po
 //===========================================
 // drawFloorSlice
 //===========================================
-static void drawFloorSlice(QImage& target, const SceneGraph& sg, const Region* region,
-  const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
-  double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+static void drawFloorSlice(QImage& target, const RenderGraph& rg, const Player& player,
+  const CRegion* region, const Point& collisionPoint, const ScreenSlice& slice, int screenX_px,
+  double projX_wd, double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
-  const Camera& cam = sg.player->camera();
+  const Camera& cam = player.camera();
 
-  double screenH_px = sg.viewport.y * vWorldUnit_px;
-  const Texture& floorTex = sg.textures.at(region->floorTexture);
+  double screenH_px = rg.viewport.y * vWorldUnit_px;
+  const Texture& floorTex = rg.textures.at(region->floorTexture);
 
   double hAngle = atan(projX_wd / cam.F);
   LineSegment ray(cam.pos, collisionPoint);
@@ -568,10 +570,10 @@ static void drawFloorSlice(QImage& target, const SceneGraph& sg, const Region* r
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
     Point decalPt;
-    const FloorDecal* decal = getFloorDecal(region, p, decalPt);
+    const CFloorDecal* decal = getFloorDecal(region, p, decalPt);
 
     if (decal != nullptr) {
-      const Texture& decalTex = sg.textures.at(decal->texture);
+      const Texture& decalTex = rg.textures.at(decal->texture);
       Size texSz_px(decalTex.image.rect().width(), decalTex.image.rect().height());
 
       Point texel(texSz_px.x * decalPt.x / decal->size.x, texSz_px.y * decalPt.y / decal->size.y);
@@ -684,14 +686,14 @@ static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double cam
 //===========================================
 // drawSlice
 //===========================================
-static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
-  double distanceAlongTarget, const Slice& slice, const string& texture, double screenX_px,
-  const Size& viewport_px, double targetH_wd = 0) {
+static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Player& player,
+  double F, double distanceAlongTarget, const Slice& slice, const string& texture,
+  double screenX_px, const Size& viewport_px, double targetH_wd = 0) {
 
-  double hWorldUnit_px = viewport_px.x / sg.viewport.x;
-  double vWorldUnit_px = viewport_px.y / sg.viewport.y;
+  double hWorldUnit_px = viewport_px.x / rg.viewport.x;
+  double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
-  const Texture& wallTex = sg.textures.at(texture);
+  const Texture& wallTex = rg.textures.at(texture);
 
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
@@ -699,7 +701,7 @@ static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
   if (screenSliceBottom_px - screenSliceTop_px > 0) {
     vector<QRect> srcRects;
     vector<QRectF> trgRects;
-    sampleWallTexture(wallTex.image.rect(), sg.player->camera().height, viewport_px, screenX_px,
+    sampleWallTexture(wallTex.image.rect(), player.camera().height, viewport_px, screenX_px,
       hWorldUnit_px, vWorldUnit_px, targetH_wd, distanceAlongTarget, slice, wallTex.size_wd,
       trgRects, srcRects);
 
@@ -710,8 +712,8 @@ static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
     }
   }
 
-  int viewportBottom_px = (sg.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
-  int viewportTop_px = (sg.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
+  int viewportBottom_px = (rg.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
+  int viewportTop_px = (rg.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
 
   return ScreenSlice{screenSliceBottom_px, screenSliceTop_px, viewportBottom_px, viewportTop_px};
 }
@@ -719,17 +721,17 @@ static ScreenSlice drawSlice(QPainter& painter, const SceneGraph& sg, double F,
 //===========================================
 // drawSprite
 //===========================================
-static void drawSprite(QPainter& painter, const SceneGraph& sg, const Size& viewport_px,
-  const SpriteX& spriteX, double screenX_px) {
+static void drawSprite(QPainter& painter, const RenderGraph& rg, const Player& player,
+  const Size& viewport_px, const SpriteX& spriteX, double screenX_px) {
 
-  const Camera& cam = sg.player->camera();
+  const Camera& cam = player.camera();
 
-  double vWorldUnit_px = viewport_px.y / sg.viewport.y;
+  double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
-  const Sprite& sprite = *spriteX.sprite;
+  const CSprite& sprite = *spriteX.sprite;
   const Slice& slice = spriteX.slice;
 
-  const Texture& tex = sg.textures.at(sprite.texture);
+  const Texture& tex = rg.textures.at(sprite.texture);
   const QRectF& uv = sprite.textureRegion(cam.pos);
   QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
@@ -748,11 +750,11 @@ static void drawSprite(QPainter& painter, const SceneGraph& sg, const Size& view
 //===========================================
 // drawWallDecal
 //===========================================
-static void drawWallDecal(QPainter& painter, const SceneGraph& sg, const WallDecal& decal,
+static void drawWallDecal(QPainter& painter, const RenderGraph& rg, const CWallDecal& decal,
   const WallX& wallX, int screenX_px, const Size& viewport_px, double camHeight,
   double vWorldUnit_px) {
 
-  const Texture& decalTex = sg.textures.at(decal.texture);
+  const Texture& decalTex = rg.textures.at(decal.texture);
 
   double projSliceH_wd = wallX.slice.projSliceTop_wd - wallX.slice.projSliceBottom_wd;
   double sliceH_wd = wallX.slice.sliceTop_wd - wallX.slice.sliceBottom_wd;
@@ -790,9 +792,9 @@ static void drawWallDecal(QPainter& painter, const SceneGraph& sg, const WallDec
 //===========================================
 // Renderer::getWallDecal
 //===========================================
-static WallDecal* getWallDecal(const Wall& wall, double x) {
+static CWallDecal* getWallDecal(const CWall& wall, double x) {
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
-    WallDecal* decal = it->get();
+    CWallDecal* decal = it->get();
 
     double x0 = decal->pos.x;
     double x1 = decal->pos.x + decal->size.x;
@@ -823,15 +825,15 @@ Renderer::Renderer() {
 //===========================================
 // Renderer::renderScene
 //===========================================
-void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
+void Renderer::renderScene(QImage& target, const Player& player) {
   QPainter painter;
   painter.begin(&target);
 
   Size viewport_px(target.width(), target.height());
-  const Camera& cam = sg.player->camera();
+  const Camera& cam = player.camera();
 
-  double hWorldUnit_px = viewport_px.x / sg.viewport.x;
-  double vWorldUnit_px = viewport_px.y / sg.viewport.y;
+  double hWorldUnit_px = viewport_px.x / rg.viewport.x;
+  double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
   QRect rect(QPoint(), QSize(viewport_px.x, viewport_px.y));
   painter.fillRect(rect, QBrush(QColor(0, 0, 0)));
@@ -840,7 +842,7 @@ void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
     CastResult result;
-    castRay(Vec2f(cam.F, projX_wd), sg, result);
+    castRay(Vec2f(cam.F, projX_wd), rg, player, region(player.currentRegion), result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       Intersection& X = **it;
@@ -848,50 +850,50 @@ void Renderer::renderScene(QImage& target, const SceneGraph& sg) {
       if (X.kind == IntersectionKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(X);
 
-        ScreenSlice slice = drawSlice(painter, sg, cam.F, wallX.distanceAlongTarget, wallX.slice,
-          wallX.wall->texture, screenX_px, viewport_px);
+        ScreenSlice slice = drawSlice(painter, rg, player, cam.F, wallX.distanceAlongTarget,
+          wallX.slice, wallX.wall->texture, screenX_px, viewport_px);
 
-        WallDecal* decal = getWallDecal(*wallX.wall, wallX.distanceAlongTarget);
+        CWallDecal* decal = getWallDecal(*wallX.wall, wallX.distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(painter, sg, *decal, wallX, screenX_px, viewport_px, cam.height,
+          drawWallDecal(painter, rg, *decal, wallX, screenX_px, viewport_px, cam.height,
             vWorldUnit_px);
         }
 
-        drawFloorSlice(target, sg, wallX.wall->region, wallX.point_world, slice, screenX_px,
+        drawFloorSlice(target, rg, player, wallX.wall->region, wallX.point_world, slice, screenX_px,
           projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (wallX.wall->region->hasCeiling) {
-          drawCeilingSlice(target, sg, wallX.wall->region, wallX.point_world, slice, screenX_px,
+          drawCeilingSlice(target, rg, player, wallX.wall->region, wallX.point_world, slice, screenX_px,
             projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
-          drawSkySlice(target, sg, slice, screenX_px);
+          drawSkySlice(target, rg, player, slice, screenX_px);
         }
       }
       else if (X.kind == IntersectionKind::JOINING_EDGE) {
         const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(X);
 
-        ScreenSlice slice0 = drawSlice(painter, sg, cam.F, jeX.distanceAlongTarget, jeX.slice0,
+        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget, jeX.slice0,
           jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
 
-        drawFloorSlice(target, sg, jeX.nearRegion, jeX.point_world, slice0,
+        drawFloorSlice(target, rg, player, jeX.nearRegion, jeX.point_world, slice0,
           screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         // TODO: Make use of jeX.farRegion->ceilingHeight optional
-        ScreenSlice slice1 = drawSlice(painter, sg, cam.F, jeX.distanceAlongTarget, jeX.slice1,
+        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget, jeX.slice1,
           jeX.joiningEdge->topTexture, screenX_px, viewport_px, jeX.farRegion->ceilingHeight);
 
         if (jeX.nearRegion->hasCeiling) {
-          drawCeilingSlice(target, sg, jeX.nearRegion, jeX.point_world, slice1, screenX_px,
+          drawCeilingSlice(target, rg, player, jeX.nearRegion, jeX.point_world, slice1, screenX_px,
             projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
-          drawSkySlice(target, sg, slice1, screenX_px);
+          drawSkySlice(target, rg, player, slice1, screenX_px);
         }
       }
       else if (X.kind == IntersectionKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(painter, sg, viewport_px, spriteX, screenX_px);
+        drawSprite(painter, rg, player, viewport_px, spriteX, screenX_px);
       }
     }
   }

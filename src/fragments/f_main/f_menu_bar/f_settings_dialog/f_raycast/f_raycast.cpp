@@ -83,7 +83,7 @@ void FRaycast::paintEvent(QPaintEvent*) {
   Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
   Renderer& renderer = m_entityManager.system<Renderer>(ComponentKind::C_RENDER);
 
-  renderer.renderScene(m_buffer, scene.sg);
+  renderer.renderScene(m_buffer, *scene.sg.player);
 
   QPainter painter;
   painter.begin(this);

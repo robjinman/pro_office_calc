@@ -6,10 +6,11 @@
 
 
 class Region;
+class CRegion;
 
 class CDoorBehaviour : public CBehaviour {
   public:
-    CDoorBehaviour(entityId_t entityId, Region& region);
+    CDoorBehaviour(entityId_t entityId, Region& zone, CRegion& region);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
@@ -22,7 +23,8 @@ class CDoorBehaviour : public CBehaviour {
       ST_CLOSED
     };
 
-    Region& m_region;
+    Region& m_zone;
+    CRegion& m_region;
     state_t m_state = ST_CLOSED;
     double m_y0;
     double m_y1;

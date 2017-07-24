@@ -262,13 +262,15 @@ void Scene::translateCamera(const Vec2f& dir) {
 
   double radius = 5.0;
 
-  dv = getDelta(*sg.currentRegion, cam.pos, *sg.player, radius, dv);
+  Region& currentRegion = getCurrentRegion();
+
+  dv = getDelta(currentRegion, cam.pos, *sg.player, radius, dv);
   Circle circle{cam.pos + dv, radius};
 
-  assert(sg.currentRegion->parent != nullptr);
+  assert(currentRegion.parent != nullptr);
 
   bool abortLoop = false;
-  forEachConstRegion(*sg.currentRegion->parent, [&](const Region& region) {
+  forEachConstRegion(*currentRegion.parent, [&](const Region& region) {
     if (abortLoop) {
       return;
     }
@@ -294,7 +296,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 
           double dist = distance(cam.pos, p_);
           if (dist < nearestX) {
-            nextRegion = getNextRegion(*sg.currentRegion, je);
+            nextRegion = getNextRegion(currentRegion, je);
             p = p_;
 
             nearestX = dist;
@@ -304,7 +306,7 @@ void Scene::translateCamera(const Vec2f& dir) {
     }
 
     if (nIntersections > 0) {
-      sg.currentRegion = nextRegion;
+      sg.player->currentRegion = nextRegion->entityId();
       sg.player->setPosition(p);
       dv = dv * 0.00001;
       abortLoop = true;
@@ -319,7 +321,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 // Scene::jump
 //===========================================
 void Scene::jump() {
-  if (!sg.player->aboveGround(*sg.currentRegion)) {
+  if (!sg.player->aboveGround(getCurrentRegion())) {
     sg.player->vVelocity = 220;
   }
 }
@@ -347,16 +349,18 @@ void Scene::addTween(const Tween& tween, const char* name) {
 // Scene::gravity
 //===========================================
 void Scene::gravity() {
-  if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(*sg.currentRegion)) {
+  Region& currentRegion = getCurrentRegion();
+
+  if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(currentRegion)) {
     double a = -600.0;
     double dt = 1.0 / m_frameRate;
     double dv = dt * a;
     sg.player->vVelocity += dv;
     double dy = sg.player->vVelocity * dt;
 
-    sg.player->changeHeight(*sg.currentRegion, dy);
+    sg.player->changeHeight(currentRegion, dy);
 
-    if (!sg.player->aboveGround(*sg.currentRegion)) {
+    if (!sg.player->aboveGround(currentRegion)) {
       sg.player->vVelocity = 0;
     }
   }
@@ -366,9 +370,11 @@ void Scene::gravity() {
 // Scene::buoyancy
 //===========================================
 void Scene::buoyancy() {
-  if (sg.player->feetHeight() + 0.1 < sg.currentRegion->floorHeight) {
+  Region& currentRegion = getCurrentRegion();
+
+  if (sg.player->feetHeight() + 0.1 < currentRegion.floorHeight) {
     double dy = 150.0 / m_frameRate;
-    sg.player->changeHeight(*sg.currentRegion, dy);
+    sg.player->changeHeight(currentRegion, dy);
   }
 }
 
@@ -515,7 +521,7 @@ set<entityId_t> Scene::getEntitiesInRadius(double radius) const {
   const Point& pos = sg.player->pos();
   Circle circle{pos, radius};
 
-  forEachConstRegion(*sg.currentRegion->parent, [&](const Region& region) {
+  forEachConstRegion(*getCurrentRegion().parent, [&](const Region& region) {
     getEntitiesInRadius_r(region, circle, entities);
   });
 

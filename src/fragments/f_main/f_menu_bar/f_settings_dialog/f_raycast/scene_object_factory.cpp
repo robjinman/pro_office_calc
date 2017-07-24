@@ -364,10 +364,12 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(EntityManager& em, const parser::Object& obj, Region& region) {
+static void constructDoor(EntityManager& em, const parser::Object& obj, Region& zone,
+  CRegion& region) {
+
   BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(region.entityId(), region);
+  CDoorBehaviour* behaviour = new CDoorBehaviour(region.entityId(), zone, region);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
@@ -379,6 +381,8 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
 
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+
+  RenderGraph& rg = renderer.rg;
   SceneGraph& sg = scene.sg;
 
   DBG_PRINT("Constructing Region\n");
@@ -410,25 +414,27 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
       string s = getValue(obj.dict, "has_ceiling");
       if (s == "true") {
         zone->hasCeiling = true;
+        region->hasCeiling = true;
       }
       else if (s == "false") {
         zone->hasCeiling = false;
+        region->hasCeiling = false;
       }
       else {
         EXCEPTION("has_ceiling must be either 'true' or 'false'");
       }
     }
 
-    zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
+    region->floorHeight = zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
       std::stod(getValue(obj.dict, "floor_height")) : sg.defaults.floorHeight;
 
-    zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
+    region->ceilingHeight = zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
       std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
 
-    zone->floorTexture = contains<string>(obj.dict, "floor_texture") ?
+    region->floorTexture = zone->floorTexture = contains<string>(obj.dict, "floor_texture") ?
       getValue(obj.dict, "floor_texture") : sg.defaults.floorTexture;
 
-    zone->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
+    region->ceilingTexture = zone->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
       getValue(obj.dict, "ceiling_texture") : sg.defaults.ceilingTexture;
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
@@ -455,12 +461,12 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
           EXCEPTION("Player already exists");
         }
         sg.player.reset(constructPlayer(child, *zone, transform, sg.viewport));
-        sg.currentRegion = zone;
+        sg.player->currentRegion = entityId;
       }
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(em, obj, *zone);
+      constructDoor(em, obj, *zone, *region);
     }
   }
   catch (Exception& ex) {
@@ -480,6 +486,8 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
 void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+
+  RenderGraph& rg = renderer.rg;
   SceneGraph& sg = scene.sg;
 
   if (getValue(obj.dict, "type") != "region") {
@@ -492,6 +500,8 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
 
   sg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   sg.viewport.y = 10.0;
+
+  rg.viewport = sg.viewport; // TODO
 
   map<Point, bool> endpoints;
   Matrix m;
@@ -511,6 +521,21 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   scene.connectRegions();
   renderer.connectRegions();
 
+  rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
+  rg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
+  rg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
+  rg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
+  rg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
+  rg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
+  rg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
+  rg.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
+  rg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
+  rg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
+  rg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
+  rg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
+  rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
+
+  // TODO
   sg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   sg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
   sg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};

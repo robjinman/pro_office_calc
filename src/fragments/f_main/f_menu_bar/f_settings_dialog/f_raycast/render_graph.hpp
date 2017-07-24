@@ -20,7 +20,6 @@ struct RenderGraph {
 
   pCRegion_t rootRegion;
   std::list<pCEdge_t> edges;
-  const CRegion* currentRegion;
 };
 
 

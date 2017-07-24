@@ -51,7 +51,7 @@ class CSprite : public CRender {
       angle = m.a();
     }
 
-    const QRectF& textureCRegion(const Point& camPos) const {
+    const QRectF& textureRegion(const Point& camPos) const {
       Vec2f v = pos - camPos;
       return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + angle);
     }

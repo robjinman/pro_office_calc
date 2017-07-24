@@ -47,11 +47,11 @@ struct JoiningEdgeX : public Intersection {
   JoiningEdgeX()
     : Intersection(IntersectionKind::JOINING_EDGE) {}
 
-  JoiningEdge* joiningEdge;
+  CJoiningEdge* joiningEdge;
   Slice slice0;
   Slice slice1;
-  const Region* nearRegion;
-  const Region* farRegion;
+  const CRegion* nearRegion;
+  const CRegion* farRegion;
 
   virtual ~JoiningEdgeX() {}
 };
@@ -60,7 +60,7 @@ struct WallX : public Intersection {
   WallX()
     : Intersection(IntersectionKind::WALL) {}
 
-  Wall* wall;
+  CWall* wall;
   Slice slice;
 
   virtual ~WallX() {}
@@ -70,7 +70,7 @@ struct SpriteX : public Intersection {
   SpriteX()
     : Intersection(IntersectionKind::SPRITE) {}
 
-  Sprite* sprite;
+  CSprite* sprite;
   Slice slice;
 
   virtual ~SpriteX() {}
@@ -82,6 +82,8 @@ struct CastResult {
 
 typedef std::array<double, 10000> tanMap_t;
 typedef std::array<double, 10000> atanMap_t;
+
+class Player;
 
 class Renderer : public System {
   public:
@@ -95,7 +97,9 @@ class Renderer : public System {
     virtual void addComponent(pComponent_t component) override;
     virtual void removeEntity(entityId_t id) override;
 
-    void renderScene(QImage& target, const SceneGraph& sg);
+    void renderScene(QImage& target, const Player& player);
+
+    RenderGraph rg;
 
   private:
     tanMap_t m_tanMap_rp;
@@ -104,10 +108,12 @@ class Renderer : public System {
     std::map<entityId_t, CRender*> m_components;
     std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
 
-    RenderGraph rg;
-
     bool isRoot(const CRender& c) const;
     void removeEntity_r(entityId_t id);
+
+    inline CRegion& region(entityId_t id) const {
+      return dynamic_cast<CRegion&>(*m_components.at(id));
+    }
 };
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
