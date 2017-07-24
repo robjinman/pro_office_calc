@@ -19,12 +19,12 @@ class Player {
     double activationRadius = 100.0;
     entityId_t currentRegion = -1;
 
-    bool aboveGround(const Region& region) const {
-      return feetHeight() - 0.1 > region.floorHeight;
+    bool aboveGround(const Zone& zone) const {
+      return feetHeight() - 0.1 > zone.floorHeight;
     }
 
-    bool belowGround(const Region& region) const {
-      return feetHeight() + 0.1 < region.floorHeight;
+    bool belowGround(const Zone& zone) const {
+      return feetHeight() + 0.1 < zone.floorHeight;
     }
 
     double feetHeight() const {
@@ -48,17 +48,17 @@ class Player {
       m_camera->height = h;
     }
 
-    void changeHeight(const Region& region, double deltaH) {
+    void changeHeight(const Zone& zone, double deltaH) {
       // If applying this delta puts the player's feet through the floor
-      if (feetHeight() - region.floorHeight + deltaH < 0) {
+      if (feetHeight() - zone.floorHeight + deltaH < 0) {
         // Only permit positive delta
         if (deltaH <= 0) {
-          setFeetHeight(region.floorHeight);
+          setFeetHeight(zone.floorHeight);
           return;
         }
       }
       // If applying this delta puts the player's head through the ceiling
-      else if (region.ceilingHeight - headHeight() + deltaH < 0) {
+      else if (zone.ceilingHeight - headHeight() + deltaH < 0) {
         // Only permit negative delta
         if (deltaH >= 0) {
           return;

@@ -13,7 +13,7 @@
 
 
 enum class CRenderSpatialKind {
-  REGION,
+  ZONE,
   WALL,
   JOINING_EDGE,
   SPRITE,
@@ -35,7 +35,7 @@ struct CRenderSpatial : public Component {
 
 typedef std::unique_ptr<CRenderSpatial> pCRenderSpatial_t;
 
-class Region;
+class Zone;
 
 class Sprite : public CRenderSpatial {
   public:
@@ -49,7 +49,7 @@ class Sprite : public CRenderSpatial {
       angle = m.a();
     }
 
-    Region* region;
+    Zone* zone;
     Vec2f pos;
     double angle;
     Size size;
@@ -88,26 +88,26 @@ struct FloorDecal : public CRenderSpatial {
 
 typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
 
-class Region;
-typedef std::unique_ptr<Region> pRegion_t;
+class Zone;
+typedef std::unique_ptr<Zone> pZone_t;
 
-struct Region : public CRenderSpatial {
-  Region(entityId_t entityId, entityId_t parentId)
-    : CRenderSpatial(CRenderSpatialKind::REGION, entityId, parentId) {}
+struct Zone : public CRenderSpatial {
+  Zone(entityId_t entityId, entityId_t parentId)
+    : CRenderSpatial(CRenderSpatialKind::ZONE, entityId, parentId) {}
 
   double floorHeight = 0;
   double ceilingHeight = 100;
-  std::list<pRegion_t> children;
+  std::list<pZone_t> children;
   std::list<Edge*> edges;
   std::list<pSprite_t> sprites;
   std::list<pFloorDecal_t> floorDecals;
-  Region* parent = nullptr;
+  Zone* parent = nullptr;
 
-  virtual ~Region() override {}
+  virtual ~Zone() override {}
 };
 
-void forEachConstRegion(const Region& region, std::function<void(const Region&)> fn);
-void forEachRegion(Region& region, std::function<void(Region&)> fn);
+void forEachConstZone(const Zone& zone, std::function<void(const Zone&)> fn);
+void forEachZone(Zone& zone, std::function<void(Zone&)> fn);
 
 struct WallDecal : public CRenderSpatial {
   WallDecal(entityId_t entityId, entityId_t parentId)
@@ -125,11 +125,11 @@ struct Wall : public Edge {
   Wall(entityId_t entityId, entityId_t parentId)
     : Edge(CRenderSpatialKind::WALL, entityId, parentId) {}
 
-  Region* region;
+  Zone* zone;
   std::list<pWallDecal_t> decals;
 
   double height() const {
-    return region->ceilingHeight - region->floorHeight;
+    return zone->ceilingHeight - zone->floorHeight;
   }
 
   virtual ~Wall() {}
@@ -144,14 +144,14 @@ struct JoiningEdge : public Edge {
     : Edge(cpy, entityId, parentId),
       joinId(joinId) {
 
-    regionA = cpy.regionA;
-    regionB = cpy.regionB;
+    zoneA = cpy.zoneA;
+    zoneB = cpy.zoneB;
   }
 
   entityId_t joinId = 0;
 
-  Region* regionA = nullptr;
-  Region* regionB = nullptr;
+  Zone* zoneA = nullptr;
+  Zone* zoneB = nullptr;
 
   virtual ~JoiningEdge() {}
 };

@@ -31,7 +31,7 @@ class Scene : public System {
     SceneGraph sg;
 
     void loadMap(const std::string& mapFilePath);
-    void connectRegions();
+    void connectZones();
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;
@@ -62,8 +62,8 @@ class Scene : public System {
     bool isRoot(const CRenderSpatial& c) const;
     void removeEntity_r(entityId_t id);
 
-    inline Region& getCurrentRegion() const {
-      return dynamic_cast<Region&>(*m_components.at(sg.player->currentRegion));
+    inline Zone& getCurrentZone() const {
+      return dynamic_cast<Zone&>(*m_components.at(sg.player->currentRegion));
     }
 
     void buoyancy();

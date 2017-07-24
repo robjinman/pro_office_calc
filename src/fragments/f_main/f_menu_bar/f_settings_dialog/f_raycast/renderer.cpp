@@ -48,8 +48,8 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
   return os;
 }
 
-static inline Region& getZone(const Scene& scene, const CRegion& r) {
-  return dynamic_cast<Region&>(scene.getComponent(r.entityId()));
+static inline Zone& getZone(const Scene& scene, const CRegion& r) {
+  return dynamic_cast<Zone&>(scene.getComponent(r.entityId()));
 }
 
 static inline Edge& getEdge(const Scene& scene, const CEdge& e) {
@@ -273,7 +273,7 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
     if ((*it)->kind == IntersectionKind::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
-      Region& zone = getZone(scene, *X.wall->region);
+      Zone& zone = getZone(scene, *X.wall->region);
 
       double floorHeight = zone.floorHeight;
       double targetHeight = zone.ceilingHeight - zone.floorHeight;
@@ -328,18 +328,18 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
       X.nearRegion = region;
       X.farRegion = nextRegion;
 
-      const Region& zone = getZone(scene, *region);
-      const Region& nextZone = getZone(scene, *nextRegion);
+      const Zone& zone = getZone(scene, *region);
+      const Zone& nextZone = getZone(scene, *nextRegion);
 
       const Point& pt = X.point_cam;
 
       double floorDiff = nextZone.floorHeight - zone.floorHeight;
       double ceilingDiff = zone.ceilingHeight - nextZone.ceilingHeight;
-      double nextRegionSpan = nextZone.ceilingHeight - nextZone.floorHeight;
+      double nextZoneSpan = nextZone.ceilingHeight - nextZone.floorHeight;
 
       double bottomWallA = zone.floorHeight - cam.height;
       double bottomWallB = bottomWallA + floorDiff;
-      double topWallA = bottomWallB + nextRegionSpan;
+      double topWallA = bottomWallB + nextZoneSpan;
       double topWallB = topWallA + ceilingDiff;
 
       if (floorDiff < 0) {
@@ -434,7 +434,7 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
       SpriteX& X = dynamic_cast<SpriteX&>(**it);
 
       const Sprite& vRect = getVRect(scene, *X.sprite);
-      const Region& zone = getZone(scene, *region);
+      const Zone& zone = getZone(scene, *region);
 
       double floorHeight = zone.floorHeight;
       const Point& pt = X.point_cam;
@@ -780,7 +780,7 @@ static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph&
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
 
-  const Region& zone = getZone(scene, *sprite.region);
+  const Zone& zone = getZone(scene, *sprite.region);
 
   QRect srcRect = sampleSpriteTexture(frame, spriteX, cam.height, vRect.size.x, vRect.size.y,
     zone.floorHeight);
@@ -816,7 +816,7 @@ static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGra
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
-  const Region& zone = getZone(scene, *wallX.wall->region);
+  const Zone& zone = getZone(scene, *wallX.wall->region);
   double floorH = zone.floorHeight;
 
   double x = wallX.distanceAlongTarget - vRect.pos.x;
@@ -909,7 +909,7 @@ void Renderer::renderScene(QImage& target, const Player& player) {
             vWorldUnit_px);
         }
 
-        Region& zone = getZone(scene, *wallX.wall->region);
+        Zone& zone = getZone(scene, *wallX.wall->region);
 
         drawFloorSlice(target, scene, rg, player, wallX.wall->region, zone.floorHeight,
           wallX.point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
@@ -928,8 +928,8 @@ void Renderer::renderScene(QImage& target, const Player& player) {
         ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
           jeX.slice0, jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
 
-        Region& nearZone = getZone(scene, *jeX.nearRegion);
-        Region& farZone = getZone(scene, *jeX.farRegion);
+        Zone& nearZone = getZone(scene, *jeX.nearRegion);
+        Zone& farZone = getZone(scene, *jeX.farRegion);
 
         drawFloorSlice(target, scene, rg, player, jeX.nearRegion, nearZone.floorHeight,
           jeX.point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);

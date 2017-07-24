@@ -120,8 +120,8 @@ class Renderer : public System {
     }
 };
 
-void findIntersections_r(const Camera& camera, const LineSegment& ray, const Region& region,
-  CastResult& result, std::set<const Region*>& visitedRegions,
+void findIntersections_r(const Camera& camera, const LineSegment& ray, const CRegion& region,
+  CastResult& result, std::set<const CRegion*>& visitedRegions,
   std::set<entityId_t>& visitedJoiningEdges);
 
 

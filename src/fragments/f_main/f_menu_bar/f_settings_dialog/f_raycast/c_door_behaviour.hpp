@@ -5,12 +5,11 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 
 
-class Region;
-class CRegion;
+class Zone;
 
 class CDoorBehaviour : public CBehaviour {
   public:
-    CDoorBehaviour(entityId_t entityId, Region& zone);
+    CDoorBehaviour(entityId_t entityId, Zone& zone);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
@@ -23,7 +22,7 @@ class CDoorBehaviour : public CBehaviour {
       ST_CLOSED
     };
 
-    Region& m_zone;
+    Zone& m_zone;
     state_t m_state = ST_CLOSED;
     double m_y0;
     double m_y1;

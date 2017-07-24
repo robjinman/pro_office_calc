@@ -27,7 +27,7 @@ using std::ostream;
 
 ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
   switch (kind) {
-    case CRenderSpatialKind::REGION: os << "REGION"; break;
+    case CRenderSpatialKind::ZONE: os << "ZONE"; break;
     case CRenderSpatialKind::WALL: os << "WALL"; break;
     case CRenderSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
     case CRenderSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
@@ -39,46 +39,46 @@ ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
 
 
 //===========================================
-// forEachConstRegion
+// forEachConstZone
 //===========================================
-void forEachConstRegion(const Region& region, function<void(const Region&)> fn) {
-  fn(region);
-  std::for_each(region.children.begin(), region.children.end(),
-    [&](const unique_ptr<Region>& r) {
+void forEachConstZone(const Zone& zone, function<void(const Zone&)> fn) {
+  fn(zone);
+  std::for_each(zone.children.begin(), zone.children.end(),
+    [&](const unique_ptr<Zone>& r) {
 
-    forEachConstRegion(*r, fn);
+    forEachConstZone(*r, fn);
   });
 }
 
 //===========================================
-// forEachRegion
+// forEachZone
 //===========================================
-void forEachRegion(Region& region, function<void(Region&)> fn) {
-  fn(region);
-  std::for_each(region.children.begin(), region.children.end(),
-    [&](unique_ptr<Region>& r) {
+void forEachZone(Zone& zone, function<void(Zone&)> fn) {
+  fn(zone);
+  std::for_each(zone.children.begin(), zone.children.end(),
+    [&](unique_ptr<Zone>& r) {
 
-    forEachRegion(*r, fn);
+    forEachZone(*r, fn);
   });
 }
 
 //===========================================
-// getNextRegion
+// getNextZone
 //===========================================
-static Region* getNextRegion(const Region& current, const JoiningEdge& je) {
-  return je.regionA == &current ? je.regionB : je.regionA;
+static Zone* getNextZone(const Zone& current, const JoiningEdge& je) {
+  return je.zoneA == &current ? je.zoneB : je.zoneA;
 }
 
 //===========================================
 // canStepAcross
 //===========================================
-static bool canStepAcross(const Player& player, const Region& currentRegion,
+static bool canStepAcross(const Player& player, const Zone& currentZone,
   const JoiningEdge& je) {
 
-  Region* nextRegion = getNextRegion(currentRegion, je);
+  Zone* nextZone = getNextZone(currentZone, je);
 
-  bool canStep = nextRegion->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
-  bool hasHeadroom = player.headHeight() < nextRegion->ceilingHeight;
+  bool canStep = nextZone->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
+  bool hasHeadroom = player.headHeight() < nextZone->ceilingHeight;
 
   return canStep && hasHeadroom;
 }
@@ -86,10 +86,10 @@ static bool canStepAcross(const Player& player, const Region& currentRegion,
 //===========================================
 // intersectWall
 //===========================================
-static bool intersectWall(const Region& region, const Circle& circle, const Player& player) {
+static bool intersectWall(const Zone& zone, const Circle& circle, const Player& player) {
   bool b = false;
 
-  forEachConstRegion(region, [&](const Region& r) {
+  forEachConstZone(zone, [&](const Zone& r) {
     if (!b) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
@@ -97,12 +97,12 @@ static bool intersectWall(const Region& region, const Circle& circle, const Play
         if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
           const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-          //assert(&region == je.regionA || &region == je.regionB);
-          if (&region != je.regionA && &region != je.regionB) {
+          //assert(&zone == je.zoneA || &zone == je.zoneB);
+          if (&zone != je.zoneA && &zone != je.zoneB) {
             continue;
           }
 
-          if (canStepAcross(player, region, je)) {
+          if (canStepAcross(player, zone, je)) {
             continue;
           }
         }
@@ -124,7 +124,7 @@ static bool intersectWall(const Region& region, const Circle& circle, const Play
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const Region& region, const Point& camPos, const Player& player,
+static Vec2f getDelta(const Zone& zone, const Point& camPos, const Player& player,
   double radius, const Vec2f& dv) {
 
   Circle circle{camPos + dv, radius};
@@ -132,10 +132,10 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
 
   Vec2f dv_ = dv;
 
-  assert(region.parent != nullptr);
+  assert(zone.parent != nullptr);
 
   bool abortLoop = false;
-  forEachConstRegion(*region.parent, [&](const Region& r) {
+  forEachConstZone(*zone.parent, [&](const Zone& r) {
     if (abortLoop == false) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
@@ -151,11 +151,11 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
           if (edge.kind == CRenderSpatialKind::JOINING_EDGE) {
             const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
 
-            if (&region != je.regionA && &region != je.regionB) {
+            if (&zone != je.zoneA && &zone != je.zoneB) {
               continue;
             }
 
-            if (canStepAcross(player, region, je)) {
+            if (canStepAcross(player, zone, je)) {
               continue;
             }
           }
@@ -166,7 +166,7 @@ static Vec2f getDelta(const Region& region, const Point& camPos, const Player& p
           dv_.y = 0;
           dv_ = m.inverse() * dv_;
 
-          if (intersectWall(region, Circle{camPos + dv_, radius}, player)) {
+          if (intersectWall(zone, Circle{camPos + dv_, radius}, player)) {
             dv_ = Vec2f(0, 0);
           }
           else {
@@ -262,25 +262,25 @@ void Scene::translateCamera(const Vec2f& dir) {
 
   double radius = 5.0;
 
-  Region& currentRegion = getCurrentRegion();
+  Zone& currentZone = getCurrentZone();
 
-  dv = getDelta(currentRegion, cam.pos, *sg.player, radius, dv);
+  dv = getDelta(currentZone, cam.pos, *sg.player, radius, dv);
   Circle circle{cam.pos + dv, radius};
 
-  assert(currentRegion.parent != nullptr);
+  assert(currentZone.parent != nullptr);
 
   bool abortLoop = false;
-  forEachConstRegion(*currentRegion.parent, [&](const Region& region) {
+  forEachConstZone(*currentZone.parent, [&](const Zone& zone) {
     if (abortLoop) {
       return;
     }
 
     int nIntersections = 0;
     double nearestX = 999999.9;
-    Region* nextRegion = nullptr;
+    Zone* nextZone = nullptr;
     Point p;
 
-    for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
+    for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
       const Edge& edge = **it;
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
@@ -296,7 +296,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 
           double dist = distance(cam.pos, p_);
           if (dist < nearestX) {
-            nextRegion = getNextRegion(currentRegion, je);
+            nextZone = getNextZone(currentZone, je);
             p = p_;
 
             nearestX = dist;
@@ -306,7 +306,7 @@ void Scene::translateCamera(const Vec2f& dir) {
     }
 
     if (nIntersections > 0) {
-      sg.player->currentRegion = nextRegion->entityId();
+      sg.player->currentRegion = nextZone->entityId();
       sg.player->setPosition(p);
       dv = dv * 0.00001;
       abortLoop = true;
@@ -321,7 +321,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 // Scene::jump
 //===========================================
 void Scene::jump() {
-  if (!sg.player->aboveGround(getCurrentRegion())) {
+  if (!sg.player->aboveGround(getCurrentZone())) {
     sg.player->vVelocity = 220;
   }
 }
@@ -349,18 +349,18 @@ void Scene::addTween(const Tween& tween, const char* name) {
 // Scene::gravity
 //===========================================
 void Scene::gravity() {
-  Region& currentRegion = getCurrentRegion();
+  Zone& currentZone = getCurrentZone();
 
-  if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(currentRegion)) {
+  if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(currentZone)) {
     double a = -600.0;
     double dt = 1.0 / m_frameRate;
     double dv = dt * a;
     sg.player->vVelocity += dv;
     double dy = sg.player->vVelocity * dt;
 
-    sg.player->changeHeight(currentRegion, dy);
+    sg.player->changeHeight(currentZone, dy);
 
-    if (!sg.player->aboveGround(currentRegion)) {
+    if (!sg.player->aboveGround(currentZone)) {
       sg.player->vVelocity = 0;
     }
   }
@@ -370,11 +370,11 @@ void Scene::gravity() {
 // Scene::buoyancy
 //===========================================
 void Scene::buoyancy() {
-  Region& currentRegion = getCurrentRegion();
+  Zone& currentZone = getCurrentZone();
 
-  if (sg.player->feetHeight() + 0.1 < currentRegion.floorHeight) {
+  if (sg.player->feetHeight() + 0.1 < currentZone.floorHeight) {
     double dy = 150.0 / m_frameRate;
-    sg.player->changeHeight(currentRegion, dy);
+    sg.player->changeHeight(currentZone, dy);
   }
 }
 
@@ -404,29 +404,29 @@ static bool overlapsCircle(const Circle& circle, const FloorDecal& decal) {
 //===========================================
 // getEntitiesInRadius
 //===========================================
-static void getEntitiesInRadius_r(const Region& region, const Circle& circle,
+static void getEntitiesInRadius_r(const Zone& zone, const Circle& circle,
   set<entityId_t>& entities) {
 
-  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
+  for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
     if (overlapsCircle(circle, **it)) {
       entities.insert((*it)->entityId());
-      entities.insert(region.entityId());
+      entities.insert(zone.entityId());
     }
   }
 
-  for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-    }
-  }
-
-  for (auto it = region.floorDecals.begin(); it != region.floorDecals.end(); ++it) {
+  for (auto it = zone.sprites.begin(); it != zone.sprites.end(); ++it) {
     if (overlapsCircle(circle, **it)) {
       entities.insert((*it)->entityId());
     }
   }
 
-  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
+  for (auto it = zone.floorDecals.begin(); it != zone.floorDecals.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+    }
+  }
+
+  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
     getEntitiesInRadius_r(**it, circle, entities);
   }
 }
@@ -448,16 +448,16 @@ static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
 }
 
 //===========================================
-// connectSubregions_r
+// connectSubzones_r
 //===========================================
-static void connectSubregions_r(Region& region) {
-  if (region.children.size() == 0) {
+static void connectSubzones_r(Zone& zone) {
+  if (zone.children.size() == 0) {
     return;
   }
 
-  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    Region& r = **it;
-    connectSubregions_r(r);
+  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
+    Zone& r = **it;
+    connectSubzones_r(r);
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
       if ((*jt)->kind == CRenderSpatialKind::JOINING_EDGE) {
@@ -465,7 +465,7 @@ static void connectSubregions_r(Region& region) {
         assert(je != nullptr);
 
         bool hasTwin = false;
-        forEachRegion(region, [&](Region& r_) {
+        forEachZone(zone, [&](Zone& r_) {
           if (!hasTwin) {
             if (&r_ != &r) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
@@ -482,8 +482,8 @@ static void connectSubregions_r(Region& region) {
                     hasTwin = true;
 
                     je->joinId = other->joinId;
-                    je->regionA = other->regionA = &r;
-                    je->regionB = other->regionB = &r_;
+                    je->zoneA = other->zoneA = &r;
+                    je->zoneB = other->zoneB = &r_;
 
                     break;
                   }
@@ -494,8 +494,8 @@ static void connectSubregions_r(Region& region) {
         });
 
         if (!hasTwin) {
-          je->regionA = &r;
-          je->regionB = &region;
+          je->zoneA = &r;
+          je->zoneB = &zone;
         }
       }
     }
@@ -503,10 +503,10 @@ static void connectSubregions_r(Region& region) {
 }
 
 //===========================================
-// Scene::connectRegions
+// Scene::connectZones
 //===========================================
-void Scene::connectRegions() {
-  connectSubregions_r(*sg.rootRegion);
+void Scene::connectZones() {
+  connectSubzones_r(*sg.rootZone);
 }
 
 //===========================================
@@ -518,8 +518,8 @@ set<entityId_t> Scene::getEntitiesInRadius(double radius) const {
   const Point& pos = sg.player->pos();
   Circle circle{pos, radius};
 
-  forEachConstRegion(*getCurrentRegion().parent, [&](const Region& region) {
-    getEntitiesInRadius_r(region, circle, entities);
+  forEachConstZone(*getCurrentZone().parent, [&](const Zone& zone) {
+    getEntitiesInRadius_r(zone, circle, entities);
   });
 
   return entities;
@@ -546,35 +546,35 @@ void Scene::update() {
 }
 
 //===========================================
-// addToRegion
+// addToZone
 //===========================================
-static void addToRegion(SceneGraph& sg, Region& region, pCRenderSpatial_t child) {
+static void addToZone(SceneGraph& sg, Zone& zone, pCRenderSpatial_t child) {
   switch (child->kind) {
-    case CRenderSpatialKind::REGION: {
-      pRegion_t ptr(dynamic_cast<Region*>(child.release()));
-      ptr->parent = &region;
-      region.children.push_back(std::move(ptr));
+    case CRenderSpatialKind::ZONE: {
+      pZone_t ptr(dynamic_cast<Zone*>(child.release()));
+      ptr->parent = &zone;
+      zone.children.push_back(std::move(ptr));
       break;
     }
     case CRenderSpatialKind::JOINING_EDGE:
     case CRenderSpatialKind::WALL: {
       pEdge_t ptr(dynamic_cast<Edge*>(child.release()));
-      region.edges.push_back(ptr.get());
+      zone.edges.push_back(ptr.get());
       sg.edges.push_back(std::move(ptr));
       break;
     }
     case CRenderSpatialKind::FLOOR_DECAL: {
       pFloorDecal_t ptr(dynamic_cast<FloorDecal*>(child.release()));
-      region.floorDecals.push_back(std::move(ptr));
+      zone.floorDecals.push_back(std::move(ptr));
       break;
     }
     case CRenderSpatialKind::SPRITE: {
       pSprite_t ptr(dynamic_cast<Sprite*>(child.release()));
-      region.sprites.push_back(std::move(ptr));
+      zone.sprites.push_back(std::move(ptr));
       break;
     }
     default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to region");
+      EXCEPTION("Cannot add component of kind " << child->kind << " to zone");
   }
 }
 
@@ -598,8 +598,8 @@ static void addToWall(Wall& edge, pCRenderSpatial_t child) {
 //===========================================
 static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRenderSpatial_t child) {
   switch (parent.kind) {
-    case CRenderSpatialKind::REGION:
-      addToRegion(sg, dynamic_cast<Region&>(parent), std::move(child));
+    case CRenderSpatialKind::ZONE:
+      addToZone(sg, dynamic_cast<Zone&>(parent), std::move(child));
       break;
     case CRenderSpatialKind::WALL:
       addToWall(dynamic_cast<Wall&>(parent), std::move(child));
@@ -611,19 +611,19 @@ static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRender
 }
 
 //===========================================
-// removeFromRegion
+// removeFromZone
 //===========================================
-static void removeFromRegion(SceneGraph& sg, Region& region, const CRenderSpatial& child) {
+static void removeFromZone(SceneGraph& sg, Zone& zone, const CRenderSpatial& child) {
   switch (child.kind) {
-    case CRenderSpatialKind::REGION: {
-      region.children.remove_if([&](const pRegion_t& e) {
-        return e.get() == dynamic_cast<const Region*>(&child);
+    case CRenderSpatialKind::ZONE: {
+      zone.children.remove_if([&](const pZone_t& e) {
+        return e.get() == dynamic_cast<const Zone*>(&child);
       });
       break;
     }
     case CRenderSpatialKind::JOINING_EDGE:
     case CRenderSpatialKind::WALL: {
-      region.edges.remove_if([&](const Edge* e) {
+      zone.edges.remove_if([&](const Edge* e) {
         return e == dynamic_cast<const Edge*>(&child);
       });
       sg.edges.remove_if([&](const pEdge_t& e) {
@@ -632,19 +632,19 @@ static void removeFromRegion(SceneGraph& sg, Region& region, const CRenderSpatia
       break;
     }
     case CRenderSpatialKind::FLOOR_DECAL: {
-      region.floorDecals.remove_if([&](const pFloorDecal_t& e) {
+      zone.floorDecals.remove_if([&](const pFloorDecal_t& e) {
         return e.get() == dynamic_cast<const FloorDecal*>(&child);
       });
       break;
     }
     case CRenderSpatialKind::SPRITE: {
-      region.sprites.remove_if([&](const pSprite_t& e) {
+      zone.sprites.remove_if([&](const pSprite_t& e) {
         return e.get() == dynamic_cast<const Sprite*>(&child);
       });
       break;
     }
     default:
-      EXCEPTION("Cannot add component of kind " << child.kind << " to region");
+      EXCEPTION("Cannot add component of kind " << child.kind << " to zone");
   }
 }
 
@@ -671,8 +671,8 @@ static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent,
   const CRenderSpatial& child) {
 
   switch (parent.kind) {
-    case CRenderSpatialKind::REGION:
-      removeFromRegion(sg, dynamic_cast<Region&>(parent), child);
+    case CRenderSpatialKind::ZONE:
+      removeFromZone(sg, dynamic_cast<Zone&>(parent), child);
       break;
     case CRenderSpatialKind::WALL:
       removeFromWall(dynamic_cast<Wall&>(parent), child);
@@ -702,17 +702,17 @@ void Scene::addComponent(pComponent_t component) {
   pCRenderSpatial_t c(ptr);
 
   if (c->parentId == -1) {
-    if (sg.rootRegion) {
-      EXCEPTION("Root region already set");
+    if (sg.rootZone) {
+      EXCEPTION("Root zone already set");
     }
 
-    if (c->kind != CRenderSpatialKind::REGION) {
-      EXCEPTION("Component has no parent; Only regions can be root");
+    if (c->kind != CRenderSpatialKind::ZONE) {
+      EXCEPTION("Component has no parent; Only zones can be root");
     }
 
-    pRegion_t z(dynamic_cast<Region*>(c.release()));
+    pZone_t z(dynamic_cast<Zone*>(c.release()));
 
-    sg.rootRegion = std::move(z);
+    sg.rootZone = std::move(z);
     m_components.clear();
   }
   else {
@@ -735,14 +735,14 @@ void Scene::addComponent(pComponent_t component) {
 // Scene::isRoot
 //===========================================
 bool Scene::isRoot(const CRenderSpatial& c) const {
-  if (c.kind != CRenderSpatialKind::REGION) {
+  if (c.kind != CRenderSpatialKind::ZONE) {
     return false;
   }
-  if (sg.rootRegion == nullptr) {
+  if (sg.rootZone == nullptr) {
     return false;
   }
-  const Region* ptr = dynamic_cast<const Region*>(&c);
-  return ptr == sg.rootRegion.get();
+  const Zone* ptr = dynamic_cast<const Zone*>(&c);
+  return ptr == sg.rootZone.get();
 }
 
 //===========================================

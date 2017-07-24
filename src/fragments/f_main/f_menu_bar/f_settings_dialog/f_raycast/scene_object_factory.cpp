@@ -130,7 +130,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 // constructWalls
 //===========================================
 static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
-  const parser::Object& obj, Region& zone, CRegion& region, const Matrix& parentTransform) {
+  const parser::Object& obj, Zone& zone, CRegion& region, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
@@ -160,7 +160,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
     edge->lseg = transform(edge->lseg, m);
-    edge->region = &zone;
+    edge->zone = &zone;
 
     edges.push_back(edge);
 
@@ -222,7 +222,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 //===========================================
 // constructPlayer
 //===========================================
-static Player* constructPlayer(const parser::Object& obj, const Region& region,
+static Player* constructPlayer(const parser::Object& obj, const Zone& zone,
   const Matrix& parentTransform, const Size& viewport) {
 
   DBG_PRINT("Constructing Player\n");
@@ -231,7 +231,7 @@ static Player* constructPlayer(const parser::Object& obj, const Region& region,
 
   Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
-  camera->height = tallness + region.floorHeight;
+  camera->height = tallness + zone.floorHeight;
 
   Player* player = new Player(tallness, unique_ptr<Camera>(camera));
   return player;
@@ -240,7 +240,7 @@ static Player* constructPlayer(const parser::Object& obj, const Region& region,
 //===========================================
 // constructSprite
 //===========================================
-static void constructSprite(EntityManager& em, const parser::Object& obj, Region& zone,
+static void constructSprite(EntityManager& em, const parser::Object& obj, Zone& zone,
   CRegion& region, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
@@ -254,7 +254,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
     Sprite* vRect = new Sprite(id, zone.entityId(), Size(70, 70));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
-    vRect->region = &zone;
+    vRect->zone = &zone;
 
     scene.addComponent(pComponent_t(vRect));
 
@@ -269,7 +269,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, Region
     Sprite* vRect = new Sprite(id, zone.entityId(), Size(30, 15));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
-    vRect->region = &zone;
+    vRect->zone = &zone;
 
     scene.addComponent(pComponent_t(vRect));
 
@@ -339,7 +339,7 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(EntityManager& em, const parser::Object& obj, Region& zone) {
+static void constructDoor(EntityManager& em, const parser::Object& obj, Zone& zone) {
   BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
   CDoorBehaviour* behaviour = new CDoorBehaviour(zone.entityId(), zone);
@@ -349,7 +349,7 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, Region& 
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(EntityManager& em, const parser::Object& obj, Region* parentZone,
+static void constructRegion_r(EntityManager& em, const parser::Object& obj, Zone* parentZone,
   CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
@@ -362,7 +362,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
   entityId_t entityId = Component::getNextId();
   entityId_t parentId = parentZone == nullptr ? -1 : parentZone->entityId();
 
-  Region* zone = new Region(entityId, parentId);
+  Zone* zone = new Zone(entityId, parentId);
   zone->parent = parentZone;
 
   CRegion* region = new CRegion(entityId, parentId);
@@ -463,7 +463,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
     EXCEPTION("Expected object of type 'region'");
   }
 
-  if (sg.rootRegion) {
+  if (sg.rootZone || rg.rootRegion) {
     EXCEPTION("Root region already exists");
   }
 
@@ -485,7 +485,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
     EXCEPTION("Scene must contain the player");
   }
 
-  scene.connectRegions();
+  scene.connectZones();
   renderer.connectRegions();
 
   rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
