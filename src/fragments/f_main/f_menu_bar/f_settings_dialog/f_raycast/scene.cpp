@@ -31,8 +31,7 @@ ostream& operator<<(ostream& os, CSpatialKind kind) {
     case CSpatialKind::WALL: os << "WALL"; break;
     case CSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
     case CSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
-    case CSpatialKind::WALL_DECAL: os << "WALL_DECAL"; break;
-    case CSpatialKind::SPRITE: os << "SPRITE"; break;
+    case CSpatialKind::V_RECT: os << "V_RECT"; break;
   }
   return os;
 }
@@ -388,7 +387,7 @@ static bool overlapsCircle(const Circle& circle, const Edge& edge) {
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const Sprite& sprite) {
+static bool overlapsCircle(const Circle& circle, const VRect& sprite) {
   return distance(circle.pos, sprite.pos) <= circle.radius;
 }
 
@@ -568,8 +567,8 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
       zone.floorDecals.push_back(std::move(ptr));
       break;
     }
-    case CSpatialKind::SPRITE: {
-      pSprite_t ptr(dynamic_cast<Sprite*>(child.release()));
+    case CSpatialKind::V_RECT: {
+      pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
       zone.sprites.push_back(std::move(ptr));
       break;
     }
@@ -583,8 +582,8 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
 //===========================================
 static void addToWall(Wall& edge, pCSpatial_t child) {
   switch (child->kind) {
-    case CSpatialKind::WALL_DECAL: {
-      pWallDecal_t ptr(dynamic_cast<WallDecal*>(child.release()));
+    case CSpatialKind::V_RECT: {
+      pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
       edge.decals.push_back(std::move(ptr));
       break;
     }
@@ -637,9 +636,9 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
       });
       break;
     }
-    case CSpatialKind::SPRITE: {
-      zone.sprites.remove_if([&](const pSprite_t& e) {
-        return e.get() == dynamic_cast<const Sprite*>(&child);
+    case CSpatialKind::V_RECT: {
+      zone.sprites.remove_if([&](const pVRect_t& e) {
+        return e.get() == dynamic_cast<const VRect*>(&child);
       });
       break;
     }
@@ -653,9 +652,9 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
 //===========================================
 static void removeFromWall(Wall& edge, const CSpatial& child) {
   switch (child.kind) {
-    case CSpatialKind::WALL_DECAL: {
-      edge.decals.remove_if([&](const pWallDecal_t& e) {
-        return e.get() == dynamic_cast<const WallDecal*>(&child);
+    case CSpatialKind::V_RECT: {
+      edge.decals.remove_if([&](const pVRect_t& e) {
+        return e.get() == dynamic_cast<const VRect*>(&child);
       });
       break;
     }

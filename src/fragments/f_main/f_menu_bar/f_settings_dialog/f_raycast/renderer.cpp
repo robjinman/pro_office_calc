@@ -56,12 +56,12 @@ static inline Edge& getEdge(const Scene& scene, const CEdge& e) {
   return dynamic_cast<Edge&>(scene.getComponent(e.entityId()));
 }
 
-static inline Sprite& getVRect(const Scene& scene, const CSprite& s) {
-  return dynamic_cast<Sprite&>(scene.getComponent(s.entityId()));
+static inline VRect& getVRect(const Scene& scene, const CSprite& s) {
+  return dynamic_cast<VRect&>(scene.getComponent(s.entityId()));
 }
 
-static inline WallDecal& getVRect(const Scene& scene, const CWallDecal& d) {
-  return dynamic_cast<WallDecal&>(scene.getComponent(d.entityId()));
+static inline VRect& getVRect(const Scene& scene, const CWallDecal& d) {
+  return dynamic_cast<VRect&>(scene.getComponent(d.entityId()));
 }
 
 static inline FloorDecal& getHRect(const Scene& scene, const CFloorDecal& d) {
@@ -171,7 +171,7 @@ void findIntersections_r(const Scene& scene, const LineSegment& ray, const CRegi
 
   for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
     CSprite& sprite = **it;
-    const Sprite& vRect = getVRect(scene, sprite);
+    const VRect& vRect = getVRect(scene, sprite);
 
     Point pos = invCamMatrix * vRect.pos;
     double w = vRect.size.x;
@@ -433,7 +433,7 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
     else if ((*it)->kind == IntersectionKind::SPRITE) {
       SpriteX& X = dynamic_cast<SpriteX&>(**it);
 
-      const Sprite& vRect = getVRect(scene, *X.sprite);
+      const VRect& vRect = getVRect(scene, *X.sprite);
       const CZone& zone = getZone(scene, *region);
 
       double floorHeight = zone.floorHeight;
@@ -768,7 +768,7 @@ static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph&
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
   const CSprite& sprite = *spriteX.sprite;
-  const Sprite& vRect = getVRect(scene, sprite);
+  const VRect& vRect = getVRect(scene, sprite);
   const Slice& slice = spriteX.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
@@ -796,7 +796,7 @@ static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGra
   const CWallDecal& decal, const WallX& wallX, int screenX_px, const Size& viewport_px,
   double camHeight, double vWorldUnit_px) {
 
-  const WallDecal& vRect = getVRect(scene, decal);
+  const VRect& vRect = getVRect(scene, decal);
 
   const Texture& decalTex = rg.textures.at(decal.texture);
 
@@ -840,7 +840,7 @@ static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGra
 static CWallDecal* getWallDecal(const Scene& scene, const CWall& wall, double x) {
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
     CWallDecal* decal = it->get();
-    const WallDecal& vRect = getVRect(scene, *decal);
+    const VRect& vRect = getVRect(scene, *decal);
 
     double x0 = vRect.pos.x;
     double x1 = vRect.pos.x + vRect.size.x;

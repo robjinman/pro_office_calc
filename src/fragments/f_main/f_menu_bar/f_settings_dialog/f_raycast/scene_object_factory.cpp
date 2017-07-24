@@ -114,8 +114,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 
   entityId_t id = Component::getNextId();
 
-  WallDecal* vRect = new WallDecal(id, parentId);
-  vRect->size = size;
+  VRect* vRect = new VRect(id, parentId, size);
   vRect->pos = pos;
 
   scene.addComponent(pComponent_t(vRect));
@@ -251,7 +250,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
   if (getValue(obj.dict, "subtype") == "bad_guy") {
     entityId_t id = Component::getNextId();
 
-    Sprite* vRect = new Sprite(id, zone.entityId(), Size(70, 70));
+    VRect* vRect = new VRect(id, zone.entityId(), Size(70, 70));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->zone = &zone;
@@ -266,7 +265,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
   else if (getValue(obj.dict, "subtype") == "ammo") {
     entityId_t id = Component::getNextId();
 
-    Sprite* vRect = new Sprite(id, zone.entityId(), Size(30, 15));
+    VRect* vRect = new VRect(id, zone.entityId(), Size(30, 15));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->zone = &zone;

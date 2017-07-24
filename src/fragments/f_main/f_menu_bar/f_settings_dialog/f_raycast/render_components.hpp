@@ -73,7 +73,7 @@ class CSprite : public CRender {
       : CRender(CRenderKind::SPRITE, entityId, parentId),
         texture(texture) {}
 
-    const QRectF& textureRegion(const Sprite& sprite, const Point& camPos) const {
+    const QRectF& textureRegion(const VRect& sprite, const Point& camPos) const {
       Vec2f v = sprite.pos - camPos;
       return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + sprite.angle);
     }

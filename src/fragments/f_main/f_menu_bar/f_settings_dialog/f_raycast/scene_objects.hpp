@@ -16,9 +16,8 @@ enum class CSpatialKind {
   ZONE,
   WALL,
   JOINING_EDGE,
-  SPRITE,
-  FLOOR_DECAL,
-  WALL_DECAL
+  V_RECT,
+  FLOOR_DECAL
 };
 
 struct CSpatial : public Component {
@@ -37,10 +36,10 @@ typedef std::unique_ptr<CSpatial> pCSpatial_t;
 
 class CZone;
 
-class Sprite : public CSpatial {
+class VRect : public CSpatial {
   public:
-    Sprite(entityId_t entityId, entityId_t parentId, const Size& size)
-      : CSpatial(CSpatialKind::SPRITE, entityId, parentId),
+    VRect(entityId_t entityId, entityId_t parentId, const Size& size)
+      : CSpatial(CSpatialKind::V_RECT, entityId, parentId),
         size(size) {}
 
     void setTransform(const Matrix& m) {
@@ -54,10 +53,10 @@ class Sprite : public CSpatial {
     double angle;
     Size size;
 
-    virtual ~Sprite() override {}
+    virtual ~VRect() override {}
 };
 
-typedef std::unique_ptr<Sprite> pSprite_t;
+typedef std::unique_ptr<VRect> pVRect_t;
 
 struct Edge : public CSpatial {
   Edge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
@@ -98,7 +97,7 @@ struct CZone : public CSpatial {
   double ceilingHeight = 100;
   std::list<pCZone_t> children;
   std::list<Edge*> edges;
-  std::list<pSprite_t> sprites;
+  std::list<pVRect_t> sprites;
   std::list<pFloorDecal_t> floorDecals;
   CZone* parent = nullptr;
 
@@ -108,24 +107,12 @@ struct CZone : public CSpatial {
 void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
 void forEachZone(CZone& zone, std::function<void(CZone&)> fn);
 
-struct WallDecal : public CSpatial {
-  WallDecal(entityId_t entityId, entityId_t parentId)
-    : CSpatial(CSpatialKind::WALL_DECAL, entityId, parentId) {}
-
-  Size size;
-  Point pos;
-
-  virtual ~WallDecal() {}
-};
-
-typedef std::unique_ptr<WallDecal> pWallDecal_t;
-
 struct Wall : public Edge {
   Wall(entityId_t entityId, entityId_t parentId)
     : Edge(CSpatialKind::WALL, entityId, parentId) {}
 
   CZone* zone;
-  std::list<pWallDecal_t> decals;
+  std::list<pVRect_t> decals;
 
   double height() const {
     return zone->ceilingHeight - zone->floorHeight;
