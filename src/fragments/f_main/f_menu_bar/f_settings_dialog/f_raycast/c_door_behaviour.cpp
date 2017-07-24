@@ -7,7 +7,7 @@
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, Zone& zone)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, CZone& zone)
   : CBehaviour(entityId),
     m_zone(zone) {
 

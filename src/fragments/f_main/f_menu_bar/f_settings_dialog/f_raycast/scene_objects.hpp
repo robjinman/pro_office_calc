@@ -35,7 +35,7 @@ struct CRenderSpatial : public Component {
 
 typedef std::unique_ptr<CRenderSpatial> pCRenderSpatial_t;
 
-class Zone;
+class CZone;
 
 class Sprite : public CRenderSpatial {
   public:
@@ -49,7 +49,7 @@ class Sprite : public CRenderSpatial {
       angle = m.a();
     }
 
-    Zone* zone;
+    CZone* zone;
     Vec2f pos;
     double angle;
     Size size;
@@ -88,26 +88,25 @@ struct FloorDecal : public CRenderSpatial {
 
 typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
 
-class Zone;
-typedef std::unique_ptr<Zone> pZone_t;
+typedef std::unique_ptr<CZone> pCZone_t;
 
-struct Zone : public CRenderSpatial {
-  Zone(entityId_t entityId, entityId_t parentId)
+struct CZone : public CRenderSpatial {
+  CZone(entityId_t entityId, entityId_t parentId)
     : CRenderSpatial(CRenderSpatialKind::ZONE, entityId, parentId) {}
 
   double floorHeight = 0;
   double ceilingHeight = 100;
-  std::list<pZone_t> children;
+  std::list<pCZone_t> children;
   std::list<Edge*> edges;
   std::list<pSprite_t> sprites;
   std::list<pFloorDecal_t> floorDecals;
-  Zone* parent = nullptr;
+  CZone* parent = nullptr;
 
-  virtual ~Zone() override {}
+  virtual ~CZone() override {}
 };
 
-void forEachConstZone(const Zone& zone, std::function<void(const Zone&)> fn);
-void forEachZone(Zone& zone, std::function<void(Zone&)> fn);
+void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
+void forEachZone(CZone& zone, std::function<void(CZone&)> fn);
 
 struct WallDecal : public CRenderSpatial {
   WallDecal(entityId_t entityId, entityId_t parentId)
@@ -125,7 +124,7 @@ struct Wall : public Edge {
   Wall(entityId_t entityId, entityId_t parentId)
     : Edge(CRenderSpatialKind::WALL, entityId, parentId) {}
 
-  Zone* zone;
+  CZone* zone;
   std::list<pWallDecal_t> decals;
 
   double height() const {
@@ -150,8 +149,8 @@ struct JoiningEdge : public Edge {
 
   entityId_t joinId = 0;
 
-  Zone* zoneA = nullptr;
-  Zone* zoneB = nullptr;
+  CZone* zoneA = nullptr;
+  CZone* zoneB = nullptr;
 
   virtual ~JoiningEdge() {}
 };

@@ -130,7 +130,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 // constructWalls
 //===========================================
 static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
-  const parser::Object& obj, Zone& zone, CRegion& region, const Matrix& parentTransform) {
+  const parser::Object& obj, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
@@ -222,7 +222,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 //===========================================
 // constructPlayer
 //===========================================
-static Player* constructPlayer(const parser::Object& obj, const Zone& zone,
+static Player* constructPlayer(const parser::Object& obj, const CZone& zone,
   const Matrix& parentTransform, const Size& viewport) {
 
   DBG_PRINT("Constructing Player\n");
@@ -240,7 +240,7 @@ static Player* constructPlayer(const parser::Object& obj, const Zone& zone,
 //===========================================
 // constructSprite
 //===========================================
-static void constructSprite(EntityManager& em, const parser::Object& obj, Zone& zone,
+static void constructSprite(EntityManager& em, const parser::Object& obj, CZone& zone,
   CRegion& region, const Matrix& parentTransform) {
 
   Scene& scene = em.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
@@ -339,7 +339,7 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(EntityManager& em, const parser::Object& obj, Zone& zone) {
+static void constructDoor(EntityManager& em, const parser::Object& obj, CZone& zone) {
   BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
   CDoorBehaviour* behaviour = new CDoorBehaviour(zone.entityId(), zone);
@@ -349,7 +349,7 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, Zone& zo
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(EntityManager& em, const parser::Object& obj, Zone* parentZone,
+static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZone* parentZone,
   CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
@@ -362,7 +362,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Zone
   entityId_t entityId = Component::getNextId();
   entityId_t parentId = parentZone == nullptr ? -1 : parentZone->entityId();
 
-  Zone* zone = new Zone(entityId, parentId);
+  CZone* zone = new CZone(entityId, parentId);
   zone->parent = parentZone;
 
   CRegion* region = new CRegion(entityId, parentId);

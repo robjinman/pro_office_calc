@@ -14,7 +14,7 @@ struct SceneDefaults {
 struct SceneGraph {
   SceneDefaults defaults;
 
-  pZone_t rootZone;
+  pCZone_t rootZone;
   std::list<pEdge_t> edges;
 
   std::unique_ptr<Player> player;

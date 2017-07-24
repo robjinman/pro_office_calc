@@ -62,8 +62,8 @@ class Scene : public System {
     bool isRoot(const CRenderSpatial& c) const;
     void removeEntity_r(entityId_t id);
 
-    inline Zone& getCurrentZone() const {
-      return dynamic_cast<Zone&>(*m_components.at(sg.player->currentRegion));
+    inline CZone& getCurrentZone() const {
+      return dynamic_cast<CZone&>(*m_components.at(sg.player->currentRegion));
     }
 
     void buoyancy();

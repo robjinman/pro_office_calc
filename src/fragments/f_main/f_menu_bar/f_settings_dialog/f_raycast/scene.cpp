@@ -41,10 +41,10 @@ ostream& operator<<(ostream& os, CRenderSpatialKind kind) {
 //===========================================
 // forEachConstZone
 //===========================================
-void forEachConstZone(const Zone& zone, function<void(const Zone&)> fn) {
+void forEachConstZone(const CZone& zone, function<void(const CZone&)> fn) {
   fn(zone);
   std::for_each(zone.children.begin(), zone.children.end(),
-    [&](const unique_ptr<Zone>& r) {
+    [&](const unique_ptr<CZone>& r) {
 
     forEachConstZone(*r, fn);
   });
@@ -53,10 +53,10 @@ void forEachConstZone(const Zone& zone, function<void(const Zone&)> fn) {
 //===========================================
 // forEachZone
 //===========================================
-void forEachZone(Zone& zone, function<void(Zone&)> fn) {
+void forEachZone(CZone& zone, function<void(CZone&)> fn) {
   fn(zone);
   std::for_each(zone.children.begin(), zone.children.end(),
-    [&](unique_ptr<Zone>& r) {
+    [&](unique_ptr<CZone>& r) {
 
     forEachZone(*r, fn);
   });
@@ -65,17 +65,17 @@ void forEachZone(Zone& zone, function<void(Zone&)> fn) {
 //===========================================
 // getNextZone
 //===========================================
-static Zone* getNextZone(const Zone& current, const JoiningEdge& je) {
+static CZone* getNextZone(const CZone& current, const JoiningEdge& je) {
   return je.zoneA == &current ? je.zoneB : je.zoneA;
 }
 
 //===========================================
 // canStepAcross
 //===========================================
-static bool canStepAcross(const Player& player, const Zone& currentZone,
+static bool canStepAcross(const Player& player, const CZone& currentZone,
   const JoiningEdge& je) {
 
-  Zone* nextZone = getNextZone(currentZone, je);
+  CZone* nextZone = getNextZone(currentZone, je);
 
   bool canStep = nextZone->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
   bool hasHeadroom = player.headHeight() < nextZone->ceilingHeight;
@@ -86,10 +86,10 @@ static bool canStepAcross(const Player& player, const Zone& currentZone,
 //===========================================
 // intersectWall
 //===========================================
-static bool intersectWall(const Zone& zone, const Circle& circle, const Player& player) {
+static bool intersectWall(const CZone& zone, const Circle& circle, const Player& player) {
   bool b = false;
 
-  forEachConstZone(zone, [&](const Zone& r) {
+  forEachConstZone(zone, [&](const CZone& r) {
     if (!b) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
@@ -124,7 +124,7 @@ static bool intersectWall(const Zone& zone, const Circle& circle, const Player& 
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const Zone& zone, const Point& camPos, const Player& player,
+static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& player,
   double radius, const Vec2f& dv) {
 
   Circle circle{camPos + dv, radius};
@@ -135,7 +135,7 @@ static Vec2f getDelta(const Zone& zone, const Point& camPos, const Player& playe
   assert(zone.parent != nullptr);
 
   bool abortLoop = false;
-  forEachConstZone(*zone.parent, [&](const Zone& r) {
+  forEachConstZone(*zone.parent, [&](const CZone& r) {
     if (abortLoop == false) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
         const Edge& edge = **it;
@@ -262,7 +262,7 @@ void Scene::translateCamera(const Vec2f& dir) {
 
   double radius = 5.0;
 
-  Zone& currentZone = getCurrentZone();
+  CZone& currentZone = getCurrentZone();
 
   dv = getDelta(currentZone, cam.pos, *sg.player, radius, dv);
   Circle circle{cam.pos + dv, radius};
@@ -270,14 +270,14 @@ void Scene::translateCamera(const Vec2f& dir) {
   assert(currentZone.parent != nullptr);
 
   bool abortLoop = false;
-  forEachConstZone(*currentZone.parent, [&](const Zone& zone) {
+  forEachConstZone(*currentZone.parent, [&](const CZone& zone) {
     if (abortLoop) {
       return;
     }
 
     int nIntersections = 0;
     double nearestX = 999999.9;
-    Zone* nextZone = nullptr;
+    CZone* nextZone = nullptr;
     Point p;
 
     for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
@@ -349,7 +349,7 @@ void Scene::addTween(const Tween& tween, const char* name) {
 // Scene::gravity
 //===========================================
 void Scene::gravity() {
-  Zone& currentZone = getCurrentZone();
+  CZone& currentZone = getCurrentZone();
 
   if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(currentZone)) {
     double a = -600.0;
@@ -370,7 +370,7 @@ void Scene::gravity() {
 // Scene::buoyancy
 //===========================================
 void Scene::buoyancy() {
-  Zone& currentZone = getCurrentZone();
+  CZone& currentZone = getCurrentZone();
 
   if (sg.player->feetHeight() + 0.1 < currentZone.floorHeight) {
     double dy = 150.0 / m_frameRate;
@@ -404,7 +404,7 @@ static bool overlapsCircle(const Circle& circle, const FloorDecal& decal) {
 //===========================================
 // getEntitiesInRadius
 //===========================================
-static void getEntitiesInRadius_r(const Zone& zone, const Circle& circle,
+static void getEntitiesInRadius_r(const CZone& zone, const Circle& circle,
   set<entityId_t>& entities) {
 
   for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
@@ -450,13 +450,13 @@ static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
 //===========================================
 // connectSubzones_r
 //===========================================
-static void connectSubzones_r(Zone& zone) {
+static void connectSubzones_r(CZone& zone) {
   if (zone.children.size() == 0) {
     return;
   }
 
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
-    Zone& r = **it;
+    CZone& r = **it;
     connectSubzones_r(r);
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
@@ -465,7 +465,7 @@ static void connectSubzones_r(Zone& zone) {
         assert(je != nullptr);
 
         bool hasTwin = false;
-        forEachZone(zone, [&](Zone& r_) {
+        forEachZone(zone, [&](CZone& r_) {
           if (!hasTwin) {
             if (&r_ != &r) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
@@ -518,7 +518,7 @@ set<entityId_t> Scene::getEntitiesInRadius(double radius) const {
   const Point& pos = sg.player->pos();
   Circle circle{pos, radius};
 
-  forEachConstZone(*getCurrentZone().parent, [&](const Zone& zone) {
+  forEachConstZone(*getCurrentZone().parent, [&](const CZone& zone) {
     getEntitiesInRadius_r(zone, circle, entities);
   });
 
@@ -548,10 +548,10 @@ void Scene::update() {
 //===========================================
 // addToZone
 //===========================================
-static void addToZone(SceneGraph& sg, Zone& zone, pCRenderSpatial_t child) {
+static void addToZone(SceneGraph& sg, CZone& zone, pCRenderSpatial_t child) {
   switch (child->kind) {
     case CRenderSpatialKind::ZONE: {
-      pZone_t ptr(dynamic_cast<Zone*>(child.release()));
+      pCZone_t ptr(dynamic_cast<CZone*>(child.release()));
       ptr->parent = &zone;
       zone.children.push_back(std::move(ptr));
       break;
@@ -599,7 +599,7 @@ static void addToWall(Wall& edge, pCRenderSpatial_t child) {
 static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRenderSpatial_t child) {
   switch (parent.kind) {
     case CRenderSpatialKind::ZONE:
-      addToZone(sg, dynamic_cast<Zone&>(parent), std::move(child));
+      addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
       break;
     case CRenderSpatialKind::WALL:
       addToWall(dynamic_cast<Wall&>(parent), std::move(child));
@@ -613,11 +613,11 @@ static void addChildToComponent(SceneGraph& sg, CRenderSpatial& parent, pCRender
 //===========================================
 // removeFromZone
 //===========================================
-static void removeFromZone(SceneGraph& sg, Zone& zone, const CRenderSpatial& child) {
+static void removeFromZone(SceneGraph& sg, CZone& zone, const CRenderSpatial& child) {
   switch (child.kind) {
     case CRenderSpatialKind::ZONE: {
-      zone.children.remove_if([&](const pZone_t& e) {
-        return e.get() == dynamic_cast<const Zone*>(&child);
+      zone.children.remove_if([&](const pCZone_t& e) {
+        return e.get() == dynamic_cast<const CZone*>(&child);
       });
       break;
     }
@@ -672,7 +672,7 @@ static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent,
 
   switch (parent.kind) {
     case CRenderSpatialKind::ZONE:
-      removeFromZone(sg, dynamic_cast<Zone&>(parent), child);
+      removeFromZone(sg, dynamic_cast<CZone&>(parent), child);
       break;
     case CRenderSpatialKind::WALL:
       removeFromWall(dynamic_cast<Wall&>(parent), child);
@@ -710,7 +710,7 @@ void Scene::addComponent(pComponent_t component) {
       EXCEPTION("Component has no parent; Only zones can be root");
     }
 
-    pZone_t z(dynamic_cast<Zone*>(c.release()));
+    pCZone_t z(dynamic_cast<CZone*>(c.release()));
 
     sg.rootZone = std::move(z);
     m_components.clear();
@@ -741,7 +741,7 @@ bool Scene::isRoot(const CRenderSpatial& c) const {
   if (sg.rootZone == nullptr) {
     return false;
   }
-  const Zone* ptr = dynamic_cast<const Zone*>(&c);
+  const CZone* ptr = dynamic_cast<const CZone*>(&c);
   return ptr == sg.rootZone.get();
 }
 
