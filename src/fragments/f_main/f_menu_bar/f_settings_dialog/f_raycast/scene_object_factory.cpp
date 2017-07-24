@@ -364,12 +364,10 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(EntityManager& em, const parser::Object& obj, Region& zone,
-  CRegion& region) {
-
+static void constructDoor(EntityManager& em, const parser::Object& obj, Region& zone) {
   BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(region.entityId(), zone, region);
+  CDoorBehaviour* behaviour = new CDoorBehaviour(zone.entityId(), zone);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
@@ -394,7 +392,6 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
   zone->parent = parentZone;
 
   CRegion* region = new CRegion(entityId, parentId);
-  region->parent = parentRegion;
 
   try {
     scene.addComponent(pComponent_t(zone));
@@ -413,11 +410,9 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
     if (contains<string>(obj.dict, "has_ceiling")) {
       string s = getValue(obj.dict, "has_ceiling");
       if (s == "true") {
-        zone->hasCeiling = true;
         region->hasCeiling = true;
       }
       else if (s == "false") {
-        zone->hasCeiling = false;
         region->hasCeiling = false;
       }
       else {
@@ -425,16 +420,16 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
       }
     }
 
-    region->floorHeight = zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
+    zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
       std::stod(getValue(obj.dict, "floor_height")) : sg.defaults.floorHeight;
 
-    region->ceilingHeight = zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
+    zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
       std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
 
-    region->floorTexture = zone->floorTexture = contains<string>(obj.dict, "floor_texture") ?
+    region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
       getValue(obj.dict, "floor_texture") : sg.defaults.floorTexture;
 
-    region->ceilingTexture = zone->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
+    region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
       getValue(obj.dict, "ceiling_texture") : sg.defaults.ceilingTexture;
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
@@ -466,7 +461,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, Regi
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(em, obj, *zone, *region);
+      constructDoor(em, obj, *zone);
     }
   }
   catch (Exception& ex) {

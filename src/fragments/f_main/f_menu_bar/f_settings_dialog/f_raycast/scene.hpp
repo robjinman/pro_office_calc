@@ -37,6 +37,7 @@ class Scene : public System {
     virtual void handleEvent(const GameEvent& event) override;
 
     virtual void addComponent(pComponent_t component) override;
+    virtual Component& getComponent(entityId_t entityId) const override;
     virtual void removeEntity(entityId_t id) override;
 
     std::set<entityId_t> getEntitiesInRadius(double radius) const;

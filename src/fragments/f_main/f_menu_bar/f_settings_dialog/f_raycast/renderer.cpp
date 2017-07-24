@@ -10,7 +10,8 @@
 #include <QPaintDevice>
 #include <QBrush>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "exception.hpp"
 
 
@@ -45,6 +46,10 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
     case CRenderKind::SPRITE: os << "SPRITE"; break;
   }
   return os;
+}
+
+static inline Region& getZone(const Scene& scene, const CRegion& r) {
+  return dynamic_cast<Region&>(scene.getComponent(r.entityId()));
 }
 
 //===========================================
@@ -214,7 +219,7 @@ void findIntersections_r(const Camera& camera, const LineSegment& ray, const CRe
 //===========================================
 // castRay
 //===========================================
-static void castRay(Vec2f r, const RenderGraph& rg, const Player& player,
+static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Player& player,
   const CRegion& currentRegion, CastResult& result) {
 
   auto& intersections = result.intersections;
@@ -249,8 +254,10 @@ static void castRay(Vec2f r, const RenderGraph& rg, const Player& player,
     if ((*it)->kind == IntersectionKind::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
-      double floorHeight = X.wall->region->floorHeight;
-      double targetHeight = X.wall->region->ceilingHeight - X.wall->region->floorHeight;
+      Region& zone = getZone(scene, *X.wall->region);
+
+      double floorHeight = zone.floorHeight;
+      double targetHeight = zone.ceilingHeight - zone.floorHeight;
       const Point& pt = X.point_cam;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
@@ -302,13 +309,16 @@ static void castRay(Vec2f r, const RenderGraph& rg, const Player& player,
       X.nearRegion = region;
       X.farRegion = nextRegion;
 
+      const Region& zone = getZone(scene, *region);
+      const Region& nextZone = getZone(scene, *nextRegion);
+
       const Point& pt = X.point_cam;
 
-      double floorDiff = nextRegion->floorHeight - region->floorHeight;
-      double ceilingDiff = region->ceilingHeight - nextRegion->ceilingHeight;
-      double nextRegionSpan = nextRegion->ceilingHeight - nextRegion->floorHeight;
+      double floorDiff = nextZone.floorHeight - zone.floorHeight;
+      double ceilingDiff = zone.ceilingHeight - nextZone.ceilingHeight;
+      double nextRegionSpan = nextZone.ceilingHeight - nextZone.floorHeight;
 
-      double bottomWallA = region->floorHeight - cam.height;
+      double bottomWallA = zone.floorHeight - cam.height;
       double bottomWallB = bottomWallA + floorDiff;
       double topWallA = bottomWallB + nextRegionSpan;
       double topWallB = topWallA + ceilingDiff;
@@ -404,7 +414,9 @@ static void castRay(Vec2f r, const RenderGraph& rg, const Player& player,
     else if ((*it)->kind == IntersectionKind::SPRITE) {
       SpriteX& X = dynamic_cast<SpriteX&>(**it);
 
-      double floorHeight = region->floorHeight;
+      const Region& zone = getZone(scene, *region);
+
+      double floorHeight = zone.floorHeight;
       const Point& pt = X.point_cam;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
@@ -484,8 +496,9 @@ static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& pl
 // drawCeilingSlice
 //===========================================
 static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player& player,
-  const CRegion* region, const Point& collisionPoint, const ScreenSlice& slice, int screenX_px,
-  double projX_wd, double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+  const CRegion* region, double ceilingHeight, const Point& collisionPoint,
+  const ScreenSlice& slice, int screenX_px, double projX_wd, double vWorldUnit_px,
+  const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   double screenH_px = rg.viewport.y * vWorldUnit_px;
   const Camera& cam = player.camera();
@@ -505,7 +518,7 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
     double projY_wd = (screenH_px * 0.5 - j) * vWorldUnit_px_rp;
     double vAngle = fastATan(atanMap, projY_wd * F_rp) + cam.vAngle;
-    double d_ = (region->ceilingHeight - cam.height) * fastTan_rp(tanMap_rp, vAngle);
+    double d_ = (ceilingHeight - cam.height) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
@@ -542,8 +555,9 @@ static const CFloorDecal* getFloorDecal(const CRegion* region, const Point& pt, 
 // drawFloorSlice
 //===========================================
 static void drawFloorSlice(QImage& target, const RenderGraph& rg, const Player& player,
-  const CRegion* region, const Point& collisionPoint, const ScreenSlice& slice, int screenX_px,
-  double projX_wd, double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+  const CRegion* region, double floorHeight, const Point& collisionPoint, const ScreenSlice& slice,
+  int screenX_px, double projX_wd, double vWorldUnit_px, const tanMap_t& tanMap_rp,
+  const atanMap_t& atanMap) {
 
   const Camera& cam = player.camera();
 
@@ -564,7 +578,7 @@ static void drawFloorSlice(QImage& target, const RenderGraph& rg, const Player& 
   for (int j = slice.sliceBottom_px; j < slice.viewportBottom_px; ++j) {
     double projY_wd = (j - screenH_px * 0.5) * vWorldUnit_px_rp;
     double vAngle = fastATan(atanMap, projY_wd * F_rp) - cam.vAngle;
-    double d_ = (cam.height - region->floorHeight) * fastTan_rp(tanMap_rp, vAngle);
+    double d_ = (cam.height - floorHeight) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
@@ -721,8 +735,8 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 //===========================================
 // drawSprite
 //===========================================
-static void drawSprite(QPainter& painter, const RenderGraph& rg, const Player& player,
-  const Size& viewport_px, const SpriteX& spriteX, double screenX_px) {
+static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph& rg,
+  const Player& player, const Size& viewport_px, const SpriteX& spriteX, double screenX_px) {
 
   const Camera& cam = player.camera();
 
@@ -740,8 +754,10 @@ static void drawSprite(QPainter& painter, const RenderGraph& rg, const Player& p
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
 
+  const Region& zone = getZone(scene, *sprite.region);
+
   QRect srcRect = sampleSpriteTexture(frame, spriteX, cam.height, sprite.size.x,
-    sprite.size.y, sprite.region->floorHeight);
+    sprite.size.y, zone.floorHeight);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
   painter.drawImage(trgRect, tex.image, srcRect);
@@ -750,9 +766,9 @@ static void drawSprite(QPainter& painter, const RenderGraph& rg, const Player& p
 //===========================================
 // drawWallDecal
 //===========================================
-static void drawWallDecal(QPainter& painter, const RenderGraph& rg, const CWallDecal& decal,
-  const WallX& wallX, int screenX_px, const Size& viewport_px, double camHeight,
-  double vWorldUnit_px) {
+static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGraph& rg,
+  const CWallDecal& decal, const WallX& wallX, int screenX_px, const Size& viewport_px,
+  double camHeight, double vWorldUnit_px) {
 
   const Texture& decalTex = rg.textures.at(decal.texture);
 
@@ -772,7 +788,8 @@ static void drawWallDecal(QPainter& painter, const RenderGraph& rg, const CWallD
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
-  double floorH = wallX.wall->region->floorHeight;
+  const Region& zone = getZone(scene, *wallX.wall->region);
+  double floorH = zone.floorHeight;
 
   double x = wallX.distanceAlongTarget - decal.pos.x;
   int i = decalTex.image.width() * x / decal.size.x;
@@ -810,7 +827,9 @@ static CWallDecal* getWallDecal(const CWall& wall, double x) {
 //===========================================
 // Renderer::Renderer
 //===========================================
-Renderer::Renderer() {
+Renderer::Renderer(EntityManager& entityManager)
+  : m_entityManager(entityManager) {
+
   for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
     m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
       / static_cast<double>(m_tanMap_rp.size()));
@@ -826,6 +845,8 @@ Renderer::Renderer() {
 // Renderer::renderScene
 //===========================================
 void Renderer::renderScene(QImage& target, const Player& player) {
+  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_RENDER_SPATIAL);
+
   QPainter painter;
   painter.begin(&target);
 
@@ -842,7 +863,7 @@ void Renderer::renderScene(QImage& target, const Player& player) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
     CastResult result;
-    castRay(Vec2f(cam.F, projX_wd), rg, player, region(player.currentRegion), result);
+    castRay(scene, Vec2f(cam.F, projX_wd), rg, player, region(player.currentRegion), result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       Intersection& X = **it;
@@ -855,16 +876,18 @@ void Renderer::renderScene(QImage& target, const Player& player) {
 
         CWallDecal* decal = getWallDecal(*wallX.wall, wallX.distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(painter, rg, *decal, wallX, screenX_px, viewport_px, cam.height,
+          drawWallDecal(painter, scene, rg, *decal, wallX, screenX_px, viewport_px, cam.height,
             vWorldUnit_px);
         }
 
-        drawFloorSlice(target, rg, player, wallX.wall->region, wallX.point_world, slice, screenX_px,
-          projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        Region& zone = getZone(scene, *wallX.wall->region);
+
+        drawFloorSlice(target, rg, player, wallX.wall->region, zone.floorHeight, wallX.point_world,
+          slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (wallX.wall->region->hasCeiling) {
-          drawCeilingSlice(target, rg, player, wallX.wall->region, wallX.point_world, slice, screenX_px,
-            projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          drawCeilingSlice(target, rg, player, wallX.wall->region, zone.ceilingHeight,
+            wallX.point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
           drawSkySlice(target, rg, player, slice, screenX_px);
@@ -873,19 +896,22 @@ void Renderer::renderScene(QImage& target, const Player& player) {
       else if (X.kind == IntersectionKind::JOINING_EDGE) {
         const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(X);
 
-        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget, jeX.slice0,
-          jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
+        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
+          jeX.slice0, jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
 
-        drawFloorSlice(target, rg, player, jeX.nearRegion, jeX.point_world, slice0,
-          screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        Region& nearZone = getZone(scene, *jeX.nearRegion);
+        Region& farZone = getZone(scene, *jeX.farRegion);
+
+        drawFloorSlice(target, rg, player, jeX.nearRegion, nearZone.floorHeight, jeX.point_world,
+          slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         // TODO: Make use of jeX.farRegion->ceilingHeight optional
-        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget, jeX.slice1,
-          jeX.joiningEdge->topTexture, screenX_px, viewport_px, jeX.farRegion->ceilingHeight);
+        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
+          jeX.slice1, jeX.joiningEdge->topTexture, screenX_px, viewport_px, farZone.ceilingHeight);
 
         if (jeX.nearRegion->hasCeiling) {
-          drawCeilingSlice(target, rg, player, jeX.nearRegion, jeX.point_world, slice1, screenX_px,
-            projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          drawCeilingSlice(target, rg, player, jeX.nearRegion, nearZone.ceilingHeight,
+            jeX.point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
           drawSkySlice(target, rg, player, slice1, screenX_px);
@@ -893,7 +919,7 @@ void Renderer::renderScene(QImage& target, const Player& player) {
       }
       else if (X.kind == IntersectionKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(painter, rg, player, viewport_px, spriteX, screenX_px);
+        drawSprite(painter, scene, rg, player, viewport_px, spriteX, screenX_px);
       }
     }
   }
@@ -1003,7 +1029,6 @@ static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
   switch (child->kind) {
     case CRenderKind::REGION: {
       pCRegion_t ptr(dynamic_cast<CRegion*>(child.release()));
-      ptr->parent = &region;
       region.children.push_back(std::move(ptr));
       break;
     }
@@ -1132,6 +1157,13 @@ static void removeChildFromComponent(RenderGraph& rg, CRender& parent,
       EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
         << parent.kind);
   };
+}
+
+//===========================================
+// Renderer::getComponent
+//===========================================
+Component& Renderer::getComponent(entityId_t entityId) const {
+  return *m_components.at(entityId);
 }
 
 //===========================================

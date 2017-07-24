@@ -687,6 +687,13 @@ static void removeChildFromComponent(SceneGraph& sg, CRenderSpatial& parent,
 }
 
 //===========================================
+// Scene::getComponent
+//===========================================
+Component& Scene::getComponent(entityId_t entityId) const {
+  return *m_components.at(entityId);
+}
+
+//===========================================
 // Scene::addComponent
 //===========================================
 void Scene::addComponent(pComponent_t component) {

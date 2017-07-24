@@ -183,11 +183,8 @@ struct Region : public CRenderSpatial {
   Region(entityId_t entityId, entityId_t parentId)
     : CRenderSpatial(CRenderSpatialKind::REGION, entityId, parentId) {}
 
-  bool hasCeiling = true;
   double floorHeight = 0;
   double ceilingHeight = 100;
-  std::string floorTexture;
-  std::string ceilingTexture;
   std::list<pRegion_t> children;
   std::list<Edge*> edges;
   std::list<pSprite_t> sprites;

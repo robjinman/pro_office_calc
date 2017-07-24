@@ -83,11 +83,12 @@ struct CastResult {
 typedef std::array<double, 10000> tanMap_t;
 typedef std::array<double, 10000> atanMap_t;
 
+class EntityManager;
 class Player;
 
 class Renderer : public System {
   public:
-    Renderer();
+    Renderer(EntityManager& entityManager);
 
     void connectRegions();
 
@@ -95,6 +96,7 @@ class Renderer : public System {
     virtual void handleEvent(const GameEvent& event) override;
 
     virtual void addComponent(pComponent_t component) override;
+    virtual Component& getComponent(entityId_t entityId) const override;
     virtual void removeEntity(entityId_t id) override;
 
     void renderScene(QImage& target, const Player& player);
@@ -102,6 +104,8 @@ class Renderer : public System {
     RenderGraph rg;
 
   private:
+    EntityManager& m_entityManager;
+
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
 

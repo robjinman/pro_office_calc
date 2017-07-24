@@ -7,16 +7,14 @@
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, Region& zone, CRegion& region)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, Region& zone)
   : CBehaviour(entityId),
-    m_zone(zone),
-    m_region(region) {
+    m_zone(zone) {
 
   m_y0 = zone.floorHeight;
   m_y1 = zone.ceilingHeight;
 
   zone.ceilingHeight = zone.floorHeight + 0.1;
-  region.ceilingHeight = region.floorHeight + 0.1;
 }
 
 //===========================================
@@ -32,17 +30,15 @@ void CDoorBehaviour::update() {
       return;
     case ST_OPENING:
       m_zone.ceilingHeight += dy;
-      m_region.ceilingHeight += dy;
 
-      if (m_region.ceilingHeight + dy >= m_y1) {
+      if (m_zone.ceilingHeight + dy >= m_y1) {
         m_state = ST_OPEN;
       }
       break;
     case ST_CLOSING:
       m_zone.ceilingHeight -= dy;
-      m_region.ceilingHeight -= dy;
 
-      if (m_region.ceilingHeight - dy <= m_y0) {
+      if (m_zone.ceilingHeight - dy <= m_y0) {
         m_state = ST_CLOSED;
       }
       break;

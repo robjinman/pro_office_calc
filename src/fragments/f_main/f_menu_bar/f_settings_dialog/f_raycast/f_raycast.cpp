@@ -53,7 +53,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   BehaviourSystem* behaviourSystem = new BehaviourSystem;
   m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
 
-  Renderer* renderer = new Renderer;
+  Renderer* renderer = new Renderer(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderer));
 
   Scene* scene = new Scene(m_entityManager, FRAME_RATE);

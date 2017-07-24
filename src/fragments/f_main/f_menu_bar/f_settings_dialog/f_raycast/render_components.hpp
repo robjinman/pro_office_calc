@@ -156,15 +156,12 @@ struct CRegion : public CRender {
     : CRender(CRenderKind::REGION, entityId, parentId) {}
 
   bool hasCeiling = true;
-  double floorHeight = 0;
-  double ceilingHeight = 100;
   std::string floorTexture;
   std::string ceilingTexture;
   std::list<pCRegion_t> children;
   std::list<CEdge*> edges;
   std::list<pCSprite_t> sprites;
   std::list<pCFloorDecal_t> floorDecals;
-  CRegion* parent = nullptr;
 
   virtual ~CRegion() override {}
 };
@@ -192,10 +189,6 @@ struct CWall : public CEdge {
   std::string texture;
   CRegion* region;
   std::list<pCWallDecal_t> decals;
-
-  double height() const {
-    return region->ceilingHeight - region->floorHeight;
-  }
 
   virtual ~CWall() {}
 };
