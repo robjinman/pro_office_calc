@@ -31,8 +31,8 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
   return os;
 }
 
-static inline CEdge& getEdge(const SpatialSystem& spatialSystem, const CBoundary& b) {
-  return dynamic_cast<CEdge&>(spatialSystem.getComponent(b.entityId()));
+static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const CBoundary& b) {
+  return dynamic_cast<CSoftEdge&>(spatialSystem.getComponent(b.entityId()));
 }
 
 //===========================================
@@ -44,32 +44,9 @@ RenderSystem::RenderSystem(EntityManager& entityManager, QImage& target)
     m_renderer(entityManager) {}
 
 //===========================================
-// similar
-//===========================================
-static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 4.0;
-  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
-    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
-}
-
-//===========================================
-// areTwins
-//===========================================
-static bool areTwins(const SpatialSystem& spatialSystem, const CJoin& je1, const CJoin& je2) {
-  const CEdge& e1 = getEdge(spatialSystem, je1);
-  const CEdge& e2 = getEdge(spatialSystem, je2);
-
-  return similar(e1.lseg, e2.lseg);
-}
-
-//===========================================
 // connectSubregions_r
 //===========================================
 static void connectSubregions_r(const SpatialSystem& spatialSystem, CRegion& region) {
-  if (region.children.size() == 0) {
-    return;
-  }
-
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     CRegion& r = **it;
     connectSubregions_r(spatialSystem, r);
@@ -86,14 +63,11 @@ static void connectSubregions_r(const SpatialSystem& spatialSystem, CRegion& reg
               for (auto lt = r_.boundaries.begin(); lt != r_.boundaries.end(); ++lt) {
                 if ((*lt)->kind == CRenderKind::JOIN) {
                   CJoin* other = dynamic_cast<CJoin*>(*lt);
-                  assert(other != nullptr);
 
-                  if (je == other) {
-                    hasTwin = true;
-                    break;
-                  }
+                  entityId_t id1 = getSoftEdge(spatialSystem, *je).joinId;
+                  entityId_t id2 = getSoftEdge(spatialSystem, *other).joinId;
 
-                  if (areTwins(spatialSystem, *je, *other)) {
+                  if (id1 == id2) {
                     hasTwin = true;
 
                     je->joinId = other->joinId;

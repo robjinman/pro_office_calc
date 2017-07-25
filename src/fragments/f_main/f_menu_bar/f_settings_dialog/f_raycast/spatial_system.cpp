@@ -450,10 +450,6 @@ static bool areTwins(const CSoftEdge& je1, const CSoftEdge& je2) {
 // connectSubzones_r
 //===========================================
 static void connectSubzones_r(CZone& zone) {
-  if (zone.children.size() == 0) {
-    return;
-  }
-
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
     CZone& r = **it;
     connectSubzones_r(r);
@@ -470,12 +466,6 @@ static void connectSubzones_r(CZone& zone) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
                 if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
                   CSoftEdge* other = dynamic_cast<CSoftEdge*>(*lt);
-                  assert(other != nullptr);
-
-                  if (je == other) {
-                    hasTwin = true;
-                    break;
-                  }
 
                   if (areTwins(*je, *other)) {
                     hasTwin = true;
