@@ -10,7 +10,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast_spec.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 
 
 #ifdef DEBUG
@@ -54,8 +54,8 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   BehaviourSystem* behaviourSystem = new BehaviourSystem;
   m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
 
-  Renderer* renderer = new Renderer(m_entityManager);
-  m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderer));
+  RenderSystem* renderSystem = new RenderSystem(m_entityManager, m_buffer);
+  m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderSystem));
 
   SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
@@ -81,10 +81,9 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Renderer& renderer = m_entityManager.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  renderer.renderScene(m_buffer, *spatialSystem.sg.player);
+  renderSystem.render();
 
   QPainter painter;
   painter.begin(this);

@@ -11,7 +11,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -78,7 +78,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId, const LineSegment& wall) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Renderer& renderer = em.system<Renderer&>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem&>(ComponentKind::C_RENDER);
 
   Point A = parentTransform * obj.transform * obj.path.points[0];
   Point B = parentTransform * obj.transform * obj.path.points[1];
@@ -122,7 +122,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   CWallDecal* decal = new CWallDecal(id, parentId);
   decal->texture = texture;
 
-  renderer.addComponent(pComponent_t(decal));
+  renderSystem.addComponent(pComponent_t(decal));
 }
 
 //===========================================
@@ -132,7 +132,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Walls\n");
 
@@ -170,7 +170,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
     wall->region = &region;
     wall->texture = getValue(obj.dict, "texture");
 
-    renderer.addComponent(pComponent_t(wall));
+    renderSystem.addComponent(pComponent_t(wall));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       if (getValue((*it)->dict, "type") == "wall_decal") {
@@ -190,7 +190,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing FloorDecal\n");
 
@@ -215,7 +215,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   CFloorDecal* decal = new CFloorDecal(id, parentId);
   decal->texture = texture;
 
-  renderer.addComponent(pComponent_t(decal));
+  renderSystem.addComponent(pComponent_t(decal));
 }
 
 //===========================================
@@ -243,7 +243,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
   CRegion& region, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Sprite\n");
 
@@ -260,7 +260,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
     CBadGuy* sprite = new CBadGuy(id, zone.entityId());
     sprite->region = &region;
 
-    renderer.addComponent(pComponent_t(sprite));
+    renderSystem.addComponent(pComponent_t(sprite));
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
     entityId_t id = Component::getNextId();
@@ -275,7 +275,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
     CAmmo* sprite = new CAmmo(id, zone.entityId());
     sprite->region = &region;
 
-    renderer.addComponent(pComponent_t(sprite));
+    renderSystem.addComponent(pComponent_t(sprite));
   }
   else {
     EXCEPTION("Error constructing sprite of unknown type");
@@ -289,7 +289,7 @@ static void constructCSoftEdges(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing CSoftEdges\n");
 
@@ -328,7 +328,7 @@ static void constructCSoftEdges(EntityManager& em, map<Point, bool>& endpoints,
       boundary->bottomTexture = getValue(obj.dict, "bottom_texture");
     }
 
-    renderer.addComponent(pComponent_t(boundary));
+    renderSystem.addComponent(pComponent_t(boundary));
   }
 
   snapEndpoint(endpoints, edges.front()->lseg.A);
@@ -351,10 +351,10 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, CZone& z
 static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZone* parentZone,
   CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
-  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   SceneGraph& sg = spatialSystem.sg;
-  RenderGraph& rg = renderer.rg;
+  RenderGraph& rg = renderSystem.rg;
 
   DBG_PRINT("Constructing Region\n");
 
@@ -368,7 +368,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
 
   try {
     spatialSystem.addComponent(pComponent_t(zone));
-    renderer.addComponent(pComponent_t(region));
+    renderSystem.addComponent(pComponent_t(region));
 
     if (getValue(obj.dict, "type") != "region") {
       EXCEPTION("Object is not of type region");
@@ -452,10 +452,10 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
 // constructRootRegion
 //===========================================
 void constructRootRegion(EntityManager& em, const parser::Object& obj) {
-  Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  RenderGraph& rg = renderer.rg;
+  RenderGraph& rg = renderSystem.rg;
   SceneGraph& sg = spatialSystem.sg;
 
   if (getValue(obj.dict, "type") != "region") {
@@ -485,7 +485,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   }
 
   spatialSystem.connectZones();
-  renderer.connectRegions();
+  renderSystem.connectRegions();
 
   rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   rg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};

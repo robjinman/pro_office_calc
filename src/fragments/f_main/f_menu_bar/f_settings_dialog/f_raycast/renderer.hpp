@@ -5,7 +5,6 @@
 #include <array>
 #include <list>
 #include <set>
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_graph.hpp"
 
@@ -86,43 +85,22 @@ typedef std::array<double, 10000> atanMap_t;
 class EntityManager;
 class Player;
 
-class Renderer : public System {
+class Renderer {
   public:
     Renderer(EntityManager& entityManager);
 
-    void connectRegions();
-
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& event) override;
-
-    virtual void addComponent(pComponent_t component) override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
-
-    void renderScene(QImage& target, const Player& player);
-
-    RenderGraph rg;
+    void renderScene(QImage& target, const RenderGraph& rg, const Player& player,
+      const CRegion& currentRegion);
 
   private:
     EntityManager& m_entityManager;
 
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
-
-    std::map<entityId_t, CRender*> m_components;
-    std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
-
-    bool isRoot(const CRender& c) const;
-    void removeEntity_r(entityId_t id);
-
-    inline CRegion& region(entityId_t id) const {
-      return dynamic_cast<CRegion&>(*m_components.at(id));
-    }
 };
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const CRegion& region,
-  CastResult& result, std::set<const CRegion*>& visitedRegions,
-  std::set<entityId_t>& visitedJoins);
+  CastResult& result, std::set<const CRegion*>& visitedRegions, std::set<entityId_t>& visitedJoins);
 
 
 #endif
