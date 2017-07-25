@@ -10,7 +10,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
 
 
 struct AnimationFrame {
@@ -45,7 +44,7 @@ struct Texture {
 enum class CRenderKind {
   REGION,
   WALL,
-  JOINING_EDGE,
+  JOIN,
   SPRITE,
   FLOOR_DECAL,
   WALL_DECAL
@@ -137,17 +136,17 @@ struct CBadGuy : public CSprite {
   virtual ~CBadGuy() override {}
 };
 
-struct CEdge : public CRender {
-  CEdge(CRenderKind kind, entityId_t entityId, entityId_t parentId)
+struct CBoundary : public CRender {
+  CBoundary(CRenderKind kind, entityId_t entityId, entityId_t parentId)
     : CRender(kind, entityId, parentId) {}
 
-  CEdge(const CEdge& cpy, entityId_t entityId, entityId_t parentId)
+  CBoundary(const CBoundary& cpy, entityId_t entityId, entityId_t parentId)
     : CRender(cpy.kind, entityId, parentId) {}
 
-  virtual ~CEdge() {}
+  virtual ~CBoundary() {}
 };
 
-typedef std::unique_ptr<CEdge> pCEdge_t;
+typedef std::unique_ptr<CBoundary> pCBoundary_t;
 
 struct CFloorDecal : public CRender {
   CFloorDecal(entityId_t entityId, entityId_t parentId)
@@ -171,7 +170,7 @@ struct CRegion : public CRender {
   std::string floorTexture;
   std::string ceilingTexture;
   std::list<pCRegion_t> children;
-  std::list<CEdge*> edges;
+  std::list<CBoundary*> boundaries;
   std::list<pCSprite_t> sprites;
   std::list<pCFloorDecal_t> floorDecals;
 
@@ -192,9 +191,9 @@ struct CWallDecal : public CRender {
 
 typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
 
-struct CWall : public CEdge {
+struct CWall : public CBoundary {
   CWall(entityId_t entityId, entityId_t parentId)
-    : CEdge(CRenderKind::WALL, entityId, parentId) {}
+    : CBoundary(CRenderKind::WALL, entityId, parentId) {}
 
   std::string texture;
   CRegion* region;
@@ -203,13 +202,13 @@ struct CWall : public CEdge {
   virtual ~CWall() {}
 };
 
-struct CJoiningEdge : public CEdge {
-  CJoiningEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : CEdge(CRenderKind::JOINING_EDGE, entityId, parentId),
+struct CJoin : public CBoundary {
+  CJoin(entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : CBoundary(CRenderKind::JOIN, entityId, parentId),
       joinId(joinId) {}
 
-  CJoiningEdge(const CJoiningEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : CEdge(cpy, entityId, parentId),
+  CJoin(const CJoin& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : CBoundary(cpy, entityId, parentId),
       joinId(joinId) {
 
     topTexture = cpy.topTexture;
@@ -218,7 +217,7 @@ struct CJoiningEdge : public CEdge {
     regionB = cpy.regionB;
   }
 
-  void mergeIn(const CJoiningEdge& other) {
+  void mergeIn(const CJoin& other) {
     if (other.topTexture != "default") {
       topTexture = other.topTexture;
     }
@@ -235,7 +234,7 @@ struct CJoiningEdge : public CEdge {
   CRegion* regionA = nullptr;
   CRegion* regionB = nullptr;
 
-  virtual ~CJoiningEdge() {}
+  virtual ~CJoin() {}
 };
 
 

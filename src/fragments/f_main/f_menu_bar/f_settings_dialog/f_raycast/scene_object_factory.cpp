@@ -9,7 +9,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
 #include "event.hpp"
@@ -77,7 +77,7 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId, const LineSegment& wall) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer&>(ComponentKind::C_RENDER);
 
   Point A = parentTransform * obj.transform * obj.path.points[0];
@@ -117,7 +117,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   VRect* vRect = new VRect(id, parentId, size);
   vRect->pos = pos;
 
-  scene.addComponent(pComponent_t(vRect));
+  spatialSystem.addComponent(pComponent_t(vRect));
 
   CWallDecal* decal = new CWallDecal(id, parentId);
   decal->texture = texture;
@@ -131,14 +131,14 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Walls\n");
 
   Matrix m = parentTransform * obj.transform;
 
-  list<Wall*> edges;
+  list<CHardEdge*> edges;
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
@@ -154,7 +154,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
 
     entityId_t id = Component::getNextId();
 
-    Wall* edge = new Wall(id, zone.entityId());
+    CHardEdge* edge = new CHardEdge(id, zone.entityId());
 
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
@@ -163,7 +163,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
 
     edges.push_back(edge);
 
-    scene.addComponent(pComponent_t(edge));
+    spatialSystem.addComponent(pComponent_t(edge));
 
     CWall* wall = new CWall(id, region.entityId());
 
@@ -189,7 +189,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
 static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
   const Matrix& parentTransform, entityId_t parentId) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing FloorDecal\n");
@@ -206,11 +206,11 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 
   entityId_t id = Component::getNextId();
 
-  FloorDecal* hRect = new FloorDecal(id, parentId);
+  CHRect* hRect = new CHRect(id, parentId);
   hRect->size = size;
   hRect->transform = parentTransform * obj.transform * m;
 
-  scene.addComponent(pComponent_t(hRect));
+  spatialSystem.addComponent(pComponent_t(hRect));
 
   CFloorDecal* decal = new CFloorDecal(id, parentId);
   decal->texture = texture;
@@ -242,7 +242,7 @@ static Player* constructPlayer(const parser::Object& obj, const CZone& zone,
 static void constructSprite(EntityManager& em, const parser::Object& obj, CZone& zone,
   CRegion& region, const Matrix& parentTransform) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
   DBG_PRINT("Constructing Sprite\n");
@@ -255,7 +255,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->zone = &zone;
 
-    scene.addComponent(pComponent_t(vRect));
+    spatialSystem.addComponent(pComponent_t(vRect));
 
     CBadGuy* sprite = new CBadGuy(id, zone.entityId());
     sprite->region = &region;
@@ -270,7 +270,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->zone = &zone;
 
-    scene.addComponent(pComponent_t(vRect));
+    spatialSystem.addComponent(pComponent_t(vRect));
 
     CAmmo* sprite = new CAmmo(id, zone.entityId());
     sprite->region = &region;
@@ -283,17 +283,17 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
 }
 
 //===========================================
-// constructJoiningEdges
+// constructCSoftEdges
 //===========================================
-static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints,
+static void constructCSoftEdges(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
 
-  DBG_PRINT("Constructing JoiningEdges\n");
+  DBG_PRINT("Constructing CSoftEdges\n");
 
-  list<JoiningEdge*> edges;
+  list<CSoftEdge*> edges;
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
@@ -309,7 +309,7 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 
     entityId_t entityId = Component::getNextId();
 
-    JoiningEdge* edge = new JoiningEdge(entityId, parentId, Component::getNextId());
+    CSoftEdge* edge = new CSoftEdge(entityId, parentId, Component::getNextId());
 
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
@@ -317,9 +317,9 @@ static void constructJoiningEdges(EntityManager& em, map<Point, bool>& endpoints
 
     edges.push_back(edge);
 
-    scene.addComponent(pComponent_t(edge));
+    spatialSystem.addComponent(pComponent_t(edge));
 
-    CJoiningEdge* boundary = new CJoiningEdge(entityId, parentId, Component::getNextId());
+    CJoin* boundary = new CJoin(entityId, parentId, Component::getNextId());
 
     if (contains<string>(obj.dict, "top_texture")) {
       boundary->topTexture = getValue(obj.dict, "top_texture");
@@ -352,8 +352,8 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
   CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
-  SceneGraph& sg = scene.sg;
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  SceneGraph& sg = spatialSystem.sg;
   RenderGraph& rg = renderer.rg;
 
   DBG_PRINT("Constructing Region\n");
@@ -367,7 +367,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
   CRegion* region = new CRegion(entityId, parentId);
 
   try {
-    scene.addComponent(pComponent_t(zone));
+    spatialSystem.addComponent(pComponent_t(zone));
     renderer.addComponent(pComponent_t(region));
 
     if (getValue(obj.dict, "type") != "region") {
@@ -416,7 +416,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
         constructWalls(em, endpoints, child, *zone, *region, transform);
       }
       else if (type == "joining_edge") {
-        constructJoiningEdges(em, endpoints, child, entityId, transform);
+        constructCSoftEdges(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
         constructSprite(em, child, *zone, *region, transform);
@@ -453,10 +453,10 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
 //===========================================
 void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   Renderer& renderer = em.system<Renderer>(ComponentKind::C_RENDER);
-  Scene& scene = em.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
   RenderGraph& rg = renderer.rg;
-  SceneGraph& sg = scene.sg;
+  SceneGraph& sg = spatialSystem.sg;
 
   if (getValue(obj.dict, "type") != "region") {
     EXCEPTION("Expected object of type 'region'");
@@ -481,10 +481,10 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   }
 
   if (!sg.player) {
-    EXCEPTION("Scene must contain the player");
+    EXCEPTION("SpatialSystem must contain the player");
   }
 
-  scene.connectZones();
+  spatialSystem.connectZones();
   renderer.connectRegions();
 
   rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};

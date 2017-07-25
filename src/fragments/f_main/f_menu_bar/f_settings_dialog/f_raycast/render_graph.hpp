@@ -17,7 +17,7 @@ struct RenderGraph {
   std::map<std::string, Texture> textures;
 
   pCRegion_t rootRegion;
-  std::list<pCEdge_t> edges;
+  std::list<pCBoundary_t> boundaries;
 };
 
 

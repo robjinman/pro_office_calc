@@ -6,7 +6,7 @@
 #include <list>
 #include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_graph.hpp"
 
 
@@ -14,7 +14,7 @@ class QImage;
 class SceneGraph;
 
 enum class IntersectionKind {
-  JOINING_EDGE,
+  JOIN,
   WALL,
   SPRITE
 };
@@ -43,17 +43,17 @@ struct Slice {
   double viewportTop_wd;
 };
 
-struct JoiningEdgeX : public Intersection {
-  JoiningEdgeX()
-    : Intersection(IntersectionKind::JOINING_EDGE) {}
+struct JoinX : public Intersection {
+  JoinX()
+    : Intersection(IntersectionKind::JOIN) {}
 
-  CJoiningEdge* joiningEdge;
+  CJoin* join;
   Slice slice0;
   Slice slice1;
   const CRegion* nearRegion;
   const CRegion* farRegion;
 
-  virtual ~JoiningEdgeX() {}
+  virtual ~JoinX() {}
 };
 
 struct WallX : public Intersection {
@@ -122,7 +122,7 @@ class Renderer : public System {
 
 void findIntersections_r(const Camera& camera, const LineSegment& ray, const CRegion& region,
   CastResult& result, std::set<const CRegion*>& visitedRegions,
-  std::set<entityId_t>& visitedJoiningEdges);
+  std::set<entityId_t>& visitedJoins);
 
 
 #endif

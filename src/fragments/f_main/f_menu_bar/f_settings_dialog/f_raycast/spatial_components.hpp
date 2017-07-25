@@ -1,5 +1,5 @@
-#ifndef __PROCALC_FRAGMENTS_F_RAYCAST_SCENE_OBJECTS_HPP__
-#define __PROCALC_FRAGMENTS_F_RAYCAST_SCENE_OBJECTS_HPP__
+#ifndef __PROCALC_FRAGMENTS_F_RAYCAST_SPATIAL_COMPONENTS_HPP__
+#define __PROCALC_FRAGMENTS_F_RAYCAST_SPATIAL_COMPONENTS_HPP__
 
 
 #include <string>
@@ -14,10 +14,10 @@
 
 enum class CSpatialKind {
   ZONE,
-  WALL,
-  JOINING_EDGE,
+  HARD_EDGE,
+  SOFT_EDGE,
   V_RECT,
-  FLOOR_DECAL
+  H_RECT
 };
 
 struct CSpatial : public Component {
@@ -58,11 +58,11 @@ class VRect : public CSpatial {
 
 typedef std::unique_ptr<VRect> pVRect_t;
 
-struct Edge : public CSpatial {
-  Edge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
+struct CEdge : public CSpatial {
+  CEdge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
     : CSpatial(kind, entityId, parentId) {}
 
-  Edge(const Edge& cpy, entityId_t entityId, entityId_t parentId)
+  CEdge(const CEdge& cpy, entityId_t entityId, entityId_t parentId)
     : CSpatial(cpy.kind, entityId, parentId) {
 
     lseg = cpy.lseg;
@@ -70,22 +70,22 @@ struct Edge : public CSpatial {
 
   LineSegment lseg;
 
-  virtual ~Edge() {}
+  virtual ~CEdge() {}
 };
 
-typedef std::unique_ptr<Edge> pEdge_t;
+typedef std::unique_ptr<CEdge> pCEdge_t;
 
-struct FloorDecal : public CSpatial {
-  FloorDecal(entityId_t entityId, entityId_t parentId)
-    : CSpatial(CSpatialKind::FLOOR_DECAL, entityId, parentId) {}
+struct CHRect : public CSpatial {
+  CHRect(entityId_t entityId, entityId_t parentId)
+    : CSpatial(CSpatialKind::H_RECT, entityId, parentId) {}
 
   Size size;
   Matrix transform;
 
-  virtual ~FloorDecal() override {}
+  virtual ~CHRect() override {}
 };
 
-typedef std::unique_ptr<FloorDecal> pFloorDecal_t;
+typedef std::unique_ptr<CHRect> pCHRect_t;
 
 typedef std::unique_ptr<CZone> pCZone_t;
 
@@ -96,9 +96,9 @@ struct CZone : public CSpatial {
   double floorHeight = 0;
   double ceilingHeight = 100;
   std::list<pCZone_t> children;
-  std::list<Edge*> edges;
+  std::list<CEdge*> edges;
   std::list<pVRect_t> sprites;
-  std::list<pFloorDecal_t> floorDecals;
+  std::list<pCHRect_t> floorDecals;
   CZone* parent = nullptr;
 
   virtual ~CZone() override {}
@@ -107,9 +107,9 @@ struct CZone : public CSpatial {
 void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
 void forEachZone(CZone& zone, std::function<void(CZone&)> fn);
 
-struct Wall : public Edge {
-  Wall(entityId_t entityId, entityId_t parentId)
-    : Edge(CSpatialKind::WALL, entityId, parentId) {}
+struct CHardEdge : public CEdge {
+  CHardEdge(entityId_t entityId, entityId_t parentId)
+    : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
 
   CZone* zone;
   std::list<pVRect_t> decals;
@@ -118,16 +118,16 @@ struct Wall : public Edge {
     return zone->ceilingHeight - zone->floorHeight;
   }
 
-  virtual ~Wall() {}
+  virtual ~CHardEdge() {}
 };
 
-struct JoiningEdge : public Edge {
-  JoiningEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : Edge(CSpatialKind::JOINING_EDGE, entityId, parentId),
+struct CSoftEdge : public CEdge {
+  CSoftEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : CEdge(CSpatialKind::SOFT_EDGE, entityId, parentId),
       joinId(joinId) {}
 
-  JoiningEdge(const JoiningEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : Edge(cpy, entityId, parentId),
+  CSoftEdge(const CSoftEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
+    : CEdge(cpy, entityId, parentId),
       joinId(joinId) {
 
     zoneA = cpy.zoneA;
@@ -139,7 +139,7 @@ struct JoiningEdge : public Edge {
   CZone* zoneA = nullptr;
   CZone* zoneB = nullptr;
 
-  virtual ~JoiningEdge() {}
+  virtual ~CSoftEdge() {}
 };
 
 

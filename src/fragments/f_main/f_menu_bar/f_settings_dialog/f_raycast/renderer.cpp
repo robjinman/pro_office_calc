@@ -10,7 +10,7 @@
 #include <QPaintDevice>
 #include <QBrush>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "exception.hpp"
 
@@ -40,7 +40,7 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
   switch (kind) {
     case CRenderKind::REGION: os << "REGION"; break;
     case CRenderKind::WALL: os << "WALL"; break;
-    case CRenderKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
+    case CRenderKind::JOIN: os << "JOIN"; break;
     case CRenderKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
     case CRenderKind::WALL_DECAL: os << "WALL_DECAL"; break;
     case CRenderKind::SPRITE: os << "SPRITE"; break;
@@ -48,24 +48,24 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
   return os;
 }
 
-static inline CZone& getZone(const Scene& scene, const CRegion& r) {
-  return dynamic_cast<CZone&>(scene.getComponent(r.entityId()));
+static inline CZone& getZone(const SpatialSystem& spatialSystem, const CRegion& r) {
+  return dynamic_cast<CZone&>(spatialSystem.getComponent(r.entityId()));
 }
 
-static inline Edge& getEdge(const Scene& scene, const CEdge& e) {
-  return dynamic_cast<Edge&>(scene.getComponent(e.entityId()));
+static inline CEdge& getEdge(const SpatialSystem& spatialSystem, const CBoundary& b) {
+  return dynamic_cast<CEdge&>(spatialSystem.getComponent(b.entityId()));
 }
 
-static inline VRect& getVRect(const Scene& scene, const CSprite& s) {
-  return dynamic_cast<VRect&>(scene.getComponent(s.entityId()));
+static inline VRect& getVRect(const SpatialSystem& spatialSystem, const CSprite& s) {
+  return dynamic_cast<VRect&>(spatialSystem.getComponent(s.entityId()));
 }
 
-static inline VRect& getVRect(const Scene& scene, const CWallDecal& d) {
-  return dynamic_cast<VRect&>(scene.getComponent(d.entityId()));
+static inline VRect& getVRect(const SpatialSystem& spatialSystem, const CWallDecal& d) {
+  return dynamic_cast<VRect&>(spatialSystem.getComponent(d.entityId()));
 }
 
-static inline FloorDecal& getHRect(const Scene& scene, const CFloorDecal& d) {
-  return dynamic_cast<FloorDecal&>(scene.getComponent(d.entityId()));
+static inline CHRect& getHRect(const SpatialSystem& spatialSystem, const CFloorDecal& d) {
+  return dynamic_cast<CHRect&>(spatialSystem.getComponent(d.entityId()));
 }
 
 //===========================================
@@ -143,8 +143,8 @@ static Intersection* constructIntersection(CRenderKind kind) {
     case CRenderKind::WALL:
       return new WallX;
       break;
-    case CRenderKind::JOINING_EDGE:
-      return new JoiningEdgeX;
+    case CRenderKind::JOIN:
+      return new JoinX;
       break;
     default:
       EXCEPTION("Error constructing Intersection of unknown type");
@@ -154,16 +154,17 @@ static Intersection* constructIntersection(CRenderKind kind) {
 //===========================================
 // findIntersections_r
 //===========================================
-void findIntersections_r(const Scene& scene, const LineSegment& ray, const CRegion& region,
-  CastResult& result, set<const CRegion*>& visitedRegions, set<entityId_t>& visitedJoiningEdges) {
+void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& ray,
+  const CRegion& region, CastResult& result, set<const CRegion*>& visitedRegions,
+  set<entityId_t>& visitedJoins) {
 
-  const Camera& camera = scene.sg.player->camera();
+  const Camera& camera = spatialSystem.sg.player->camera();
 
   visitedRegions.insert(&region);
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     if (visitedRegions.find(it->get()) == visitedRegions.end()) {
-      findIntersections_r(scene, ray, **it, result, visitedRegions, visitedJoiningEdges);
+      findIntersections_r(spatialSystem, ray, **it, result, visitedRegions, visitedJoins);
     }
   }
 
@@ -171,7 +172,7 @@ void findIntersections_r(const Scene& scene, const LineSegment& ray, const CRegi
 
   for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
     CSprite& sprite = **it;
-    const VRect& vRect = getVRect(scene, sprite);
+    const VRect& vRect = getVRect(spatialSystem, sprite);
 
     Point pos = invCamMatrix * vRect.pos;
     double w = vRect.size.x;
@@ -190,42 +191,42 @@ void findIntersections_r(const Scene& scene, const LineSegment& ray, const CRegi
     }
   }
 
-  for (auto it = region.edges.begin(); it != region.edges.end(); ++it) {
-    CEdge& edge = **it;
+  for (auto it = region.boundaries.begin(); it != region.boundaries.end(); ++it) {
+    CBoundary& boundary = **it;
 
-    LineSegment lseg = transform(getEdge(scene, edge).lseg, invCamMatrix);
+    LineSegment lseg = transform(getEdge(spatialSystem, boundary).lseg, invCamMatrix);
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      Intersection* X = constructIntersection(edge.kind);
+      Intersection* X = constructIntersection(boundary.kind);
       X->point_cam = pt;
       X->point_world = camera.matrix() * pt;
       X->distanceFromCamera = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
 
-      if (edge.kind == CRenderKind::WALL) {
+      if (boundary.kind == CRenderKind::WALL) {
         WallX* wallX = dynamic_cast<WallX*>(X);
-        CWall& wall = dynamic_cast<CWall&>(edge);
+        CWall& wall = dynamic_cast<CWall&>(boundary);
 
         wallX->wall = &wall;
         result.intersections.push_back(pIntersection_t(X));
       }
-      else if (edge.kind == CRenderKind::JOINING_EDGE) {
-        JoiningEdgeX* jeX = dynamic_cast<JoiningEdgeX*>(X);
-        CJoiningEdge& je = dynamic_cast<CJoiningEdge&>(edge);
+      else if (boundary.kind == CRenderKind::JOIN) {
+        JoinX* jeX = dynamic_cast<JoinX*>(X);
+        CJoin& je = dynamic_cast<CJoin&>(boundary);
 
-        jeX->joiningEdge = &je;
+        jeX->join = &je;
 
         const CRegion& next = je.regionA == &region ? *je.regionB : *je.regionA;
 
         auto pX = pIntersection_t(X);
-        if (visitedJoiningEdges.find(je.joinId) == visitedJoiningEdges.end()) {
+        if (visitedJoins.find(je.joinId) == visitedJoins.end()) {
           result.intersections.push_back(std::move(pX));
-          visitedJoiningEdges.insert(je.joinId);
+          visitedJoins.insert(je.joinId);
         }
 
         if (visitedRegions.find(&next) == visitedRegions.end()) {
-          findIntersections_r(scene, ray, next, result, visitedRegions, visitedJoiningEdges);
+          findIntersections_r(spatialSystem, ray, next, result, visitedRegions, visitedJoins);
         }
       }
       else {
@@ -238,8 +239,8 @@ void findIntersections_r(const Scene& scene, const LineSegment& ray, const CRegi
 //===========================================
 // castRay
 //===========================================
-static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Player& player,
-  const CRegion& currentRegion, CastResult& result) {
+static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGraph& rg,
+  const Player& player, const CRegion& currentRegion, CastResult& result) {
 
   auto& intersections = result.intersections;
 
@@ -247,8 +248,8 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
   LineSegment ray(Point(0, 0), Point(r.x * 999.9, r.y * 999.9));
 
   set<const CRegion*> visitedRegions;
-  set<entityId_t> visitedJoiningEdges;
-  findIntersections_r(scene, ray, currentRegion, result, visitedRegions, visitedJoiningEdges);
+  set<entityId_t> visitedJoins;
+  findIntersections_r(spatialSystem, ray, currentRegion, result, visitedRegions, visitedJoins);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -273,7 +274,7 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
     if ((*it)->kind == IntersectionKind::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
-      CZone& zone = getZone(scene, *X.wall->region);
+      CZone& zone = getZone(spatialSystem, *X.wall->region);
 
       double floorHeight = zone.floorHeight;
       double targetHeight = zone.ceilingHeight - zone.floorHeight;
@@ -317,19 +318,19 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
 
       break;
     }
-    else if ((*it)->kind == IntersectionKind::JOINING_EDGE) {
-      JoiningEdgeX& X = dynamic_cast<JoiningEdgeX&>(**it);
+    else if ((*it)->kind == IntersectionKind::JOIN) {
+      JoinX& X = dynamic_cast<JoinX&>(**it);
 
       // TODO: Fix
-      //assert(region == X.joiningEdge->regionA || region == X.joiningEdge->regionB);
-      CRegion* nextRegion = region == X.joiningEdge->regionA ?
-        X.joiningEdge->regionB : X.joiningEdge->regionA;
+      //assert(region == X.join->regionA || region == X.join->regionB);
+      CRegion* nextRegion = region == X.join->regionA ?
+        X.join->regionB : X.join->regionA;
 
       X.nearRegion = region;
       X.farRegion = nextRegion;
 
-      const CZone& zone = getZone(scene, *region);
-      const CZone& nextZone = getZone(scene, *nextRegion);
+      const CZone& zone = getZone(spatialSystem, *region);
+      const CZone& nextZone = getZone(spatialSystem, *nextRegion);
 
       const Point& pt = X.point_cam;
 
@@ -433,8 +434,8 @@ static void castRay(const Scene& scene, Vec2f r, const RenderGraph& rg, const Pl
     else if ((*it)->kind == IntersectionKind::SPRITE) {
       SpriteX& X = dynamic_cast<SpriteX&>(**it);
 
-      const VRect& vRect = getVRect(scene, *X.sprite);
-      const CZone& zone = getZone(scene, *region);
+      const VRect& vRect = getVRect(spatialSystem, *X.sprite);
+      const CZone& zone = getZone(spatialSystem, *region);
 
       double floorHeight = zone.floorHeight;
       const Point& pt = X.point_cam;
@@ -555,13 +556,13 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player
 //
 // x is set to the point inside decal space
 //===========================================
-static const CFloorDecal* getFloorDecal(const Scene& scene, const CRegion* region, const Point& pt,
-  Point& x) {
+static const CFloorDecal* getFloorDecal(const SpatialSystem& spatialSystem, const CRegion* region,
+  const Point& pt, Point& x) {
 
   for (auto it = region->floorDecals.begin(); it != region->floorDecals.end(); ++it) {
     const CFloorDecal& decal = **it;
 
-    const FloorDecal& hRect = getHRect(scene, decal);
+    const CHRect& hRect = getHRect(spatialSystem, decal);
     x = hRect.transform.inverse() * pt;
 
     if (isBetween(x.x, 0, hRect.size.x)
@@ -577,10 +578,10 @@ static const CFloorDecal* getFloorDecal(const Scene& scene, const CRegion* regio
 //===========================================
 // drawFloorSlice
 //===========================================
-static void drawFloorSlice(QImage& target, const Scene& scene, const RenderGraph& rg,
-  const Player& player, const CRegion* region, double floorHeight, const Point& collisionPoint,
-  const ScreenSlice& slice, int screenX_px, double projX_wd, double vWorldUnit_px,
-  const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
+  const RenderGraph& rg, const Player& player, const CRegion* region, double floorHeight,
+  const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
+  double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   const Camera& cam = player.camera();
 
@@ -607,10 +608,10 @@ static void drawFloorSlice(QImage& target, const Scene& scene, const RenderGraph
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
     Point decalPt;
-    const CFloorDecal* decal = getFloorDecal(scene, region, p, decalPt);
+    const CFloorDecal* decal = getFloorDecal(spatialSystem, region, p, decalPt);
 
     if (decal != nullptr) {
-      const FloorDecal& hRect = getHRect(scene, *decal);
+      const CHRect& hRect = getHRect(spatialSystem, *decal);
 
       const Texture& decalTex = rg.textures.at(decal->texture);
       Size texSz_px(decalTex.image.rect().width(), decalTex.image.rect().height());
@@ -760,7 +761,7 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 //===========================================
 // drawSprite
 //===========================================
-static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph& rg,
+static void drawSprite(QPainter& painter, const SpatialSystem& spatialSystem, const RenderGraph& rg,
   const Player& player, const Size& viewport_px, const SpriteX& spriteX, double screenX_px) {
 
   const Camera& cam = player.camera();
@@ -768,7 +769,7 @@ static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph&
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
   const CSprite& sprite = *spriteX.sprite;
-  const VRect& vRect = getVRect(scene, sprite);
+  const VRect& vRect = getVRect(spatialSystem, sprite);
   const Slice& slice = spriteX.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
@@ -780,7 +781,7 @@ static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph&
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
 
-  const CZone& zone = getZone(scene, *sprite.region);
+  const CZone& zone = getZone(spatialSystem, *sprite.region);
 
   QRect srcRect = sampleSpriteTexture(frame, spriteX, cam.height, vRect.size.x, vRect.size.y,
     zone.floorHeight);
@@ -792,11 +793,11 @@ static void drawSprite(QPainter& painter, const Scene& scene, const RenderGraph&
 //===========================================
 // drawWallDecal
 //===========================================
-static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGraph& rg,
-  const CWallDecal& decal, const WallX& wallX, int screenX_px, const Size& viewport_px,
-  double camHeight, double vWorldUnit_px) {
+static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
+  const RenderGraph& rg, const CWallDecal& decal, const WallX& wallX, int screenX_px,
+  const Size& viewport_px, double camHeight, double vWorldUnit_px) {
 
-  const VRect& vRect = getVRect(scene, decal);
+  const VRect& vRect = getVRect(spatialSystem, decal);
 
   const Texture& decalTex = rg.textures.at(decal.texture);
 
@@ -816,7 +817,7 @@ static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGra
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
-  const CZone& zone = getZone(scene, *wallX.wall->region);
+  const CZone& zone = getZone(spatialSystem, *wallX.wall->region);
   double floorH = zone.floorHeight;
 
   double x = wallX.distanceAlongTarget - vRect.pos.x;
@@ -837,10 +838,10 @@ static void drawWallDecal(QPainter& painter, const Scene& scene, const RenderGra
 //===========================================
 // Renderer::getWallDecal
 //===========================================
-static CWallDecal* getWallDecal(const Scene& scene, const CWall& wall, double x) {
+static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CWall& wall, double x) {
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
     CWallDecal* decal = it->get();
-    const VRect& vRect = getVRect(scene, *decal);
+    const VRect& vRect = getVRect(spatialSystem, *decal);
 
     double x0 = vRect.pos.x;
     double x1 = vRect.pos.x + vRect.size.x;
@@ -874,7 +875,8 @@ Renderer::Renderer(EntityManager& entityManager)
 // Renderer::renderScene
 //===========================================
 void Renderer::renderScene(QImage& target, const Player& player) {
-  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
+  const SpatialSystem& spatialSystem = m_entityManager
+    .system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
   QPainter painter;
   painter.begin(&target);
@@ -892,7 +894,8 @@ void Renderer::renderScene(QImage& target, const Player& player) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
     CastResult result;
-    castRay(scene, Vec2f(cam.F, projX_wd), rg, player, region(player.currentRegion), result);
+    castRay(spatialSystem, Vec2f(cam.F, projX_wd), rg, player, region(player.currentRegion),
+      result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       Intersection& X = **it;
@@ -903,15 +906,15 @@ void Renderer::renderScene(QImage& target, const Player& player) {
         ScreenSlice slice = drawSlice(painter, rg, player, cam.F, wallX.distanceAlongTarget,
           wallX.slice, wallX.wall->texture, screenX_px, viewport_px);
 
-        CWallDecal* decal = getWallDecal(scene, *wallX.wall, wallX.distanceAlongTarget);
+        CWallDecal* decal = getWallDecal(spatialSystem, *wallX.wall, wallX.distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(painter, scene, rg, *decal, wallX, screenX_px, viewport_px, cam.height,
-            vWorldUnit_px);
+          drawWallDecal(painter, spatialSystem, rg, *decal, wallX, screenX_px, viewport_px,
+            cam.height, vWorldUnit_px);
         }
 
-        CZone& zone = getZone(scene, *wallX.wall->region);
+        CZone& zone = getZone(spatialSystem, *wallX.wall->region);
 
-        drawFloorSlice(target, scene, rg, player, wallX.wall->region, zone.floorHeight,
+        drawFloorSlice(target, spatialSystem, rg, player, wallX.wall->region, zone.floorHeight,
           wallX.point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (wallX.wall->region->hasCeiling) {
@@ -922,21 +925,21 @@ void Renderer::renderScene(QImage& target, const Player& player) {
           drawSkySlice(target, rg, player, slice, screenX_px);
         }
       }
-      else if (X.kind == IntersectionKind::JOINING_EDGE) {
-        const JoiningEdgeX& jeX = dynamic_cast<const JoiningEdgeX&>(X);
+      else if (X.kind == IntersectionKind::JOIN) {
+        const JoinX& jeX = dynamic_cast<const JoinX&>(X);
 
         ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
-          jeX.slice0, jeX.joiningEdge->bottomTexture, screenX_px, viewport_px);
+          jeX.slice0, jeX.join->bottomTexture, screenX_px, viewport_px);
 
-        CZone& nearZone = getZone(scene, *jeX.nearRegion);
-        CZone& farZone = getZone(scene, *jeX.farRegion);
+        CZone& nearZone = getZone(spatialSystem, *jeX.nearRegion);
+        CZone& farZone = getZone(spatialSystem, *jeX.farRegion);
 
-        drawFloorSlice(target, scene, rg, player, jeX.nearRegion, nearZone.floorHeight,
+        drawFloorSlice(target, spatialSystem, rg, player, jeX.nearRegion, nearZone.floorHeight,
           jeX.point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         // TODO: Make use of jeX.farRegion->ceilingHeight optional
         ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
-          jeX.slice1, jeX.joiningEdge->topTexture, screenX_px, viewport_px, farZone.ceilingHeight);
+          jeX.slice1, jeX.join->topTexture, screenX_px, viewport_px, farZone.ceilingHeight);
 
         if (jeX.nearRegion->hasCeiling) {
           drawCeilingSlice(target, rg, player, jeX.nearRegion, nearZone.ceilingHeight,
@@ -948,7 +951,7 @@ void Renderer::renderScene(QImage& target, const Player& player) {
       }
       else if (X.kind == IntersectionKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(painter, scene, rg, player, viewport_px, spriteX, screenX_px);
+        drawSprite(painter, spatialSystem, rg, player, viewport_px, spriteX, screenX_px);
       }
     }
   }
@@ -982,9 +985,9 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 //===========================================
 // areTwins
 //===========================================
-static bool areTwins(const Scene& scene, const CJoiningEdge& je1, const CJoiningEdge& je2) {
-  const Edge& e1 = getEdge(scene, je1);
-  const Edge& e2 = getEdge(scene, je2);
+static bool areTwins(const SpatialSystem& spatialSystem, const CJoin& je1, const CJoin& je2) {
+  const CEdge& e1 = getEdge(spatialSystem, je1);
+  const CEdge& e2 = getEdge(spatialSystem, je2);
 
   return similar(e1.lseg, e2.lseg);
 }
@@ -992,27 +995,27 @@ static bool areTwins(const Scene& scene, const CJoiningEdge& je1, const CJoining
 //===========================================
 // connectSubregions_r
 //===========================================
-static void connectSubregions_r(const Scene& scene, CRegion& region) {
+static void connectSubregions_r(const SpatialSystem& spatialSystem, CRegion& region) {
   if (region.children.size() == 0) {
     return;
   }
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     CRegion& r = **it;
-    connectSubregions_r(scene, r);
+    connectSubregions_r(spatialSystem, r);
 
-    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == CRenderKind::JOINING_EDGE) {
-        CJoiningEdge* je = dynamic_cast<CJoiningEdge*>(*jt);
+    for (auto jt = r.boundaries.begin(); jt != r.boundaries.end(); ++jt) {
+      if ((*jt)->kind == CRenderKind::JOIN) {
+        CJoin* je = dynamic_cast<CJoin*>(*jt);
         assert(je != nullptr);
 
         bool hasTwin = false;
         forEachCRegion(region, [&](CRegion& r_) {
           if (!hasTwin) {
             if (&r_ != &r) {
-              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CRenderKind::JOINING_EDGE) {
-                  CJoiningEdge* other = dynamic_cast<CJoiningEdge*>(*lt);
+              for (auto lt = r_.boundaries.begin(); lt != r_.boundaries.end(); ++lt) {
+                if ((*lt)->kind == CRenderKind::JOIN) {
+                  CJoin* other = dynamic_cast<CJoin*>(*lt);
                   assert(other != nullptr);
 
                   if (je == other) {
@@ -1020,7 +1023,7 @@ static void connectSubregions_r(const Scene& scene, CRegion& region) {
                     break;
                   }
 
-                  if (areTwins(scene, *je, *other)) {
+                  if (areTwins(spatialSystem, *je, *other)) {
                     hasTwin = true;
 
                     je->joinId = other->joinId;
@@ -1051,9 +1054,10 @@ static void connectSubregions_r(const Scene& scene, CRegion& region) {
 // Renderer::connectRegions
 //===========================================
 void Renderer::connectRegions() {
-  const Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
+  const SpatialSystem& spatialSystem = m_entityManager
+    .system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  connectSubregions_r(scene, *rg.rootRegion);
+  connectSubregions_r(spatialSystem, *rg.rootRegion);
 }
 
 //===========================================
@@ -1066,11 +1070,11 @@ static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
       region.children.push_back(std::move(ptr));
       break;
     }
-    case CRenderKind::JOINING_EDGE:
+    case CRenderKind::JOIN:
     case CRenderKind::WALL: {
-      pCEdge_t ptr(dynamic_cast<CEdge*>(child.release()));
-      region.edges.push_back(ptr.get());
-      rg.edges.push_back(std::move(ptr));
+      pCBoundary_t ptr(dynamic_cast<CBoundary*>(child.release()));
+      region.boundaries.push_back(ptr.get());
+      rg.boundaries.push_back(std::move(ptr));
       break;
     }
     case CRenderKind::FLOOR_DECAL: {
@@ -1091,11 +1095,11 @@ static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
 //===========================================
 // addToWall
 //===========================================
-static void addToWall(CWall& edge, pCRender_t child) {
+static void addToWall(CWall& boundary, pCRender_t child) {
   switch (child->kind) {
     case CRenderKind::WALL_DECAL: {
       pCWallDecal_t ptr(dynamic_cast<CWallDecal*>(child.release()));
-      edge.decals.push_back(std::move(ptr));
+      boundary.decals.push_back(std::move(ptr));
       break;
     }
     default:
@@ -1131,13 +1135,13 @@ static void removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
       });
       break;
     }
-    case CRenderKind::JOINING_EDGE:
+    case CRenderKind::JOIN:
     case CRenderKind::WALL: {
-      region.edges.remove_if([&](const CEdge* e) {
-        return e == dynamic_cast<const CEdge*>(&child);
+      region.boundaries.remove_if([&](const CBoundary* b) {
+        return b == dynamic_cast<const CBoundary*>(&child);
       });
-      rg.edges.remove_if([&](const pCEdge_t& e) {
-        return e.get() == dynamic_cast<const CEdge*>(&child);
+      rg.boundaries.remove_if([&](const pCBoundary_t& b) {
+        return b.get() == dynamic_cast<const CBoundary*>(&child);
       });
       break;
     }
@@ -1161,10 +1165,10 @@ static void removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
 //===========================================
 // removeFromWall
 //===========================================
-static void removeFromWall(CWall& edge, const CRender& child) {
+static void removeFromWall(CWall& boundary, const CRender& child) {
   switch (child.kind) {
     case CRenderKind::WALL_DECAL: {
-      edge.decals.remove_if([&](const pCWallDecal_t& e) {
+      boundary.decals.remove_if([&](const pCWallDecal_t& e) {
         return e.get() == dynamic_cast<const CWallDecal*>(&child);
       });
       break;

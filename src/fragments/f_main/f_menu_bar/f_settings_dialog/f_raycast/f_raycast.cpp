@@ -8,7 +8,8 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast_spec.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/renderer.hpp"
 
 
@@ -56,10 +57,10 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   Renderer* renderer = new Renderer(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderer));
 
-  Scene* scene = new Scene(m_entityManager, FRAME_RATE);
-  m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(scene));
+  SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, FRAME_RATE);
+  m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
 
-  scene->loadMap("data/map.svg");
+  spatialSystem->loadMap("data/map.svg");
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
@@ -80,10 +81,10 @@ void FRaycast::cleanUp() {
 // FRaycast::paintEvent
 //===========================================
 void FRaycast::paintEvent(QPaintEvent*) {
-  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Renderer& renderer = m_entityManager.system<Renderer>(ComponentKind::C_RENDER);
 
-  renderer.renderScene(m_buffer, *scene.sg.player);
+  renderer.renderScene(m_buffer, *spatialSystem.sg.player);
 
   QPainter painter;
   painter.begin(this);
@@ -146,17 +147,17 @@ void FRaycast::tick() {
   ++m_frame;
 #endif
 
-  Scene& scene = m_entityManager.system<Scene>(ComponentKind::C_SPATIAL);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
   m_entityManager.update();
 
   if (m_keyStates[Qt::Key_Space]) {
-    scene.jump();
+    spatialSystem.jump();
   }
 
   if (m_keyStates[Qt::Key_X]) {
     GameEvent e("playerActivate");
-    scene.handleEvent(e);
+    spatialSystem.handleEvent(e);
 
     m_keyStates[Qt::Key_X] = false;
   }
@@ -177,14 +178,14 @@ void FRaycast::tick() {
 
   if (v.x != 0 || v.y != 0) {
     double ds = 300 / FRAME_RATE;
-    scene.translateCamera(normalise(v) * ds);
+    spatialSystem.translateCamera(normalise(v) * ds);
   }
 
   if (m_keyStates[Qt::Key_Left]) {
-    scene.hRotateCamera(-(1.2 / FRAME_RATE) * PI);
+    spatialSystem.hRotateCamera(-(1.2 / FRAME_RATE) * PI);
   }
   if (m_keyStates[Qt::Key_Right]) {
-    scene.hRotateCamera((1.2 / FRAME_RATE) * PI);
+    spatialSystem.hRotateCamera((1.2 / FRAME_RATE) * PI);
   }
 
   if (m_cursorCaptured) {
@@ -198,12 +199,12 @@ void FRaycast::tick() {
 
     if (fabs(v.x) > 0) {
       double da = 0.0008 * PI * v.x;
-      scene.hRotateCamera(da);
+      spatialSystem.hRotateCamera(da);
     }
 
     if (fabs(v.y) > 0) {
       double da = 0.0008 * PI * v.y;
-      scene.vRotateCamera(da);
+      spatialSystem.vRotateCamera(da);
     }
   }
 

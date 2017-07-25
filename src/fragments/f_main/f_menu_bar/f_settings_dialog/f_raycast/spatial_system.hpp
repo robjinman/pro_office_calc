@@ -1,5 +1,5 @@
-#ifndef __PROCALC_FRAGMENTS_F_RAYCAST_SCENE_HPP__
-#define __PROCALC_FRAGMENTS_F_RAYCAST_SCENE_HPP__
+#ifndef __PROCALC_FRAGMENTS_F_RAYCAST_SPATIAL_SYSTEM_HPP__
+#define __PROCALC_FRAGMENTS_F_RAYCAST_SPATIAL_SYSTEM_HPP__
 
 
 #include <string>
@@ -9,7 +9,7 @@
 #include <memory>
 #include <QImage>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
 
 
 namespace tinyxml2 { class XMLElement; }
@@ -24,9 +24,9 @@ struct Tween {
 class EntityManager;
 class EventSystem;
 
-class Scene : public System {
+class SpatialSystem : public System {
   public:
-    Scene(EntityManager& entityManager, double frameRate);
+    SpatialSystem(EntityManager& entityManager, double frameRate);
 
     SceneGraph sg;
 
@@ -48,7 +48,7 @@ class Scene : public System {
     void jump();
     void addTween(const Tween& tween, const char* name = nullptr);
 
-    virtual ~Scene() override;
+    virtual ~SpatialSystem() override;
 
   private:
     EntityManager& m_entityManager;

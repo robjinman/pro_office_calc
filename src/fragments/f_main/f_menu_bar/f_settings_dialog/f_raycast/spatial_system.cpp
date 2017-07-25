@@ -4,7 +4,7 @@
 #include <ostream>
 #include <list>
 #include <iterator>
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
@@ -28,9 +28,9 @@ using std::ostream;
 ostream& operator<<(ostream& os, CSpatialKind kind) {
   switch (kind) {
     case CSpatialKind::ZONE: os << "ZONE"; break;
-    case CSpatialKind::WALL: os << "WALL"; break;
-    case CSpatialKind::JOINING_EDGE: os << "JOINING_EDGE"; break;
-    case CSpatialKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
+    case CSpatialKind::HARD_EDGE: os << "HARD_EDGE"; break;
+    case CSpatialKind::SOFT_EDGE: os << "SOFT_EDGE"; break;
+    case CSpatialKind::H_RECT: os << "H_RECT"; break;
     case CSpatialKind::V_RECT: os << "V_RECT"; break;
   }
   return os;
@@ -64,7 +64,7 @@ void forEachZone(CZone& zone, function<void(CZone&)> fn) {
 //===========================================
 // getNextZone
 //===========================================
-static CZone* getNextZone(const CZone& current, const JoiningEdge& je) {
+static CZone* getNextZone(const CZone& current, const CSoftEdge& je) {
   return je.zoneA == &current ? je.zoneB : je.zoneA;
 }
 
@@ -72,7 +72,7 @@ static CZone* getNextZone(const CZone& current, const JoiningEdge& je) {
 // canStepAcross
 //===========================================
 static bool canStepAcross(const Player& player, const CZone& currentZone,
-  const JoiningEdge& je) {
+  const CSoftEdge& je) {
 
   CZone* nextZone = getNextZone(currentZone, je);
 
@@ -83,18 +83,18 @@ static bool canStepAcross(const Player& player, const CZone& currentZone,
 }
 
 //===========================================
-// intersectWall
+// intersectHardEdge
 //===========================================
-static bool intersectWall(const CZone& zone, const Circle& circle, const Player& player) {
+static bool intersectHardEdge(const CZone& zone, const Circle& circle, const Player& player) {
   bool b = false;
 
   forEachConstZone(zone, [&](const CZone& r) {
     if (!b) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-        const Edge& edge = **it;
+        const CEdge& edge = **it;
 
-        if (edge.kind == CSpatialKind::JOINING_EDGE) {
-          const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+        if (edge.kind == CSpatialKind::SOFT_EDGE) {
+          const CSoftEdge& je = dynamic_cast<const CSoftEdge&>(edge);
 
           //assert(&zone == je.zoneA || &zone == je.zoneB);
           if (&zone != je.zoneA && &zone != je.zoneB) {
@@ -137,7 +137,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
   forEachConstZone(*zone.parent, [&](const CZone& r) {
     if (abortLoop == false) {
       for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-        const Edge& edge = **it;
+        const CEdge& edge = **it;
 
         // If moving by dv will intersect something
         if (lineSegmentCircleIntersect(circle, edge.lseg)) {
@@ -147,8 +147,8 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
             continue;
           }
 
-          if (edge.kind == CSpatialKind::JOINING_EDGE) {
-            const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+          if (edge.kind == CSpatialKind::SOFT_EDGE) {
+            const CSoftEdge& je = dynamic_cast<const CSoftEdge&>(edge);
 
             if (&zone != je.zoneA && &zone != je.zoneB) {
               continue;
@@ -165,7 +165,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
           dv_.y = 0;
           dv_ = m.inverse() * dv_;
 
-          if (intersectWall(zone, Circle{camPos + dv_, radius}, player)) {
+          if (intersectHardEdge(zone, Circle{camPos + dv_, radius}, player)) {
             dv_ = Vec2f(0, 0);
           }
           else {
@@ -183,35 +183,35 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
 //===========================================
 // playerBounce
 //===========================================
-static void playerBounce(Scene& scene) {
+static void playerBounce(SpatialSystem& spatialSystem) {
   double dy = 5.0;
   double frames = 20;
   double dy_ = dy / (frames / 2);
   int i = 0;
-  scene.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+  spatialSystem.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
     if (i < frames / 2) {
-      scene.sg.player->changeTallness(dy_);
+      spatialSystem.sg.player->changeTallness(dy_);
     }
     else {
-      scene.sg.player->changeTallness(-dy_);
+      spatialSystem.sg.player->changeTallness(-dy_);
     }
     return ++i < frames;
   }, []() {}}, "playerBounce");
 }
 
 //===========================================
-// Scene::Scene
+// SpatialSystem::SpatialSystem
 //===========================================
-Scene::Scene(EntityManager& entityManager, double frameRate)
+SpatialSystem::SpatialSystem(EntityManager& entityManager, double frameRate)
   : m_entityManager(entityManager) {
 
   m_frameRate = frameRate;
 }
 
 //===========================================
-// Scene::loadMap
+// SpatialSystem::loadMap
 //===========================================
-void Scene::loadMap(const string& mapFilePath) {
+void SpatialSystem::loadMap(const string& mapFilePath) {
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
@@ -220,9 +220,9 @@ void Scene::loadMap(const string& mapFilePath) {
 }
 
 //===========================================
-// Scene::handleEvent
+// SpatialSystem::handleEvent
 //===========================================
-void Scene::handleEvent(const GameEvent& event) {
+void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "playerActivate") {
     GameEvent e("activateEntity");
     e.entitiesInRange = getEntitiesInRadius(sg.player->activationRadius);
@@ -232,28 +232,28 @@ void Scene::handleEvent(const GameEvent& event) {
 }
 
 //===========================================
-// Scene::~Scene
+// SpatialSystem::~SpatialSystem
 //===========================================
-Scene::~Scene() {}
+SpatialSystem::~SpatialSystem() {}
 
 //===========================================
-// Scene::vRotateCamera
+// SpatialSystem::vRotateCamera
 //===========================================
-void Scene::vRotateCamera(double da) {
+void SpatialSystem::vRotateCamera(double da) {
   sg.player->vRotate(da);
 }
 
 //===========================================
-// Scene::hRotateCamera
+// SpatialSystem::hRotateCamera
 //===========================================
-void Scene::hRotateCamera(double da) {
+void SpatialSystem::hRotateCamera(double da) {
   sg.player->hRotate(da);
 }
 
 //===========================================
-// Scene::translateCamera
+// SpatialSystem::translateCamera
 //===========================================
-void Scene::translateCamera(const Vec2f& dir) {
+void SpatialSystem::translateCamera(const Vec2f& dir) {
   const Camera& cam = sg.player->camera();
 
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
@@ -280,11 +280,11 @@ void Scene::translateCamera(const Vec2f& dir) {
     Point p;
 
     for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
-      const Edge& edge = **it;
+      const CEdge& edge = **it;
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        assert(edge.kind == CSpatialKind::JOINING_EDGE);
-        const JoiningEdge& je = dynamic_cast<const JoiningEdge&>(edge);
+        assert(edge.kind == CSpatialKind::SOFT_EDGE);
+        const CSoftEdge& je = dynamic_cast<const CSoftEdge&>(edge);
 
         LineSegment ray(cam.pos, cam.pos + dv);
         Point p_;
@@ -317,18 +317,18 @@ void Scene::translateCamera(const Vec2f& dir) {
 }
 
 //===========================================
-// Scene::jump
+// SpatialSystem::jump
 //===========================================
-void Scene::jump() {
+void SpatialSystem::jump() {
   if (!sg.player->aboveGround(getCurrentZone())) {
     sg.player->vVelocity = 220;
   }
 }
 
 //===========================================
-// Scene::addTween
+// SpatialSystem::addTween
 //===========================================
-void Scene::addTween(const Tween& tween, const char* name) {
+void SpatialSystem::addTween(const Tween& tween, const char* name) {
   string s;
   if (name != nullptr) {
     s.assign(name);
@@ -345,9 +345,9 @@ void Scene::addTween(const Tween& tween, const char* name) {
 }
 
 //===========================================
-// Scene::gravity
+// SpatialSystem::gravity
 //===========================================
-void Scene::gravity() {
+void SpatialSystem::gravity() {
   CZone& currentZone = getCurrentZone();
 
   if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(currentZone)) {
@@ -366,9 +366,9 @@ void Scene::gravity() {
 }
 
 //===========================================
-// Scene::buoyancy
+// SpatialSystem::buoyancy
 //===========================================
-void Scene::buoyancy() {
+void SpatialSystem::buoyancy() {
   CZone& currentZone = getCurrentZone();
 
   if (sg.player->feetHeight() + 0.1 < currentZone.floorHeight) {
@@ -380,7 +380,7 @@ void Scene::buoyancy() {
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const Edge& edge) {
+static bool overlapsCircle(const Circle& circle, const CEdge& edge) {
   return lineSegmentCircleIntersect(circle, edge.lseg); // TODO
 }
 
@@ -394,7 +394,7 @@ static bool overlapsCircle(const Circle& circle, const VRect& sprite) {
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const FloorDecal& decal) {
+static bool overlapsCircle(const Circle& circle, const CHRect& decal) {
   // TODO
 
   return false;
@@ -442,7 +442,7 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 //===========================================
 // areTwins
 //===========================================
-static bool areTwins(const JoiningEdge& je1, const JoiningEdge& je2) {
+static bool areTwins(const CSoftEdge& je1, const CSoftEdge& je2) {
   return similar(je1.lseg, je2.lseg);
 }
 
@@ -459,8 +459,8 @@ static void connectSubzones_r(CZone& zone) {
     connectSubzones_r(r);
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == CSpatialKind::JOINING_EDGE) {
-        JoiningEdge* je = dynamic_cast<JoiningEdge*>(*jt);
+      if ((*jt)->kind == CSpatialKind::SOFT_EDGE) {
+        CSoftEdge* je = dynamic_cast<CSoftEdge*>(*jt);
         assert(je != nullptr);
 
         bool hasTwin = false;
@@ -468,8 +468,8 @@ static void connectSubzones_r(CZone& zone) {
           if (!hasTwin) {
             if (&r_ != &r) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CSpatialKind::JOINING_EDGE) {
-                  JoiningEdge* other = dynamic_cast<JoiningEdge*>(*lt);
+                if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
+                  CSoftEdge* other = dynamic_cast<CSoftEdge*>(*lt);
                   assert(other != nullptr);
 
                   if (je == other) {
@@ -502,16 +502,16 @@ static void connectSubzones_r(CZone& zone) {
 }
 
 //===========================================
-// Scene::connectZones
+// SpatialSystem::connectZones
 //===========================================
-void Scene::connectZones() {
+void SpatialSystem::connectZones() {
   connectSubzones_r(*sg.rootZone);
 }
 
 //===========================================
-// Scene::getEntitiesInRadius
+// SpatialSystem::getEntitiesInRadius
 //===========================================
-set<entityId_t> Scene::getEntitiesInRadius(double radius) const {
+set<entityId_t> SpatialSystem::getEntitiesInRadius(double radius) const {
   set<entityId_t> entities;
 
   const Point& pos = sg.player->pos();
@@ -525,9 +525,9 @@ set<entityId_t> Scene::getEntitiesInRadius(double radius) const {
 }
 
 //===========================================
-// Scene::update
+// SpatialSystem::update
 //===========================================
-void Scene::update() {
+void SpatialSystem::update() {
   for (auto it = m_tweens.begin(); it != m_tweens.end();) {
     const Tween& tween = it->second;
 
@@ -555,15 +555,15 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
       zone.children.push_back(std::move(ptr));
       break;
     }
-    case CSpatialKind::JOINING_EDGE:
-    case CSpatialKind::WALL: {
-      pEdge_t ptr(dynamic_cast<Edge*>(child.release()));
+    case CSpatialKind::SOFT_EDGE:
+    case CSpatialKind::HARD_EDGE: {
+      pCEdge_t ptr(dynamic_cast<CEdge*>(child.release()));
       zone.edges.push_back(ptr.get());
       sg.edges.push_back(std::move(ptr));
       break;
     }
-    case CSpatialKind::FLOOR_DECAL: {
-      pFloorDecal_t ptr(dynamic_cast<FloorDecal*>(child.release()));
+    case CSpatialKind::H_RECT: {
+      pCHRect_t ptr(dynamic_cast<CHRect*>(child.release()));
       zone.floorDecals.push_back(std::move(ptr));
       break;
     }
@@ -578,9 +578,9 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
 }
 
 //===========================================
-// addToWall
+// addToHardEdge
 //===========================================
-static void addToWall(Wall& edge, pCSpatial_t child) {
+static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::V_RECT: {
       pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
@@ -588,7 +588,7 @@ static void addToWall(Wall& edge, pCSpatial_t child) {
       break;
     }
     default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to Wall");
+      EXCEPTION("Cannot add component of kind " << child->kind << " to HardEdge");
   }
 }
 
@@ -600,8 +600,8 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
     case CSpatialKind::ZONE:
       addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
       break;
-    case CSpatialKind::WALL:
-      addToWall(dynamic_cast<Wall&>(parent), std::move(child));
+    case CSpatialKind::HARD_EDGE:
+      addToHardEdge(dynamic_cast<CHardEdge&>(parent), std::move(child));
       break;
     default:
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
@@ -620,19 +620,19 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
       });
       break;
     }
-    case CSpatialKind::JOINING_EDGE:
-    case CSpatialKind::WALL: {
-      zone.edges.remove_if([&](const Edge* e) {
-        return e == dynamic_cast<const Edge*>(&child);
+    case CSpatialKind::SOFT_EDGE:
+    case CSpatialKind::HARD_EDGE: {
+      zone.edges.remove_if([&](const CEdge* e) {
+        return e == dynamic_cast<const CEdge*>(&child);
       });
-      sg.edges.remove_if([&](const pEdge_t& e) {
-        return e.get() == dynamic_cast<const Edge*>(&child);
+      sg.edges.remove_if([&](const pCEdge_t& e) {
+        return e.get() == dynamic_cast<const CEdge*>(&child);
       });
       break;
     }
-    case CSpatialKind::FLOOR_DECAL: {
-      zone.floorDecals.remove_if([&](const pFloorDecal_t& e) {
-        return e.get() == dynamic_cast<const FloorDecal*>(&child);
+    case CSpatialKind::H_RECT: {
+      zone.floorDecals.remove_if([&](const pCHRect_t& e) {
+        return e.get() == dynamic_cast<const CHRect*>(&child);
       });
       break;
     }
@@ -648,9 +648,9 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
 }
 
 //===========================================
-// removeFromWall
+// removeFromHardEdge
 //===========================================
-static void removeFromWall(Wall& edge, const CSpatial& child) {
+static void removeFromHardEdge(CHardEdge& edge, const CSpatial& child) {
   switch (child.kind) {
     case CSpatialKind::V_RECT: {
       edge.decals.remove_if([&](const pVRect_t& e) {
@@ -659,7 +659,7 @@ static void removeFromWall(Wall& edge, const CSpatial& child) {
       break;
     }
     default:
-      EXCEPTION("Cannot remove component of kind " << child.kind << " from Wall");
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from HardEdge");
   }
 }
 
@@ -673,8 +673,8 @@ static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent,
     case CSpatialKind::ZONE:
       removeFromZone(sg, dynamic_cast<CZone&>(parent), child);
       break;
-    case CSpatialKind::WALL:
-      removeFromWall(dynamic_cast<Wall&>(parent), child);
+    case CSpatialKind::HARD_EDGE:
+      removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child);
       break;
     default:
       EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
@@ -683,16 +683,16 @@ static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent,
 }
 
 //===========================================
-// Scene::getComponent
+// SpatialSystem::getComponent
 //===========================================
-Component& Scene::getComponent(entityId_t entityId) const {
+Component& SpatialSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 
 //===========================================
-// Scene::addComponent
+// SpatialSystem::addComponent
 //===========================================
-void Scene::addComponent(pComponent_t component) {
+void SpatialSystem::addComponent(pComponent_t component) {
   if (component->kind() != ComponentKind::C_SPATIAL) {
     EXCEPTION("Component is not of kind C_SPATIAL");
   }
@@ -731,9 +731,9 @@ void Scene::addComponent(pComponent_t component) {
 }
 
 //===========================================
-// Scene::isRoot
+// SpatialSystem::isRoot
 //===========================================
-bool Scene::isRoot(const CSpatial& c) const {
+bool SpatialSystem::isRoot(const CSpatial& c) const {
   if (c.kind != CSpatialKind::ZONE) {
     return false;
   }
@@ -745,9 +745,9 @@ bool Scene::isRoot(const CSpatial& c) const {
 }
 
 //===========================================
-// Scene::removeEntity_r
+// SpatialSystem::removeEntity_r
 //===========================================
-void Scene::removeEntity_r(entityId_t id) {
+void SpatialSystem::removeEntity_r(entityId_t id) {
   m_components.erase(id);
 
   auto it = m_entityChildren.find(id);
@@ -763,9 +763,9 @@ void Scene::removeEntity_r(entityId_t id) {
 }
 
 //===========================================
-// Scene::removeEntity
+// SpatialSystem::removeEntity
 //===========================================
-void Scene::removeEntity(entityId_t id) {
+void SpatialSystem::removeEntity(entityId_t id) {
   auto it = m_components.find(id);
   if (it == m_components.end()) {
     return;

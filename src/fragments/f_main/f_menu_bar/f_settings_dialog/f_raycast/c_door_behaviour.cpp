@@ -1,5 +1,5 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_objects.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
 #include "event.hpp"
 
