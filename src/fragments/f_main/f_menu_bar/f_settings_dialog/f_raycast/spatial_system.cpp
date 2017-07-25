@@ -483,6 +483,7 @@ static void connectSubzones_r(CZone& zone) {
                     je->joinId = other->joinId;
                     je->zoneA = other->zoneA = &r;
                     je->zoneB = other->zoneB = &r_;
+                    je->lseg = other->lseg;
 
                     break;
                   }

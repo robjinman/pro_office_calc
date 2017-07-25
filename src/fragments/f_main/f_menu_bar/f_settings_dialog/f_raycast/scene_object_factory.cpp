@@ -283,15 +283,15 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
 }
 
 //===========================================
-// constructCSoftEdges
+// constructBoundaries
 //===========================================
-static void constructCSoftEdges(EntityManager& em, map<Point, bool>& endpoints,
+static void constructBoundaries(EntityManager& em, map<Point, bool>& endpoints,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  DBG_PRINT("Constructing CSoftEdges\n");
+  DBG_PRINT("Constructing Boundaries\n");
 
   list<CSoftEdge*> edges;
 
@@ -416,7 +416,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
         constructWalls(em, endpoints, child, *zone, *region, transform);
       }
       else if (type == "joining_edge") {
-        constructCSoftEdges(em, endpoints, child, entityId, transform);
+        constructBoundaries(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
         constructSprite(em, child, *zone, *region, transform);
