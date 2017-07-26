@@ -27,9 +27,9 @@
      inkscape:window-height="975"
      id="namedview65"
      showgrid="false"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="567.90366"
-     inkscape:cy="1062.6538"
+     inkscape:zoom="0.25"
+     inkscape:cx="449.63878"
+     inkscape:cy="703.13956"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -61,7 +61,7 @@
        x="752.125"
        y="695.6875" /></text>
   <g
-     id="g6154">
+     id="g6416">
     <g
        transform="matrix(1.5383265,0,0,1.660481,-101.7071,-12.874932)"
        id="g4206">
@@ -2412,7 +2412,7 @@
       </g>
     </g>
     <g
-       id="g6107">
+       id="g6357">
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -2610,7 +2610,7 @@
       </g>
       <g
          id="g5519"
-         transform="translate(-87.594451,51.77483)">
+         transform="translate(-511.85853,324.01095)">
         <path
            inkscape:connector-curvature="0"
            id="path4611"
@@ -2638,6 +2638,67 @@
              x="692.08075"
              sodipodi:role="line"
              id="tspan4507">tallness=50</tspan></text>
+      </g>
+      <g
+         id="g6320">
+        <text
+           sodipodi:linespacing="125%"
+           id="text5152-6"
+           y="116.14851"
+           x="185.79659"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="116.14851"
+             x="185.79659"
+             id="tspan5154-7"
+             sodipodi:role="line">type=sprite</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text5156-5"
+           y="122.25633"
+           x="186.12187"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="122.25633"
+             x="186.12187"
+             id="tspan5158-3"
+             sodipodi:role="line">subtype=ammo</tspan></text>
+        <path
+           inkscape:connector-curvature="0"
+           id="path6318"
+           d="m 193.74726,127.64475 0.35356,8.30851 12.02081,-4.06587 z"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      </g>
+      <g
+         transform="translate(119.14781,-1.6232945)"
+         id="g6320-6">
+        <text
+           sodipodi:linespacing="125%"
+           id="text5152-6-2"
+           y="116.14851"
+           x="185.79659"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="116.14851"
+             x="185.79659"
+             id="tspan5154-7-9"
+             sodipodi:role="line">type=sprite</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text5156-5-1"
+           y="122.25633"
+           x="186.12187"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="122.25633"
+             x="186.12187"
+             id="tspan5158-3-2"
+             sodipodi:role="line">subtype=ammo</tspan></text>
+        <path
+           inkscape:connector-curvature="0"
+           id="path6318-7"
+           d="m 193.74726,127.64475 0.35356,8.30851 12.02081,-4.06587 z"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       </g>
     </g>
   </g>

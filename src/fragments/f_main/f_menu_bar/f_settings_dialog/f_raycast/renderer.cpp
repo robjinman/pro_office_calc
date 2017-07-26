@@ -760,7 +760,7 @@ static void drawSprite(QPainter& painter, const SpatialSystem& spatialSystem, co
   const Slice& slice = spriteX.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
-  const QRectF& uv = sprite.textureRegion(vRect, cam.pos);
+  const QRectF& uv = sprite.getView(vRect, cam.pos);
   QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());

@@ -27,6 +27,7 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
     case CRenderKind::FLOOR_DECAL: os << "FLOOR_DECAL"; break;
     case CRenderKind::WALL_DECAL: os << "WALL_DECAL"; break;
     case CRenderKind::SPRITE: os << "SPRITE"; break;
+    case CRenderKind::OVERLAY: os << "OVERLAY"; break;
   }
   return os;
 }
@@ -96,6 +97,8 @@ static void connectSubregions_r(const SpatialSystem& spatialSystem, CRegion& reg
 
 //===========================================
 // RenderSystem::connectRegions
+//
+// Assumes SpatialSystem::connectZones() has already been called
 //===========================================
 void RenderSystem::connectRegions() {
   const SpatialSystem& spatialSystem = m_entityManager

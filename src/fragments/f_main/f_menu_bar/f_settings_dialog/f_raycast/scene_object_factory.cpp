@@ -257,8 +257,18 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
 
     spatialSystem.addComponent(pComponent_t(vRect));
 
-    CBadGuy* sprite = new CBadGuy(id, zone.entityId());
+    CSprite* sprite = new CSprite(id, zone.entityId(), "bad_guy");
     sprite->region = &region;
+    sprite->texViews = {
+      QRectF(0, 0, 0.125, 1),
+      QRectF(0.125, 0, 0.125, 1),
+      QRectF(0.25, 0, 0.125, 1),
+      QRectF(0.375, 0, 0.125, 1),
+      QRectF(0.5, 0, 0.125, 1),
+      QRectF(0.625, 0, 0.125, 1),
+      QRectF(0.750, 0, 0.125, 1),
+      QRectF(0.875, 0, 0.125, 1)
+    };
 
     renderSystem.addComponent(pComponent_t(sprite));
   }
@@ -272,8 +282,11 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
 
     spatialSystem.addComponent(pComponent_t(vRect));
 
-    CAmmo* sprite = new CAmmo(id, zone.entityId());
+    CSprite* sprite = new CSprite(id, zone.entityId(), "ammo");
     sprite->region = &region;
+    sprite->texViews = {
+      QRectF(0, 0, 1, 1)
+    };
 
     renderSystem.addComponent(pComponent_t(sprite));
   }
@@ -487,6 +500,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   spatialSystem.connectZones();
   renderSystem.connectRegions();
 
+  // TODO: Read from map file
   rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   rg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
   rg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
@@ -500,4 +514,6 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   rg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
   rg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
   rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
+  rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
+  rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
 }

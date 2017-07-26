@@ -4,37 +4,12 @@
 
 #include <string>
 #include <list>
-#include <map>
 #include <memory>
 #include <QImage>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
+#include "exception.hpp"
 
-
-struct AnimationFrame {
-  std::array<QRectF, 8> parts;
-
-  const QRectF& part(double angle) const {
-    double da = PI * 0.25;
-    return parts[static_cast<int>(round(normaliseAngle(angle) / da)) % 8];
-  }
-};
-
-class Animation {
-  public:
-    int fps = 0;
-    std::vector<AnimationFrame> frames;
-
-    void update();
-    const AnimationFrame& currentFrame() const {
-      return frames[m_currentFrameIdx];
-    }
-
-  private:
-    double m_elapsed = 0.0;
-    int m_currentFrameIdx = 0;
-};
 
 struct Texture {
   QImage image;
@@ -47,7 +22,8 @@ enum class CRenderKind {
   JOIN,
   SPRITE,
   FLOOR_DECAL,
-  WALL_DECAL
+  WALL_DECAL,
+  OVERLAY
 };
 
 struct CRender : public Component {
@@ -64,6 +40,14 @@ struct CRender : public Component {
 
 typedef std::unique_ptr<CRender> pCRender_t;
 
+class COverlay : public CRender {
+  public:
+    COverlay(entityId_t entityId, const std::string& texture)
+      : CRender(CRenderKind::OVERLAY, entityId, -1) {}
+
+    // TODO
+};
+
 class CRegion;
 
 class CSprite : public CRender {
@@ -72,69 +56,27 @@ class CSprite : public CRender {
       : CRender(CRenderKind::SPRITE, entityId, parentId),
         texture(texture) {}
 
-    const QRectF& textureRegion(const VRect& sprite, const Point& camPos) const {
-      Vec2f v = sprite.pos - camPos;
-      return animations.at("idle").currentFrame().part(PI - atan2(v.y, v.x) + sprite.angle);
+    const QRectF& getView(const VRect& vRect, const Point& camPos) const {
+      if (texViews.empty()) {
+        EXCEPTION("Cannot get view; texViews is empty");
+      }
+
+      Vec2f v = vRect.pos - camPos;
+      double a = PI - atan2(v.y, v.x) + vRect.angle;
+      int n = texViews.size();
+      double da = 2.0 * PI / n;
+      int idx = static_cast<int>(round(normaliseAngle(a) / da)) % n;
+      return texViews[idx];
     }
 
     CRegion* region;
     std::string texture;
-    std::map<std::string, Animation> animations;
-
-    void playAnimation(const std::string& name);
+    std::vector<QRectF> texViews;
 
     virtual ~CSprite() override {}
 };
 
 typedef std::unique_ptr<CSprite> pCSprite_t;
-
-struct CAmmo : public CSprite {
-  CAmmo(entityId_t entityId, entityId_t parentId)
-    : CSprite(entityId, parentId, "ammo") {
-
-    Animation anim;
-    anim.fps = 0;
-
-    anim.frames.push_back(AnimationFrame{
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1),
-      QRectF(0, 0, 1, 1)
-    });
-
-    animations["idle"] = anim;
-  }
-
-  virtual ~CAmmo() override {}
-};
-
-struct CBadGuy : public CSprite {
-  CBadGuy(entityId_t entityId, entityId_t parentId)
-    : CSprite(entityId, parentId, "bad_guy") {
-
-    Animation anim;
-    anim.fps = 0;
-
-    anim.frames.push_back(AnimationFrame{
-      QRectF(0, 0, 0.125, 1),
-      QRectF(0.125, 0, 0.125, 1),
-      QRectF(0.25, 0, 0.125, 1),
-      QRectF(0.375, 0, 0.125, 1),
-      QRectF(0.5, 0, 0.125, 1),
-      QRectF(0.625, 0, 0.125, 1),
-      QRectF(0.750, 0, 0.125, 1),
-      QRectF(0.875, 0, 0.125, 1)
-    });
-
-    animations["idle"] = anim;
-  }
-
-  virtual ~CBadGuy() override {}
-};
 
 struct CBoundary : public CRender {
   CBoundary(CRenderKind kind, entityId_t entityId, entityId_t parentId)
