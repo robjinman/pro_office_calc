@@ -7,9 +7,10 @@
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, CZone& zone)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, CZone& zone, double frameRate)
   : CBehaviour(entityId),
-    m_zone(zone) {
+    m_zone(zone),
+    m_frameRate(frameRate) {
 
   m_y0 = zone.floorHeight;
   m_y1 = zone.ceilingHeight;
@@ -21,7 +22,7 @@ CDoorBehaviour::CDoorBehaviour(entityId_t entityId, CZone& zone)
 // CDoorBehaviour::update
 //===========================================
 void CDoorBehaviour::update() {
-  double dy = 1.0;
+  double dy = 60.0 / m_frameRate;
 
   switch (m_state) {
     case ST_CLOSED:

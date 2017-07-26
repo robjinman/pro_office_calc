@@ -183,9 +183,9 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
 //===========================================
 // playerBounce
 //===========================================
-static void playerBounce(SpatialSystem& spatialSystem) {
+static void playerBounce(SpatialSystem& spatialSystem, double frameRate) {
   double dy = 5.0;
-  double frames = 20;
+  double frames = frameRate / 3;
   double dy_ = dy / (frames / 2);
   int i = 0;
   spatialSystem.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
@@ -216,7 +216,7 @@ void SpatialSystem::loadMap(const string& mapFilePath) {
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(m_entityManager, **objects.begin());
+  constructRootRegion(m_entityManager, **objects.begin(), m_frameRate);
 }
 
 //===========================================
@@ -313,7 +313,7 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
   });
 
   sg.player->move(dv);
-  playerBounce(*this);
+  playerBounce(*this, m_frameRate);
 }
 
 //===========================================

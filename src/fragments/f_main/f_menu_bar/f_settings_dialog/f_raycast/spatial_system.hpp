@@ -30,7 +30,9 @@ class SpatialSystem : public System {
 
     SceneGraph sg;
 
+    // TODO: Move this out of this class
     void loadMap(const std::string& mapFilePath);
+
     void connectZones();
 
     virtual void update() override;

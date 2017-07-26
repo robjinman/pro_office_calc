@@ -18,9 +18,9 @@ namespace chrono = std::chrono;
 #endif
 
 
-const int SCREEN_WIDTH = 320;
-const int SCREEN_HEIGHT = 200;
-const int FRAME_RATE = 60;
+const int SCREEN_WIDTH = 600;
+const int SCREEN_HEIGHT = 400;
+const int FRAME_RATE = 35;
 
 
 //===========================================
@@ -60,6 +60,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
 
+  // TODO: Move out of SpatialSystem
   spatialSystem->loadMap("data/map.svg");
 
   m_timer.reset(new QTimer(this));

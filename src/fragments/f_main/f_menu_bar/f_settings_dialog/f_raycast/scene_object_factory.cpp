@@ -351,18 +351,21 @@ static void constructBoundaries(EntityManager& em, map<Point, bool>& endpoints,
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(EntityManager& em, const parser::Object& obj, CZone& zone) {
+static void constructDoor(EntityManager& em, const parser::Object& obj, CZone& zone,
+  double frameRate) {
+
   BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(zone.entityId(), zone);
+  CDoorBehaviour* behaviour = new CDoorBehaviour(zone.entityId(), zone, frameRate);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZone* parentZone,
-  CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
+static void constructRegion_r(EntityManager& em, const parser::Object& obj, double frameRate,
+  CZone* parentZone, CRegion* parentRegion, const Matrix& parentTransform,
+  map<Point, bool>& endpoints) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -423,7 +426,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(em, child, zone, region, transform, endpoints);
+        constructRegion_r(em, child, frameRate, zone, region, transform, endpoints);
       }
       else if (type == "wall") {
         constructWalls(em, endpoints, child, *zone, *region, transform);
@@ -447,7 +450,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(em, obj, *zone);
+      constructDoor(em, obj, *zone, frameRate);
     }
   }
   catch (Exception& ex) {
@@ -464,7 +467,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, CZon
 //===========================================
 // constructRootRegion
 //===========================================
-void constructRootRegion(EntityManager& em, const parser::Object& obj) {
+void constructRootRegion(EntityManager& em, const parser::Object& obj, double frameRate) {
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
@@ -485,7 +488,7 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj) {
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(em, obj, nullptr, nullptr, m, endpoints);
+  constructRegion_r(em, obj, frameRate, nullptr, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {

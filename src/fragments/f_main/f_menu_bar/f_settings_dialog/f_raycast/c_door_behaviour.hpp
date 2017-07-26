@@ -9,7 +9,7 @@ class CZone;
 
 class CDoorBehaviour : public CBehaviour {
   public:
-    CDoorBehaviour(entityId_t entityId, CZone& zone);
+    CDoorBehaviour(entityId_t entityId, CZone& zone, double frameRate);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
@@ -23,6 +23,7 @@ class CDoorBehaviour : public CBehaviour {
     };
 
     CZone& m_zone;
+    double m_frameRate;
     state_t m_state = ST_CLOSED;
     double m_y0;
     double m_y1;

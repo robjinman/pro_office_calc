@@ -6,7 +6,7 @@ class EntityManager;
 namespace parser { class Object; }
 
 
-void constructRootRegion(EntityManager& em, const parser::Object& obj);
+void constructRootRegion(EntityManager& em, const parser::Object& obj, double frameRate);
 
 
 #endif
