@@ -97,8 +97,8 @@ struct CZone : public CSpatial {
   double ceilingHeight = 100;
   std::list<pCZone_t> children;
   std::list<CEdge*> edges;
-  std::list<pVRect_t> sprites;
-  std::list<pCHRect_t> floorDecals;
+  std::list<pVRect_t> vRects;
+  std::list<pCHRect_t> hRects;
   CZone* parent = nullptr;
 
   virtual ~CZone() override {}
@@ -112,7 +112,7 @@ struct CHardEdge : public CEdge {
     : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
 
   CZone* zone;
-  std::list<pVRect_t> decals;
+  std::list<pVRect_t> vRects;
 
   double height() const {
     return zone->ceilingHeight - zone->floorHeight;

@@ -199,17 +199,17 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
         result.intersections.push_back(pIntersection_t(X));
       }
       else if (boundary.kind == CRenderKind::JOIN) {
-        JoinX* jeX = dynamic_cast<JoinX*>(X);
-        CJoin& je = dynamic_cast<CJoin&>(boundary);
+        JoinX* joinX = dynamic_cast<JoinX*>(X);
+        CJoin& join = dynamic_cast<CJoin&>(boundary);
 
-        jeX->join = &je;
+        joinX->join = &join;
 
-        const CRegion& next = je.regionA == &region ? *je.regionB : *je.regionA;
+        const CRegion& next = join.regionA == &region ? *join.regionB : *join.regionA;
 
         auto pX = pIntersection_t(X);
-        if (visitedJoins.find(je.joinId) == visitedJoins.end()) {
+        if (visitedJoins.find(join.joinId) == visitedJoins.end()) {
           result.intersections.push_back(std::move(pX));
-          visitedJoins.insert(je.joinId);
+          visitedJoins.insert(join.joinId);
         }
 
         if (visitedRegions.find(&next) == visitedRegions.end()) {
@@ -914,24 +914,24 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
         }
       }
       else if (X.kind == IntersectionKind::JOIN) {
-        const JoinX& jeX = dynamic_cast<const JoinX&>(X);
+        const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
-        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
-          jeX.slice0, jeX.join->bottomTexture, screenX_px, viewport_px);
+        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, joinX.distanceAlongTarget,
+          joinX.slice0, joinX.join->bottomTexture, screenX_px, viewport_px);
 
-        CZone& nearZone = getZone(spatialSystem, *jeX.nearRegion);
-        CZone& farZone = getZone(spatialSystem, *jeX.farRegion);
+        CZone& nearZone = getZone(spatialSystem, *joinX.nearRegion);
+        CZone& farZone = getZone(spatialSystem, *joinX.farRegion);
 
-        drawFloorSlice(target, spatialSystem, rg, player, jeX.nearRegion, nearZone.floorHeight,
-          jeX.point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        drawFloorSlice(target, spatialSystem, rg, player, joinX.nearRegion, nearZone.floorHeight,
+          joinX.point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
-        // TODO: Make use of jeX.farRegion->ceilingHeight optional
-        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, jeX.distanceAlongTarget,
-          jeX.slice1, jeX.join->topTexture, screenX_px, viewport_px, farZone.ceilingHeight);
+        // TODO: Make use of joinX.farRegion->ceilingHeight optional
+        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, joinX.distanceAlongTarget,
+          joinX.slice1, joinX.join->topTexture, screenX_px, viewport_px, farZone.ceilingHeight);
 
-        if (jeX.nearRegion->hasCeiling) {
-          drawCeilingSlice(target, rg, player, jeX.nearRegion, nearZone.ceilingHeight,
-            jeX.point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        if (joinX.nearRegion->hasCeiling) {
+          drawCeilingSlice(target, rg, player, joinX.nearRegion, nearZone.ceilingHeight,
+            joinX.point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
           drawSkySlice(target, rg, player, slice1, screenX_px);

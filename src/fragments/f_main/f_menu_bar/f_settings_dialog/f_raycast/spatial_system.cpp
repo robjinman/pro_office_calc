@@ -64,17 +64,17 @@ void forEachZone(CZone& zone, function<void(CZone&)> fn) {
 //===========================================
 // getNextZone
 //===========================================
-static CZone* getNextZone(const CZone& current, const CSoftEdge& je) {
-  return je.zoneA == &current ? je.zoneB : je.zoneA;
+static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
+  return se.zoneA == &current ? se.zoneB : se.zoneA;
 }
 
 //===========================================
 // canStepAcross
 //===========================================
 static bool canStepAcross(const Player& player, const CZone& currentZone,
-  const CSoftEdge& je) {
+  const CSoftEdge& se) {
 
-  CZone* nextZone = getNextZone(currentZone, je);
+  CZone* nextZone = getNextZone(currentZone, se);
 
   bool canStep = nextZone->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
   bool hasHeadroom = player.headHeight() < nextZone->ceilingHeight;
@@ -94,14 +94,14 @@ static bool intersectHardEdge(const CZone& zone, const Circle& circle, const Pla
         const CEdge& edge = **it;
 
         if (edge.kind == CSpatialKind::SOFT_EDGE) {
-          const CSoftEdge& je = dynamic_cast<const CSoftEdge&>(edge);
+          const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
 
-          //assert(&zone == je.zoneA || &zone == je.zoneB);
-          if (&zone != je.zoneA && &zone != je.zoneB) {
+          //assert(&zone == se.zoneA || &zone == se.zoneB);
+          if (&zone != se.zoneA && &zone != se.zoneB) {
             continue;
           }
 
-          if (canStepAcross(player, zone, je)) {
+          if (canStepAcross(player, zone, se)) {
             continue;
           }
         }
@@ -148,13 +148,13 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
           }
 
           if (edge.kind == CSpatialKind::SOFT_EDGE) {
-            const CSoftEdge& je = dynamic_cast<const CSoftEdge&>(edge);
+            const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
 
-            if (&zone != je.zoneA && &zone != je.zoneB) {
+            if (&zone != se.zoneA && &zone != se.zoneB) {
               continue;
             }
 
-            if (canStepAcross(player, zone, je)) {
+            if (canStepAcross(player, zone, se)) {
               continue;
             }
           }
@@ -284,7 +284,7 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
 
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
         assert(edge.kind == CSpatialKind::SOFT_EDGE);
-        const CSoftEdge& je = dynamic_cast<const CSoftEdge&>(edge);
+        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
 
         LineSegment ray(cam.pos, cam.pos + dv);
         Point p_;
@@ -295,7 +295,7 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
 
           double dist = distance(cam.pos, p_);
           if (dist < nearestX) {
-            nextZone = getNextZone(currentZone, je);
+            nextZone = getNextZone(currentZone, se);
             p = p_;
 
             nearestX = dist;
@@ -387,14 +387,14 @@ static bool overlapsCircle(const Circle& circle, const CEdge& edge) {
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const VRect& sprite) {
-  return distance(circle.pos, sprite.pos) <= circle.radius;
+static bool overlapsCircle(const Circle& circle, const VRect& vRect) {
+  return distance(circle.pos, vRect.pos) <= circle.radius;
 }
 
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const CHRect& decal) {
+static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
   // TODO
 
   return false;
@@ -413,13 +413,13 @@ static void getEntitiesInRadius_r(const CZone& zone, const Circle& circle,
     }
   }
 
-  for (auto it = zone.sprites.begin(); it != zone.sprites.end(); ++it) {
+  for (auto it = zone.vRects.begin(); it != zone.vRects.end(); ++it) {
     if (overlapsCircle(circle, **it)) {
       entities.insert((*it)->entityId());
     }
   }
 
-  for (auto it = zone.floorDecals.begin(); it != zone.floorDecals.end(); ++it) {
+  for (auto it = zone.hRects.begin(); it != zone.hRects.end(); ++it) {
     if (overlapsCircle(circle, **it)) {
       entities.insert((*it)->entityId());
     }
@@ -442,8 +442,8 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 //===========================================
 // areTwins
 //===========================================
-static bool areTwins(const CSoftEdge& je1, const CSoftEdge& je2) {
-  return similar(je1.lseg, je2.lseg);
+static bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) {
+  return similar(se1.lseg, se2.lseg);
 }
 
 //===========================================
@@ -456,8 +456,8 @@ static void connectSubzones_r(CZone& zone) {
 
     for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
       if ((*jt)->kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge* je = dynamic_cast<CSoftEdge*>(*jt);
-        assert(je != nullptr);
+        CSoftEdge* se = dynamic_cast<CSoftEdge*>(*jt);
+        assert(se != nullptr);
 
         bool hasTwin = false;
         forEachZone(zone, [&](CZone& r_) {
@@ -467,13 +467,13 @@ static void connectSubzones_r(CZone& zone) {
                 if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
                   CSoftEdge* other = dynamic_cast<CSoftEdge*>(*lt);
 
-                  if (areTwins(*je, *other)) {
+                  if (areTwins(*se, *other)) {
                     hasTwin = true;
 
-                    je->joinId = other->joinId;
-                    je->zoneA = other->zoneA = &r;
-                    je->zoneB = other->zoneB = &r_;
-                    je->lseg = other->lseg;
+                    se->joinId = other->joinId;
+                    se->zoneA = other->zoneA = &r;
+                    se->zoneB = other->zoneB = &r_;
+                    se->lseg = other->lseg;
 
                     break;
                   }
@@ -484,8 +484,8 @@ static void connectSubzones_r(CZone& zone) {
         });
 
         if (!hasTwin) {
-          je->zoneA = &r;
-          je->zoneB = &zone;
+          se->zoneA = &r;
+          se->zoneB = &zone;
         }
       }
     }
@@ -555,12 +555,12 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
     }
     case CSpatialKind::H_RECT: {
       pCHRect_t ptr(dynamic_cast<CHRect*>(child.release()));
-      zone.floorDecals.push_back(std::move(ptr));
+      zone.hRects.push_back(std::move(ptr));
       break;
     }
     case CSpatialKind::V_RECT: {
       pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
-      zone.sprites.push_back(std::move(ptr));
+      zone.vRects.push_back(std::move(ptr));
       break;
     }
     default:
@@ -575,7 +575,7 @@ static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::V_RECT: {
       pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
-      edge.decals.push_back(std::move(ptr));
+      edge.vRects.push_back(std::move(ptr));
       break;
     }
     default:
@@ -622,13 +622,13 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
       break;
     }
     case CSpatialKind::H_RECT: {
-      zone.floorDecals.remove_if([&](const pCHRect_t& e) {
+      zone.hRects.remove_if([&](const pCHRect_t& e) {
         return e.get() == dynamic_cast<const CHRect*>(&child);
       });
       break;
     }
     case CSpatialKind::V_RECT: {
-      zone.sprites.remove_if([&](const pVRect_t& e) {
+      zone.vRects.remove_if([&](const pVRect_t& e) {
         return e.get() == dynamic_cast<const VRect*>(&child);
       });
       break;
@@ -644,7 +644,7 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
 static void removeFromHardEdge(CHardEdge& edge, const CSpatial& child) {
   switch (child.kind) {
     case CSpatialKind::V_RECT: {
-      edge.decals.remove_if([&](const pVRect_t& e) {
+      edge.vRects.remove_if([&](const pVRect_t& e) {
         return e.get() == dynamic_cast<const VRect*>(&child);
       });
       break;
