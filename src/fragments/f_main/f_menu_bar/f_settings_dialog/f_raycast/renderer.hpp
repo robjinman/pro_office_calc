@@ -52,7 +52,7 @@ struct JoinX : public Intersection {
   const CRegion* nearRegion;
   const CRegion* farRegion;
 
-  virtual ~JoinX() {}
+  virtual ~JoinX() override {}
 };
 
 struct WallX : public Intersection {
@@ -62,7 +62,7 @@ struct WallX : public Intersection {
   CWall* wall;
   Slice slice;
 
-  virtual ~WallX() {}
+  virtual ~WallX() override {}
 };
 
 struct SpriteX : public Intersection {
@@ -72,7 +72,7 @@ struct SpriteX : public Intersection {
   CSprite* sprite;
   Slice slice;
 
-  virtual ~SpriteX() {}
+  virtual ~SpriteX() override {}
 };
 
 struct CastResult {

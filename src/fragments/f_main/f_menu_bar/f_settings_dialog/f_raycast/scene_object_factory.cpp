@@ -115,7 +115,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
 
   entityId_t id = Component::getNextId();
 
-  VRect* vRect = new VRect(id, parentId, size);
+  CVRect* vRect = new CVRect(id, parentId, size);
   vRect->pos = pos;
 
   spatialSystem.addComponent(pComponent_t(vRect));
@@ -252,7 +252,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, double
   if (getValue(obj.dict, "subtype") == "bad_guy") {
     entityId_t id = Component::getNextId();
 
-    VRect* vRect = new VRect(id, zone.entityId(), Size(70, 70));
+    CVRect* vRect = new CVRect(id, zone.entityId(), Size(70, 70));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->zone = &zone;
@@ -275,7 +275,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, double
     renderSystem.addComponent(pComponent_t(sprite));
 
     pCAnimation_t anim(new CAnimation(id));
-    anim->animations.insert(std::make_pair("idle", Animation(frameRate, 2.0, {
+    anim->animations.insert(std::make_pair("idle", Animation(frameRate, 1.0, {
       AnimationFrame{{
         QRectF(0, 0, 0.125, 0.125),
         QRectF(0.125, 0, 0.125, 0.125),
@@ -364,7 +364,7 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, double
   else if (getValue(obj.dict, "subtype") == "ammo") {
     entityId_t id = Component::getNextId();
 
-    VRect* vRect = new VRect(id, zone.entityId(), Size(30, 15));
+    CVRect* vRect = new CVRect(id, zone.entityId(), Size(30, 15));
     Matrix m = transformFromTriangle(obj.path);
     vRect->setTransform(parentTransform * obj.transform * m);
     vRect->zone = &zone;

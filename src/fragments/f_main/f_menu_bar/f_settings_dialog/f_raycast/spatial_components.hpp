@@ -36,9 +36,9 @@ typedef std::unique_ptr<CSpatial> pCSpatial_t;
 
 class CZone;
 
-class VRect : public CSpatial {
+class CVRect : public CSpatial {
   public:
-    VRect(entityId_t entityId, entityId_t parentId, const Size& size)
+    CVRect(entityId_t entityId, entityId_t parentId, const Size& size)
       : CSpatial(CSpatialKind::V_RECT, entityId, parentId),
         size(size) {}
 
@@ -53,10 +53,10 @@ class VRect : public CSpatial {
     double angle;
     Size size;
 
-    virtual ~VRect() override {}
+    virtual ~CVRect() override {}
 };
 
-typedef std::unique_ptr<VRect> pVRect_t;
+typedef std::unique_ptr<CVRect> pCVRect_t;
 
 struct CEdge : public CSpatial {
   CEdge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
@@ -70,7 +70,7 @@ struct CEdge : public CSpatial {
 
   LineSegment lseg;
 
-  virtual ~CEdge() {}
+  virtual ~CEdge() override {}
 };
 
 typedef std::unique_ptr<CEdge> pCEdge_t;
@@ -97,7 +97,7 @@ struct CZone : public CSpatial {
   double ceilingHeight = 100;
   std::list<pCZone_t> children;
   std::list<CEdge*> edges;
-  std::list<pVRect_t> vRects;
+  std::list<pCVRect_t> vRects;
   std::list<pCHRect_t> hRects;
   CZone* parent = nullptr;
 
@@ -112,13 +112,13 @@ struct CHardEdge : public CEdge {
     : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
 
   CZone* zone;
-  std::list<pVRect_t> vRects;
+  std::list<pCVRect_t> vRects;
 
   double height() const {
     return zone->ceilingHeight - zone->floorHeight;
   }
 
-  virtual ~CHardEdge() {}
+  virtual ~CHardEdge() override {}
 };
 
 struct CSoftEdge : public CEdge {
@@ -139,7 +139,7 @@ struct CSoftEdge : public CEdge {
   CZone* zoneA = nullptr;
   CZone* zoneB = nullptr;
 
-  virtual ~CSoftEdge() {}
+  virtual ~CSoftEdge() override {}
 };
 
 

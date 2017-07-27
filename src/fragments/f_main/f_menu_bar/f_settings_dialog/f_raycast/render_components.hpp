@@ -56,7 +56,7 @@ class CSprite : public CRender {
       : CRender(CRenderKind::SPRITE, entityId, parentId),
         texture(texture) {}
 
-    const QRectF& getView(const VRect& vRect, const Point& camPos) const {
+    const QRectF& getView(const CVRect& vRect, const Point& camPos) const {
       if (texViews.empty()) {
         EXCEPTION("Cannot get view; texViews is empty");
       }
@@ -85,7 +85,7 @@ struct CBoundary : public CRender {
   CBoundary(const CBoundary& cpy, entityId_t entityId, entityId_t parentId)
     : CRender(cpy.kind, entityId, parentId) {}
 
-  virtual ~CBoundary() {}
+  virtual ~CBoundary() override {}
 };
 
 typedef std::unique_ptr<CBoundary> pCBoundary_t;
@@ -128,7 +128,7 @@ struct CWallDecal : public CRender {
 
   std::string texture;
 
-  virtual ~CWallDecal() {}
+  virtual ~CWallDecal() override {}
 };
 
 typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
@@ -141,7 +141,7 @@ struct CWall : public CBoundary {
   CRegion* region;
   std::list<pCWallDecal_t> decals;
 
-  virtual ~CWall() {}
+  virtual ~CWall() override {}
 };
 
 struct CJoin : public CBoundary {
@@ -176,7 +176,7 @@ struct CJoin : public CBoundary {
   CRegion* regionA = nullptr;
   CRegion* regionB = nullptr;
 
-  virtual ~CJoin() {}
+  virtual ~CJoin() override {}
 };
 
 

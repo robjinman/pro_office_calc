@@ -387,7 +387,7 @@ static bool overlapsCircle(const Circle& circle, const CEdge& edge) {
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const VRect& vRect) {
+static bool overlapsCircle(const Circle& circle, const CVRect& vRect) {
   return distance(circle.pos, vRect.pos) <= circle.radius;
 }
 
@@ -559,7 +559,7 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
       break;
     }
     case CSpatialKind::V_RECT: {
-      pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
+      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
       zone.vRects.push_back(std::move(ptr));
       break;
     }
@@ -574,7 +574,7 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
 static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::V_RECT: {
-      pVRect_t ptr(dynamic_cast<VRect*>(child.release()));
+      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
       edge.vRects.push_back(std::move(ptr));
       break;
     }
@@ -628,8 +628,8 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
       break;
     }
     case CSpatialKind::V_RECT: {
-      zone.vRects.remove_if([&](const pVRect_t& e) {
-        return e.get() == dynamic_cast<const VRect*>(&child);
+      zone.vRects.remove_if([&](const pCVRect_t& e) {
+        return e.get() == dynamic_cast<const CVRect*>(&child);
       });
       break;
     }
@@ -644,8 +644,8 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
 static void removeFromHardEdge(CHardEdge& edge, const CSpatial& child) {
   switch (child.kind) {
     case CSpatialKind::V_RECT: {
-      edge.vRects.remove_if([&](const pVRect_t& e) {
-        return e.get() == dynamic_cast<const VRect*>(&child);
+      edge.vRects.remove_if([&](const pCVRect_t& e) {
+        return e.get() == dynamic_cast<const CVRect*>(&child);
       });
       break;
     }

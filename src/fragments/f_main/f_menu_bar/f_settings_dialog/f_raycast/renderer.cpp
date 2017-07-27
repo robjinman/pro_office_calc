@@ -43,12 +43,12 @@ static inline CEdge& getEdge(const SpatialSystem& spatialSystem, const CBoundary
   return dynamic_cast<CEdge&>(spatialSystem.getComponent(b.entityId()));
 }
 
-static inline VRect& getVRect(const SpatialSystem& spatialSystem, const CSprite& s) {
-  return dynamic_cast<VRect&>(spatialSystem.getComponent(s.entityId()));
+static inline CVRect& getVRect(const SpatialSystem& spatialSystem, const CSprite& s) {
+  return dynamic_cast<CVRect&>(spatialSystem.getComponent(s.entityId()));
 }
 
-static inline VRect& getVRect(const SpatialSystem& spatialSystem, const CWallDecal& d) {
-  return dynamic_cast<VRect&>(spatialSystem.getComponent(d.entityId()));
+static inline CVRect& getVRect(const SpatialSystem& spatialSystem, const CWallDecal& d) {
+  return dynamic_cast<CVRect&>(spatialSystem.getComponent(d.entityId()));
 }
 
 static inline CHRect& getHRect(const SpatialSystem& spatialSystem, const CFloorDecal& d) {
@@ -159,7 +159,7 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
 
   for (auto it = region.sprites.begin(); it != region.sprites.end(); ++it) {
     CSprite& sprite = **it;
-    const VRect& vRect = getVRect(spatialSystem, sprite);
+    const CVRect& vRect = getVRect(spatialSystem, sprite);
 
     Point pos = invCamMatrix * vRect.pos;
     double w = vRect.size.x;
@@ -421,7 +421,7 @@ static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGra
     else if ((*it)->kind == IntersectionKind::SPRITE) {
       SpriteX& X = dynamic_cast<SpriteX&>(**it);
 
-      const VRect& vRect = getVRect(spatialSystem, *X.sprite);
+      const CVRect& vRect = getVRect(spatialSystem, *X.sprite);
       const CZone& zone = getZone(spatialSystem, *region);
 
       double floorHeight = zone.floorHeight;
@@ -756,7 +756,7 @@ static void drawSprite(QPainter& painter, const SpatialSystem& spatialSystem, co
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
   const CSprite& sprite = *spriteX.sprite;
-  const VRect& vRect = getVRect(spatialSystem, sprite);
+  const CVRect& vRect = getVRect(spatialSystem, sprite);
   const Slice& slice = spriteX.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
@@ -784,7 +784,7 @@ static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
   const RenderGraph& rg, const CWallDecal& decal, const WallX& wallX, int screenX_px,
   const Size& viewport_px, double camHeight, double vWorldUnit_px) {
 
-  const VRect& vRect = getVRect(spatialSystem, decal);
+  const CVRect& vRect = getVRect(spatialSystem, decal);
 
   const Texture& decalTex = rg.textures.at(decal.texture);
 
@@ -828,7 +828,7 @@ static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
 static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CWall& wall, double x) {
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
     CWallDecal* decal = it->get();
-    const VRect& vRect = getVRect(spatialSystem, *decal);
+    const CVRect& vRect = getVRect(spatialSystem, *decal);
 
     double x0 = vRect.pos.x;
     double x1 = vRect.pos.x + vRect.size.x;
