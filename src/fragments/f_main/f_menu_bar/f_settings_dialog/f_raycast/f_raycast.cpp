@@ -11,6 +11,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 
 
 #ifdef DEBUG
@@ -59,6 +60,9 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
 
   SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
+
+  AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, FRAME_RATE);
+  m_entityManager.addSystem(ComponentKind::C_ANIMATION, pSystem_t(animationSystem));
 
   // TODO: Move out of SpatialSystem
   spatialSystem->loadMap("data/map.svg");

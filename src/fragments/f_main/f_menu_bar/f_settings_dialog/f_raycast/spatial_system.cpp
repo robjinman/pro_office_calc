@@ -259,7 +259,7 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
-  double radius = 5.0;
+  double radius = 10.0;
 
   CZone& currentZone = getCurrentZone();
 

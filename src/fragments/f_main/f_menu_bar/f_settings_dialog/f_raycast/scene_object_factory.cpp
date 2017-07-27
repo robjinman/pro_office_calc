@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -239,11 +240,12 @@ static Player* constructPlayer(const parser::Object& obj, const CZone& zone,
 //===========================================
 // constructSprite
 //===========================================
-static void constructSprite(EntityManager& em, const parser::Object& obj, CZone& zone,
-  CRegion& region, const Matrix& parentTransform) {
+static void constructSprite(EntityManager& em, const parser::Object& obj, double frameRate,
+  CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
+  AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
 
   DBG_PRINT("Constructing Sprite\n");
 
@@ -260,17 +262,104 @@ static void constructSprite(EntityManager& em, const parser::Object& obj, CZone&
     CSprite* sprite = new CSprite(id, zone.entityId(), "bad_guy");
     sprite->region = &region;
     sprite->texViews = {
-      QRectF(0, 0, 0.125, 1),
-      QRectF(0.125, 0, 0.125, 1),
-      QRectF(0.25, 0, 0.125, 1),
-      QRectF(0.375, 0, 0.125, 1),
-      QRectF(0.5, 0, 0.125, 1),
-      QRectF(0.625, 0, 0.125, 1),
-      QRectF(0.750, 0, 0.125, 1),
-      QRectF(0.875, 0, 0.125, 1)
+      QRectF(0, 0, 0.125, 0.125),
+      QRectF(0.125, 0, 0.125, 0.125),
+      QRectF(0.25, 0, 0.125, 0.125),
+      QRectF(0.375, 0, 0.125, 0.125),
+      QRectF(0.5, 0, 0.125, 0.125),
+      QRectF(0.625, 0, 0.125, 0.125),
+      QRectF(0.750, 0, 0.125, 0.125),
+      QRectF(0.875, 0, 0.125, 0.125)
     };
 
     renderSystem.addComponent(pComponent_t(sprite));
+
+    pCAnimation_t anim(new CAnimation(id));
+    anim->animations.insert(std::make_pair("idle", Animation(frameRate, 2.0, {
+      AnimationFrame{{
+        QRectF(0, 0, 0.125, 0.125),
+        QRectF(0.125, 0, 0.125, 0.125),
+        QRectF(0.25, 0, 0.125, 0.125),
+        QRectF(0.375, 0, 0.125, 0.125),
+        QRectF(0.5, 0, 0.125, 0.125),
+        QRectF(0.625, 0, 0.125, 0.125),
+        QRectF(0.750, 0, 0.125, 0.125),
+        QRectF(0.875, 0, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.125, 0.125, 0.125),
+        QRectF(0.125, 0.125, 0.125, 0.125),
+        QRectF(0.25, 0.125, 0.125, 0.125),
+        QRectF(0.375, 0.125, 0.125, 0.125),
+        QRectF(0.5, 0.125, 0.125, 0.125),
+        QRectF(0.625, 0.125, 0.125, 0.125),
+        QRectF(0.750, 0.125, 0.125, 0.125),
+        QRectF(0.875, 0.125, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.25, 0.125, 0.125),
+        QRectF(0.125, 0.25, 0.125, 0.125),
+        QRectF(0.25, 0.25, 0.125, 0.125),
+        QRectF(0.375, 0.25, 0.125, 0.125),
+        QRectF(0.5, 0.25, 0.125, 0.125),
+        QRectF(0.625, 0.25, 0.125, 0.125),
+        QRectF(0.750, 0.25, 0.125, 0.125),
+        QRectF(0.875, 0.25, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.375, 0.125, 0.125),
+        QRectF(0.125, 0.375, 0.125, 0.125),
+        QRectF(0.25, 0.375, 0.125, 0.125),
+        QRectF(0.375, 0.375, 0.125, 0.125),
+        QRectF(0.5, 0.375, 0.125, 0.125),
+        QRectF(0.625, 0.375, 0.125, 0.125),
+        QRectF(0.750, 0.375, 0.125, 0.125),
+        QRectF(0.875, 0.375, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.5, 0.125, 0.125),
+        QRectF(0.125, 0.5, 0.125, 0.125),
+        QRectF(0.25, 0.5, 0.125, 0.125),
+        QRectF(0.375, 0.5, 0.125, 0.125),
+        QRectF(0.5, 0.5, 0.125, 0.125),
+        QRectF(0.625, 0.5, 0.125, 0.125),
+        QRectF(0.750, 0.5, 0.125, 0.125),
+        QRectF(0.875, 0.5, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.625, 0.125, 0.125),
+        QRectF(0.125, 0.625, 0.125, 0.125),
+        QRectF(0.25, 0.625, 0.125, 0.125),
+        QRectF(0.375, 0.625, 0.125, 0.125),
+        QRectF(0.5, 0.625, 0.125, 0.125),
+        QRectF(0.625, 0.625, 0.125, 0.125),
+        QRectF(0.750, 0.625, 0.125, 0.125),
+        QRectF(0.875, 0.625, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.75, 0.125, 0.125),
+        QRectF(0.125, 0.75, 0.125, 0.125),
+        QRectF(0.25, 0.75, 0.125, 0.125),
+        QRectF(0.375, 0.75, 0.125, 0.125),
+        QRectF(0.5, 0.75, 0.125, 0.125),
+        QRectF(0.625, 0.75, 0.125, 0.125),
+        QRectF(0.750, 0.75, 0.125, 0.125),
+        QRectF(0.875, 0.75, 0.125, 0.125)
+      }},
+      AnimationFrame{{
+        QRectF(0, 0.875, 0.125, 0.125),
+        QRectF(0.125, 0.875, 0.125, 0.125),
+        QRectF(0.25, 0.875, 0.125, 0.125),
+        QRectF(0.375, 0.875, 0.125, 0.125),
+        QRectF(0.5, 0.875, 0.125, 0.125),
+        QRectF(0.625, 0.875, 0.125, 0.125),
+        QRectF(0.750, 0.875, 0.125, 0.125),
+        QRectF(0.875, 0.875, 0.125, 0.125)
+      }}
+    })));
+
+    animationSystem.addComponent(std::move(anim));
+    animationSystem.playAnimation(id, "idle", true);
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
     entityId_t id = Component::getNextId();
@@ -435,7 +524,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
         constructBoundaries(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
-        constructSprite(em, child, *zone, *region, transform);
+        constructSprite(em, child, frameRate, *zone, *region, transform);
       }
       else if (type == "floor_decal") {
         constructFloorDecal(em, child, transform, entityId);
