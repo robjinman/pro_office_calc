@@ -197,22 +197,13 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 //===========================================
 // constructPlayer
 //===========================================
-static Player* constructPlayer(EntityManager& em, const parser::Object& obj, const CZone& zone,
-  const Matrix& parentTransform, const Size& viewport) {
+static Player* constructPlayer(EntityManager& em, const parser::Object& obj, double frameRate,
+  const CZone& zone, const Matrix& parentTransform, const Size& viewport) {
 
   DBG_PRINT("Constructing Player\n");
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  entityId_t id = Component::getNextId();
-
-  Size sz(0.5, 0.5);
-  COverlay* crosshair = new COverlay(id, "crosshair", viewport / 2 - sz / 2, sz);
-  renderSystem.addComponent(pCRender_t(crosshair));
-
-  COverlay* gun = new COverlay(id, "gun", Point(viewport.x * 0.6, 0), Size(2, 2));
-  gun->texRect = QRectF(0, 0, 0.25, 1);
-  renderSystem.addComponent(pCRender_t(gun));
+  AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
 
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
@@ -220,7 +211,36 @@ static Player* constructPlayer(EntityManager& em, const parser::Object& obj, con
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
   camera->height = tallness + zone.floorHeight;
 
-  Player* player = new Player(tallness, unique_ptr<Camera>(camera));
+  Player* player = new Player(em, tallness, unique_ptr<Camera>(camera));
+  player->sprite = Component::getNextId();
+  player->crosshair = Component::getNextId();
+
+  Size sz(0.5, 0.5);
+  COverlay* crosshair = new COverlay(player->crosshair, "crosshair", viewport / 2 - sz / 2, sz);
+  renderSystem.addComponent(pCRender_t(crosshair));
+
+  COverlay* sprite = new COverlay(player->sprite, "gun", Point(viewport.x * 0.6, 0), Size(3, 3));
+  sprite->texRect = QRectF(0, 0, 0.25, 1);
+  renderSystem.addComponent(pCRender_t(sprite));
+
+  CAnimation* shoot = new CAnimation(player->sprite);
+  shoot->animations.insert(std::make_pair("shoot", Animation(frameRate, 0.4, {
+    AnimationFrame{{
+      QRectF(0.75, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0.5, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0.25, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0, 0, 0.25, 1)
+    }}
+  })));
+
+  animationSystem.addComponent(pCAnimation_t(shoot));
+
   return player;
 }
 
@@ -373,7 +393,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(em, child, *zone, transform, rg.viewport));
+        sg.player.reset(constructPlayer(em, child, frameRate, *zone, transform, rg.viewport));
         sg.player->currentRegion = entityId;
       }
     }

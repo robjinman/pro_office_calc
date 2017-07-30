@@ -38,6 +38,7 @@ class FRaycast : public QWidget, public Fragment {
     void keyReleaseEvent(QKeyEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
   private:
     FRaycastData m_data;
@@ -47,6 +48,7 @@ class FRaycast : public QWidget, public Fragment {
     std::unique_ptr<QTimer> m_timer;
     QImage m_buffer;
     std::map<int, bool> m_keyStates;
+    bool m_mouseBtnState;
     Point m_cursor;
     bool m_cursorCaptured;
     Qt::CursorShape m_defaultCursor;

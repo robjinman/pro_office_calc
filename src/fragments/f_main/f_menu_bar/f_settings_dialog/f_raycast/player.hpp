@@ -4,98 +4,54 @@
 
 #include <memory>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
 
 
+class CZone;
+class Camera;
+class EntityManager;
+
 class Player {
   public:
-    Player(double tallness, std::unique_ptr<Camera> camera)
-      : m_camera(std::move(camera)),
-        m_tallness(tallness) {}
+    Player(EntityManager& entityManager, double tallness, std::unique_ptr<Camera> camera);
 
     double vVelocity = 0;
     double activationRadius = 100.0;
     entityId_t currentRegion = -1;
 
-    bool aboveGround(const CZone& zone) const {
-      return feetHeight() - 0.1 > zone.floorHeight;
-    }
+    entityId_t crosshair;
+    entityId_t sprite;
 
-    bool belowGround(const CZone& zone) const {
-      return feetHeight() + 0.1 < zone.floorHeight;
-    }
+    bool aboveGround(const CZone& zone) const;
+    bool belowGround(const CZone& zone) const;
 
-    double feetHeight() const {
-      return m_camera->height - m_tallness;
-    }
+    double feetHeight() const;
+    double headHeight() const;
 
-    double headHeight() const {
-      return m_camera->height;
-    }
+    void changeTallness(double delta);
+    void setFeetHeight(double h);
+    void setEyeHeight(double h);
 
-    void changeTallness(double delta) {
-      m_tallness += delta;
-      m_camera->height += delta;
-    }
+    void changeHeight(const CZone& zone, double deltaH);
 
-    void setFeetHeight(double h) {
-      m_camera->height = h + m_tallness;
-    }
+    const Point& pos() const;
+    void setPosition(const Point& pos);
+    void move(const Vec2f& ds);
 
-    void setEyeHeight(double h) {
-      m_camera->height = h;
-    }
+    void hRotate(double da);
+    void vRotate(double da);
 
-    void changeHeight(const CZone& zone, double deltaH) {
-      // If applying this delta puts the player's feet through the floor
-      if (feetHeight() - zone.floorHeight + deltaH < 0) {
-        // Only permit positive delta
-        if (deltaH <= 0) {
-          setFeetHeight(zone.floorHeight);
-          return;
-        }
-      }
-      // If applying this delta puts the player's head through the ceiling
-      else if (zone.ceilingHeight - headHeight() + deltaH < 0) {
-        // Only permit negative delta
-        if (deltaH >= 0) {
-          return;
-        }
-      }
-      m_camera->height += deltaH;
-    }
+    void shoot();
 
-    const Point& pos() const {
-      return m_camera->pos;
-    }
-
-    void setPosition(const Point& pos) {
-      m_camera->pos = pos;
-    }
-
-    void move(const Vec2f& ds) {
-      m_camera->pos = m_camera->pos + ds;
-    }
-
-    void hRotate(double da) {
-      m_camera->angle += da;
-    }
-
-    void vRotate(double da) {
-      if (fabs(m_camera->vAngle + da) <= DEG_TO_RAD(20)) {
-        m_camera->vAngle += da;
-      }
-    }
-
-    const Camera& camera() const {
-      return *m_camera;
-    }
+    const Camera& camera() const;
 
   private:
-      std::unique_ptr<Camera> m_camera;
-      double m_tallness = 50;
+    EntityManager& m_entityManager;
+    std::unique_ptr<Camera> m_camera;
+    double m_tallness = 50;
 };
 
 

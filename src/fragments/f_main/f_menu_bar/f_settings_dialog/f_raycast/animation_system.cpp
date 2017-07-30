@@ -37,15 +37,19 @@ void Animation::update() {
     // Since first frame
     m_elapsed += sim_dt;
 
-    m_currentFrameIdx = floor(m_elapsed / anim_dt);
+    int next = floor(m_elapsed / anim_dt);
 
-    if (m_currentFrameIdx == frames.size()) {
-      m_currentFrameIdx = 0;
-      m_elapsed = 0;
-
-      if (!m_loop) {
+    if (next == frames.size()) {
+      if (m_loop) {
+        m_currentFrameIdx = 0;
+        m_elapsed = 0;
+      }
+      else {
         m_state = AnimState::STOPPED;
       }
+    }
+    else {
+      m_currentFrameIdx = next;
     }
   }
 }
@@ -85,6 +89,10 @@ void AnimationSystem::update() {
       if (c.kind == CRenderKind::SPRITE) {
         CSprite& sprite = dynamic_cast<CSprite&>(c);
         sprite.texViews = anim->currentFrame().texViews;
+      }
+      else if (c.kind == CRenderKind::OVERLAY) {
+        COverlay& overlay = dynamic_cast<COverlay&>(c);
+        overlay.texRect = anim->currentFrame().texViews[0];
       }
 
       if (anim->state() == AnimState::STOPPED) {

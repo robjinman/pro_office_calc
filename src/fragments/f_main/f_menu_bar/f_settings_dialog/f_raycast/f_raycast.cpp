@@ -41,6 +41,7 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 
   m_defaultCursor = cursor().shape();
   m_cursorCaptured = false;
+  m_mouseBtnState = false;
 
   m_buffer = QImage(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
 
@@ -122,11 +123,24 @@ void FRaycast::keyReleaseEvent(QKeyEvent* event) {
 // FRaycast::mousePressEvent
 //===========================================
 void FRaycast::mousePressEvent(QMouseEvent* event) {
+  if (m_cursorCaptured && event->button() == Qt::LeftButton) {
+    m_mouseBtnState = true;
+  }
+
   m_cursorCaptured = true;
   m_cursor.x = width() / 2;
   m_cursor.y = height() / 2;
 
   setCursor(Qt::BlankCursor);
+}
+
+//===========================================
+// FRaycast::mouseReleaseEvent
+//===========================================
+void FRaycast::mouseReleaseEvent(QMouseEvent* event) {
+  if (event->button() == Qt::LeftButton) {
+    m_mouseBtnState = false;
+  }
 }
 
 //===========================================
@@ -209,6 +223,11 @@ void FRaycast::tick() {
     if (fabs(v.y) > 0) {
       double da = 0.0008 * PI * v.y;
       spatialSystem.vRotateCamera(da);
+    }
+
+    if (m_mouseBtnState == true) {
+      spatialSystem.sg.player->shoot();
+      m_mouseBtnState = false;
     }
   }
 
