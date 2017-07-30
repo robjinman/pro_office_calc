@@ -210,6 +210,10 @@ static Player* constructPlayer(EntityManager& em, const parser::Object& obj, con
   COverlay* crosshair = new COverlay(id, "crosshair", viewport / 2 - sz / 2, sz);
   renderSystem.addComponent(pCRender_t(crosshair));
 
+  COverlay* gun = new COverlay(id, "gun", Point(viewport.x * 0.6, 0), Size(2, 2));
+  gun->texRect = QRectF(0, 0, 0.25, 1);
+  renderSystem.addComponent(pCRender_t(gun));
+
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
   Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));

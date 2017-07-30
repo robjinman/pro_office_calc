@@ -49,6 +49,7 @@ class COverlay : public CRender {
         size(size) {}
 
     std::string texture;
+    QRectF texRect = QRectF(0, 0, 1, 1);
     Point pos;
     Size size;
 };

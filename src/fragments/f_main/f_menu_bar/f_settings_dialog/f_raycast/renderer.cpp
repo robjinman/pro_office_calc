@@ -835,8 +835,14 @@ static void drawOverlay(QPainter& painter, const COverlay& overlay, const Render
 
   const Texture& tex = rg.textures.at(overlay.texture);
 
-  QRect trgRect(x, y, w, h);
-  painter.drawImage(trgRect, tex.image, tex.image.rect());
+  double sx = overlay.texRect.x() * tex.image.rect().width();
+  double sy = overlay.texRect.y() * tex.image.rect().height();
+  double sw = overlay.texRect.width() * tex.image.rect().width();
+  double sh = overlay.texRect.height() * tex.image.rect().height();
+
+  QRect srcRect(sx, sy, sw, sh);
+  QRect trgRect(x, y - h, w, h);
+  painter.drawImage(trgRect, tex.image, srcRect);
 }
 
 //===========================================
