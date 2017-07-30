@@ -51,4 +51,9 @@ Object* constructObject_r(const tinyxml2::XMLElement& node);
 }
 
 
+const std::string& getValue(const std::map<std::string, std::string>& m, const std::string& key);
+const std::string& getValue(const std::map<std::string, std::string>& m, const std::string& key,
+  const std::string& default_);
+
+
 #endif

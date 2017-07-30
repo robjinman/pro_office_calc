@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 
 
 #ifdef DEBUG
@@ -64,8 +65,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_ANIMATION, pSystem_t(animationSystem));
 
-  // TODO: Move out of SpatialSystem
-  spatialSystem->loadMap("data/map.svg");
+  loadMap("data/map.svg", m_entityManager, FRAME_RATE);
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

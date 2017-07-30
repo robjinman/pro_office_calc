@@ -209,17 +209,6 @@ SpatialSystem::SpatialSystem(EntityManager& entityManager, double frameRate)
 }
 
 //===========================================
-// SpatialSystem::loadMap
-//===========================================
-void SpatialSystem::loadMap(const string& mapFilePath) {
-  list<parser::pObject_t> objects;
-  parser::parse(mapFilePath, objects);
-
-  assert(objects.size() == 1);
-  constructRootRegion(m_entityManager, **objects.begin(), m_frameRate);
-}
-
-//===========================================
 // SpatialSystem::handleEvent
 //===========================================
 void SpatialSystem::handleEvent(const GameEvent& event) {

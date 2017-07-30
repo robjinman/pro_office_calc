@@ -4,9 +4,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 
 
-namespace parser {
-
-
 using std::list;
 using std::string;
 using std::map;
@@ -15,6 +12,9 @@ using std::istream;
 using std::stringstream;
 using tinyxml2::XMLDocument;
 using tinyxml2::XMLElement;
+
+
+namespace parser {
 
 
 //===========================================
@@ -323,4 +323,29 @@ void parse(const string& file, list<pObject_t>& objects) {
 }
 
 
+}
+
+
+//===========================================
+// getValue
+//===========================================
+const string& getValue(const map<string, string>& m, const string& key) {
+  try {
+    return m.at(key);
+  }
+  catch (std::out_of_range& ex) {
+    EXCEPTION("No '" << key << "' key in map");
+  }
+}
+
+//===========================================
+// getValue
+//===========================================
+const string& getValue(const map<string, string>& m, const string& key, const string& default_) {
+  if (m.find(key) != m.end()) {
+    return m.at(key);
+  }
+  else {
+    return default_;
+  }
 }

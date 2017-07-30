@@ -2,11 +2,12 @@
 #define __PROCALC_FRAGMENTS_F_RAYCAST_SCENE_OBJECT_FACTORY_HPP__
 
 
+#include <string>
+
+
 class EntityManager;
-namespace parser { class Object; }
 
-
-void constructRootRegion(EntityManager& em, const parser::Object& obj, double frameRate);
+void loadMap(const std::string& mapFilePath, EntityManager& entityManager, double frameRate);
 
 
 #endif

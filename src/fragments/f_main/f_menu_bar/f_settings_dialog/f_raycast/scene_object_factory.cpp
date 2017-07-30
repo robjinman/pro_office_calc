@@ -4,6 +4,7 @@
 #include <list>
 #include <iterator>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/sprite_factory.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_graph.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
@@ -28,32 +29,6 @@ using std::map;
 
 const double SNAP_DISTANCE = 4.0;
 
-
-//===========================================
-// getValue
-//===========================================
-static const string& getValue(const map<string, string>& m, const string& key) {
-  try {
-    return m.at(key);
-  }
-  catch (std::out_of_range& ex) {
-    EXCEPTION("No '" << key << "' key in map");
-  }
-}
-
-//===========================================
-// getValue
-//===========================================
-static const string& getValue(const map<string, string>& m, const string& key,
-  const string& default_) {
-
-  if (m.find(key) != m.end()) {
-    return m.at(key);
-  }
-  else {
-    return default_;
-  }
-}
 
 //===========================================
 // snapEndpoint
@@ -238,153 +213,6 @@ static Player* constructPlayer(const parser::Object& obj, const CZone& zone,
 }
 
 //===========================================
-// constructSprite
-//===========================================
-static void constructSprite(EntityManager& em, const parser::Object& obj, double frameRate,
-  CZone& zone, CRegion& region, const Matrix& parentTransform) {
-
-  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
-  AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
-  DBG_PRINT("Constructing Sprite\n");
-
-  if (getValue(obj.dict, "subtype") == "bad_guy") {
-    entityId_t id = Component::getNextId();
-
-    CVRect* vRect = new CVRect(id, zone.entityId(), Size(70, 70));
-    Matrix m = transformFromTriangle(obj.path);
-    vRect->setTransform(parentTransform * obj.transform * m);
-    vRect->zone = &zone;
-
-    spatialSystem.addComponent(pComponent_t(vRect));
-
-    CSprite* sprite = new CSprite(id, zone.entityId(), "bad_guy");
-    sprite->region = &region;
-    sprite->texViews = {
-      QRectF(0, 0, 0.125, 0.125),
-      QRectF(0.125, 0, 0.125, 0.125),
-      QRectF(0.25, 0, 0.125, 0.125),
-      QRectF(0.375, 0, 0.125, 0.125),
-      QRectF(0.5, 0, 0.125, 0.125),
-      QRectF(0.625, 0, 0.125, 0.125),
-      QRectF(0.750, 0, 0.125, 0.125),
-      QRectF(0.875, 0, 0.125, 0.125)
-    };
-
-    renderSystem.addComponent(pComponent_t(sprite));
-
-    pCAnimation_t anim(new CAnimation(id));
-    anim->animations.insert(std::make_pair("idle", Animation(frameRate, 1.0, {
-      AnimationFrame{{
-        QRectF(0, 0, 0.125, 0.125),
-        QRectF(0.125, 0, 0.125, 0.125),
-        QRectF(0.25, 0, 0.125, 0.125),
-        QRectF(0.375, 0, 0.125, 0.125),
-        QRectF(0.5, 0, 0.125, 0.125),
-        QRectF(0.625, 0, 0.125, 0.125),
-        QRectF(0.750, 0, 0.125, 0.125),
-        QRectF(0.875, 0, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.125, 0.125, 0.125),
-        QRectF(0.125, 0.125, 0.125, 0.125),
-        QRectF(0.25, 0.125, 0.125, 0.125),
-        QRectF(0.375, 0.125, 0.125, 0.125),
-        QRectF(0.5, 0.125, 0.125, 0.125),
-        QRectF(0.625, 0.125, 0.125, 0.125),
-        QRectF(0.750, 0.125, 0.125, 0.125),
-        QRectF(0.875, 0.125, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.25, 0.125, 0.125),
-        QRectF(0.125, 0.25, 0.125, 0.125),
-        QRectF(0.25, 0.25, 0.125, 0.125),
-        QRectF(0.375, 0.25, 0.125, 0.125),
-        QRectF(0.5, 0.25, 0.125, 0.125),
-        QRectF(0.625, 0.25, 0.125, 0.125),
-        QRectF(0.750, 0.25, 0.125, 0.125),
-        QRectF(0.875, 0.25, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.375, 0.125, 0.125),
-        QRectF(0.125, 0.375, 0.125, 0.125),
-        QRectF(0.25, 0.375, 0.125, 0.125),
-        QRectF(0.375, 0.375, 0.125, 0.125),
-        QRectF(0.5, 0.375, 0.125, 0.125),
-        QRectF(0.625, 0.375, 0.125, 0.125),
-        QRectF(0.750, 0.375, 0.125, 0.125),
-        QRectF(0.875, 0.375, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.5, 0.125, 0.125),
-        QRectF(0.125, 0.5, 0.125, 0.125),
-        QRectF(0.25, 0.5, 0.125, 0.125),
-        QRectF(0.375, 0.5, 0.125, 0.125),
-        QRectF(0.5, 0.5, 0.125, 0.125),
-        QRectF(0.625, 0.5, 0.125, 0.125),
-        QRectF(0.750, 0.5, 0.125, 0.125),
-        QRectF(0.875, 0.5, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.625, 0.125, 0.125),
-        QRectF(0.125, 0.625, 0.125, 0.125),
-        QRectF(0.25, 0.625, 0.125, 0.125),
-        QRectF(0.375, 0.625, 0.125, 0.125),
-        QRectF(0.5, 0.625, 0.125, 0.125),
-        QRectF(0.625, 0.625, 0.125, 0.125),
-        QRectF(0.750, 0.625, 0.125, 0.125),
-        QRectF(0.875, 0.625, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.75, 0.125, 0.125),
-        QRectF(0.125, 0.75, 0.125, 0.125),
-        QRectF(0.25, 0.75, 0.125, 0.125),
-        QRectF(0.375, 0.75, 0.125, 0.125),
-        QRectF(0.5, 0.75, 0.125, 0.125),
-        QRectF(0.625, 0.75, 0.125, 0.125),
-        QRectF(0.750, 0.75, 0.125, 0.125),
-        QRectF(0.875, 0.75, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.875, 0.125, 0.125),
-        QRectF(0.125, 0.875, 0.125, 0.125),
-        QRectF(0.25, 0.875, 0.125, 0.125),
-        QRectF(0.375, 0.875, 0.125, 0.125),
-        QRectF(0.5, 0.875, 0.125, 0.125),
-        QRectF(0.625, 0.875, 0.125, 0.125),
-        QRectF(0.750, 0.875, 0.125, 0.125),
-        QRectF(0.875, 0.875, 0.125, 0.125)
-      }}
-    })));
-
-    animationSystem.addComponent(std::move(anim));
-    animationSystem.playAnimation(id, "idle", true);
-  }
-  else if (getValue(obj.dict, "subtype") == "ammo") {
-    entityId_t id = Component::getNextId();
-
-    CVRect* vRect = new CVRect(id, zone.entityId(), Size(30, 15));
-    Matrix m = transformFromTriangle(obj.path);
-    vRect->setTransform(parentTransform * obj.transform * m);
-    vRect->zone = &zone;
-
-    spatialSystem.addComponent(pComponent_t(vRect));
-
-    CSprite* sprite = new CSprite(id, zone.entityId(), "ammo");
-    sprite->region = &region;
-    sprite->texViews = {
-      QRectF(0, 0, 1, 1)
-    };
-
-    renderSystem.addComponent(pComponent_t(sprite));
-  }
-  else {
-    EXCEPTION("Error constructing sprite of unknown type");
-  }
-}
-
-//===========================================
 // constructBoundaries
 //===========================================
 static void constructBoundaries(EntityManager& em, map<Point, bool>& endpoints,
@@ -556,7 +384,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
 //===========================================
 // constructRootRegion
 //===========================================
-void constructRootRegion(EntityManager& em, const parser::Object& obj, double frameRate) {
+static void constructRootRegion(EntityManager& em, const parser::Object& obj, double frameRate) {
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
@@ -608,4 +436,15 @@ void constructRootRegion(EntityManager& em, const parser::Object& obj, double fr
   rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
   rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
   rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
+}
+
+//===========================================
+// loadMap
+//===========================================
+void loadMap(const string& mapFilePath, EntityManager& entityManager, double frameRate) {
+  list<parser::pObject_t> objects;
+  parser::parse(mapFilePath, objects);
+
+  assert(objects.size() == 1);
+  constructRootRegion(entityManager, **objects.begin(), frameRate);
 }
