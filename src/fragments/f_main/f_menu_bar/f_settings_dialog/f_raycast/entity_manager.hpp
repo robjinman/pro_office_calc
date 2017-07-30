@@ -13,11 +13,18 @@ class EntityManager {
 
     void addSystem(ComponentKind kind, pSystem_t system);
     bool hasComponent(entityId_t entityId, ComponentKind kind) const;
-    Component& getComponent(entityId_t entityId) const;
     void addComponent(entityId_t entityId, pComponent_t component);
     void deleteEntity(entityId_t entityId);
     void broadcastEvent(const GameEvent& event) const;
     void update();
+
+    template<class T>
+    T& getComponent(entityId_t entityId, ComponentKind kind) const {
+      System& sys = *m_systems.at(kind);
+      Component& c = sys.getComponent(entityId);
+
+      return dynamic_cast<T&>(c);
+    }
 
     template<class T>
     T& system(ComponentKind kind) const {

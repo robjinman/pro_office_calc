@@ -276,12 +276,12 @@ static void constructBoundaries(EntityManager& em, map<Point, bool>& endpoints,
 //===========================================
 // constructDoor
 //===========================================
-static void constructDoor(EntityManager& em, const parser::Object& obj, CZone& zone,
+static void constructDoor(EntityManager& em, const parser::Object& obj, entityId_t entityId,
   double frameRate) {
 
   BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(zone.entityId(), zone, frameRate);
+  CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, em, frameRate);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 }
 
@@ -375,7 +375,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(em, obj, *zone, frameRate);
+      constructDoor(em, obj, entityId, frameRate);
     }
   }
   catch (Exception& ex) {

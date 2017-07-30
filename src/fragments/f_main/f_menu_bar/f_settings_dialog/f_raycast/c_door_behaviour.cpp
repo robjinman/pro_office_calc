@@ -1,16 +1,19 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "event.hpp"
 
 
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, CZone& zone, double frameRate)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate)
   : CBehaviour(entityId),
-    m_zone(zone),
+    m_entityManager(entityManager),
     m_frameRate(frameRate) {
+
+  CZone& zone = entityManager.getComponent<CZone>(entityId, ComponentKind::C_SPATIAL);
 
   m_y0 = zone.floorHeight;
   m_y1 = zone.ceilingHeight;
@@ -22,6 +25,10 @@ CDoorBehaviour::CDoorBehaviour(entityId_t entityId, CZone& zone, double frameRat
 // CDoorBehaviour::update
 //===========================================
 void CDoorBehaviour::update() {
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+  CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
+
   double dy = 60.0 / m_frameRate;
 
   switch (m_state) {
@@ -30,18 +37,25 @@ void CDoorBehaviour::update() {
     case ST_OPEN:
       return;
     case ST_OPENING:
-      m_zone.ceilingHeight += dy;
+      zone.ceilingHeight += dy;
 
-      if (m_zone.ceilingHeight + dy >= m_y1) {
+      if (zone.ceilingHeight + dy >= m_y1) {
         m_state = ST_OPEN;
       }
+
       break;
     case ST_CLOSING:
-      m_zone.ceilingHeight -= dy;
+      zone.ceilingHeight -= dy;
 
-      if (m_zone.ceilingHeight - dy <= m_y0) {
+      if (player.currentRegion == entityId()) {
+        if (zone.ceilingHeight - dy <= player.headHeight()) {
+          m_state = ST_OPENING;
+        }
+      }
+      else if (zone.ceilingHeight - dy <= m_y0) {
         m_state = ST_CLOSED;
       }
+
       break;
   }
 }

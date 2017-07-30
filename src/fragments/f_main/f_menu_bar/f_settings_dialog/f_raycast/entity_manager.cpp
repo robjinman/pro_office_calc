@@ -13,10 +13,6 @@ bool EntityManager::hasComponent(entityId_t entityId, ComponentKind kind) const 
 
 }
 
-Component& EntityManager::getComponent(entityId_t entityId) const {
-
-}
-
 void EntityManager::addComponent(entityId_t entityId, pComponent_t component) {
 
 }

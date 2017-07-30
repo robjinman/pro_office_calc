@@ -5,11 +5,11 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 
 
-class CZone;
+class EntityManager;
 
 class CDoorBehaviour : public CBehaviour {
   public:
-    CDoorBehaviour(entityId_t entityId, CZone& zone, double frameRate);
+    CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
@@ -22,7 +22,7 @@ class CDoorBehaviour : public CBehaviour {
       ST_CLOSED
     };
 
-    CZone& m_zone;
+    EntityManager& m_entityManager;
     double m_frameRate;
     state_t m_state = ST_CLOSED;
     double m_y0;
