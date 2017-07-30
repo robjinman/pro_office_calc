@@ -823,22 +823,20 @@ static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
 }
 
 //===========================================
-// Renderer::getWallDecal
+// drawOverlays
 //===========================================
-static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CWall& wall, double x) {
-  for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
-    CWallDecal* decal = it->get();
-    const CVRect& vRect = getVRect(spatialSystem, *decal);
+static void drawOverlay(QPainter& painter, const COverlay& overlay, const RenderGraph& rg,
+  const Size& viewport_px) {
 
-    double x0 = vRect.pos.x;
-    double x1 = vRect.pos.x + vRect.size.x;
+  double x = (overlay.pos.x / rg.viewport.x) * viewport_px.x;
+  double y = (1.0 - overlay.pos.y / rg.viewport.y) * viewport_px.y;
+  double w = (overlay.size.x / rg.viewport.x) * viewport_px.x;
+  double h = (overlay.size.y / rg.viewport.y) * viewport_px.y;
 
-    if (isBetween(x, x0, x1)) {
-      return decal;
-    }
-  }
+  const Texture& tex = rg.textures.at(overlay.texture);
 
-  return nullptr;
+  QRect trgRect(x, y, w, h);
+  painter.drawImage(trgRect, tex.image, tex.image.rect());
 }
 
 //===========================================
@@ -856,6 +854,25 @@ Renderer::Renderer(EntityManager& entityManager)
   for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
     m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
   }
+}
+
+//===========================================
+// Renderer::getWallDecal
+//===========================================
+static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CWall& wall, double x) {
+  for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
+    CWallDecal* decal = it->get();
+    const CVRect& vRect = getVRect(spatialSystem, *decal);
+
+    double x0 = vRect.pos.x;
+    double x1 = vRect.pos.x + vRect.size.x;
+
+    if (isBetween(x, x0, x1)) {
+      return decal;
+    }
+  }
+
+  return nullptr;
 }
 
 //===========================================
@@ -942,6 +959,10 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
         drawSprite(painter, spatialSystem, rg, player, viewport_px, spriteX, screenX_px);
       }
     }
+  }
+
+  for (auto it = rg.overlays.begin(); it != rg.overlays.end(); ++it) {
+    drawOverlay(painter, **it, rg, viewport_px);
   }
 
   painter.end();

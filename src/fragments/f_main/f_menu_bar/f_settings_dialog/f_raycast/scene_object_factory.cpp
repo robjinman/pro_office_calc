@@ -197,10 +197,18 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 //===========================================
 // constructPlayer
 //===========================================
-static Player* constructPlayer(const parser::Object& obj, const CZone& zone,
+static Player* constructPlayer(EntityManager& em, const parser::Object& obj, const CZone& zone,
   const Matrix& parentTransform, const Size& viewport) {
 
   DBG_PRINT("Constructing Player\n");
+
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  entityId_t id = Component::getNextId();
+
+  Size sz(0.5, 0.5);
+  COverlay* crosshair = new COverlay(id, "crosshair", viewport / 2 - sz / 2, sz);
+  renderSystem.addComponent(pCRender_t(crosshair));
 
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
@@ -361,7 +369,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(child, *zone, transform, rg.viewport));
+        sg.player.reset(constructPlayer(em, child, *zone, transform, rg.viewport));
         sg.player->currentRegion = entityId;
       }
     }

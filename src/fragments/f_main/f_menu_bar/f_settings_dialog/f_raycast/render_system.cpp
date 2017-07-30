@@ -275,18 +275,23 @@ void RenderSystem::addComponent(pComponent_t component) {
   pCRender_t c(ptr);
 
   if (c->parentId == -1) {
-    if (rg.rootRegion) {
-      EXCEPTION("Root region already set");
+    if (c->kind == CRenderKind::REGION) {
+      if (rg.rootRegion) {
+        EXCEPTION("Root region already set");
+      }
+
+      pCRegion_t z(dynamic_cast<CRegion*>(c.release()));
+
+      rg.rootRegion = std::move(z);
+      m_components.clear();
     }
-
-    if (c->kind != CRenderKind::REGION) {
-      EXCEPTION("Component has no parent; Only regions can be root");
+    else if (c->kind == CRenderKind::OVERLAY) {
+      pCOverlay_t z(dynamic_cast<COverlay*>(c.release()));
+      rg.overlays.push_back(pCOverlay_t(std::move(z)));
     }
-
-    pCRegion_t z(dynamic_cast<CRegion*>(c.release()));
-
-    rg.rootRegion = std::move(z);
-    m_components.clear();
+    else {
+      EXCEPTION("Component has no parent and is not of type REGION or OVERLAY");
+    }
   }
   else {
     auto it = m_components.find(c->parentId);

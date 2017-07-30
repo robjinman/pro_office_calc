@@ -42,11 +42,18 @@ typedef std::unique_ptr<CRender> pCRender_t;
 
 class COverlay : public CRender {
   public:
-    COverlay(entityId_t entityId, const std::string& texture)
-      : CRender(CRenderKind::OVERLAY, entityId, -1) {}
+    COverlay(entityId_t entityId, const std::string& texture, const Point& pos, const Size& size)
+      : CRender(CRenderKind::OVERLAY, entityId, -1),
+        texture(texture),
+        pos(pos),
+        size(size) {}
 
-    // TODO
+    std::string texture;
+    Point pos;
+    Size size;
 };
+
+typedef std::unique_ptr<COverlay> pCOverlay_t;
 
 class CRegion;
 

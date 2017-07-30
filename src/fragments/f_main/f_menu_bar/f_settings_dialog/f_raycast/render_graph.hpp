@@ -18,6 +18,7 @@ struct RenderGraph {
 
   pCRegion_t rootRegion;
   std::list<pCBoundary_t> boundaries;
+  std::list<pCOverlay_t> overlays;
 };
 
 
