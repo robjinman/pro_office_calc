@@ -14,6 +14,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -471,12 +472,27 @@ static void constructRootRegion(EntityManager& em, const parser::Object& obj, do
 }
 
 //===========================================
+// constructPlayerInventory
+//===========================================
+void constructPlayerInventory(EntityManager& em) {
+  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
+  InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
+
+  entityId_t ammoId = Component::getNextId();
+
+  CBucket* ammo = new CBucket(ammoId, "ammo", 50);
+  inventorySystem.addComponent(pComponent_t(ammo));
+}
+
+//===========================================
 // loadMap
 //===========================================
-void loadMap(const string& mapFilePath, EntityManager& entityManager, double frameRate) {
+void loadMap(const string& mapFilePath, EntityManager& em, double frameRate) {
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(entityManager, **objects.begin(), frameRate);
+  constructRootRegion(em, **objects.begin(), frameRate);
+
+  constructPlayerInventory(em);
 }

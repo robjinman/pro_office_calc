@@ -10,22 +10,29 @@
 #include <limits>
 
 
-struct Point {
-  Point()
-    : x(0.0), y(0.0) {}
+template<class T>
+struct Vec2 {
+  Vec2()
+    : x(0), y(0) {}
 
-  Point(double x, double y)
+  Vec2(T x, T y)
     : x(x), y(y) {}
 
-  double x;
-  double y;
+  T x;
+  T y;
 
-  bool operator==(const Point& rhs) const {
+  bool operator==(const Vec2<T>& rhs) const {
     return x == rhs.x && y == rhs.y;
+  }
+
+  bool operator!=(const Vec2<T>& rhs) const {
+    return !(*this == rhs);
   }
 };
 
-typedef Point Vec2f;
+typedef Vec2<int> Vec2i;
+typedef Vec2<double> Vec2f;
+typedef Vec2f Point;
 typedef Vec2f Size;
 
 Point operator+(const Point& lhs, const Point& rhs);

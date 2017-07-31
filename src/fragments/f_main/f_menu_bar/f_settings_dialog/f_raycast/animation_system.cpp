@@ -37,7 +37,7 @@ void Animation::update() {
     // Since first frame
     m_elapsed += sim_dt;
 
-    int next = floor(m_elapsed / anim_dt);
+    unsigned int next = floor(m_elapsed / anim_dt);
 
     if (next == frames.size()) {
       if (m_loop) {

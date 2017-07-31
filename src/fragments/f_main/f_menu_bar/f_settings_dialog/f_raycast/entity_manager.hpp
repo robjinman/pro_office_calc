@@ -3,6 +3,7 @@
 
 
 #include <map>
+#include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component_kinds.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/system.hpp"
 
@@ -15,6 +16,7 @@ class EntityManager {
     bool hasComponent(entityId_t entityId, ComponentKind kind) const;
     void addComponent(entityId_t entityId, pComponent_t component);
     void deleteEntity(entityId_t entityId);
+    void purgeEntities();
     void broadcastEvent(const GameEvent& event) const;
     void update();
 
@@ -33,6 +35,7 @@ class EntityManager {
 
   private:
     std::map<ComponentKind, pSystem_t> m_systems;
+    std::set<entityId_t> m_pendingDelete;
 };
 
 

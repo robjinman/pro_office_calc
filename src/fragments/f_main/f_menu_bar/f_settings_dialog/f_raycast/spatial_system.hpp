@@ -61,6 +61,8 @@ class SpatialSystem : public System {
     std::map<entityId_t, CSpatial*> m_components;
     std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
 
+    Vec2i m_playerCell;
+
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
 

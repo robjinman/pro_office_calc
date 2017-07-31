@@ -20,6 +20,8 @@ class Player {
 
     double vVelocity = 0;
     double activationRadius = 100.0;
+    double collisionRadius = 10.0;
+    double collectionRadius = 50.0;
     entityId_t currentRegion = -1;
 
     entityId_t crosshair;

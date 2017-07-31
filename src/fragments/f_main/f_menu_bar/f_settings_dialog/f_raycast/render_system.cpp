@@ -189,31 +189,39 @@ static void addChildToComponent(RenderGraph& rg, CRender& parent, pCRender_t chi
 static void removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& child) {
   switch (child.kind) {
     case CRenderKind::REGION: {
-      region.children.remove_if([&](const pCRegion_t& e) {
+      auto it = find_if(region.children.begin(), region.children.end(), [&](const pCRegion_t& e) {
         return e.get() == dynamic_cast<const CRegion*>(&child);
       });
+      region.children.erase(it);
       break;
     }
     case CRenderKind::JOIN:
     case CRenderKind::WALL: {
-      region.boundaries.remove_if([&](const CBoundary* b) {
+      auto it = find_if(region.boundaries.begin(), region.boundaries.end(),
+        [&](const CBoundary* b) {
+
         return b == dynamic_cast<const CBoundary*>(&child);
       });
-      rg.boundaries.remove_if([&](const pCBoundary_t& b) {
+      region.boundaries.erase(it);
+
+      auto jt = remove_if(rg.boundaries.begin(), rg.boundaries.end(), [&](const pCBoundary_t& b) {
         return b.get() == dynamic_cast<const CBoundary*>(&child);
       });
+      rg.boundaries.erase(jt);
       break;
     }
     case CRenderKind::FLOOR_DECAL: {
-      region.floorDecals.remove_if([&](const pCFloorDecal_t& e) {
+      auto it = find_if(region.floorDecals.begin(), region.floorDecals.end(), [&](const pCFloorDecal_t& e) {
         return e.get() == dynamic_cast<const CFloorDecal*>(&child);
       });
+      region.floorDecals.erase(it);
       break;
     }
     case CRenderKind::SPRITE: {
-      region.sprites.remove_if([&](const pCSprite_t& e) {
+      auto it = find_if(region.sprites.begin(), region.sprites.end(), [&](const pCSprite_t& e) {
         return e.get() == dynamic_cast<const CSprite*>(&child);
       });
+      region.sprites.erase(it);
       break;
     }
     default:

@@ -6,6 +6,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -19,6 +20,7 @@ void constructSprite(EntityManager& em, const parser::Object& obj, double frameR
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+  InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
 
   DBG_PRINT("Constructing Sprite\n");
 
@@ -151,6 +153,9 @@ void constructSprite(EntityManager& em, const parser::Object& obj, double frameR
     };
 
     renderSystem.addComponent(pComponent_t(sprite));
+
+    CCollectable* collectable = new CCollectable(id, "ammo", 20);
+    inventorySystem.addComponent(pComponent_t(collectable));
   }
   else {
     EXCEPTION("Error constructing sprite of unknown type");

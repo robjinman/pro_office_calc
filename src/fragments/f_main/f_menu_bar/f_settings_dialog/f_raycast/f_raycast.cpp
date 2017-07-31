@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 
 
@@ -65,6 +66,9 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
 
   AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_ANIMATION, pSystem_t(animationSystem));
+
+  InventorySystem* inventorySystem = new InventorySystem(m_entityManager);
+  m_entityManager.addSystem(ComponentKind::C_INVENTORY, pSystem_t(inventorySystem));
 
   loadMap("data/map.svg", m_entityManager, FRAME_RATE);
 
@@ -167,6 +171,7 @@ void FRaycast::tick() {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
+  m_entityManager.purgeEntities();
   m_entityManager.update();
 
   if (m_keyStates[Qt::Key_Space]) {

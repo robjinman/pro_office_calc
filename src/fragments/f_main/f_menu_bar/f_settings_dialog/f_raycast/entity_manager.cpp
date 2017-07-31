@@ -18,7 +18,15 @@ void EntityManager::addComponent(entityId_t entityId, pComponent_t component) {
 }
 
 void EntityManager::deleteEntity(entityId_t entityId) {
+  m_pendingDelete.insert(entityId);
+}
 
+void EntityManager::purgeEntities() {
+  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+    for (auto jt = m_pendingDelete.begin(); jt != m_pendingDelete.end(); ++jt) {
+      it->second->removeEntity(*jt);
+    }
+  }
 }
 
 void EntityManager::update() {

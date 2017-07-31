@@ -25,6 +25,9 @@ using std::set;
 using std::ostream;
 
 
+static const double GRID_CELL_SIZE = 25.0;
+
+
 ostream& operator<<(ostream& os, CSpatialKind kind) {
   switch (kind) {
     case CSpatialKind::ZONE: os << "ZONE"; break;
@@ -248,7 +251,7 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
   Vec2f dv(cos(cam.angle) * dir.x - sin(cam.angle) * dir.y,
     sin(cam.angle) * dir.x + cos(cam.angle) * dir.y);
 
-  double radius = 10.0;
+  double radius = sg.player->collisionRadius;
 
   CZone& currentZone = getCurrentZone();
 
@@ -303,6 +306,18 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
 
   sg.player->move(dv);
   playerBounce(*this, m_frameRate);
+
+  Point pos = sg.player->pos();
+  Vec2i cell(pos.x / GRID_CELL_SIZE, pos.y / GRID_CELL_SIZE);
+
+  if (cell != m_playerCell) {
+    m_playerCell = cell;
+
+    GameEvent e("playerMove");
+    e.entitiesInRange = getEntitiesInRadius(sg.player->collectionRadius);
+
+    m_entityManager.broadcastEvent(e);
+  }
 }
 
 //===========================================
@@ -595,31 +610,36 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
 static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
   switch (child.kind) {
     case CSpatialKind::ZONE: {
-      zone.children.remove_if([&](const pCZone_t& e) {
+      auto it = find_if(zone.children.begin(), zone.children.end(), [&](const pCZone_t& e) {
         return e.get() == dynamic_cast<const CZone*>(&child);
       });
+      zone.children.erase(it);
       break;
     }
     case CSpatialKind::SOFT_EDGE:
     case CSpatialKind::HARD_EDGE: {
-      zone.edges.remove_if([&](const CEdge* e) {
+      auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const CEdge* e) {
         return e == dynamic_cast<const CEdge*>(&child);
       });
-      sg.edges.remove_if([&](const pCEdge_t& e) {
+      zone.edges.erase(it);
+      auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
         return e.get() == dynamic_cast<const CEdge*>(&child);
       });
+      sg.edges.erase(jt);
       break;
     }
     case CSpatialKind::H_RECT: {
-      zone.hRects.remove_if([&](const pCHRect_t& e) {
+      auto it = find_if(zone.hRects.begin(), zone.hRects.end(), [&](const pCHRect_t& e) {
         return e.get() == dynamic_cast<const CHRect*>(&child);
       });
+      zone.hRects.erase(it);
       break;
     }
     case CSpatialKind::V_RECT: {
-      zone.vRects.remove_if([&](const pCVRect_t& e) {
+      auto it = find_if(zone.vRects.begin(), zone.vRects.end(), [&](const pCVRect_t& e) {
         return e.get() == dynamic_cast<const CVRect*>(&child);
       });
+      zone.vRects.erase(it);
       break;
     }
     default:

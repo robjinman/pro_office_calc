@@ -1,9 +1,11 @@
+- Collectable items / player inventory
+- Player health
+- Enemy health
+- Lighting (e.g. distant surfaces darker)
 - Levers/switches
 - Ceiling decals
 - Sprites at different heights (possibly attached to wall/ceiling)
 - Animated wall/floor/ceiling textures/decals
-- 2D overlay
-- Sprite animations
 - Translucent walls & walls with holes
 - Sound
 - Sprite patrol paths
