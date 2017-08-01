@@ -2,6 +2,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 
 
 //===========================================
@@ -125,10 +126,16 @@ void Player::vRotate(double da) {
 // Player::shoot
 //===========================================
 void Player::shoot() {
-  AnimationSystem& animationSystem = m_entityManager
-    .system<AnimationSystem>(ComponentKind::C_ANIMATION);
+  InventorySystem& inventorySystem = m_entityManager
+    .system<InventorySystem>(ComponentKind::C_INVENTORY);
 
-  animationSystem.playAnimation(sprite, "shoot", false);
+  if (inventorySystem.getBucketValue("ammo") > 0) {
+    AnimationSystem& animationSystem = m_entityManager
+      .system<AnimationSystem>(ComponentKind::C_ANIMATION);
+
+    animationSystem.playAnimation(sprite, "shoot", false);
+    inventorySystem.subtractFromBucket("ammo", 1);
+  }
 }
 
 //===========================================

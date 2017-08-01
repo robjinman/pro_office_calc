@@ -74,9 +74,7 @@ static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
 //===========================================
 // canStepAcross
 //===========================================
-static bool canStepAcross(const Player& player, const CZone& currentZone,
-  const CSoftEdge& se) {
-
+static bool canStepAcross(const Player& player, const CZone& currentZone, const CSoftEdge& se) {
   CZone* nextZone = getNextZone(currentZone, se);
 
   bool canStep = nextZone->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
@@ -126,8 +124,8 @@ static bool intersectHardEdge(const CZone& zone, const Circle& circle, const Pla
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& player,
-  double radius, const Vec2f& dv) {
+static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& player, double radius,
+  const Vec2f& dv) {
 
   Circle circle{camPos + dv, radius};
   LineSegment ray(camPos, camPos + dv);
@@ -666,9 +664,7 @@ static void removeFromHardEdge(CHardEdge& edge, const CSpatial& child) {
 //===========================================
 // removeChildFromComponent
 //===========================================
-static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent,
-  const CSpatial& child) {
-
+static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSpatial& child) {
   switch (parent.kind) {
     case CSpatialKind::ZONE:
       removeFromZone(sg, dynamic_cast<CZone&>(parent), child);

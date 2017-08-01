@@ -71,6 +71,7 @@ class InventorySystem : public System {
 
     void addToBucket(const CCollectable& item);
     int getBucketValue(const std::string& type) const;
+    int subtractFromBucket(const std::string& type, int value);
 
     virtual ~InventorySystem() override {}
 

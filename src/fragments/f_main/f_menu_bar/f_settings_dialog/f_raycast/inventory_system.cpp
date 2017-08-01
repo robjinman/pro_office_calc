@@ -5,6 +5,7 @@
 
 
 using std::make_pair;
+using std::string;
 
 
 //===========================================
@@ -114,9 +115,30 @@ void InventorySystem::addToBucket(const CCollectable& item) {
 }
 
 //===========================================
+// InventorySystem::subtractFromBucket
+//===========================================
+int InventorySystem::subtractFromBucket(const string& type, int value) {
+  auto it = m_bucketAssignment.find(type);
+  if (it != m_bucketAssignment.end()) {
+    entityId_t id = it->second;
+    CBucket& bucket = *m_buckets.at(id);
+
+    if (bucket.count >= value) {
+      bucket.count -= value;
+    }
+
+    DBG_PRINT(bucket.type << " = " << bucket.count << "/" << bucket.capacity << "\n");
+
+    return bucket.count;
+  }
+
+  return 0;
+}
+
+//===========================================
 // InventorySystem::getBucketValue
 //===========================================
-int InventorySystem::getBucketValue(const std::string& type) const {
+int InventorySystem::getBucketValue(const string& type) const {
   entityId_t id = m_bucketAssignment.at(type);
   return m_buckets.at(id)->count;
 }

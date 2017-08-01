@@ -1,3 +1,4 @@
+#include <cassert>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 
 
@@ -10,11 +11,11 @@ void EntityManager::addSystem(ComponentKind kind, pSystem_t system) {
 }
 
 bool EntityManager::hasComponent(entityId_t entityId, ComponentKind kind) const {
-
+  assert(false); // TODO
 }
 
 void EntityManager::addComponent(entityId_t entityId, pComponent_t component) {
-
+  assert(false); // TODO
 }
 
 void EntityManager::deleteEntity(entityId_t entityId) {
