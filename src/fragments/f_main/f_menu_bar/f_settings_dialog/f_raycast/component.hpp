@@ -11,7 +11,7 @@ typedef long entityId_t;
 
 
 struct GameEvent {
-  GameEvent(const std::string& name)
+  explicit GameEvent(const std::string& name)
     : name(name) {}
 
   std::string name;

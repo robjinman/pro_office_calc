@@ -1,6 +1,7 @@
 #include <cassert>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "utils.hpp"
 
 
@@ -64,6 +65,14 @@ void InventorySystem::addCollectable(CInventory* component) {
 }
 
 //===========================================
+// InventorySystem::hasComponent
+//===========================================
+bool InventorySystem::hasComponent(entityId_t entityId) const {
+  return (m_collectables.find(entityId) != m_collectables.end())
+    || (m_buckets.find(entityId) != m_buckets.end());
+}
+
+//===========================================
 // InventorySystem::getComponent
 //===========================================
 Component& InventorySystem::getComponent(entityId_t entityId) const {
@@ -109,6 +118,11 @@ void InventorySystem::addToBucket(const CCollectable& item) {
 
       DBG_PRINT(bucket.type << " = " << bucket.count << "/" << bucket.capacity << "\n");
 
+      EventHandlerSystem& eventHandlerSystem = m_entityManager
+        .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+      eventHandlerSystem.sendEvent(id, GameEvent("bucketCountChange"));
+
       m_entityManager.deleteEntity(item.entityId());
     }
   }
@@ -128,6 +142,11 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
     }
 
     DBG_PRINT(bucket.type << " = " << bucket.count << "/" << bucket.capacity << "\n");
+
+    EventHandlerSystem& eventHandlerSystem = m_entityManager
+      .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    eventHandlerSystem.sendEvent(id, GameEvent("bucketCountChange"));
 
     return bucket.count;
   }

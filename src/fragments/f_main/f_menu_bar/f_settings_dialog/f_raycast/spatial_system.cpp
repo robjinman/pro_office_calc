@@ -679,6 +679,13 @@ static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSp
 }
 
 //===========================================
+// SpatialSystem::hasComponent
+//===========================================
+bool SpatialSystem::hasComponent(entityId_t entityId) const {
+  return m_components.find(entityId) != m_components.end();
+}
+
+//===========================================
 // SpatialSystem::getComponent
 //===========================================
 Component& SpatialSystem::getComponent(entityId_t entityId) const {

@@ -15,6 +15,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -479,6 +480,8 @@ static void constructRootRegion(EntityManager& em, const parser::Object& obj, do
 void constructPlayerInventory(EntityManager& em) {
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
+  EventHandlerSystem& eventHandlerSystem = em
+    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   entityId_t ammoId = Component::getNextId();
 
@@ -487,8 +490,16 @@ void constructPlayerInventory(EntityManager& em) {
 
   CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, 0.1), 0.5,
     Qt::green);
+  renderSystem.addComponent(pComponent_t(ammoCounter));
 
-  renderSystem.addComponent(pCRender_t(ammoCounter));
+  CEventHandler* syncCounter = new CEventHandler(ammoId);
+  syncCounter->handlers.push_back(EventHandler{"bucketCountChange", [=](const GameEvent& e) {
+    stringstream ss;
+    ss << "AMMO " << ammoBucket->count << "/" << ammoBucket->capacity;
+    ammoCounter->text = ss.str();
+  }});
+
+  eventHandlerSystem.addComponent(pComponent_t(syncCounter));
 }
 
 //===========================================

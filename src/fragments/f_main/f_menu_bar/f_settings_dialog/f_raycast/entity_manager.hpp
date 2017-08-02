@@ -14,7 +14,7 @@ class EntityManager {
 
     void addSystem(ComponentKind kind, pSystem_t system);
     bool hasComponent(entityId_t entityId, ComponentKind kind) const;
-    void addComponent(entityId_t entityId, pComponent_t component);
+    void addComponent(pComponent_t component);
     void deleteEntity(entityId_t entityId);
     void purgeEntities();
     void broadcastEvent(const GameEvent& event) const;

@@ -25,6 +25,13 @@ void BehaviourSystem::handleEvent(const GameEvent& event) {
 }
 
 //===========================================
+// BehaviourSystem::hasComponent
+//===========================================
+bool BehaviourSystem::hasComponent(entityId_t entityId) const {
+  return m_components.find(entityId) != m_components.end();
+}
+
+//===========================================
 // BehaviourSystem::getComponent
 //===========================================
 Component& BehaviourSystem::getComponent(entityId_t entityId) const {

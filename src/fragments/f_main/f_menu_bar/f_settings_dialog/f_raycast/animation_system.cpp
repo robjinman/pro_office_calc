@@ -120,6 +120,13 @@ void AnimationSystem::addComponent(pComponent_t component) {
 }
 
 //===========================================
+// AnimationSystem::hasComponent
+//===========================================
+bool AnimationSystem::hasComponent(entityId_t entityId) const {
+  return m_components.find(entityId) != m_components.end();
+}
+
+//===========================================
 // AnimationSystem::getComponent
 //===========================================
 Component& AnimationSystem::getComponent(entityId_t entityId) const {

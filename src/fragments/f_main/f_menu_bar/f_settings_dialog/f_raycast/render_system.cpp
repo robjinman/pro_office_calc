@@ -265,6 +265,13 @@ static void removeChildFromComponent(RenderGraph& rg, CRender& parent,
 }
 
 //===========================================
+// RenderSystem::hasComponent
+//===========================================
+bool RenderSystem::hasComponent(entityId_t entityId) const {
+  return m_components.find(entityId) != m_components.end();
+}
+
+//===========================================
 // RenderSystem::getComponent
 //===========================================
 Component& RenderSystem::getComponent(entityId_t entityId) const {

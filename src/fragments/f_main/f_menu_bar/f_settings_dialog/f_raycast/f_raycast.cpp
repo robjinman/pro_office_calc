@@ -13,6 +13,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 
 
@@ -69,6 +70,9 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
 
   InventorySystem* inventorySystem = new InventorySystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_INVENTORY, pSystem_t(inventorySystem));
+
+  EventHandlerSystem* eventHandlerSystem = new EventHandlerSystem;
+  m_entityManager.addSystem(ComponentKind::C_EVENT_HANDLER, pSystem_t(eventHandlerSystem));
 
   loadMap("data/map.svg", m_entityManager, FRAME_RATE);
 
