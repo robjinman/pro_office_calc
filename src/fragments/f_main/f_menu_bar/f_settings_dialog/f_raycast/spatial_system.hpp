@@ -22,7 +22,6 @@ struct Tween {
 };
 
 class EntityManager;
-class EventSystem;
 
 class SpatialSystem : public System {
   public:

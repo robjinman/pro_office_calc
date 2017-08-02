@@ -823,9 +823,9 @@ static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
 }
 
 //===========================================
-// drawOverlays
+// drawImageOverlay
 //===========================================
-static void drawOverlay(QPainter& painter, const COverlay& overlay, const RenderGraph& rg,
+static void drawImageOverlay(QPainter& painter, const CImageOverlay& overlay, const RenderGraph& rg,
   const Size& viewport_px) {
 
   double x = (overlay.pos.x / rg.viewport.x) * viewport_px.x;
@@ -843,6 +843,24 @@ static void drawOverlay(QPainter& painter, const COverlay& overlay, const Render
   QRect srcRect(sx, sy, sw, sh);
   QRect trgRect(x, y - h, w, h);
   painter.drawImage(trgRect, tex.image, srcRect);
+}
+
+//===========================================
+// drawTextOverlay
+//===========================================
+static void drawTextOverlay(QPainter& painter, const CTextOverlay& overlay, const RenderGraph& rg,
+  const Size& viewport_px) {
+
+  double x = (overlay.pos.x / rg.viewport.x) * viewport_px.x;
+  double y = (1.0 - overlay.pos.y / rg.viewport.y) * viewport_px.y;
+  double h = (overlay.height / rg.viewport.y) * viewport_px.y;
+
+  QFont font;
+  font.setPixelSize(h);
+
+  painter.setFont(font);
+  painter.setPen(overlay.colour);
+  painter.drawText(x, y, overlay.text.c_str());
 }
 
 //===========================================
@@ -968,7 +986,13 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
   }
 
   for (auto it = rg.overlays.begin(); it != rg.overlays.end(); ++it) {
-    drawOverlay(painter, **it, rg, viewport_px);
+    const COverlay& overlay = **it;
+    if (overlay.kind == COverlayKind::IMAGE) {
+      drawImageOverlay(painter, dynamic_cast<const CImageOverlay&>(overlay), rg, viewport_px);
+    }
+    else if (overlay.kind == COverlayKind::TEXT) {
+      drawTextOverlay(painter, dynamic_cast<const CTextOverlay&>(overlay), rg, viewport_px);
+    }
   }
 
   painter.end();

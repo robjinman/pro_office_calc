@@ -217,10 +217,12 @@ static Player* constructPlayer(EntityManager& em, const parser::Object& obj, dou
   player->crosshair = Component::getNextId();
 
   Size sz(0.5, 0.5);
-  COverlay* crosshair = new COverlay(player->crosshair, "crosshair", viewport / 2 - sz / 2, sz);
+  CImageOverlay* crosshair = new CImageOverlay(player->crosshair, "crosshair",
+    viewport / 2 - sz / 2, sz);
   renderSystem.addComponent(pCRender_t(crosshair));
 
-  COverlay* sprite = new COverlay(player->sprite, "gun", Point(viewport.x * 0.6, 0), Size(3, 3));
+  CImageOverlay* sprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.6, 0),
+    Size(3, 3));
   sprite->texRect = QRectF(0, 0, 0.25, 1);
   renderSystem.addComponent(pCRender_t(sprite));
 
@@ -480,8 +482,13 @@ void constructPlayerInventory(EntityManager& em) {
 
   entityId_t ammoId = Component::getNextId();
 
-  CBucket* ammo = new CBucket(ammoId, "ammo", 50);
-  inventorySystem.addComponent(pComponent_t(ammo));
+  CBucket* ammoBucket = new CBucket(ammoId, "ammo", 50);
+  inventorySystem.addComponent(pComponent_t(ammoBucket));
+
+  CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, 0.1), 0.5,
+    Qt::green);
+
+  renderSystem.addComponent(pCRender_t(ammoCounter));
 }
 
 //===========================================

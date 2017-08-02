@@ -92,7 +92,11 @@ void AnimationSystem::update() {
       }
       else if (c.kind == CRenderKind::OVERLAY) {
         COverlay& overlay = dynamic_cast<COverlay&>(c);
-        overlay.texRect = anim->currentFrame().texViews[0];
+
+        if (overlay.kind == COverlayKind::IMAGE) {
+          CImageOverlay& imgOverlay = dynamic_cast<CImageOverlay&>(c);
+          imgOverlay.texRect = anim->currentFrame().texViews[0];
+        }
       }
 
       if (anim->state() == AnimState::STOPPED) {

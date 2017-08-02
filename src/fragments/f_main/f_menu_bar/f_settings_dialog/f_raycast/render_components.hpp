@@ -6,6 +6,7 @@
 #include <list>
 #include <memory>
 #include <QImage>
+#include <QColor>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 #include "exception.hpp"
@@ -40,21 +41,54 @@ struct CRender : public Component {
 
 typedef std::unique_ptr<CRender> pCRender_t;
 
+enum class COverlayKind {
+  IMAGE,
+  TEXT
+};
+
 class COverlay : public CRender {
   public:
-    COverlay(entityId_t entityId, const std::string& texture, const Point& pos, const Size& size)
+    COverlay(COverlayKind kind, entityId_t entityId, const Point& pos)
       : CRender(CRenderKind::OVERLAY, entityId, -1),
+        kind(kind),
+        pos(pos) {}
+
+    COverlayKind kind;
+    Point pos;
+};
+
+typedef std::unique_ptr<COverlay> pCOverlay_t;
+
+class CImageOverlay : public COverlay {
+  public:
+    CImageOverlay(entityId_t entityId, const std::string& texture, const Point& pos,
+      const Size& size)
+      : COverlay(COverlayKind::IMAGE, entityId, pos),
         texture(texture),
-        pos(pos),
         size(size) {}
 
     std::string texture;
     QRectF texRect = QRectF(0, 0, 1, 1);
-    Point pos;
     Size size;
 };
 
 typedef std::unique_ptr<COverlay> pCOverlay_t;
+
+class CTextOverlay : public COverlay {
+  public:
+    CTextOverlay(entityId_t entityId, std::string text, const Point& pos, double height,
+      const QColor& colour)
+      : COverlay(COverlayKind::TEXT, entityId, pos),
+        text(text),
+        height(height),
+        colour(colour) {}
+
+    std::string text;
+    double height;
+    QColor colour;
+};
+
+typedef std::unique_ptr<CTextOverlay> pCTextOverlay_t;
 
 class CRegion;
 
