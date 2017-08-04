@@ -28,6 +28,73 @@ static const double ATAN_MIN = -10.0;
 static const double ATAN_MAX = 10.0;
 
 
+enum class IntersectionKind {
+  JOIN,
+  WALL,
+  SPRITE
+};
+
+struct RIntersection {
+  RIntersection(IntersectionKind kind)
+    : kind(kind) {}
+
+  IntersectionKind kind;
+  Point point_cam;
+  Point point_world;
+  double distanceFromCamera;
+  double distanceAlongTarget;
+
+  virtual ~RIntersection() {}
+};
+
+typedef std::unique_ptr<RIntersection> pRIntersection_t;
+
+struct Slice {
+  double sliceBottom_wd;
+  double sliceTop_wd;
+  double projSliceBottom_wd;
+  double projSliceTop_wd;
+  double viewportBottom_wd;
+  double viewportTop_wd;
+};
+
+struct JoinX : public RIntersection {
+  JoinX()
+    : RIntersection(IntersectionKind::JOIN) {}
+
+  CJoin* join;
+  Slice slice0;
+  Slice slice1;
+  const CRegion* nearRegion;
+  const CRegion* farRegion;
+
+  virtual ~JoinX() override {}
+};
+
+struct WallX : public RIntersection {
+  WallX()
+    : RIntersection(IntersectionKind::WALL) {}
+
+  CWall* wall;
+  Slice slice;
+
+  virtual ~WallX() override {}
+};
+
+struct SpriteX : public RIntersection {
+  SpriteX()
+    : RIntersection(IntersectionKind::SPRITE) {}
+
+  CSprite* sprite;
+  Slice slice;
+
+  virtual ~SpriteX() override {}
+};
+
+struct CastResult {
+  std::list<pRIntersection_t> intersections;
+};
+
 struct ScreenSlice {
   int sliceBottom_px;
   int sliceTop_px;
@@ -123,9 +190,9 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 }
 
 //===========================================
-// constructIntersection
+// constructRIntersection
 //===========================================
-static Intersection* constructIntersection(CRenderKind kind) {
+static RIntersection* constructRIntersection(CRenderKind kind) {
   switch (kind) {
     case CRenderKind::WALL:
       return new WallX;
@@ -134,14 +201,14 @@ static Intersection* constructIntersection(CRenderKind kind) {
       return new JoinX;
       break;
     default:
-      EXCEPTION("Error constructing Intersection of unknown type");
+      EXCEPTION("Error constructing RIntersection of unknown type");
   }
 }
 
 //===========================================
-// findIntersections_r
+// findRIntersections_r
 //===========================================
-void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& ray,
+static void findRIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& ray,
   const CRegion& region, CastResult& result, set<const CRegion*>& visitedRegions,
   set<entityId_t>& visitedJoins) {
 
@@ -151,7 +218,7 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     if (visitedRegions.find(it->get()) == visitedRegions.end()) {
-      findIntersections_r(spatialSystem, ray, **it, result, visitedRegions, visitedJoins);
+      findRIntersections_r(spatialSystem, ray, **it, result, visitedRegions, visitedJoins);
     }
   }
 
@@ -168,7 +235,7 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
       SpriteX* X = new SpriteX;
-      result.intersections.push_back(pIntersection_t(X));
+      result.intersections.push_back(pRIntersection_t(X));
 
       X->point_cam = pt;
       X->point_world = camera.matrix() * pt;
@@ -185,7 +252,7 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      Intersection* X = constructIntersection(boundary.kind);
+      RIntersection* X = constructRIntersection(boundary.kind);
       X->point_cam = pt;
       X->point_world = camera.matrix() * pt;
       X->distanceFromCamera = pt.x;
@@ -196,7 +263,7 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
         CWall& wall = dynamic_cast<CWall&>(boundary);
 
         wallX->wall = &wall;
-        result.intersections.push_back(pIntersection_t(X));
+        result.intersections.push_back(pRIntersection_t(X));
       }
       else if (boundary.kind == CRenderKind::JOIN) {
         JoinX* joinX = dynamic_cast<JoinX*>(X);
@@ -206,14 +273,14 @@ void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& 
 
         const CRegion& next = join.regionA == &region ? *join.regionB : *join.regionA;
 
-        auto pX = pIntersection_t(X);
+        auto pX = pRIntersection_t(X);
         if (visitedJoins.find(join.joinId) == visitedJoins.end()) {
           result.intersections.push_back(std::move(pX));
           visitedJoins.insert(join.joinId);
         }
 
         if (visitedRegions.find(&next) == visitedRegions.end()) {
-          findIntersections_r(spatialSystem, ray, next, result, visitedRegions, visitedJoins);
+          findRIntersections_r(spatialSystem, ray, next, result, visitedRegions, visitedJoins);
         }
       }
       else {
@@ -236,9 +303,9 @@ static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGra
 
   set<const CRegion*> visitedRegions;
   set<entityId_t> visitedJoins;
-  findIntersections_r(spatialSystem, ray, currentRegion, result, visitedRegions, visitedJoins);
+  findRIntersections_r(spatialSystem, ray, currentRegion, result, visitedRegions, visitedJoins);
 
-  intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
+  intersections.sort([](const pRIntersection_t& a, const pRIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
   });
 
@@ -927,7 +994,7 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
     castRay(spatialSystem, Vec2f(cam.F, projX_wd), rg, player, currentRegion, result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
-      Intersection& X = **it;
+      RIntersection& X = **it;
 
       if (X.kind == IntersectionKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(X);

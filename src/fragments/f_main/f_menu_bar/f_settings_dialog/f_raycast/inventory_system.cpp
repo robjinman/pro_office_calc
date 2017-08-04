@@ -116,8 +116,6 @@ void InventorySystem::addToBucket(const CCollectable& item) {
         bucket.count = bucket.capacity;
       }
 
-      DBG_PRINT(bucket.type << " = " << bucket.count << "/" << bucket.capacity << "\n");
-
       EventHandlerSystem& eventHandlerSystem = m_entityManager
         .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
@@ -140,8 +138,6 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
     if (bucket.count >= value) {
       bucket.count -= value;
     }
-
-    DBG_PRINT(bucket.type << " = " << bucket.count << "/" << bucket.capacity << "\n");
 
     EventHandlerSystem& eventHandlerSystem = m_entityManager
       .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);

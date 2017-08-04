@@ -21,6 +21,13 @@ struct Tween {
   std::function<void()> finish;
 };
 
+struct Intersection {
+  entityId_t entityId;
+  Point point_cam;
+  Point point_world;
+  double distanceFromCamera;
+};
+
 class EntityManager;
 
 class SpatialSystem : public System {
@@ -42,7 +49,8 @@ class SpatialSystem : public System {
     virtual Component& getComponent(entityId_t entityId) const override;
     virtual void removeEntity(entityId_t id) override;
 
-    std::set<entityId_t> getEntitiesInRadius(double radius) const;
+    std::set<entityId_t> entitiesInRadius(const Point& pos, double radius) const;
+    std::list<Intersection> entitiesAlongRay(double camSpaceAngle) const;
 
     void vRotateCamera(double da);
     void hRotateCamera(double da);

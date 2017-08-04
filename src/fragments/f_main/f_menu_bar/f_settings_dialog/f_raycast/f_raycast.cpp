@@ -14,6 +14,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 
 
@@ -73,6 +74,9 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
 
   EventHandlerSystem* eventHandlerSystem = new EventHandlerSystem;
   m_entityManager.addSystem(ComponentKind::C_EVENT_HANDLER, pSystem_t(eventHandlerSystem));
+
+  DamageSystem* damageSystem = new DamageSystem(m_entityManager);
+  m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
   loadMap("data/map.svg", m_entityManager, FRAME_RATE);
 

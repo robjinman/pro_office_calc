@@ -3,6 +3,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 
 
 //===========================================
@@ -133,8 +134,12 @@ void Player::shoot() {
     AnimationSystem& animationSystem = m_entityManager
       .system<AnimationSystem>(ComponentKind::C_ANIMATION);
 
+    DamageSystem& damageSystem = m_entityManager
+      .system<DamageSystem>(ComponentKind::C_DAMAGE);
+
     animationSystem.playAnimation(sprite, "shoot", false);
     inventorySystem.subtractFromBucket("ammo", 1);
+    damageSystem.damageAtIntersection(0, 1);
   }
 }
 

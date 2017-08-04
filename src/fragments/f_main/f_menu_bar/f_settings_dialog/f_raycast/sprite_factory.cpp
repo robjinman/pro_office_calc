@@ -7,6 +7,8 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -21,6 +23,9 @@ void constructSprite(EntityManager& em, const parser::Object& obj, double frameR
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
   InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
+  DamageSystem& damageSystem = em.system<DamageSystem>(ComponentKind::C_DAMAGE);
+  EventHandlerSystem& eventHandlerSystem =
+    em.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   DBG_PRINT("Constructing Sprite\n");
 
@@ -49,7 +54,7 @@ void constructSprite(EntityManager& em, const parser::Object& obj, double frameR
 
     renderSystem.addComponent(pComponent_t(sprite));
 
-    pCAnimation_t anim(new CAnimation(id));
+    CAnimation* anim = new CAnimation(id);
     anim->animations.insert(std::make_pair("idle", Animation(frameRate, 1.0, {
       AnimationFrame{{
         QRectF(0, 0, 0.125, 0.125),
@@ -133,8 +138,22 @@ void constructSprite(EntityManager& em, const parser::Object& obj, double frameR
       }}
     })));
 
-    animationSystem.addComponent(std::move(anim));
+    animationSystem.addComponent(pCAnimation_t(anim));
     animationSystem.playAnimation(id, "idle", true);
+
+    CDamage* damage = new CDamage(id, 5, 5);
+    damageSystem.addComponent(pCDamage_t(damage));
+
+    CEventHandler* takeDamage = new CEventHandler(id);
+    takeDamage->handlers.push_back(EventHandler{"entityDamaged", [=, &em](const GameEvent& e) {
+      std::cout << "Ouch!\n";
+
+      if (damage->health == 0) {
+        em.deleteEntity(id);
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(takeDamage));
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
     entityId_t id = Component::getNextId();

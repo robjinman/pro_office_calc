@@ -215,7 +215,7 @@ SpatialSystem::SpatialSystem(EntityManager& entityManager, double frameRate)
 void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "playerActivate") {
     GameEvent e("activateEntity");
-    e.entitiesInRange = getEntitiesInRadius(sg.player->activationRadius);
+    e.entitiesInRange = entitiesInRadius(sg.player->pos(), sg.player->activationRadius);
 
     m_entityManager.broadcastEvent(e);
   }
@@ -312,7 +312,7 @@ void SpatialSystem::translateCamera(const Vec2f& dir) {
     m_playerCell = cell;
 
     GameEvent e("playerMove");
-    e.entitiesInRange = getEntitiesInRadius(sg.player->collectionRadius);
+    e.entitiesInRange = entitiesInRadius(sg.player->pos(), sg.player->collectionRadius);
 
     m_entityManager.broadcastEvent(e);
   }
@@ -403,9 +403,9 @@ static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
 }
 
 //===========================================
-// getEntitiesInRadius
+// entitiesInRadius
 //===========================================
-static void getEntitiesInRadius_r(const CZone& zone, const Circle& circle,
+static void entitiesInRadius_r(const CZone& zone, const Circle& circle,
   set<entityId_t>& entities) {
 
   for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
@@ -428,7 +428,7 @@ static void getEntitiesInRadius_r(const CZone& zone, const Circle& circle,
   }
 
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
-    getEntitiesInRadius_r(**it, circle, entities);
+    entitiesInRadius_r(**it, circle, entities);
   }
 }
 
@@ -502,16 +502,108 @@ void SpatialSystem::connectZones() {
 }
 
 //===========================================
-// SpatialSystem::getEntitiesInRadius
+// findIntersections_r
 //===========================================
-set<entityId_t> SpatialSystem::getEntitiesInRadius(double radius) const {
-  set<entityId_t> entities;
+static void findIntersections_r(const Camera& camera, double camSpaceAngle, const CZone& zone,
+  list<Intersection>& intersections, set<const CZone*>& visitedZones,
+  set<entityId_t>& visitedJoins) {
 
-  const Point& pos = sg.player->pos();
+  Matrix invCamMatrix = camera.matrix().inverse();
+
+  LineSegment ray(Vec2f(0, 0), 10000 * Vec2f(cos(camSpaceAngle), sin(camSpaceAngle)));
+  visitedZones.insert(&zone);
+
+  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
+    if (visitedZones.find(it->get()) == visitedZones.end()) {
+      findIntersections_r(camera, camSpaceAngle, **it, intersections, visitedZones, visitedJoins);
+    }
+  }
+
+  for (auto it = zone.vRects.begin(); it != zone.vRects.end(); ++it) {
+    CVRect& vRect = **it;
+
+    Point pos = invCamMatrix * vRect.pos;
+    double w = vRect.size.x;
+    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x, pos.y + 0.5 * w));
+
+    Point pt;
+    if (lineSegmentIntersect(ray, lseg, pt)) {
+      Intersection X;
+
+      X.distanceFromCamera = pt.x;
+      X.point_cam = pt;
+      X.point_world = camera.matrix() * pt;
+      X.entityId = vRect.entityId();
+
+      intersections.push_back(X);
+    }
+  }
+
+  for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
+    CEdge& edge = **it;
+    LineSegment lseg = transform(edge.lseg, invCamMatrix);
+
+    Point pt;
+    if (lineSegmentIntersect(ray, lseg, pt)) {
+      Intersection X;
+      X.distanceFromCamera = pt.x;
+      X.point_cam = pt;
+      X.point_world = camera.matrix() * pt;
+      X.entityId = edge.entityId();
+
+      if (edge.kind == CSpatialKind::HARD_EDGE) {
+        intersections.push_back(X);
+      }
+      else if (edge.kind == CSpatialKind::SOFT_EDGE) {
+        CSoftEdge& se = dynamic_cast<CSoftEdge&>(edge);
+
+        const CZone& next = se.zoneA == &zone ? *se.zoneB : *se.zoneA;
+
+        if (visitedJoins.find(se.joinId) == visitedJoins.end()) {
+          intersections.push_back(X);
+          visitedJoins.insert(se.joinId);
+        }
+
+        if (visitedZones.find(&next) == visitedZones.end()) {
+          findIntersections_r(camera, camSpaceAngle, next, intersections, visitedZones,
+            visitedJoins);
+        }
+      }
+      else {
+        EXCEPTION("Unexpected intersection type");
+      }
+    }
+  }
+}
+
+//===========================================
+// SpatialSystem::entitiesAlongRay
+//===========================================
+list<Intersection> SpatialSystem::entitiesAlongRay(double camSpaceAngle) const {
+  const Camera& camera = sg.player->camera();
+
+  list<Intersection> intersections;
+  set<const CZone*> visitedZones;
+  set<entityId_t> visitedJoins;
+  findIntersections_r(camera, camSpaceAngle, *sg.rootZone, intersections, visitedZones,
+    visitedJoins);
+
+  intersections.sort([](const Intersection& a, const Intersection& b) {
+    return a.distanceFromCamera < b.distanceFromCamera;
+  });
+
+  return intersections;
+}
+
+//===========================================
+// SpatialSystem::entitiesInRadius
+//===========================================
+set<entityId_t> SpatialSystem::entitiesInRadius(const Point& pos, double radius) const {
+  set<entityId_t> entities;
   Circle circle{pos, radius};
 
   forEachConstZone(*getCurrentZone().parent, [&](const CZone& zone) {
-    getEntitiesInRadius_r(zone, circle, entities);
+    entitiesInRadius_r(zone, circle, entities);
   });
 
   return entities;
