@@ -28,17 +28,17 @@ static const double ATAN_MIN = -10.0;
 static const double ATAN_MAX = 10.0;
 
 
-enum class IntersectionKind {
+enum class RIntersectionKind {
   JOIN,
   WALL,
   SPRITE
 };
 
 struct RIntersection {
-  RIntersection(IntersectionKind kind)
+  RIntersection(RIntersectionKind kind)
     : kind(kind) {}
 
-  IntersectionKind kind;
+  RIntersectionKind kind;
   Point point_cam;
   Point point_world;
   double distanceFromCamera;
@@ -49,7 +49,7 @@ struct RIntersection {
 
 typedef std::unique_ptr<RIntersection> pRIntersection_t;
 
-struct Slice {
+struct RSlice {
   double sliceBottom_wd;
   double sliceTop_wd;
   double projSliceBottom_wd;
@@ -60,11 +60,11 @@ struct Slice {
 
 struct JoinX : public RIntersection {
   JoinX()
-    : RIntersection(IntersectionKind::JOIN) {}
+    : RIntersection(RIntersectionKind::JOIN) {}
 
   CJoin* join;
-  Slice slice0;
-  Slice slice1;
+  RSlice slice0;
+  RSlice slice1;
   const CRegion* nearRegion;
   const CRegion* farRegion;
 
@@ -73,20 +73,20 @@ struct JoinX : public RIntersection {
 
 struct WallX : public RIntersection {
   WallX()
-    : RIntersection(IntersectionKind::WALL) {}
+    : RIntersection(RIntersectionKind::WALL) {}
 
   CWall* wall;
-  Slice slice;
+  RSlice slice;
 
   virtual ~WallX() override {}
 };
 
 struct SpriteX : public RIntersection {
   SpriteX()
-    : RIntersection(IntersectionKind::SPRITE) {}
+    : RIntersection(RIntersectionKind::SPRITE) {}
 
   CSprite* sprite;
-  Slice slice;
+  RSlice slice;
 
   virtual ~SpriteX() override {}
 };
@@ -127,9 +127,7 @@ static inline CHRect& getHRect(const SpatialSystem& spatialSystem, const CFloorD
 //===========================================
 void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> fn) {
   fn(region);
-  std::for_each(region.children.begin(), region.children.end(),
-    [&](const unique_ptr<CRegion>& r) {
-
+  std::for_each(region.children.begin(), region.children.end(), [&](const unique_ptr<CRegion>& r) {
     forEachConstCRegion(*r, fn);
   });
 }
@@ -139,9 +137,7 @@ void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> f
 //===========================================
 void forEachCRegion(CRegion& region, function<void(CRegion&)> fn) {
   fn(region);
-  std::for_each(region.children.begin(), region.children.end(),
-    [&](unique_ptr<CRegion>& r) {
-
+  std::for_each(region.children.begin(), region.children.end(), [&](unique_ptr<CRegion>& r) {
     forEachCRegion(*r, fn);
   });
 }
@@ -206,9 +202,9 @@ static RIntersection* constructRIntersection(CRenderKind kind) {
 }
 
 //===========================================
-// findRIntersections_r
+// findIntersections_r
 //===========================================
-static void findRIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& ray,
+static void findIntersections_r(const SpatialSystem& spatialSystem, const LineSegment& ray,
   const CRegion& region, CastResult& result, set<const CRegion*>& visitedRegions,
   set<entityId_t>& visitedJoins) {
 
@@ -218,7 +214,7 @@ static void findRIntersections_r(const SpatialSystem& spatialSystem, const LineS
 
   for (auto it = region.children.begin(); it != region.children.end(); ++it) {
     if (visitedRegions.find(it->get()) == visitedRegions.end()) {
-      findRIntersections_r(spatialSystem, ray, **it, result, visitedRegions, visitedJoins);
+      findIntersections_r(spatialSystem, ray, **it, result, visitedRegions, visitedJoins);
     }
   }
 
@@ -280,7 +276,7 @@ static void findRIntersections_r(const SpatialSystem& spatialSystem, const LineS
         }
 
         if (visitedRegions.find(&next) == visitedRegions.end()) {
-          findRIntersections_r(spatialSystem, ray, next, result, visitedRegions, visitedJoins);
+          findIntersections_r(spatialSystem, ray, next, result, visitedRegions, visitedJoins);
         }
       }
       else {
@@ -303,7 +299,7 @@ static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGra
 
   set<const CRegion*> visitedRegions;
   set<entityId_t> visitedJoins;
-  findRIntersections_r(spatialSystem, ray, currentRegion, result, visitedRegions, visitedJoins);
+  findIntersections_r(spatialSystem, ray, currentRegion, result, visitedRegions, visitedJoins);
 
   intersections.sort([](const pRIntersection_t& a, const pRIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -325,7 +321,7 @@ static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGra
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
     ++last;
 
-    if ((*it)->kind == IntersectionKind::WALL) {
+    if ((*it)->kind == RIntersectionKind::WALL) {
       WallX& X = dynamic_cast<WallX&>(**it);
 
       CZone& zone = getZone(spatialSystem, *X.wall->region);
@@ -372,7 +368,7 @@ static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGra
 
       break;
     }
-    else if ((*it)->kind == IntersectionKind::JOIN) {
+    else if ((*it)->kind == RIntersectionKind::JOIN) {
       JoinX& X = dynamic_cast<JoinX&>(**it);
 
       // TODO: Fix
@@ -485,7 +481,7 @@ static void castRay(const SpatialSystem& spatialSystem, Vec2f r, const RenderGra
 
       region = nextRegion;
     }
-    else if ((*it)->kind == IntersectionKind::SPRITE) {
+    else if ((*it)->kind == RIntersectionKind::SPRITE) {
       SpriteX& X = dynamic_cast<SpriteX&>(**it);
 
       const CVRect& vRect = getVRect(spatialSystem, *X.sprite);
@@ -687,7 +683,7 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
 //===========================================
 static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
   double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double targetH_wd,
-  double distanceAlongTarget, const Slice& slice, const Size& texSz_wd, vector<QRectF>& trgRects,
+  double distanceAlongTarget, const RSlice& slice, const Size& texSz_wd, vector<QRectF>& trgRects,
   vector<QRect>& srcRects) {
 
   double H_tx = texRect.height();
@@ -781,7 +777,7 @@ static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double cam
 // drawSlice
 //===========================================
 static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Player& player,
-  double F, double distanceAlongTarget, const Slice& slice, const string& texture,
+  double F, double distanceAlongTarget, const RSlice& slice, const string& texture,
   double screenX_px, const Size& viewport_px, double targetH_wd = 0) {
 
   double hWorldUnit_px = viewport_px.x / rg.viewport.x;
@@ -824,7 +820,7 @@ static void drawSprite(QPainter& painter, const SpatialSystem& spatialSystem, co
 
   const CSprite& sprite = *spriteX.sprite;
   const CVRect& vRect = getVRect(spatialSystem, sprite);
-  const Slice& slice = spriteX.slice;
+  const RSlice& slice = spriteX.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
   const QRectF& uv = sprite.getView(vRect, cam.pos);
@@ -996,7 +992,7 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       RIntersection& X = **it;
 
-      if (X.kind == IntersectionKind::WALL) {
+      if (X.kind == RIntersectionKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(X);
 
         ScreenSlice slice = drawSlice(painter, rg, player, cam.F, wallX.distanceAlongTarget,
@@ -1021,7 +1017,7 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
           drawSkySlice(target, rg, player, slice, screenX_px);
         }
       }
-      else if (X.kind == IntersectionKind::JOIN) {
+      else if (X.kind == RIntersectionKind::JOIN) {
         const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
         ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, joinX.distanceAlongTarget,
@@ -1045,7 +1041,7 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
           drawSkySlice(target, rg, player, slice1, screenX_px);
         }
       }
-      else if (X.kind == IntersectionKind::SPRITE) {
+      else if (X.kind == RIntersectionKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
         drawSprite(painter, spatialSystem, rg, player, viewport_px, spriteX, screenX_px);
       }

@@ -502,10 +502,26 @@ void SpatialSystem::connectZones() {
 }
 
 //===========================================
+// constructRIntersection
+//===========================================
+static Intersection* constructIntersection(CSpatialKind kind) {
+  switch (kind) {
+    case CSpatialKind::HARD_EDGE:
+      return new HardEdgeX;
+      break;
+    case CSpatialKind::SOFT_EDGE:
+      return new SoftEdgeX;
+      break;
+    default:
+      EXCEPTION("Error constructing Intersection of unknown type");
+  }
+}
+
+//===========================================
 // findIntersections_r
 //===========================================
 static void findIntersections_r(const Camera& camera, double camSpaceAngle, const CZone& zone,
-  list<Intersection>& intersections, set<const CZone*>& visitedZones,
+  list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
   set<entityId_t>& visitedJoins) {
 
   Matrix invCamMatrix = camera.matrix().inverse();
@@ -528,14 +544,15 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      Intersection X;
+      VRectX* X = new VRectX;
+      intersections.push_back(pIntersection_t(X));
 
-      X.distanceFromCamera = pt.x;
-      X.point_cam = pt;
-      X.point_world = camera.matrix() * pt;
-      X.entityId = vRect.entityId();
-
-      intersections.push_back(X);
+      X->entityId = vRect.entityId();
+      X->point_cam = pt;
+      X->point_world = camera.matrix() * pt;
+      X->distanceFromCamera = pt.x;
+      X->distanceAlongTarget = distance(lseg.A, pt);
+      X->vRect = &vRect;
     }
   }
 
@@ -545,23 +562,33 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      Intersection X;
-      X.distanceFromCamera = pt.x;
-      X.point_cam = pt;
-      X.point_world = camera.matrix() * pt;
-      X.entityId = edge.entityId();
+      Intersection* X = constructIntersection(edge.kind);
+      X->entityId = edge.entityId();
+      X->point_cam = pt;
+      X->point_world = camera.matrix() * pt;
+      X->distanceFromCamera = pt.x;
+      X->distanceAlongTarget = distance(lseg.A, pt);
 
       if (edge.kind == CSpatialKind::HARD_EDGE) {
-        intersections.push_back(X);
+        HardEdgeX* hardEdgeX = dynamic_cast<HardEdgeX*>(X);
+        CHardEdge& hardEdge = dynamic_cast<CHardEdge&>(edge);
+
+        hardEdgeX->hardEdge = &hardEdge;
+
+        intersections.push_back(pIntersection_t(X));
       }
       else if (edge.kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge& se = dynamic_cast<CSoftEdge&>(edge);
+        SoftEdgeX* softEdgeX = dynamic_cast<SoftEdgeX*>(X);
+        CSoftEdge& softEdge = dynamic_cast<CSoftEdge&>(edge);
 
-        const CZone& next = se.zoneA == &zone ? *se.zoneB : *se.zoneA;
+        softEdgeX->softEdge = &softEdge;
 
-        if (visitedJoins.find(se.joinId) == visitedJoins.end()) {
-          intersections.push_back(X);
-          visitedJoins.insert(se.joinId);
+        const CZone& next = softEdge.zoneA == &zone ? *softEdge.zoneB : *softEdge.zoneA;
+
+        auto pX = pIntersection_t(X);
+        if (visitedJoins.find(softEdge.joinId) == visitedJoins.end()) {
+          intersections.push_back(std::move(pX));
+          visitedJoins.insert(softEdge.joinId);
         }
 
         if (visitedZones.find(&next) == visitedZones.end()) {
@@ -579,17 +606,17 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
 //===========================================
 // SpatialSystem::entitiesAlongRay
 //===========================================
-list<Intersection> SpatialSystem::entitiesAlongRay(double camSpaceAngle) const {
+list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) const {
   const Camera& camera = sg.player->camera();
 
-  list<Intersection> intersections;
+  list<pIntersection_t> intersections;
   set<const CZone*> visitedZones;
   set<entityId_t> visitedJoins;
   findIntersections_r(camera, camSpaceAngle, *sg.rootZone, intersections, visitedZones,
     visitedJoins);
 
-  intersections.sort([](const Intersection& a, const Intersection& b) {
-    return a.distanceFromCamera < b.distanceFromCamera;
+  intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
+    return a->distanceFromCamera < b->distanceFromCamera;
   });
 
   return intersections;

@@ -83,9 +83,11 @@ void DamageSystem::damageWithinRadius(const Point& pos, double radius, int damag
 //===========================================
 void DamageSystem::damageAtIntersection(double camSpaceAngle, int damage) {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  list<Intersection> intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
+  list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
 
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
-    damageEntity(it->entityId, damage);
+    const Intersection& intersection = **it;
+
+    damageEntity(intersection.entityId, damage);
   }
 }
