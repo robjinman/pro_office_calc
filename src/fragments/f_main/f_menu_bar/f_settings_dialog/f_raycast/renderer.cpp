@@ -307,8 +307,10 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       JoinX& joinX = dynamic_cast<JoinX&>(*X);
 
       // TODO: Fix
-      //assert(region == joinX.X->join->regionA || region == joinX.X->join->regionB);
-      CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB : joinX.softEdge->zoneA;
+      //assert(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB);
+
+      CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB
+        : joinX.softEdge->zoneA;
 
       joinX.nearZone = zone;
       joinX.farZone = nextZone;
@@ -344,10 +346,13 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      auto bWallAClip = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1), joinX.slice0.sliceBottom_wd);
-      auto bWallBClip = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1), joinX.slice0.sliceTop_wd);
+      auto bWallAClip = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1),
+        joinX.slice0.sliceBottom_wd);
+      auto bWallBClip = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1),
+        joinX.slice0.sliceTop_wd);
 
-      auto tWallAClip = clipNumber(topWall.A.y, Size(wall_s0, wall_s1), joinX.slice1.sliceBottom_wd);
+      auto tWallAClip = clipNumber(topWall.A.y, Size(wall_s0, wall_s1),
+        joinX.slice1.sliceBottom_wd);
       auto tWallBClip = clipNumber(topWall.B.y, Size(wall_s0, wall_s1), joinX.slice1.sliceTop_wd);
 
       Point p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
