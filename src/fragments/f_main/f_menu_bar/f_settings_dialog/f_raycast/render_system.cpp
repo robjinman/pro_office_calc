@@ -113,10 +113,8 @@ void RenderSystem::connectRegions() {
 void RenderSystem::render() {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   const Player& player = *spatialSystem.sg.player;
-  const CRegion& currentRegion = dynamic_cast<const CRegion&>(*m_components
-    .at(player.currentRegion));
 
-  m_renderer.renderScene(m_target, rg, player, currentRegion);
+  m_renderer.renderScene(m_target, rg, player);
 }
 
 //===========================================
@@ -211,7 +209,9 @@ static void removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
       break;
     }
     case CRenderKind::FLOOR_DECAL: {
-      auto it = find_if(region.floorDecals.begin(), region.floorDecals.end(), [&](const pCFloorDecal_t& e) {
+      auto it = find_if(region.floorDecals.begin(), region.floorDecals.end(),
+        [&](const pCFloorDecal_t& e) {
+
         return e.get() == dynamic_cast<const CFloorDecal*>(&child);
       });
       region.floorDecals.erase(it);

@@ -59,8 +59,8 @@ struct SoftEdgeX : public Intersection {
   CSoftEdge* softEdge;
   Slice slice0;
   Slice slice1;
-  const CZone* nearZone;
-  const CZone* farZone;
+  entityId_t nearZone;
+  entityId_t farZone;
 
   virtual ~SoftEdgeX() override {}
 };

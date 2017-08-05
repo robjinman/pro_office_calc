@@ -22,8 +22,7 @@ class Renderer {
   public:
     Renderer(EntityManager& entityManager);
 
-    void renderScene(QImage& target, const RenderGraph& rg, const Player& player,
-      const CRegion& currentRegion);
+    void renderScene(QImage& target, const RenderGraph& rg, const Player& player);
 
   private:
     EntityManager& m_entityManager;
