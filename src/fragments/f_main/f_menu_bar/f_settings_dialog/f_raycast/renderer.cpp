@@ -29,15 +29,83 @@ static const double ATAN_MIN = -10.0;
 static const double ATAN_MAX = 10.0;
 
 
-struct CastResult {
-  std::list<pIntersection_t> intersections;
-};
-
 struct ScreenSlice {
   int sliceBottom_px;
   int sliceTop_px;
   int viewportBottom_px;
   int viewportTop_px;
+};
+
+enum class XWrapperKind {
+  JOIN,
+  WALL,
+  SPRITE
+};
+
+struct XWrapper {
+  XWrapper(XWrapperKind kind)
+    : kind(kind) {}
+
+  XWrapperKind kind;
+
+  virtual ~XWrapper() {}
+};
+
+typedef std::unique_ptr<XWrapper> pXWrapper_t;
+
+struct CastResult {
+  std::list<pXWrapper_t> intersections;
+};
+
+struct Slice {
+  double sliceBottom_wd;
+  double sliceTop_wd;
+  double projSliceBottom_wd;
+  double projSliceTop_wd;
+  double viewportBottom_wd;
+  double viewportTop_wd;
+};
+
+struct JoinX : public XWrapper {
+  JoinX(pIntersection_t X)
+    : XWrapper(XWrapperKind::JOIN),
+      X(std::move(X)) {}
+
+  pIntersection_t X;
+  const CSoftEdge* softEdge = nullptr;
+  const CJoin* join = nullptr;
+  Slice slice0;
+  Slice slice1;
+  const CZone* nearZone;
+  const CZone* farZone;
+
+  virtual ~JoinX() override {}
+};
+
+struct WallX : public XWrapper {
+  WallX(pIntersection_t X)
+    : XWrapper(XWrapperKind::WALL),
+      X(std::move(X)) {}
+
+  pIntersection_t X;
+  const CHardEdge* hardEdge = nullptr;
+  const CWall* wall = nullptr;
+  Slice slice;
+
+  virtual ~WallX() override {}
+};
+
+struct SpriteX : public XWrapper {
+  SpriteX(pIntersection_t X)
+    : XWrapper(XWrapperKind::SPRITE),
+      X(std::move(X)) {}
+
+  pIntersection_t X;
+  const CVRect* vRect = nullptr;
+  const CSprite* sprite = nullptr;
+  Slice slice;
+
+  virtual ~SpriteX() override {}
 };
 
 static inline CZone& getZone(const SpatialSystem& spatialSystem, const CRegion& r) {
@@ -124,15 +192,48 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 }
 
 //===========================================
+// constructXWrapper
+//===========================================
+static XWrapper* constructXWrapper(const SpatialSystem& spatialSystem,
+  const RenderSystem& renderSystem, pIntersection_t X) {
+
+  Intersection* pX = X.get();
+
+  switch (pX->kind) {
+    case CSpatialKind::HARD_EDGE: {
+      WallX* wrapper = new WallX(std::move(X));
+      wrapper->hardEdge = dynamic_cast<const CHardEdge*>(&spatialSystem.getComponent(pX->entityId));
+      wrapper->wall = dynamic_cast<const CWall*>(&renderSystem.getComponent(pX->entityId));
+      return wrapper;
+    }
+    case CSpatialKind::SOFT_EDGE: {
+      JoinX* wrapper = new JoinX(std::move(X));
+      wrapper->softEdge = dynamic_cast<const CSoftEdge*>(&spatialSystem.getComponent(pX->entityId));
+      wrapper->join = dynamic_cast<const CJoin*>(&renderSystem.getComponent(pX->entityId));
+      return wrapper;
+    }
+    case CSpatialKind::V_RECT: {
+      SpriteX* wrapper = new SpriteX(std::move(X));
+      wrapper->vRect = dynamic_cast<const CVRect*>(&spatialSystem.getComponent(pX->entityId));
+      wrapper->sprite = dynamic_cast<const CSprite*>(&renderSystem.getComponent(pX->entityId));
+      return wrapper;
+    }
+    default:
+      EXCEPTION("Error constructing XWrapper for Intersection of unknown type");
+  }
+
+  return nullptr;
+}
+
+//===========================================
 // castRay
 //===========================================
-static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, const RenderGraph& rg,
-  const Player& player, CastResult& result) {
+static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
+  double camSpaceAngle, const RenderGraph& rg, const Player& player, CastResult& result) {
 
-  auto& intersections = result.intersections;
   const Camera& cam = player.camera();
 
-  result.intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
+  list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
@@ -152,15 +253,17 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
   int last = -1;
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
     ++last;
+    XWrapper* X = constructXWrapper(spatialSystem, renderSystem, std::move(*it));
+    result.intersections.push_back(pXWrapper_t(X));
 
-    if ((*it)->kind == IntersectionKind::HARD_EDGE) {
-      HardEdgeX& X = dynamic_cast<HardEdgeX&>(**it);
+    if (X->kind == XWrapperKind::WALL) {
+      WallX& wallX = dynamic_cast<WallX&>(*X);
 
-      CZone& z = *X.hardEdge->zone;
+      CZone& z = *wallX.hardEdge->zone;
 
       double floorHeight = z.floorHeight;
       double targetHeight = z.ceilingHeight - z.floorHeight;
-      const Point& pt = X.point_cam;
+      const Point& pt = wallX.X->point_cam;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + targetHeight));
@@ -176,8 +279,8 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      auto wallAClip = clipNumber(wall.A.y, Size(wall_s0, wall_s1), X.slice.sliceBottom_wd);
-      auto wallBClip = clipNumber(wall.B.y, Size(wall_s0, wall_s1), X.slice.sliceTop_wd);
+      auto wallAClip = clipNumber(wall.A.y, Size(wall_s0, wall_s1), wallX.slice.sliceBottom_wd);
+      auto wallBClip = clipNumber(wall.B.y, Size(wall_s0, wall_s1), wallX.slice.sliceTop_wd);
 
       if (wallAClip == CLIPPED_TO_BOTTOM) {
         proj_w0 = subview0;
@@ -192,25 +295,25 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
         proj_w1 = subview1;
       }
 
-      X.slice.projSliceBottom_wd = proj_w0;
-      X.slice.projSliceTop_wd = proj_w1;
+      wallX.slice.projSliceBottom_wd = proj_w0;
+      wallX.slice.projSliceTop_wd = proj_w1;
 
-      X.slice.viewportBottom_wd = subview0;
-      X.slice.viewportTop_wd = subview1;
+      wallX.slice.viewportBottom_wd = subview0;
+      wallX.slice.viewportTop_wd = subview1;
 
       break;
     }
-    else if ((*it)->kind == IntersectionKind::SOFT_EDGE) {
-      SoftEdgeX& X = dynamic_cast<SoftEdgeX&>(**it);
+    else if (X->kind == XWrapperKind::JOIN) {
+      JoinX& joinX = dynamic_cast<JoinX&>(*X);
 
       // TODO: Fix
-      //assert(region == X.join->regionA || region == X.join->regionB);
-      CZone* nextZone = zone == X.softEdge->zoneA ? X.softEdge->zoneB : X.softEdge->zoneA;
+      //assert(region == joinX.X->join->regionA || region == joinX.X->join->regionB);
+      CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB : joinX.softEdge->zoneA;
 
-      X.nearZone = zone->entityId();
-      X.farZone = nextZone->entityId();
+      joinX.nearZone = zone;
+      joinX.farZone = nextZone;
 
-      const Point& pt = X.point_cam;
+      const Point& pt = joinX.X->point_cam;
 
       double floorDiff = nextZone->floorHeight - zone->floorHeight;
       double ceilingDiff = zone->ceilingHeight - nextZone->ceilingHeight;
@@ -241,11 +344,11 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      auto bWallAClip = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1), X.slice0.sliceBottom_wd);
-      auto bWallBClip = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1), X.slice0.sliceTop_wd);
+      auto bWallAClip = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1), joinX.slice0.sliceBottom_wd);
+      auto bWallBClip = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1), joinX.slice0.sliceTop_wd);
 
-      auto tWallAClip = clipNumber(topWall.A.y, Size(wall_s0, wall_s1), X.slice1.sliceBottom_wd);
-      auto tWallBClip = clipNumber(topWall.B.y, Size(wall_s0, wall_s1), X.slice1.sliceTop_wd);
+      auto tWallAClip = clipNumber(topWall.A.y, Size(wall_s0, wall_s1), joinX.slice1.sliceBottom_wd);
+      auto tWallBClip = clipNumber(topWall.B.y, Size(wall_s0, wall_s1), joinX.slice1.sliceTop_wd);
 
       Point p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
       double proj_bw0 = rotProjPlane.signedDistance(p.x);
@@ -287,15 +390,15 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
         proj_tw1 = subview1;
       }
 
-      X.slice0.projSliceBottom_wd = proj_bw0;
-      X.slice0.projSliceTop_wd = proj_bw1;
-      X.slice1.projSliceBottom_wd = proj_tw0;
-      X.slice1.projSliceTop_wd = proj_tw1;
+      joinX.slice0.projSliceBottom_wd = proj_bw0;
+      joinX.slice0.projSliceTop_wd = proj_bw1;
+      joinX.slice1.projSliceBottom_wd = proj_tw0;
+      joinX.slice1.projSliceTop_wd = proj_tw1;
 
-      X.slice0.viewportBottom_wd = subview0;
-      X.slice0.viewportTop_wd = subview1;
-      X.slice1.viewportBottom_wd = subview0;
-      X.slice1.viewportTop_wd = subview1;
+      joinX.slice0.viewportBottom_wd = subview0;
+      joinX.slice0.viewportTop_wd = subview1;
+      joinX.slice1.viewportBottom_wd = subview0;
+      joinX.slice1.viewportTop_wd = subview1;
 
       if (proj_bw1 > subview0) {
         subview0 = proj_bw1;
@@ -309,14 +412,14 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
 
       zone = nextZone;
     }
-    else if ((*it)->kind == IntersectionKind::V_RECT) {
-      VRectX& X = dynamic_cast<VRectX&>(**it);
+    else if (X->kind == XWrapperKind::SPRITE) {
+      SpriteX& spriteX = dynamic_cast<SpriteX&>(*X);
 
       double floorHeight = zone->floorHeight;
-      const Point& pt = X.point_cam;
+      const Point& pt = spriteX.X->point_cam;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
-        Point(pt.x, floorHeight - cam.height + X.vRect->size.y));
+        Point(pt.x, floorHeight - cam.height + spriteX.vRect->size.y));
 
       LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));
       LineSegment wallRay1(Point(0, 0), Point(pt.x, wall.B.y));
@@ -326,17 +429,17 @@ static void castRay(const SpatialSystem& spatialSystem, double camSpaceAngle, co
       p = lineIntersect(wallRay1.line(), rotProjPlane.line());
       double proj_w1 = rotProjPlane.signedDistance(p.x);
 
-      X.slice.viewportBottom_wd = subview0;
-      X.slice.viewportTop_wd = subview1;
+      spriteX.slice.viewportBottom_wd = subview0;
+      spriteX.slice.viewportTop_wd = subview1;
 
-      X.slice.projSliceBottom_wd = clipNumber(proj_w0, Size(subview0, subview1));
-      X.slice.projSliceTop_wd = clipNumber(proj_w1, Size(subview0, subview1));
+      spriteX.slice.projSliceBottom_wd = clipNumber(proj_w0, Size(subview0, subview1));
+      spriteX.slice.projSliceTop_wd = clipNumber(proj_w1, Size(subview0, subview1));
 
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      X.slice.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
-      X.slice.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
+      spriteX.slice.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
+      spriteX.slice.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
     }
 
     if (subview1 <= subview0) {
@@ -576,7 +679,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
 //===========================================
 // sampleSpriteTexture
 //===========================================
-static QRect sampleSpriteTexture(const QRect& rect, const VRectX& X, double camHeight,
+static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double camHeight,
   double width_wd, double height_wd, double y_wd) {
 
   double H_px = rect.height();
@@ -585,7 +688,7 @@ static QRect sampleSpriteTexture(const QRect& rect, const VRectX& X, double camH
   double hWorldUnit_px = W_px / width_wd;
   double texW_wd = W_px / hWorldUnit_px;
 
-  double n = X.distanceAlongTarget / texW_wd;
+  double n = X.X->distanceAlongTarget / texW_wd;
   double x = (n - floor(n)) * texW_wd;
 
   double texBottom_px = H_px - ((camHeight + X.slice.sliceBottom_wd - y_wd) / height_wd) * H_px;
@@ -635,7 +738,7 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 // drawSprite
 //===========================================
 static void drawSprite(QPainter& painter, const CSprite& sprite, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const Player& player, const Size& viewport_px, const VRectX& X,
+  const RenderGraph& rg, const Player& player, const Size& viewport_px, const SpriteX& X,
   double screenX_px) {
 
   const Camera& cam = player.camera();
@@ -667,33 +770,33 @@ static void drawSprite(QPainter& painter, const CSprite& sprite, const SpatialSy
 // drawWallDecal
 //===========================================
 static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const CWallDecal& decal, const HardEdgeX& hardEdgeX, int screenX_px,
+  const RenderGraph& rg, const CWallDecal& decal, const WallX& X, int screenX_px,
   const Size& viewport_px, double camHeight, double vWorldUnit_px) {
 
   const CVRect& vRect = getVRect(spatialSystem, decal);
 
   const Texture& decalTex = rg.textures.at(decal.texture);
 
-  double projSliceH_wd = hardEdgeX.slice.projSliceTop_wd - hardEdgeX.slice.projSliceBottom_wd;
-  double sliceH_wd = hardEdgeX.slice.sliceTop_wd - hardEdgeX.slice.sliceBottom_wd;
+  double projSliceH_wd = X.slice.projSliceTop_wd - X.slice.projSliceBottom_wd;
+  double sliceH_wd = X.slice.sliceTop_wd - X.slice.sliceBottom_wd;
   double sliceToProjScale = projSliceH_wd / sliceH_wd;
 
   // World space
-  double sliceBottom_wd = hardEdgeX.slice.sliceBottom_wd + camHeight;
+  double sliceBottom_wd = X.slice.sliceBottom_wd + camHeight;
 
   // World space (not camera space)
   auto fnSliceToProjY = [&](double y) {
-    return hardEdgeX.slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
+    return X.slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
   };
 
   auto fnProjToScreenY = [&](double y) {
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
-  const CZone& zone = *hardEdgeX.hardEdge->zone;
+  const CZone& zone = *X.hardEdge->zone;
   double floorH = zone.floorHeight;
 
-  double x = hardEdgeX.distanceAlongTarget - vRect.pos.x;
+  double x = X.X->distanceAlongTarget - vRect.pos.x;
   int i = decalTex.image.width() * x / vRect.size.x;
 
   double y0 = floorH + vRect.pos.y;
@@ -811,82 +914,67 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
     CastResult result;
-    castRay(spatialSystem, screenX_px * da - 0.5 * cam.hFov, rg, player, result);
+    castRay(spatialSystem, renderSystem, screenX_px * da - 0.5 * cam.hFov, rg, player, result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
-      Intersection& X = **it;
+      XWrapper& X = **it;
 
-      if (X.kind == IntersectionKind::HARD_EDGE) {
-        const HardEdgeX& hardEdgeX = dynamic_cast<const HardEdgeX&>(X);
-        const CWall& wall = dynamic_cast<CWall&>(renderSystem.getComponent(hardEdgeX.entityId));
+      if (X.kind == XWrapperKind::WALL) {
+        const WallX& wallX = dynamic_cast<const WallX&>(X);
 
-        ScreenSlice slice = drawSlice(painter, rg, player, cam.F, hardEdgeX.distanceAlongTarget,
-          hardEdgeX.slice, wall.texture, screenX_px, viewport_px);
+        ScreenSlice slice = drawSlice(painter, rg, player, cam.F, wallX.X->distanceAlongTarget,
+          wallX.slice, wallX.wall->texture, screenX_px, viewport_px);
 
-        CWallDecal* decal = getWallDecal(spatialSystem, wall, hardEdgeX.distanceAlongTarget);
+        CWallDecal* decal = getWallDecal(spatialSystem, *wallX.wall, wallX.X->distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(painter, spatialSystem, rg, *decal, hardEdgeX, screenX_px, viewport_px,
+          drawWallDecal(painter, spatialSystem, rg, *decal, wallX, screenX_px, viewport_px,
             cam.height, vWorldUnit_px);
         }
 
-        CZone& zone = *hardEdgeX.hardEdge->zone;
-        CRegion& region = dynamic_cast<CRegion&>(renderSystem.getComponent(zone.entityId()));
+        CZone& zone = *wallX.hardEdge->zone;
+        CRegion& region = *wallX.wall->region;
 
         drawFloorSlice(target, spatialSystem, rg, player, &region, zone.floorHeight,
-          hardEdgeX.point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
-          m_atanMap);
+          wallX.X->point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
-          drawCeilingSlice(target, rg, player, &region, zone.ceilingHeight, hardEdgeX.point_world,
+          drawCeilingSlice(target, rg, player, &region, zone.ceilingHeight, wallX.X->point_world,
             slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
           drawSkySlice(target, rg, player, slice, screenX_px);
         }
       }
-      else if (X.kind == IntersectionKind::SOFT_EDGE) {
-        const SoftEdgeX& softEdgeX = dynamic_cast<const SoftEdgeX&>(X);
-        const CJoin& join = dynamic_cast<const CJoin&>(renderSystem
-          .getComponent(softEdgeX.entityId));
+      else if (X.kind == XWrapperKind::JOIN) {
+        const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
-        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, softEdgeX.distanceAlongTarget,
-          softEdgeX.slice0, join.bottomTexture, screenX_px, viewport_px);
-
-        const CZone& nearZone = dynamic_cast<const CZone&>(spatialSystem
-          .getComponent(softEdgeX.nearZone));
-        const CZone& farZone = dynamic_cast<const CZone&>(spatialSystem
-          .getComponent(softEdgeX.farZone));
+        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, joinX.X->distanceAlongTarget,
+          joinX.slice0, joinX.join->bottomTexture, screenX_px, viewport_px);
 
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
-          .getComponent(softEdgeX.nearZone));
-        const CRegion& farRegion = dynamic_cast<const CRegion&>(renderSystem
-          .getComponent(softEdgeX.farZone));
+          .getComponent(joinX.nearZone->entityId()));
 
-        drawFloorSlice(target, spatialSystem, rg, player, &nearRegion, nearZone.floorHeight,
-          softEdgeX.point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
+        drawFloorSlice(target, spatialSystem, rg, player, &nearRegion, joinX.nearZone->floorHeight,
+          joinX.X->point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
           m_atanMap);
 
-        // TODO: Make use of softEdgeX.farRegion->ceilingHeight optional
-        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, softEdgeX.distanceAlongTarget,
-          softEdgeX.slice1, join.topTexture, screenX_px, viewport_px, farZone.ceilingHeight);
+        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, joinX.X->distanceAlongTarget,
+          joinX.slice1, joinX.join->topTexture, screenX_px, viewport_px,
+          joinX.farZone->ceilingHeight);
 
         if (nearRegion.hasCeiling) {
-          drawCeilingSlice(target, rg, player, &nearRegion, nearZone.ceilingHeight,
-            softEdgeX.point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
+          drawCeilingSlice(target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
+            joinX.X->point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
             m_atanMap);
         }
         else {
           drawSkySlice(target, rg, player, slice1, screenX_px);
         }
       }
-      else if (X.kind == IntersectionKind::V_RECT) {
-        const VRectX& vRectX = dynamic_cast<const VRectX&>(X);
-
-        if (renderSystem.hasComponent(vRectX.entityId)) {
-          const CSprite& sprite = dynamic_cast<const CSprite&>(renderSystem
-            .getComponent(vRectX.entityId));
-          drawSprite(painter, sprite, spatialSystem, rg, player, viewport_px, vRectX, screenX_px);
-        }
+      else if (X.kind == XWrapperKind::SPRITE) {
+        const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
+        drawSprite(painter, *spriteX.sprite, spatialSystem, rg, player, viewport_px, spriteX,
+          screenX_px);
       }
     }
   }

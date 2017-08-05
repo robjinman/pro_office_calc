@@ -21,69 +21,19 @@ struct Tween {
   std::function<void()> finish;
 };
 
-enum class IntersectionKind {
-  SOFT_EDGE,
-  HARD_EDGE,
-  V_RECT
-};
-
 struct Intersection {
-  Intersection(IntersectionKind kind)
+  Intersection(CSpatialKind kind)
     : kind(kind) {}
 
-  IntersectionKind kind;
+  CSpatialKind kind;
   entityId_t entityId;
   Point point_cam;
   Point point_world;
   double distanceFromCamera;
   double distanceAlongTarget;
-
-  virtual ~Intersection() {}
 };
 
 typedef std::unique_ptr<Intersection> pIntersection_t;
-
-struct Slice {
-  double sliceBottom_wd;
-  double sliceTop_wd;
-  double projSliceBottom_wd;
-  double projSliceTop_wd;
-  double viewportBottom_wd;
-  double viewportTop_wd;
-};
-
-struct SoftEdgeX : public Intersection {
-  SoftEdgeX()
-    : Intersection(IntersectionKind::SOFT_EDGE) {}
-
-  CSoftEdge* softEdge;
-  Slice slice0;
-  Slice slice1;
-  entityId_t nearZone;
-  entityId_t farZone;
-
-  virtual ~SoftEdgeX() override {}
-};
-
-struct HardEdgeX : public Intersection {
-  HardEdgeX()
-    : Intersection(IntersectionKind::HARD_EDGE) {}
-
-  CHardEdge* hardEdge;
-  Slice slice;
-
-  virtual ~HardEdgeX() override {}
-};
-
-struct VRectX : public Intersection {
-  VRectX()
-    : Intersection(IntersectionKind::V_RECT) {}
-
-  CVRect* vRect;
-  Slice slice;
-
-  virtual ~VRectX() override {}
-};
 
 class EntityManager;
 
@@ -92,9 +42,6 @@ class SpatialSystem : public System {
     SpatialSystem(EntityManager& entityManager, double frameRate);
 
     SceneGraph sg;
-
-    // TODO: Move this out of this class
-    void loadMap(const std::string& mapFilePath);
 
     void connectZones();
 

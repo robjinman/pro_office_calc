@@ -502,22 +502,6 @@ void SpatialSystem::connectZones() {
 }
 
 //===========================================
-// constructRIntersection
-//===========================================
-static Intersection* constructIntersection(CSpatialKind kind) {
-  switch (kind) {
-    case CSpatialKind::HARD_EDGE:
-      return new HardEdgeX;
-      break;
-    case CSpatialKind::SOFT_EDGE:
-      return new SoftEdgeX;
-      break;
-    default:
-      EXCEPTION("Error constructing Intersection of unknown type");
-  }
-}
-
-//===========================================
 // findIntersections_r
 //===========================================
 static void findIntersections_r(const Camera& camera, double camSpaceAngle, const CZone& zone,
@@ -544,7 +528,7 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      VRectX* X = new VRectX;
+      Intersection* X = new Intersection(CSpatialKind::V_RECT);
       intersections.push_back(pIntersection_t(X));
 
       X->entityId = vRect.entityId();
@@ -552,7 +536,6 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
       X->point_world = camera.matrix() * pt;
       X->distanceFromCamera = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
-      X->vRect = &vRect;
     }
   }
 
@@ -562,7 +545,7 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
-      Intersection* X = constructIntersection(edge.kind);
+      Intersection* X = new Intersection(edge.kind);
       X->entityId = edge.entityId();
       X->point_cam = pt;
       X->point_world = camera.matrix() * pt;
@@ -570,19 +553,10 @@ static void findIntersections_r(const Camera& camera, double camSpaceAngle, cons
       X->distanceAlongTarget = distance(lseg.A, pt);
 
       if (edge.kind == CSpatialKind::HARD_EDGE) {
-        HardEdgeX* hardEdgeX = dynamic_cast<HardEdgeX*>(X);
-        CHardEdge& hardEdge = dynamic_cast<CHardEdge&>(edge);
-
-        hardEdgeX->hardEdge = &hardEdge;
-
         intersections.push_back(pIntersection_t(X));
       }
       else if (edge.kind == CSpatialKind::SOFT_EDGE) {
-        SoftEdgeX* softEdgeX = dynamic_cast<SoftEdgeX*>(X);
         CSoftEdge& softEdge = dynamic_cast<CSoftEdge&>(edge);
-
-        softEdgeX->softEdge = &softEdge;
-
         const CZone& next = softEdge.zoneA == &zone ? *softEdge.zoneB : *softEdge.zoneA;
 
         auto pX = pIntersection_t(X);
