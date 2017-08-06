@@ -1,4 +1,7 @@
 - Player health
+- Multiple guns
+- Enemy AI
+- Enemy patrol paths
 - Lighting (e.g. distant surfaces darker)
 - Levers/switches
 - Ceiling decals
@@ -6,4 +9,3 @@
 - Animated wall/floor/ceiling textures/decals
 - Translucent walls & walls with holes
 - Sound
-- Sprite patrol paths

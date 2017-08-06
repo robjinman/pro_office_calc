@@ -9,7 +9,8 @@ enum class ComponentKind {
   C_ANIMATION,
   C_INVENTORY,
   C_EVENT_HANDLER,
-  C_DAMAGE
+  C_DAMAGE,
+  C_AUDIO
 };
 
 
