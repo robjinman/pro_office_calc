@@ -1,3 +1,4 @@
+#include <QFileInfo>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 
 
@@ -11,7 +12,9 @@ using std::unique_ptr;
 //===========================================
 void AudioManager::addSound(const string& name, const string& resourcePath) {
   unique_ptr<QSoundEffect> sound(new QSoundEffect);
-  sound->setSource(QUrl::fromLocalFile(resourcePath.c_str()));
+
+  QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
+  sound->setSource(QUrl::fromLocalFile(absPath));
 
   m_sounds.insert(make_pair(name, std::move(sound)));
 }

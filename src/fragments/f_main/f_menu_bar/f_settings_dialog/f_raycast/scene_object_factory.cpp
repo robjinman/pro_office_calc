@@ -478,9 +478,9 @@ static void constructRootRegion(EntityManager& em, AudioManager& audioManager,
   rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
   rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
 
-  audioManager.addSound("pistol_shoot", "/home/rob/code/projects/pro_office_calc/data/pistol_shoot.wav");
-  audioManager.addSound("monster_hurt", "/home/rob/code/projects/pro_office_calc/data/monster_hurt.wav");
-  audioManager.addSound("monster_death", "/home/rob/code/projects/pro_office_calc/data/monster_death.wav");
+  audioManager.addSound("pistol_shoot", "data/pistol_shoot.wav");
+  audioManager.addSound("monster_hurt", "data/monster_hurt.wav");
+  audioManager.addSound("monster_death", "data/monster_death.wav");
 }
 
 //===========================================
