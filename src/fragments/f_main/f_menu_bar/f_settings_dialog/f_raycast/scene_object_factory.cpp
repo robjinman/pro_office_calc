@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
@@ -199,8 +200,9 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 //===========================================
 // constructPlayer
 //===========================================
-static Player* constructPlayer(EntityManager& em, const parser::Object& obj, double frameRate,
-  const CZone& zone, const Matrix& parentTransform, const Size& viewport) {
+static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
+  const parser::Object& obj, double frameRate, const CZone& zone, const Matrix& parentTransform,
+  const Size& viewport) {
 
   DBG_PRINT("Constructing Player\n");
 
@@ -213,7 +215,7 @@ static Player* constructPlayer(EntityManager& em, const parser::Object& obj, dou
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
   camera->height = tallness + zone.floorHeight;
 
-  Player* player = new Player(em, tallness, unique_ptr<Camera>(camera));
+  Player* player = new Player(em, audioManager, tallness, unique_ptr<Camera>(camera));
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 
@@ -316,9 +318,9 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, entityId
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(EntityManager& em, const parser::Object& obj, double frameRate,
-  CZone* parentZone, CRegion* parentRegion, const Matrix& parentTransform,
-  map<Point, bool>& endpoints) {
+static void constructRegion_r(EntityManager& em, AudioManager& audioManager,
+  const parser::Object& obj, double frameRate, CZone* parentZone, CRegion* parentRegion,
+  const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -379,7 +381,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(em, child, frameRate, zone, region, transform, endpoints);
+        constructRegion_r(em, audioManager, child, frameRate, zone, region, transform, endpoints);
       }
       else if (type == "wall") {
         constructWalls(em, endpoints, child, *zone, *region, transform);
@@ -388,7 +390,7 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
         constructBoundaries(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
-        constructSprite(em, child, frameRate, *zone, *region, transform);
+        constructSprite(em, audioManager, child, frameRate, *zone, *region, transform);
       }
       else if (type == "floor_decal") {
         constructFloorDecal(em, child, transform, entityId);
@@ -397,7 +399,8 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(em, child, frameRate, *zone, transform, rg.viewport));
+        sg.player.reset(constructPlayer(em, audioManager, child, frameRate, *zone, transform,
+          rg.viewport));
         sg.player->currentRegion = entityId;
       }
     }
@@ -420,7 +423,9 @@ static void constructRegion_r(EntityManager& em, const parser::Object& obj, doub
 //===========================================
 // constructRootRegion
 //===========================================
-static void constructRootRegion(EntityManager& em, const parser::Object& obj, double frameRate) {
+static void constructRootRegion(EntityManager& em, AudioManager& audioManager,
+  const parser::Object& obj, double frameRate) {
+
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
@@ -441,7 +446,7 @@ static void constructRootRegion(EntityManager& em, const parser::Object& obj, do
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(em, obj, frameRate, nullptr, nullptr, m, endpoints);
+  constructRegion_r(em, audioManager, obj, frameRate, nullptr, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -472,6 +477,10 @@ static void constructRootRegion(EntityManager& em, const parser::Object& obj, do
   rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
   rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
   rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
+
+  audioManager.addSound("pistol_shoot", "/home/rob/code/projects/pro_office_calc/data/pistol_shoot.wav");
+  audioManager.addSound("monster_hurt", "/home/rob/code/projects/pro_office_calc/data/monster_hurt.wav");
+  audioManager.addSound("monster_death", "/home/rob/code/projects/pro_office_calc/data/monster_death.wav");
 }
 
 //===========================================
@@ -505,12 +514,14 @@ void constructPlayerInventory(EntityManager& em) {
 //===========================================
 // loadMap
 //===========================================
-void loadMap(const string& mapFilePath, EntityManager& em, double frameRate) {
+void loadMap(const string& mapFilePath, EntityManager& em, AudioManager& audioManager,
+  double frameRate) {
+
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(em, **objects.begin(), frameRate);
+  constructRootRegion(em, audioManager, **objects.begin(), frameRate);
 
   constructPlayerInventory(em);
 }

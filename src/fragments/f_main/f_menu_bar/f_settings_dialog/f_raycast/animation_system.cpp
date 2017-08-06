@@ -58,19 +58,30 @@ void Animation::update() {
 // AnimationSystem::playAnimation
 //===========================================
 void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name, bool loop) {
-  CAnimation& component = *m_components.at(entityId);
-  Animation& anim = component.animations.at(name);
-  anim.start(loop);
-  component.active = &anim;
+  auto it = m_components.find(entityId);
+  if (it != m_components.end()) {
+    CAnimation& component = *it->second;
+
+    auto jt = component.animations.find(name);
+    if (jt != component.animations.end()) {
+      Animation& anim = jt->second;
+      anim.start(loop);
+      component.active = &anim;
+    }
+  }
 }
 
 //===========================================
 // AnimationSystem::stopAnimation
 //===========================================
 void AnimationSystem::stopAnimation(entityId_t entityId) {
-  CAnimation& component = *m_components.at(entityId);
-  if (component.active != nullptr) {
-    component.active->stop();
+  auto it = m_components.find(entityId);
+  if (it != m_components.end()) {
+    CAnimation& component = *it->second;
+
+    if (component.active != nullptr) {
+      component.active->stop();
+    }
   }
 }
 

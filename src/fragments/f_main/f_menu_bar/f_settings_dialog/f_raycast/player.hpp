@@ -13,10 +13,12 @@ const double PLAYER_STEP_HEIGHT = 16.0;
 class CZone;
 class Camera;
 class EntityManager;
+class AudioManager;
 
 class Player {
   public:
-    Player(EntityManager& entityManager, double tallness, std::unique_ptr<Camera> camera);
+    Player(EntityManager& entityManager, AudioManager& audioManager, double tallness,
+      std::unique_ptr<Camera> camera);
 
     double vVelocity = 0;
     double activationRadius = 100.0;
@@ -52,6 +54,7 @@ class Player {
 
   private:
     EntityManager& m_entityManager;
+    AudioManager& m_audioManager;
     std::unique_ptr<Camera> m_camera;
     double m_tallness = 50;
 };

@@ -15,7 +15,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 
 
@@ -79,10 +78,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  AudioSystem* audioSystem = new AudioSystem(m_entityManager);
-  m_entityManager.addSystem(ComponentKind::C_AUDIO, pSystem_t(audioSystem));
-
-  loadMap("data/map.svg", m_entityManager, FRAME_RATE);
+  loadMap("data/map.svg", m_entityManager, m_audioManager, FRAME_RATE);
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

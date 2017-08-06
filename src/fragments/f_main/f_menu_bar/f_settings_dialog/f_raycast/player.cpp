@@ -1,6 +1,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/player.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
@@ -9,8 +10,10 @@
 //===========================================
 // Player::Player
 //===========================================
-Player::Player(EntityManager& entityManager, double tallness, std::unique_ptr<Camera> camera)
+Player::Player(EntityManager& entityManager, AudioManager& audioManager, double tallness,
+  std::unique_ptr<Camera> camera)
   : m_entityManager(entityManager),
+    m_audioManager(audioManager),
     m_camera(std::move(camera)),
     m_tallness(tallness) {}
 
@@ -138,6 +141,7 @@ void Player::shoot() {
       .system<DamageSystem>(ComponentKind::C_DAMAGE);
 
     animationSystem.playAnimation(sprite, "shoot", false);
+    m_audioManager.playSound("pistol_shoot");
     inventorySystem.subtractFromBucket("ammo", 1);
     damageSystem.damageAtIntersection(0, 0, 1);
   }

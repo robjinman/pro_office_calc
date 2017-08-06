@@ -9,6 +9,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -16,8 +17,8 @@
 //===========================================
 // constructSprite
 //===========================================
-void constructSprite(EntityManager& em, const parser::Object& obj, double frameRate, CZone& zone,
-  CRegion& region, const Matrix& parentTransform) {
+void constructSprite(EntityManager& em, AudioManager& audioManager, const parser::Object& obj,
+  double frameRate, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -145,11 +146,18 @@ void constructSprite(EntityManager& em, const parser::Object& obj, double frameR
     damageSystem.addComponent(pCDamage_t(damage));
 
     CEventHandler* takeDamage = new CEventHandler(id);
-    takeDamage->handlers.push_back(EventHandler{"entityDamaged", [=, &em](const GameEvent& e) {
+    takeDamage->handlers.push_back(EventHandler{"entityDamaged",
+      [=, &em, &audioManager, &animationSystem](const GameEvent& e) {
+
       std::cout << "Ouch!\n";
+      animationSystem.playAnimation(id, "hurt", false);
 
       if (damage->health == 0) {
+        audioManager.playSoundAtPos("monster_death", vRect->pos);
         em.deleteEntity(id);
+      }
+      else {
+        audioManager.playSoundAtPos("monster_hurt", vRect->pos);
       }
     }});
 

@@ -6,8 +6,10 @@
 
 
 class EntityManager;
+class AudioManager;
 
-void loadMap(const std::string& mapFilePath, EntityManager& entityManager, double frameRate);
+void loadMap(const std::string& mapFilePath, EntityManager& entityManager,
+  AudioManager& audioManager, double frameRate);
 
 
 #endif
