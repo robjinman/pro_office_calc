@@ -86,9 +86,7 @@ void DamageSystem::damageAtIntersection(double camSpaceHAngle, double camSpaceVA
   list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(camSpaceHAngle,
     camSpaceVAngle);
 
-  for (auto it = intersections.begin(); it != intersections.end(); ++it) {
-    const Intersection& intersection = **it;
-
-    damageEntity(intersection.entityId, damage);
+  if (intersections.size() > 0) {
+    damageEntity(intersections.front()->entityId, damage);
   }
 }

@@ -584,12 +584,20 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) cons
   list<pIntersection_t> intersections;
   set<const CZone*> visitedZones;
   set<entityId_t> visitedJoins;
-  findIntersections_r(camera, camSpaceAngle, *sg.rootZone, intersections, visitedZones,
+  findIntersections_r(camera, camSpaceAngle, getCurrentZone(), intersections, visitedZones,
     visitedJoins);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromCamera < b->distanceFromCamera;
   });
+
+  auto it = std::find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
+    return i->kind == CSpatialKind::HARD_EDGE;
+  });
+
+  if (it != intersections.end()) {
+    intersections.erase(++it, intersections.end());
+  }
 
   return intersections;
 }
@@ -597,7 +605,7 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) cons
 //===========================================
 // SpatialSystem::getHeightRangeForEntity
 //===========================================
-pair<double, double> SpatialSystem::getHeightRangeForEntity(entityId_t id) const {
+pair<Range, Range> SpatialSystem::getHeightRangeForEntity(entityId_t id) const {
   auto it = m_components.find(id);
   if (it != m_components.end()) {
     const CSpatial& c = *it->second;
@@ -605,16 +613,21 @@ pair<double, double> SpatialSystem::getHeightRangeForEntity(entityId_t id) const
     switch (c.kind) {
       case CSpatialKind::V_RECT: {
         const CVRect& vRect = dynamic_cast<const CVRect&>(c);
-        return make_pair(vRect.zone->floorHeight, vRect.zone->floorHeight + vRect.size.y);
+        return make_pair(Range(vRect.zone->floorHeight, vRect.zone->floorHeight + vRect.size.y),
+          Range(0, 0));
       }
-      // TODO
+      case CSpatialKind::SOFT_EDGE: {
+        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(c);
+        return make_pair(Range(se.zoneA->floorHeight, se.zoneB->floorHeight),
+          Range(se.zoneA->ceilingHeight, se.zoneB->ceilingHeight));
+      }
       // ...
       default:
-        return make_pair(-10000, 10000);
+        return make_pair(Range(-10000, 10000), Range(0, 0));
     }
   }
   else {
-    return make_pair(-10000, 10000);
+    return make_pair(Range(-10000, 10000), Range(0, 0));
   }
 }
 
@@ -635,9 +648,11 @@ list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(double camSpaceHAngle,
     const Intersection& X = **it;
 
     double y = X.distanceFromCamera * tan(vAngle);
-    auto range = getHeightRangeForEntity(X.entityId);
+    auto ranges = getHeightRangeForEntity(X.entityId);
 
-    if (isBetween(y, range.first - cam.height, range.second - cam.height)) {
+    if (isBetween(y, ranges.first.a - cam.height, ranges.first.b - cam.height)
+      || isBetween(y, ranges.second.a - cam.height, ranges.second.b - cam.height)) {
+
       result.push_back(std::move(*it));
     }
   }

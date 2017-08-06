@@ -35,6 +35,25 @@ typedef Vec2<double> Vec2f;
 typedef Vec2f Point;
 typedef Vec2f Size;
 
+struct Range {
+  Range()
+    : a(0), b(0) {}
+
+  Range(double a, double b)
+    : a(a), b(b) {}
+
+  double a;
+  double b;
+
+  bool operator==(const Range& rhs) const {
+    return a == rhs.a && b == rhs.b;
+  }
+
+  bool operator!=(const Range& rhs) const {
+    return !(*this == rhs);
+  }
+};
+
 Point operator+(const Point& lhs, const Point& rhs);
 Point operator-(const Point& lhs, const Point& rhs);
 Point operator/(const Point& lhs, double rhs);

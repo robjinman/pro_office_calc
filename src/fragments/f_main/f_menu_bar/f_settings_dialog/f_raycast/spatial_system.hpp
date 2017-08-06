@@ -79,7 +79,7 @@ class SpatialSystem : public System {
 
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
-    std::pair<double, double> getHeightRangeForEntity(entityId_t id) const;
+    std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
 
     inline CZone& getCurrentZone() const {
       return dynamic_cast<CZone&>(*m_components.at(sg.player->currentRegion));
