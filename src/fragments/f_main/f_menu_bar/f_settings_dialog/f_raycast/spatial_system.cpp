@@ -23,6 +23,8 @@ using std::list;
 using std::map;
 using std::set;
 using std::ostream;
+using std::pair;
+using std::make_pair;
 
 
 static const double GRID_CELL_SIZE = 25.0;
@@ -45,9 +47,7 @@ ostream& operator<<(ostream& os, CSpatialKind kind) {
 //===========================================
 void forEachConstZone(const CZone& zone, function<void(const CZone&)> fn) {
   fn(zone);
-  std::for_each(zone.children.begin(), zone.children.end(),
-    [&](const unique_ptr<CZone>& r) {
-
+  std::for_each(zone.children.begin(), zone.children.end(), [&](const unique_ptr<CZone>& r) {
     forEachConstZone(*r, fn);
   });
 }
@@ -57,9 +57,7 @@ void forEachConstZone(const CZone& zone, function<void(const CZone&)> fn) {
 //===========================================
 void forEachZone(CZone& zone, function<void(CZone&)> fn) {
   fn(zone);
-  std::for_each(zone.children.begin(), zone.children.end(),
-    [&](unique_ptr<CZone>& r) {
-
+  std::for_each(zone.children.begin(), zone.children.end(), [&](unique_ptr<CZone>& r) {
     forEachZone(*r, fn);
   });
 }
@@ -594,6 +592,57 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) cons
   });
 
   return intersections;
+}
+
+//===========================================
+// SpatialSystem::getHeightRangeForEntity
+//===========================================
+pair<double, double> SpatialSystem::getHeightRangeForEntity(entityId_t id) const {
+  auto it = m_components.find(id);
+  if (it != m_components.end()) {
+    const CSpatial& c = *it->second;
+
+    switch (c.kind) {
+      case CSpatialKind::V_RECT: {
+        const CVRect& vRect = dynamic_cast<const CVRect&>(c);
+        return make_pair(vRect.zone->floorHeight, vRect.zone->floorHeight + vRect.size.y);
+      }
+      // TODO
+      // ...
+      default:
+        return make_pair(-10000, 10000);
+    }
+  }
+  else {
+    return make_pair(-10000, 10000);
+  }
+}
+
+//===========================================
+// SpatialSystem::entitiesAlong3dRay
+//===========================================
+list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(double camSpaceHAngle,
+  double camSpaceVAngle) const {
+
+  const Camera& cam = sg.player->camera();
+
+  list<pIntersection_t> intersections = entitiesAlongRay(camSpaceHAngle);
+  double vAngle = cam.vAngle + camSpaceVAngle;
+
+  list<pIntersection_t> result;
+
+  for (auto it = intersections.begin(); it != intersections.end(); ++it) {
+    const Intersection& X = **it;
+
+    double y = X.distanceFromCamera * tan(vAngle);
+    auto range = getHeightRangeForEntity(X.entityId);
+
+    if (isBetween(y, range.first - cam.height, range.second - cam.height)) {
+      result.push_back(std::move(*it));
+    }
+  }
+
+  return result;
 }
 
 //===========================================

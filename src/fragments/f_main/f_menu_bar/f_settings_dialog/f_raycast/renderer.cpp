@@ -235,10 +235,6 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 
   list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
 
-  intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
-    return a->distanceFromCamera < b->distanceFromCamera;
-  });
-
   LineSegment projPlane(Point(cam.F, -rg.viewport.y / 2), Point(cam.F, rg.viewport.y * 0.5));
 
   Matrix m(cam.vAngle, Vec2f(0, 0));

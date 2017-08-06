@@ -139,7 +139,7 @@ void Player::shoot() {
 
     animationSystem.playAnimation(sprite, "shoot", false);
     inventorySystem.subtractFromBucket("ammo", 1);
-    damageSystem.damageAtIntersection(0, 1);
+    damageSystem.damageAtIntersection(0, 0, 1);
   }
 }
 

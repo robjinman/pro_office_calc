@@ -55,6 +55,8 @@ class SpatialSystem : public System {
 
     std::set<entityId_t> entitiesInRadius(const Point& pos, double radius) const;
     std::list<pIntersection_t> entitiesAlongRay(double camSpaceAngle) const;
+    std::list<pIntersection_t> entitiesAlong3dRay(double camSpaceHAngle,
+      double camSpaceVAngle) const;
 
     void vRotateCamera(double da);
     void hRotateCamera(double da);
@@ -77,6 +79,7 @@ class SpatialSystem : public System {
 
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
+    std::pair<double, double> getHeightRangeForEntity(entityId_t id) const;
 
     inline CZone& getCurrentZone() const {
       return dynamic_cast<CZone&>(*m_components.at(sg.player->currentRegion));
