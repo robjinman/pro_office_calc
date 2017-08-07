@@ -198,8 +198,8 @@ Vec2f normalise(const Vec2f& v);
 double normaliseAngle(double a);
 
 enum clipResult_t { CLIPPED_TO_TOP, CLIPPED_TO_BOTTOM, NOT_CLIPPED };
-double clipNumber(double x, const Size& range);
-clipResult_t clipNumber(double x, const Size& range, double& result);
+double clipNumber(double x, const Range& range);
+clipResult_t clipNumber(double x, const Range& range, double& result);
 
 #ifdef DEBUG
 #include <ostream>

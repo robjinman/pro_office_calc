@@ -5,6 +5,7 @@
 #include <array>
 #include <list>
 #include <set>
+#include <QPainter>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_graph.hpp"
 
@@ -17,15 +18,19 @@ typedef std::array<double, 10000> atanMap_t;
 
 class EntityManager;
 class Player;
+class SpatialSystem;
+class SpriteX;
 
 class Renderer {
   public:
-    Renderer(EntityManager& entityManager);
+    Renderer(EntityManager& entityManager, QImage& target);
 
-    void renderScene(QImage& target, const RenderGraph& rg, const Player& player);
+    void renderScene(const RenderGraph& rg, const Player& player);
 
   private:
     EntityManager& m_entityManager;
+
+    QImage& m_target;
 
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;

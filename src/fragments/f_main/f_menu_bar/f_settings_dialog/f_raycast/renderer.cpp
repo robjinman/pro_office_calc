@@ -192,6 +192,21 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
 }
 
 //===========================================
+// getShade
+//===========================================
+static inline double getShade(double distance) {
+  return clipNumber(distance * 0.2, Range(0, 255));
+}
+
+//===========================================
+// applyShade
+//===========================================
+static inline QRgb applyShade(const QRgb& c, double distance) {
+  double s = 1.0 - getShade(distance) / 255.0;
+  return qRgba(qRed(c) * s, qGreen(c) * s, qBlue(c) * s, qAlpha(c));
+}
+
+//===========================================
 // constructXWrapper
 //===========================================
 static XWrapper* constructXWrapper(const SpatialSystem& spatialSystem,
@@ -275,8 +290,8 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      auto wallAClip = clipNumber(wall.A.y, Size(wall_s0, wall_s1), wallX.slice.sliceBottom_wd);
-      auto wallBClip = clipNumber(wall.B.y, Size(wall_s0, wall_s1), wallX.slice.sliceTop_wd);
+      auto wallAClip = clipNumber(wall.A.y, Range(wall_s0, wall_s1), wallX.slice.sliceBottom_wd);
+      auto wallBClip = clipNumber(wall.B.y, Range(wall_s0, wall_s1), wallX.slice.sliceTop_wd);
 
       if (wallAClip == CLIPPED_TO_BOTTOM) {
         proj_w0 = subview0;
@@ -342,14 +357,14 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      auto bWallAClip = clipNumber(bottomWall.A.y, Size(wall_s0, wall_s1),
+      auto bWallAClip = clipNumber(bottomWall.A.y, Range(wall_s0, wall_s1),
         joinX.slice0.sliceBottom_wd);
-      auto bWallBClip = clipNumber(bottomWall.B.y, Size(wall_s0, wall_s1),
+      auto bWallBClip = clipNumber(bottomWall.B.y, Range(wall_s0, wall_s1),
         joinX.slice0.sliceTop_wd);
 
-      auto tWallAClip = clipNumber(topWall.A.y, Size(wall_s0, wall_s1),
+      auto tWallAClip = clipNumber(topWall.A.y, Range(wall_s0, wall_s1),
         joinX.slice1.sliceBottom_wd);
-      auto tWallBClip = clipNumber(topWall.B.y, Size(wall_s0, wall_s1), joinX.slice1.sliceTop_wd);
+      auto tWallBClip = clipNumber(topWall.B.y, Range(wall_s0, wall_s1), joinX.slice1.sliceTop_wd);
 
       Point p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
       double proj_bw0 = rotProjPlane.signedDistance(p.x);
@@ -433,14 +448,14 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       spriteX.slice.viewportBottom_wd = subview0;
       spriteX.slice.viewportTop_wd = subview1;
 
-      spriteX.slice.projSliceBottom_wd = clipNumber(proj_w0, Size(subview0, subview1));
-      spriteX.slice.projSliceTop_wd = clipNumber(proj_w1, Size(subview0, subview1));
+      spriteX.slice.projSliceBottom_wd = clipNumber(proj_w0, Range(subview0, subview1));
+      spriteX.slice.projSliceTop_wd = clipNumber(proj_w1, Range(subview0, subview1));
 
       double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
       double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
 
-      spriteX.slice.sliceBottom_wd = clipNumber(wall.A.y, Size(wall_s0, wall_s1));
-      spriteX.slice.sliceTop_wd = clipNumber(wall.B.y, Size(wall_s0, wall_s1));
+      spriteX.slice.sliceBottom_wd = clipNumber(wall.A.y, Range(wall_s0, wall_s1));
+      spriteX.slice.sliceTop_wd = clipNumber(wall.B.y, Range(wall_s0, wall_s1));
     }
 
     if (subview1 <= subview0) {
@@ -526,7 +541,7 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player
     Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-    pixels[screenX_px] = ceilingTex.image.pixel(texel.x, texel.y);
+    pixels[screenX_px] = applyShade(ceilingTex.image.pixel(texel.x, texel.y), d);
   }
 }
 
@@ -600,7 +615,7 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
     else {
       Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
       QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-      pixels[screenX_px] = floorTex.image.pixel(texel.x, texel.y);
+      pixels[screenX_px] = applyShade(floorTex.image.pixel(texel.x, texel.y), d);
     }
   }
 }
@@ -704,7 +719,7 @@ static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double cam
 // drawSlice
 //===========================================
 static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Player& player,
-  double F, double distanceAlongTarget, const Slice& slice, const string& texture,
+  double F, const Intersection& X, const Slice& slice, const string& texture,
   double screenX_px, const Size& viewport_px, double targetH_wd = 0) {
 
   double hWorldUnit_px = viewport_px.x / rg.viewport.x;
@@ -719,13 +734,14 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
     vector<QRect> srcRects;
     vector<QRectF> trgRects;
     sampleWallTexture(wallTex.image.rect(), player.camera().height, viewport_px, screenX_px,
-      hWorldUnit_px, vWorldUnit_px, targetH_wd, distanceAlongTarget, slice, wallTex.size_wd,
+      hWorldUnit_px, vWorldUnit_px, targetH_wd, X.distanceAlongTarget, slice, wallTex.size_wd,
       trgRects, srcRects);
 
     assert(srcRects.size() == trgRects.size());
 
     for (unsigned int i = 0; i < srcRects.size(); ++i) {
       painter.drawImage(trgRects[i], wallTex.image, srcRects[i]);
+      painter.fillRect(trgRects[i], QBrush(QColor(0, 0, 0, getShade(X.distanceFromCamera))));
     }
   }
 
@@ -736,11 +752,25 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 }
 
 //===========================================
+// shadeSlice
+//===========================================
+static void shadeSlice(QImage& target, double distance) {
+  for (int i = 0; i < target.width(); ++i) {
+    for (int j = 0; j < target.height(); ++j) {
+      QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+      if (qAlpha(pixels[i]) != 0) {
+        pixels[i] = applyShade(pixels[i], distance);
+      }
+    }
+  }
+}
+
+//===========================================
 // drawSprite
 //===========================================
-static void drawSprite(QPainter& painter, const CSprite& sprite, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const Player& player, const Size& viewport_px, const SpriteX& X,
-  double screenX_px) {
+void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
+  const CSprite& sprite, const SpatialSystem& spatialSystem, const RenderGraph& rg,
+  const Player& player, const Size& viewport_px, const SpriteX& X, double screenX_px) {
 
   const Camera& cam = player.camera();
 
@@ -764,15 +794,20 @@ static void drawSprite(QPainter& painter, const CSprite& sprite, const SpatialSy
     zone.floorHeight);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
-  painter.drawImage(trgRect, tex.image, srcRect);
+  QRect bufRect(0, 0, 1, trgRect.height());
+
+  sliceBuffer.fill(0);
+  bufferPainter.drawImage(bufRect, tex.image, srcRect);
+  shadeSlice(sliceBuffer, X.X->distanceFromCamera);
+  painter.drawImage(trgRect, sliceBuffer, bufRect);
 }
 
 //===========================================
 // drawWallDecal
 //===========================================
-static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const CWallDecal& decal, const WallX& X, int screenX_px,
-  const Size& viewport_px, double camHeight, double vWorldUnit_px) {
+static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
+  const SpatialSystem& spatialSystem, const RenderGraph& rg, const CWallDecal& decal,
+  const WallX& X, int screenX_px, const Size& viewport_px, double camHeight, double vWorldUnit_px) {
 
   const CVRect& vRect = getVRect(spatialSystem, decal);
 
@@ -809,7 +844,13 @@ static void drawWallDecal(QPainter& painter, const SpatialSystem& spatialSystem,
   QRect srcRect(i, 0, 1, decalTex.image.height());
   QRect trgRect(screenX_px, y1_px, 1, y0_px - y1_px);
 
-  painter.drawImage(trgRect, decalTex.image, srcRect);
+  double h = clipNumber(trgRect.height(), Range(0, sliceBuffer.height()));
+  QRect bufRect(0, 0, 1, h);
+
+  sliceBuffer.fill(0);
+  bufferPainter.drawImage(bufRect, decalTex.image, srcRect);
+  shadeSlice(sliceBuffer, X.X->distanceFromCamera);
+  painter.drawImage(trgRect, sliceBuffer, bufRect);
 }
 
 //===========================================
@@ -856,8 +897,9 @@ static void drawTextOverlay(QPainter& painter, const CTextOverlay& overlay, cons
 //===========================================
 // Renderer::Renderer
 //===========================================
-Renderer::Renderer(EntityManager& entityManager)
-  : m_entityManager(entityManager) {
+Renderer::Renderer(EntityManager& entityManager, QImage& target)
+  : m_entityManager(entityManager),
+    m_target(target) {
 
   for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
     m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
@@ -892,15 +934,20 @@ static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CWall&
 //===========================================
 // Renderer::renderScene
 //===========================================
-void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& player) {
+void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   const SpatialSystem& spatialSystem = m_entityManager
     .system<SpatialSystem>(ComponentKind::C_SPATIAL);
   const RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
   QPainter painter;
-  painter.begin(&target);
+  painter.begin(&m_target);
 
-  Size viewport_px(target.width(), target.height());
+  QPainter bufferPainter;
+  QImage sliceBuffer(1, m_target.height(), QImage::Format_ARGB32);
+
+  bufferPainter.begin(&sliceBuffer);
+
+  Size viewport_px(m_target.width(), m_target.height());
   const Camera& cam = player.camera();
 
   double hWorldUnit_px = viewport_px.x / rg.viewport.x;
@@ -923,59 +970,58 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
       if (X.kind == XWrapperKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(X);
 
-        ScreenSlice slice = drawSlice(painter, rg, player, cam.F, wallX.X->distanceAlongTarget,
-          wallX.slice, wallX.wall->texture, screenX_px, viewport_px);
+        ScreenSlice slice = drawSlice(painter, rg, player, cam.F, *wallX.X, wallX.slice,
+          wallX.wall->texture, screenX_px, viewport_px);
 
         CWallDecal* decal = getWallDecal(spatialSystem, *wallX.wall, wallX.X->distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(painter, spatialSystem, rg, *decal, wallX, screenX_px, viewport_px,
-            cam.height, vWorldUnit_px);
+          drawWallDecal(painter, bufferPainter, sliceBuffer, spatialSystem, rg, *decal, wallX,
+            screenX_px, viewport_px, cam.height, vWorldUnit_px);
         }
 
         CZone& zone = *wallX.hardEdge->zone;
         CRegion& region = *wallX.wall->region;
 
-        drawFloorSlice(target, spatialSystem, rg, player, &region, zone.floorHeight,
+        drawFloorSlice(m_target, spatialSystem, rg, player, &region, zone.floorHeight,
           wallX.X->point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
-          drawCeilingSlice(target, rg, player, &region, zone.ceilingHeight, wallX.X->point_world,
+          drawCeilingSlice(m_target, rg, player, &region, zone.ceilingHeight, wallX.X->point_world,
             slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
-          drawSkySlice(target, rg, player, slice, screenX_px);
+          drawSkySlice(m_target, rg, player, slice, screenX_px);
         }
       }
       else if (X.kind == XWrapperKind::JOIN) {
         const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
-        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, joinX.X->distanceAlongTarget,
-          joinX.slice0, joinX.join->bottomTexture, screenX_px, viewport_px);
+        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, *joinX.X, joinX.slice0,
+          joinX.join->bottomTexture, screenX_px, viewport_px);
 
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
 
-        drawFloorSlice(target, spatialSystem, rg, player, &nearRegion, joinX.nearZone->floorHeight,
+        drawFloorSlice(m_target, spatialSystem, rg, player, &nearRegion, joinX.nearZone->floorHeight,
           joinX.X->point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
           m_atanMap);
 
-        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, joinX.X->distanceAlongTarget,
-          joinX.slice1, joinX.join->topTexture, screenX_px, viewport_px,
-          joinX.farZone->ceilingHeight);
+        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, *joinX.X, joinX.slice1,
+          joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
 
         if (nearRegion.hasCeiling) {
-          drawCeilingSlice(target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
+          drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
             joinX.X->point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
             m_atanMap);
         }
         else {
-          drawSkySlice(target, rg, player, slice1, screenX_px);
+          drawSkySlice(m_target, rg, player, slice1, screenX_px);
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(painter, *spriteX.sprite, spatialSystem, rg, player, viewport_px, spriteX,
-          screenX_px);
+        drawSprite(painter, bufferPainter, sliceBuffer, *spriteX.sprite, spatialSystem, rg, player,
+          viewport_px, spriteX, screenX_px);
       }
     }
   }
@@ -990,5 +1036,6 @@ void Renderer::renderScene(QImage& target, const RenderGraph& rg, const Player& 
     }
   }
 
+  bufferPainter.end();
   painter.end();
 }

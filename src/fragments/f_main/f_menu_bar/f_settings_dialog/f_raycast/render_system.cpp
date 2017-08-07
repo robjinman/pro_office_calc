@@ -42,7 +42,7 @@ static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const C
 RenderSystem::RenderSystem(EntityManager& entityManager, QImage& target)
   : m_entityManager(entityManager),
     m_target(target),
-    m_renderer(entityManager) {}
+    m_renderer(entityManager, target) {}
 
 //===========================================
 // connectSubregions_r
@@ -114,7 +114,7 @@ void RenderSystem::render() {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   const Player& player = *spatialSystem.sg.player;
 
-  m_renderer.renderScene(m_target, rg, player);
+  m_renderer.renderScene(rg, player);
 }
 
 //===========================================

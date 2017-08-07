@@ -259,12 +259,12 @@ double normaliseAngle(double angle) {
 //===========================================
 // clipNumber
 //===========================================
-double clipNumber(double x, const Size& range) {
-  if (x < range.x) {
-    x = range.x;
+double clipNumber(double x, const Range& range) {
+  if (x < range.a) {
+    x = range.a;
   }
-  else if (x > range.y) {
-    x = range.y;
+  else if (x > range.b) {
+    x = range.b;
   }
   return x;
 }
@@ -272,13 +272,13 @@ double clipNumber(double x, const Size& range) {
 //===========================================
 // clipNumber
 //===========================================
-clipResult_t clipNumber(double x, const Size& range, double& result) {
-  if (x < range.x) {
-    result = range.x;
+clipResult_t clipNumber(double x, const Range& range, double& result) {
+  if (x < range.a) {
+    result = range.a;
     return CLIPPED_TO_BOTTOM;
   }
-  else if (x > range.y) {
-    result = range.y;
+  else if (x > range.b) {
+    result = range.b;
     return CLIPPED_TO_TOP;
   }
   else {
