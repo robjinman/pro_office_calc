@@ -5,11 +5,23 @@
 #include <string>
 #include <memory>
 #include <QSoundEffect>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
+#include <QMediaContent>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 
 
+struct SoundEffect {
+  QSoundEffect sound;
+  double volume = 1.0;
+};
+
+typedef std::unique_ptr<SoundEffect> pSoundEffect_t;
+
 class AudioManager {
   public:
+    AudioManager();
+
     void addSound(const std::string& name, const std::string& resourcePath);
     void addMusicTrack(const std::string& name, const std::string& resourcePath);
 
@@ -20,8 +32,15 @@ class AudioManager {
     void stopMusic();
     void setMusicVolume(double volume);
 
+    void setMasterVolume(double volume);
+
   private:
-    std::map<std::string, std::unique_ptr<QSoundEffect>> m_sounds;
+    QMediaPlayer m_mediaPlayer;
+    QMediaPlaylist m_playlist;
+    std::map<std::string, pSoundEffect_t> m_sounds;
+    std::map<std::string, QMediaContent> m_musicTracks;
+    double m_masterVolume;
+    double m_musicVolume;
 };
 
 

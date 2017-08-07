@@ -481,6 +481,13 @@ static void constructRootRegion(EntityManager& em, AudioManager& audioManager,
   audioManager.addSound("pistol_shoot", "data/pistol_shoot.wav");
   audioManager.addSound("monster_hurt", "data/monster_hurt.wav");
   audioManager.addSound("monster_death", "data/monster_death.wav");
+
+  audioManager.addMusicTrack("loop1", "data/loop1.mp3");
+  audioManager.addMusicTrack("loop2", "data/loop2.mp3");
+  audioManager.addMusicTrack("loop3", "data/loop3.mp3");
+
+  audioManager.setMusicVolume(0.25);
+  audioManager.playMusic("loop3");
 }
 
 //===========================================

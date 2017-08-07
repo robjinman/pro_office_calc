@@ -1,4 +1,5 @@
 #include <QFileInfo>
+#include <QUrl>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 
 
@@ -8,13 +9,23 @@ using std::unique_ptr;
 
 
 //===========================================
+// AudioManager::AudioManager
+//===========================================
+AudioManager::AudioManager() {
+  m_musicVolume = 0.5;
+  setMasterVolume(0.5);
+
+  m_mediaPlayer.setPlaylist(&m_playlist);
+}
+
+//===========================================
 // AudioManager::addSound
 //===========================================
 void AudioManager::addSound(const string& name, const string& resourcePath) {
-  unique_ptr<QSoundEffect> sound(new QSoundEffect);
+  pSoundEffect_t sound(new SoundEffect);
 
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
-  sound->setSource(QUrl::fromLocalFile(absPath));
+  sound->sound.setSource(QUrl::fromLocalFile(absPath));
 
   m_sounds.insert(make_pair(name, std::move(sound)));
 }
@@ -23,7 +34,8 @@ void AudioManager::addSound(const string& name, const string& resourcePath) {
 // AudioManager::addMusicTrack
 //===========================================
 void AudioManager::addMusicTrack(const string& name, const string& resourcePath) {
-
+  QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
+  m_musicTracks[name] = QMediaContent(QUrl::fromLocalFile(absPath));
 }
 
 //===========================================
@@ -32,7 +44,10 @@ void AudioManager::addMusicTrack(const string& name, const string& resourcePath)
 void AudioManager::playSound(const string& name) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
-    it->second->play();
+    SoundEffect& sound = *it->second;
+
+    sound.sound.setVolume(m_masterVolume * sound.volume);
+    sound.sound.play();
   }
 }
 
@@ -42,7 +57,10 @@ void AudioManager::playSound(const string& name) {
 void AudioManager::playSoundAtPos(const string& name, const Point& pos) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) { // TODO
-    it->second->play();
+    SoundEffect& sound = *it->second;
+
+    sound.sound.setVolume(m_masterVolume * sound.volume);
+    sound.sound.play();
   }
 }
 
@@ -50,19 +68,36 @@ void AudioManager::playSoundAtPos(const string& name, const Point& pos) {
 // AudioManager::playMusic
 //===========================================
 void AudioManager::playMusic(const string& name) {
+  auto it = m_musicTracks.find(name);
 
+  if (it != m_musicTracks.end()) {
+    m_playlist.clear();
+    m_playlist.addMedia(it->second);
+    m_playlist.setPlaybackMode(QMediaPlaylist::Loop);
+
+    m_mediaPlayer.play();
+  }
 }
 
 //===========================================
 // AudioManager::stopMusic
 //===========================================
 void AudioManager::stopMusic() {
-
+  m_mediaPlayer.stop();
 }
 
 //===========================================
 // AudioManager::setMusicVolume
 //===========================================
 void AudioManager::setMusicVolume(double volume) {
+  m_musicVolume = volume;
+  m_mediaPlayer.setVolume(m_masterVolume * m_musicVolume * 100);
+}
 
+//===========================================
+// AudioManager::setMasterVolume
+//===========================================
+void AudioManager::setMasterVolume(double volume) {
+  m_masterVolume = volume;
+  setMusicVolume(m_musicVolume);
 }
