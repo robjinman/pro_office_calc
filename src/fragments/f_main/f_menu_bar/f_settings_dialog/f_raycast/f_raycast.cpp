@@ -32,7 +32,8 @@ const int FRAME_RATE = 60;
 // FRaycast::FRaycast
 //===========================================
 FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FRaycast", parent_, parentData_, m_data) {
+  : Fragment("FRaycast", parent_, parentData_, m_data),
+    m_audioManager(m_entityManager) {
 
   auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();

@@ -18,9 +18,11 @@ struct SoundEffect {
 
 typedef std::unique_ptr<SoundEffect> pSoundEffect_t;
 
+class EntityManager;
+
 class AudioManager {
   public:
-    AudioManager();
+    AudioManager(EntityManager& entityManager);
 
     void addSound(const std::string& name, const std::string& resourcePath);
     void addMusicTrack(const std::string& name, const std::string& resourcePath);
@@ -35,6 +37,7 @@ class AudioManager {
     void setMasterVolume(double volume);
 
   private:
+    EntityManager& m_entityManager;
     QMediaPlayer m_mediaPlayer;
     QMediaPlaylist m_playlist;
     std::map<std::string, pSoundEffect_t> m_sounds;

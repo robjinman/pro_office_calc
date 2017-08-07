@@ -1,6 +1,8 @@
 #include <QFileInfo>
 #include <QUrl>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 
 
 using std::make_pair;
@@ -11,7 +13,9 @@ using std::unique_ptr;
 //===========================================
 // AudioManager::AudioManager
 //===========================================
-AudioManager::AudioManager() {
+AudioManager::AudioManager(EntityManager& entityManager)
+  : m_entityManager(entityManager) {
+
   m_musicVolume = 0.5;
   setMasterVolume(0.5);
 
@@ -56,10 +60,16 @@ void AudioManager::playSound(const string& name) {
 //===========================================
 void AudioManager::playSoundAtPos(const string& name, const Point& pos) {
   auto it = m_sounds.find(name);
-  if (it != m_sounds.end()) { // TODO
+  if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    sound.sound.setVolume(m_masterVolume * sound.volume);
+    const SpatialSystem& spatialSystem = m_entityManager
+      .system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+    double d = distance(spatialSystem.sg.player->camera().pos, pos);
+    double v = 1.0 - clipNumber(d, Range(0, 2000)) / 2000;
+
+    sound.sound.setVolume(m_masterVolume * sound.volume * v);
     sound.sound.play();
   }
 }
