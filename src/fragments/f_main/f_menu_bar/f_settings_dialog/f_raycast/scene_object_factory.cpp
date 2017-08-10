@@ -16,6 +16,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "event.hpp"
 #include "exception.hpp"
@@ -208,6 +209,8 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+  DamageSystem& damageSystem = em.system<DamageSystem>(ComponentKind::C_DAMAGE);
+  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
@@ -246,6 +249,15 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
   })));
 
   animationSystem.addComponent(pCAnimation_t(shoot));
+
+  player->body = Component::getNextId();
+
+  CVRect* vRect = new CVRect(player->body, zone.entityId(), Size(30, player->getTallness())); // TODO
+  vRect->setTransform(camera->matrix());
+  spatialSystem.addComponent(pCSpatial_t(vRect));
+
+  CDamage* damage = new CDamage(player->body, 10, 10);
+  damageSystem.addComponent(pCDamage_t(damage));
 
   return player;
 }

@@ -28,6 +28,7 @@ class Player {
 
     entityId_t crosshair;
     entityId_t sprite;
+    entityId_t body;
 
     bool aboveGround(const CZone& zone) const;
     bool belowGround(const CZone& zone) const;
@@ -35,6 +36,7 @@ class Player {
     double feetHeight() const;
     double headHeight() const;
 
+    double getTallness() const;
     void changeTallness(double delta);
     void setFeetHeight(double h);
     void setEyeHeight(double h);
@@ -42,8 +44,7 @@ class Player {
     void changeHeight(const CZone& zone, double deltaH);
 
     const Point& pos() const;
-    void setPosition(const Point& pos);
-    void move(const Vec2f& ds);
+    void setPosition(entityId_t zoneId, const Point& pos);
 
     void hRotate(double da);
     void vRotate(double da);

@@ -27,9 +27,9 @@ struct Intersection {
 
   CSpatialKind kind;
   entityId_t entityId;
-  Point point_cam;
-  Point point_world;
-  double distanceFromCamera;
+  Point point_rel;
+  Point point_wld;
+  double distanceFromOrigin;
   double distanceAlongTarget;
 };
 
@@ -53,15 +53,27 @@ class SpatialSystem : public System {
     virtual Component& getComponent(entityId_t entityId) const override;
     virtual void removeEntity(entityId_t id) override;
 
+    void moveEntity(entityId_t id, const Vec2f& v, double collisionRadius);
+
     std::set<entityId_t> entitiesInRadius(const Point& pos, double radius) const;
+
+    std::list<pIntersection_t> entitiesAlongRay(const CZone& zone, const Point& pos, double angle,
+      const Matrix& matrix) const;
     std::list<pIntersection_t> entitiesAlongRay(double camSpaceAngle) const;
+
+    std::list<pIntersection_t> entitiesAlong3dRay(const CZone& zone, const Point& pos,
+      double hAngle, double vAngle, const Matrix& matrix) const;
     std::list<pIntersection_t> entitiesAlong3dRay(double camSpaceHAngle,
       double camSpaceVAngle) const;
 
     void vRotateCamera(double da);
     void hRotateCamera(double da);
-    void translateCamera(const Vec2f& dir);
+    void movePlayer(const Vec2f& v);
+
+    // TODO: Move this
     void jump();
+
+    // TODO: Move this
     void addTween(const Tween& tween, const char* name = nullptr);
 
     virtual ~SpatialSystem() override;

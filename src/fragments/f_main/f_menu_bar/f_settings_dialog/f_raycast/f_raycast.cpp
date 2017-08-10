@@ -210,7 +210,7 @@ void FRaycast::tick() {
 
   if (v.x != 0 || v.y != 0) {
     double ds = 300 / FRAME_RATE;
-    spatialSystem.translateCamera(normalise(v) * ds);
+    spatialSystem.movePlayer(normalise(v) * ds);
   }
 
   if (m_keyStates[Qt::Key_Left]) {
@@ -226,8 +226,10 @@ void FRaycast::tick() {
     // Y-axis is top to bottom
     Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
 
-    QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
-    m_cursor = centre;
+    if (v.x != 0 || v.y != 0) {
+      QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
+      m_cursor = centre;
+    }
 
     if (fabs(v.x) > 0) {
       double da = 0.0008 * PI * v.x;

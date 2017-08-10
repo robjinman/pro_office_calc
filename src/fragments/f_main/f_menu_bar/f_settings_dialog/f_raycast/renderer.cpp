@@ -263,6 +263,10 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
   const CZone* zone = &dynamic_cast<const CZone&>(spatialSystem.getComponent(player.currentRegion));
   int last = -1;
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
+    if (!renderSystem.hasComponent((*it)->entityId)) {
+      continue;
+    }
+
     ++last;
     XWrapper* X = constructXWrapper(spatialSystem, renderSystem, std::move(*it));
     result.intersections.push_back(pXWrapper_t(X));
@@ -274,7 +278,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 
       double floorHeight = z.floorHeight;
       double targetHeight = z.ceilingHeight - z.floorHeight;
-      const Point& pt = wallX.X->point_cam;
+      const Point& pt = wallX.X->point_rel;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + targetHeight));
@@ -326,7 +330,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       joinX.nearZone = zone;
       joinX.farZone = nextZone;
 
-      const Point& pt = joinX.X->point_cam;
+      const Point& pt = joinX.X->point_rel;
 
       double floorDiff = nextZone->floorHeight - zone->floorHeight;
       double ceilingDiff = zone->ceilingHeight - nextZone->ceilingHeight;
@@ -432,7 +436,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       SpriteX& spriteX = dynamic_cast<SpriteX&>(*X);
 
       double floorHeight = zone->floorHeight;
-      const Point& pt = spriteX.X->point_cam;
+      const Point& pt = spriteX.X->point_rel;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + spriteX.vRect->size.y));
@@ -741,7 +745,7 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 
     for (unsigned int i = 0; i < srcRects.size(); ++i) {
       painter.drawImage(trgRects[i], wallTex.image, srcRects[i]);
-      painter.fillRect(trgRects[i], QBrush(QColor(0, 0, 0, getShade(X.distanceFromCamera))));
+      painter.fillRect(trgRects[i], QBrush(QColor(0, 0, 0, getShade(X.distanceFromOrigin))));
     }
   }
 
@@ -798,7 +802,7 @@ void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
 
   sliceBuffer.fill(0);
   bufferPainter.drawImage(bufRect, tex.image, srcRect);
-  shadeSlice(sliceBuffer, X.X->distanceFromCamera);
+  shadeSlice(sliceBuffer, X.X->distanceFromOrigin);
   painter.drawImage(trgRect, sliceBuffer, bufRect);
 }
 
@@ -849,7 +853,7 @@ static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sl
 
   sliceBuffer.fill(0);
   bufferPainter.drawImage(bufRect, decalTex.image, srcRect);
-  shadeSlice(sliceBuffer, X.X->distanceFromCamera);
+  shadeSlice(sliceBuffer, X.X->distanceFromOrigin);
   painter.drawImage(trgRect, sliceBuffer, bufRect);
 }
 
@@ -983,10 +987,10 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         CRegion& region = *wallX.wall->region;
 
         drawFloorSlice(m_target, spatialSystem, rg, player, &region, zone.floorHeight,
-          wallX.X->point_world, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
-          drawCeilingSlice(m_target, rg, player, &region, zone.ceilingHeight, wallX.X->point_world,
+          drawCeilingSlice(m_target, rg, player, &region, zone.ceilingHeight, wallX.X->point_wld,
             slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
@@ -1002,16 +1006,16 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
 
-        drawFloorSlice(m_target, spatialSystem, rg, player, &nearRegion, joinX.nearZone->floorHeight,
-          joinX.X->point_world, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
-          m_atanMap);
+        drawFloorSlice(m_target, spatialSystem, rg, player, &nearRegion,
+          joinX.nearZone->floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd,
+          vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, *joinX.X, joinX.slice1,
           joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
 
         if (nearRegion.hasCeiling) {
           drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
-            joinX.X->point_world, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
+            joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
             m_atanMap);
         }
         else {

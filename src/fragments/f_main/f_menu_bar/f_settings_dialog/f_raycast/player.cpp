@@ -46,6 +46,13 @@ double Player::headHeight() const {
 }
 
 //===========================================
+// Player::getTallness
+//===========================================
+double Player::getTallness() const {
+  return m_tallness;
+}
+
+//===========================================
 // Player::changeTallness
 //===========================================
 void Player::changeTallness(double delta) {
@@ -99,15 +106,9 @@ const Point& Player::pos() const {
 //===========================================
 // Player::setPosition
 //===========================================
-void Player::setPosition(const Point& pos) {
+void Player::setPosition(entityId_t zoneId, const Point& pos) {
   m_camera->pos = pos;
-}
-
-//===========================================
-// Player::move
-//===========================================
-void Player::move(const Vec2f& ds) {
-  m_camera->pos = m_camera->pos + ds;
+  currentRegion = zoneId;
 }
 
 //===========================================

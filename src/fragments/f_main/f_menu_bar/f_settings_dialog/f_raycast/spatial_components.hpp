@@ -36,24 +36,23 @@ typedef std::unique_ptr<CSpatial> pCSpatial_t;
 
 class CZone;
 
-class CVRect : public CSpatial {
-  public:
-    CVRect(entityId_t entityId, entityId_t parentId, const Size& size)
-      : CSpatial(CSpatialKind::V_RECT, entityId, parentId),
-        size(size) {}
+struct CVRect : public CSpatial {
+  CVRect(entityId_t entityId, entityId_t parentId, const Size& size)
+    : CSpatial(CSpatialKind::V_RECT, entityId, parentId),
+      size(size) {}
 
-    void setTransform(const Matrix& m) {
-      pos.x = m.tx();
-      pos.y = m.ty();
-      angle = m.a();
-    }
+  void setTransform(const Matrix& m) {
+    pos.x = m.tx();
+    pos.y = m.ty();
+    angle = m.a();
+  }
 
-    CZone* zone;
-    Vec2f pos;
-    double angle;
-    Size size;
+  CZone* zone = nullptr;
+  Vec2f pos;
+  double angle;
+  Size size;
 
-    virtual ~CVRect() override {}
+  virtual ~CVRect() override {}
 };
 
 typedef std::unique_ptr<CVRect> pCVRect_t;
@@ -111,7 +110,7 @@ struct CHardEdge : public CEdge {
   CHardEdge(entityId_t entityId, entityId_t parentId)
     : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
 
-  CZone* zone;
+  CZone* zone = nullptr;
   std::list<pCVRect_t> vRects;
 
   double height() const {
