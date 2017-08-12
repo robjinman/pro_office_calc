@@ -53,7 +53,7 @@ class SpatialSystem : public System {
     virtual Component& getComponent(entityId_t entityId) const override;
     virtual void removeEntity(entityId_t id) override;
 
-    void moveEntity(entityId_t id, const Vec2f& v, double collisionRadius);
+    void moveEntity(entityId_t id, Vec2f dv);
 
     std::set<entityId_t> entitiesInRadius(const Point& pos, double radius) const;
 

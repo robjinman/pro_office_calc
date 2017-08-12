@@ -11,6 +11,7 @@ const double PLAYER_STEP_HEIGHT = 16.0;
 
 
 class CZone;
+class CVRect;
 class Camera;
 class EntityManager;
 class AudioManager;
@@ -18,17 +19,16 @@ class AudioManager;
 class Player {
   public:
     Player(EntityManager& entityManager, AudioManager& audioManager, double tallness,
-      std::unique_ptr<Camera> camera);
+      std::unique_ptr<Camera> camera, CVRect& body);
 
     double vVelocity = 0;
     double activationRadius = 100.0;
-    double collisionRadius = 10.0;
     double collectionRadius = 50.0;
     entityId_t currentRegion = -1;
 
     entityId_t crosshair;
     entityId_t sprite;
-    entityId_t body;
+    CVRect& body;
 
     bool aboveGround(const CZone& zone) const;
     bool belowGround(const CZone& zone) const;

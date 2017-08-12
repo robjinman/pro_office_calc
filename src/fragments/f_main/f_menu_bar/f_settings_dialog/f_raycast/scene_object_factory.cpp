@@ -202,8 +202,10 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 // constructPlayer
 //===========================================
 static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
-  const parser::Object& obj, double frameRate, const CZone& zone, const Matrix& parentTransform,
+  const parser::Object& obj, double frameRate, CZone& zone, const Matrix& parentTransform,
   const Size& viewport) {
+
+  const double COLLISION_RADIUS = 10;
 
   DBG_PRINT("Constructing Player\n");
 
@@ -218,7 +220,17 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
   camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
   camera->height = tallness + zone.floorHeight;
 
-  Player* player = new Player(em, audioManager, tallness, unique_ptr<Camera>(camera));
+  entityId_t bodyId = Component::getNextId();
+
+  CVRect* body = new CVRect(bodyId, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
+  body->setTransform(camera->matrix());
+  body->zone = &zone;
+  spatialSystem.addComponent(pCSpatial_t(body));
+
+  CDamage* damage = new CDamage(bodyId, 10, 10);
+  damageSystem.addComponent(pCDamage_t(damage));
+
+  Player* player = new Player(em, audioManager, tallness, unique_ptr<Camera>(camera), *body);
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 
@@ -249,15 +261,6 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
   })));
 
   animationSystem.addComponent(pCAnimation_t(shoot));
-
-  player->body = Component::getNextId();
-
-  CVRect* vRect = new CVRect(player->body, zone.entityId(), Size(30, player->getTallness())); // TODO
-  vRect->setTransform(camera->matrix());
-  spatialSystem.addComponent(pCSpatial_t(vRect));
-
-  CDamage* damage = new CDamage(player->body, 10, 10);
-  damageSystem.addComponent(pCDamage_t(damage));
 
   return player;
 }

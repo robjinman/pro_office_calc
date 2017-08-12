@@ -11,8 +11,9 @@
 // Player::Player
 //===========================================
 Player::Player(EntityManager& entityManager, AudioManager& audioManager, double tallness,
-  std::unique_ptr<Camera> camera)
-  : m_entityManager(entityManager),
+  std::unique_ptr<Camera> camera, CVRect& body)
+  : body(body),
+    m_entityManager(entityManager),
     m_audioManager(audioManager),
     m_camera(std::move(camera)),
     m_tallness(tallness) {}

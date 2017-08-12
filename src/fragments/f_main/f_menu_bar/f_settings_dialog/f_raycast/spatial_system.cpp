@@ -72,11 +72,13 @@ static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
 //===========================================
 // canStepAcross
 //===========================================
-static bool canStepAcross(const Player& player, const CZone& currentZone, const CSoftEdge& se) {
+static bool canStepAcross(const CVRect& body, double height, const CZone& currentZone,
+  const CSoftEdge& se) {
+
   CZone* nextZone = getNextZone(currentZone, se);
 
-  bool canStep = nextZone->floorHeight - player.feetHeight() <= PLAYER_STEP_HEIGHT;
-  bool hasHeadroom = player.headHeight() < nextZone->ceilingHeight;
+  bool canStep = nextZone->floorHeight - height <= PLAYER_STEP_HEIGHT;
+  bool hasHeadroom = height + body.size.y < nextZone->ceilingHeight;
 
   return canStep && hasHeadroom;
 }
@@ -84,7 +86,9 @@ static bool canStepAcross(const Player& player, const CZone& currentZone, const 
 //===========================================
 // intersectHardEdge
 //===========================================
-static bool intersectHardEdge(const CZone& zone, const Circle& circle, const Player& player) {
+static bool intersectHardEdge(const CZone& zone, const Circle& circle, const CVRect& body,
+  double height) {
+
   bool b = false;
 
   forEachConstZone(zone, [&](const CZone& r) {
@@ -100,7 +104,7 @@ static bool intersectHardEdge(const CZone& zone, const Circle& circle, const Pla
             continue;
           }
 
-          if (canStepAcross(player, zone, se)) {
+          if (canStepAcross(body, height, zone, se)) {
             continue;
           }
         }
@@ -122,8 +126,8 @@ static bool intersectHardEdge(const CZone& zone, const Circle& circle, const Pla
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& player, double radius,
-  const Vec2f& dv) {
+static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body, double height,
+  double radius, const Vec2f& dv) {
 
   Circle circle{camPos + dv, radius};
   LineSegment ray(camPos, camPos + dv);
@@ -153,7 +157,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
               continue;
             }
 
-            if (canStepAcross(player, zone, se)) {
+            if (canStepAcross(body, height, zone, se)) {
               continue;
             }
           }
@@ -164,7 +168,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const Player& play
           dv_.y = 0;
           dv_ = m.inverse() * dv_;
 
-          if (intersectHardEdge(zone, Circle{camPos + dv_, radius}, player)) {
+          if (intersectHardEdge(zone, Circle{camPos + dv_, radius}, body, height)) {
             dv_ = Vec2f(0, 0);
           }
           else {
@@ -241,8 +245,69 @@ void SpatialSystem::hRotateCamera(double da) {
 //===========================================
 // SpatialSystem::moveEntity
 //===========================================
-void moveEntity(entityId_t id, const Vec2f& v, double collisionRadius) {
-  // TODO
+void SpatialSystem::moveEntity(entityId_t id, Vec2f dv) {
+  // Currently, only VRects can be moved
+  auto it = m_components.find(id);
+  if (it != m_components.end()) {
+    CSpatial& c = *it->second;
+    if (c.kind == CSpatialKind::V_RECT) {
+      CVRect& body = dynamic_cast<CVRect&>(c);
+      CZone& currentZone = getCurrentZone();
+
+      double radius = body.size.x * 0.5;
+
+      dv = getDelta(currentZone, body.pos, body, currentZone.floorHeight, radius, dv);
+      Circle circle{body.pos + dv, radius};
+
+      assert(currentZone.parent != nullptr);
+
+      bool abortLoop = false;
+      forEachConstZone(*currentZone.parent, [&](const CZone& zone) {
+        if (abortLoop) {
+          return;
+        }
+
+        int nIntersections = 0;
+        double nearestX = 999999.9;
+        CZone* nextZone = nullptr;
+        Point p;
+
+        for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
+          const CEdge& edge = **it;
+
+          if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+            assert(edge.kind == CSpatialKind::SOFT_EDGE);
+            const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+
+            LineSegment ray(body.pos, body.pos + dv);
+            Point p_;
+            bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
+
+            if (crossesLine) {
+              ++nIntersections;
+
+              double dist = distance(body.pos, p_);
+              if (dist < nearestX) {
+                nextZone = getNextZone(currentZone, se);
+                p = p_;
+
+                nearestX = dist;
+              }
+            }
+          }
+        }
+
+        if (nIntersections > 0) {
+          body.zone = nextZone;
+          body.pos = p;
+          dv = dv * 0.00001;
+          abortLoop = true;
+        }
+      });
+
+      body.pos = body.pos + dv;
+    }
+  }
 }
 
 //===========================================
@@ -254,59 +319,8 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
   Vec2f dv(cos(cam.angle) * v.x - sin(cam.angle) * v.y,
     sin(cam.angle) * v.x + cos(cam.angle) * v.y);
 
-  double radius = sg.player->collisionRadius;
-
-  CZone& currentZone = getCurrentZone();
-
-  dv = getDelta(currentZone, cam.pos, *sg.player, radius, dv);
-  Circle circle{cam.pos + dv, radius};
-
-  assert(currentZone.parent != nullptr);
-
-  bool abortLoop = false;
-  forEachConstZone(*currentZone.parent, [&](const CZone& zone) {
-    if (abortLoop) {
-      return;
-    }
-
-    int nIntersections = 0;
-    double nearestX = 999999.9;
-    CZone* nextZone = nullptr;
-    Point p;
-
-    for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
-      const CEdge& edge = **it;
-
-      if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        assert(edge.kind == CSpatialKind::SOFT_EDGE);
-        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
-
-        LineSegment ray(cam.pos, cam.pos + dv);
-        Point p_;
-        bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
-
-        if (crossesLine) {
-          ++nIntersections;
-
-          double dist = distance(cam.pos, p_);
-          if (dist < nearestX) {
-            nextZone = getNextZone(currentZone, se);
-            p = p_;
-
-            nearestX = dist;
-          }
-        }
-      }
-    }
-
-    if (nIntersections > 0) {
-      sg.player->setPosition(nextZone->entityId(), p);
-      dv = dv * 0.00001;
-      abortLoop = true;
-    }
-  });
-
-  sg.player->setPosition(sg.player->currentRegion, sg.player->pos() + dv);
+  moveEntity(sg.player->body.entityId(), dv);
+  sg.player->setPosition(sg.player->body.zone->entityId(), sg.player->body.pos);
 
   playerBounce(*this, m_frameRate);
 
