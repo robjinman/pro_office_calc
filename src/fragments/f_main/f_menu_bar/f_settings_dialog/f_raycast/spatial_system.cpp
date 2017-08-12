@@ -245,7 +245,7 @@ void SpatialSystem::hRotateCamera(double da) {
 //===========================================
 // SpatialSystem::moveEntity
 //===========================================
-void SpatialSystem::moveEntity(entityId_t id, Vec2f dv) {
+void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor) {
   // Currently, only VRects can be moved
   auto it = m_components.find(id);
   if (it != m_components.end()) {
@@ -256,7 +256,9 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv) {
 
       double radius = body.size.x * 0.5;
 
-      dv = getDelta(currentZone, body.pos, body, currentZone.floorHeight, radius, dv);
+      dv = getDelta(currentZone, body.pos, body, currentZone.floorHeight + heightAboveFloor, radius,
+        dv);
+
       Circle circle{body.pos + dv, radius};
 
       assert(currentZone.parent != nullptr);
@@ -314,24 +316,25 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv) {
 // SpatialSystem::movePlayer
 //===========================================
 void SpatialSystem::movePlayer(const Vec2f& v) {
-  const Camera& cam = sg.player->camera();
+  Player& player = *sg.player;
+  const Camera& cam = player.camera();
 
   Vec2f dv(cos(cam.angle) * v.x - sin(cam.angle) * v.y,
     sin(cam.angle) * v.x + cos(cam.angle) * v.y);
 
-  moveEntity(sg.player->body.entityId(), dv);
-  sg.player->setPosition(sg.player->body.zone->entityId(), sg.player->body.pos);
+  moveEntity(player.body.entityId(), dv, player.feetHeight() - player.body.zone->floorHeight);
+  player.setPosition(player.body.zone->entityId(), player.body.pos);
 
   playerBounce(*this, m_frameRate);
 
-  Point pos = sg.player->pos();
+  Point pos = player.pos();
   Vec2i cell(pos.x / GRID_CELL_SIZE, pos.y / GRID_CELL_SIZE);
 
   if (cell != m_playerCell) {
     m_playerCell = cell;
 
     GameEvent e("playerMove");
-    e.entitiesInRange = entitiesInRadius(sg.player->pos(), sg.player->collectionRadius);
+    e.entitiesInRange = entitiesInRadius(player.pos(), player.collectionRadius);
 
     m_entityManager.broadcastEvent(e);
   }
