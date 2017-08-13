@@ -111,7 +111,6 @@ class CSprite : public CRender {
       return texViews[idx];
     }
 
-    CRegion* region;
     std::string texture;
     std::vector<QRectF> texViews;
 

@@ -209,7 +209,7 @@ void FRaycast::tick() {
   }
 
   if (v.x != 0 || v.y != 0) {
-    double ds = 300 / FRAME_RATE;
+    double ds = 300.0 / FRAME_RATE;
     spatialSystem.movePlayer(normalise(v) * ds);
   }
 

@@ -35,6 +35,18 @@ struct Intersection {
 
 typedef std::unique_ptr<Intersection> pIntersection_t;
 
+struct EChangedZone : public GameEvent {
+  EChangedZone(entityId_t entityId, entityId_t oldZone, entityId_t newZone)
+    : GameEvent("entityChangedZone"),
+      entityId(entityId),
+      oldZone(oldZone),
+      newZone(newZone) {}
+
+  entityId_t entityId;
+  entityId_t oldZone;
+  entityId_t newZone;
+};
+
 class EntityManager;
 
 class SpatialSystem : public System {
@@ -91,6 +103,7 @@ class SpatialSystem : public System {
 
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
+    void crossZones(SceneGraph& sg, entityId_t entityId, entityId_t oldZone, entityId_t newZone);
     std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
 
     inline CZone& getCurrentZone() const {

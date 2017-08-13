@@ -20,7 +20,7 @@ class RenderSystem : public System {
     void render();
 
     virtual void update() override {}
-    virtual void handleEvent(const GameEvent& event) override {}
+    virtual void handleEvent(const GameEvent& event) override;
 
     virtual void addComponent(pComponent_t component) override;
     virtual bool hasComponent(entityId_t entityId) const override;
@@ -37,6 +37,7 @@ class RenderSystem : public System {
 
     bool isRoot(const CRender& c) const;
     void removeEntity_r(entityId_t id);
+    void crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t oldZone, entityId_t newZone);
 };
 
 

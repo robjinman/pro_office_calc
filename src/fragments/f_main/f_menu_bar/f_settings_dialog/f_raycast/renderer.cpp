@@ -23,6 +23,7 @@ using std::vector;
 using std::array;
 using std::unique_ptr;
 using std::function;
+using std::for_each;
 
 
 static const double ATAN_MIN = -10.0;
@@ -51,10 +52,10 @@ struct XWrapper {
   virtual ~XWrapper() {}
 };
 
-typedef std::unique_ptr<XWrapper> pXWrapper_t;
+typedef unique_ptr<XWrapper> pXWrapper_t;
 
 struct CastResult {
-  std::list<pXWrapper_t> intersections;
+  list<pXWrapper_t> intersections;
 };
 
 struct Slice {
@@ -133,7 +134,7 @@ static inline CHRect& getHRect(const SpatialSystem& spatialSystem, const CFloorD
 //===========================================
 void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> fn) {
   fn(region);
-  std::for_each(region.children.begin(), region.children.end(), [&](const unique_ptr<CRegion>& r) {
+  for_each(region.children.begin(), region.children.end(), [&](const unique_ptr<CRegion>& r) {
     forEachConstCRegion(*r, fn);
   });
 }
@@ -143,7 +144,7 @@ void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> f
 //===========================================
 void forEachCRegion(CRegion& region, function<void(CRegion&)> fn) {
   fn(region);
-  std::for_each(region.children.begin(), region.children.end(), [&](unique_ptr<CRegion>& r) {
+  for_each(region.children.begin(), region.children.end(), [&](unique_ptr<CRegion>& r) {
     forEachCRegion(*r, fn);
   });
 }
@@ -792,7 +793,7 @@ void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
   int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
   int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
 
-  const CZone& zone = getZone(spatialSystem, *sprite.region);
+  const CZone& zone = *vRect.zone;
 
   QRect srcRect = sampleSpriteTexture(frame, X, cam.height, vRect.size.x, vRect.size.y,
     zone.floorHeight);

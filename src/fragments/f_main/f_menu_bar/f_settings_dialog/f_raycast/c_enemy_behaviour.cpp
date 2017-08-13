@@ -8,15 +8,25 @@
 //===========================================
 // CEnemyBehaviour::CEnemyBehaviour
 //===========================================
-CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager)
+CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager,
+  double frameRate)
   : CBehaviour(entityId),
-    m_entityManager(entityManager) {}
+    m_entityManager(entityManager),
+    m_frameRate(frameRate) {}
 
 //===========================================
 // CEnemyBehaviour::update
 //===========================================
 void CEnemyBehaviour::update() {
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
 
+  const Point& target = spatialSystem.sg.player->pos();
+
+  double speed = 100.0 / m_frameRate;
+  Vec2f v = normalise(target - body.pos) * speed;
+
+  spatialSystem.moveEntity(entityId(), v);
 }
 
 //===========================================

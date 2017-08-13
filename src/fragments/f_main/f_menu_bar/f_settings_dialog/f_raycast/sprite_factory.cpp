@@ -36,7 +36,6 @@ static void constructAmmo(EntityManager& em, const parser::Object& obj, CZone& z
   spatialSystem.addComponent(pComponent_t(vRect));
 
   CSprite* sprite = new CSprite(id, zone.entityId(), "ammo");
-  sprite->region = &region;
   sprite->texViews = {
     QRectF(0, 0, 1, 1)
   };
@@ -72,7 +71,6 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
   spatialSystem.addComponent(pComponent_t(vRect));
 
   CSprite* sprite = new CSprite(id, zone.entityId(), "bad_guy");
-  sprite->region = &region;
   sprite->texViews = {
     QRectF(0, 0, 0.125, 0.125),
     QRectF(0.125, 0, 0.125, 0.125),
@@ -192,7 +190,7 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
     }
   }});
 
-  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em);
+  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, frameRate);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));

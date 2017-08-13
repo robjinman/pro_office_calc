@@ -9,13 +9,14 @@ class EntityManager;
 
 class CEnemyBehaviour : public CBehaviour {
   public:
-    CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager);
+    CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
 
   private:
     EntityManager& m_entityManager;
+    double m_frameRate;
 };
 
 

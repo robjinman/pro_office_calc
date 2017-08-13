@@ -25,6 +25,8 @@ using std::set;
 using std::ostream;
 using std::pair;
 using std::make_pair;
+using std::find_if;
+using std::for_each;
 
 
 static const double GRID_CELL_SIZE = 25.0;
@@ -47,7 +49,7 @@ ostream& operator<<(ostream& os, CSpatialKind kind) {
 //===========================================
 void forEachConstZone(const CZone& zone, function<void(const CZone&)> fn) {
   fn(zone);
-  std::for_each(zone.children.begin(), zone.children.end(), [&](const unique_ptr<CZone>& r) {
+  for_each(zone.children.begin(), zone.children.end(), [&](const unique_ptr<CZone>& r) {
     forEachConstZone(*r, fn);
   });
 }
@@ -57,7 +59,7 @@ void forEachConstZone(const CZone& zone, function<void(const CZone&)> fn) {
 //===========================================
 void forEachZone(CZone& zone, function<void(CZone&)> fn) {
   fn(zone);
-  std::for_each(zone.children.begin(), zone.children.end(), [&](unique_ptr<CZone>& r) {
+  for_each(zone.children.begin(), zone.children.end(), [&](unique_ptr<CZone>& r) {
     forEachZone(*r, fn);
   });
 }
@@ -252,9 +254,10 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
     CSpatial& c = *it->second;
     if (c.kind == CSpatialKind::V_RECT) {
       CVRect& body = dynamic_cast<CVRect&>(c);
-      CZone& currentZone = getCurrentZone();
+      CZone& currentZone = *body.zone;
 
-      double radius = body.size.x * 0.5;
+      // TODO
+      double radius = 10.0; //body.size.x * 0.5;
 
       dv = getDelta(currentZone, body.pos, body, currentZone.floorHeight + heightAboveFloor, radius,
         dv);
@@ -279,6 +282,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 
           if (lineSegmentCircleIntersect(circle, edge.lseg)) {
             assert(edge.kind == CSpatialKind::SOFT_EDGE);
+
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
 
             LineSegment ray(body.pos, body.pos + dv);
@@ -304,6 +308,11 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
           body.pos = p;
           dv = dv * 0.00001;
           abortLoop = true;
+
+          crossZones(sg, id, currentZone.entityId(), nextZone->entityId());
+
+          m_entityManager.broadcastEvent(EChangedZone(id, currentZone.entityId(),
+            nextZone->entityId()));
         }
       });
 
@@ -616,13 +625,19 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) cons
     return a->distanceFromOrigin < b->distanceFromOrigin;
   });
 
-  auto it = std::find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
+  auto it = find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
     return i->kind == CSpatialKind::HARD_EDGE;
   });
 
   if (it != intersections.end()) {
     intersections.erase(++it, intersections.end());
   }
+
+  auto jt = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
+    return i->entityId == sg.player->body.entityId();
+  });
+
+  intersections.erase(jt);
 
   return intersections;
 }
@@ -642,7 +657,7 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
     return a->distanceFromOrigin < b->distanceFromOrigin;
   });
 
-  auto it = std::find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
+  auto it = find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
     return i->kind == CSpatialKind::HARD_EDGE;
   });
 
@@ -838,13 +853,21 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
 //===========================================
 // removeFromZone
 //===========================================
-static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
+static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, bool keepAlive) {
+  bool found = false;
+
   switch (child.kind) {
     case CSpatialKind::ZONE: {
       auto it = find_if(zone.children.begin(), zone.children.end(), [&](const pCZone_t& e) {
         return e.get() == dynamic_cast<const CZone*>(&child);
       });
-      zone.children.erase(it);
+      if (it != zone.children.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        zone.children.erase(it);
+        found = true;
+      }
       break;
     }
     case CSpatialKind::SOFT_EDGE:
@@ -856,59 +879,108 @@ static void removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child) {
       auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
         return e.get() == dynamic_cast<const CEdge*>(&child);
       });
-      sg.edges.erase(jt);
+      if (jt != sg.edges.end()) {
+        if (keepAlive) {
+          jt->release();
+        }
+        sg.edges.erase(jt);
+        found = true;
+      }
       break;
     }
     case CSpatialKind::H_RECT: {
       auto it = find_if(zone.hRects.begin(), zone.hRects.end(), [&](const pCHRect_t& e) {
         return e.get() == dynamic_cast<const CHRect*>(&child);
       });
-      zone.hRects.erase(it);
+      if (it != zone.hRects.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        zone.hRects.erase(it);
+        found = true;
+      }
       break;
     }
     case CSpatialKind::V_RECT: {
       auto it = find_if(zone.vRects.begin(), zone.vRects.end(), [&](const pCVRect_t& e) {
         return e.get() == dynamic_cast<const CVRect*>(&child);
       });
-      zone.vRects.erase(it);
+      if (it != zone.vRects.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        zone.vRects.erase(it);
+        found = true;
+      }
       break;
     }
     default:
       EXCEPTION("Cannot add component of kind " << child.kind << " to zone");
   }
+
+  return found;
 }
 
 //===========================================
 // removeFromHardEdge
 //===========================================
-static void removeFromHardEdge(CHardEdge& edge, const CSpatial& child) {
+static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keepAlive) {
+  bool found = false;
+
   switch (child.kind) {
     case CSpatialKind::V_RECT: {
-      edge.vRects.remove_if([&](const pCVRect_t& e) {
+      auto it = find_if(edge.vRects.begin(), edge.vRects.end(), [&](const pCVRect_t& e) {
         return e.get() == dynamic_cast<const CVRect*>(&child);
       });
+      if (it != edge.vRects.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        edge.vRects.erase(it);
+        found = true;
+      }
       break;
     }
     default:
       EXCEPTION("Cannot remove component of kind " << child.kind << " from HardEdge");
   }
+
+  return found;
 }
 
 //===========================================
 // removeChildFromComponent
 //===========================================
-static void removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSpatial& child) {
+static bool removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSpatial& child,
+  bool keepAlive = false) {
+
   switch (parent.kind) {
     case CSpatialKind::ZONE:
-      removeFromZone(sg, dynamic_cast<CZone&>(parent), child);
-      break;
+      return removeFromZone(sg, dynamic_cast<CZone&>(parent), child, keepAlive);
     case CSpatialKind::HARD_EDGE:
-      removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child);
-      break;
+      return removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child, keepAlive);
     default:
       EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
         << parent.kind);
   };
+}
+
+//===========================================
+// SpatialSystem::crossZones
+//===========================================
+void SpatialSystem::crossZones(SceneGraph& sg, entityId_t entityId, entityId_t oldZoneId,
+  entityId_t newZoneId) {
+
+  auto it = m_components.find(entityId);
+  if (it != m_components.end()) {
+    CSpatial& c = *it->second;
+    CZone& oldZone = dynamic_cast<CZone&>(getComponent(oldZoneId));
+    CZone& newZone = dynamic_cast<CZone&>(getComponent(newZoneId));
+
+    if (removeFromZone(sg, oldZone, c, true)) {
+      addChildToComponent(sg, newZone, pCSpatial_t(&c));
+    }
+  }
 }
 
 //===========================================
@@ -963,7 +1035,7 @@ void SpatialSystem::addComponent(pComponent_t component) {
     addChildToComponent(sg, *parent, std::move(c));
   }
 
-  m_components.insert(std::make_pair(ptr->entityId(), ptr));
+  m_components.insert(make_pair(ptr->entityId(), ptr));
 }
 
 //===========================================
