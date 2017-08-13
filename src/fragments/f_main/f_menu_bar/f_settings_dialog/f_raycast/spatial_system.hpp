@@ -59,6 +59,8 @@ class SpatialSystem : public System {
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;
+    virtual void handleEvent(const GameEvent& event,
+      const std::set<entityId_t>& entities) override {}
 
     virtual void addComponent(pComponent_t component) override;
     virtual bool hasComponent(entityId_t entityId) const override;

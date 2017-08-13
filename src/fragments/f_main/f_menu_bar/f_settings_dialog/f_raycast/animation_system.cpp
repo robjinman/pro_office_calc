@@ -3,6 +3,9 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 
 
+using std::set;
+
+
 //===========================================
 // Animation::start
 //===========================================
@@ -121,6 +124,11 @@ void AnimationSystem::update() {
 // AnimationSystem::handleEvent
 //===========================================
 void AnimationSystem::handleEvent(const GameEvent& event) {}
+
+//===========================================
+// AnimationSystem::handleEvent
+//===========================================
+void AnimationSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {}
 
 //===========================================
 // AnimationSystem::addComponent

@@ -17,16 +17,19 @@ class CEnemyBehaviour : public CBehaviour {
     virtual void handleEvent(const GameEvent& e) override;
 
     std::vector<Point> patrolPath;
+    entityId_t stPatrollingTrigger = -1;
+    entityId_t stChasingTrigger = -1;
 
   private:
     enum state_t {
+      ST_IDLE,
       ST_PATROLLING,
       ST_CHASING
     };
 
     EntityManager& m_entityManager;
     double m_frameRate;
-    state_t m_state = ST_PATROLLING;
+    state_t m_state = ST_IDLE;
 
     int m_waypointIdx = -1;
 };

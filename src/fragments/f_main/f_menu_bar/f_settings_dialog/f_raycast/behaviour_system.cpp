@@ -3,6 +3,9 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 
 
+using std::set;
+
+
 //===========================================
 // BehaviourSystem::update
 //===========================================
@@ -18,7 +21,17 @@ void BehaviourSystem::update() {
 void BehaviourSystem::handleEvent(const GameEvent& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
     CBehaviour& c = *it->second;
-    if (event.entitiesInRange.count(c.entityId()) == 1) {
+    c.handleEvent(event);
+  }
+}
+
+//===========================================
+// BehaviourSystem::handleEvent
+//===========================================
+void BehaviourSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
+  for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+    CBehaviour& c = *it->second;
+    if (entities.count(c.entityId()) == 1) {
       c.handleEvent(event);
     }
   }

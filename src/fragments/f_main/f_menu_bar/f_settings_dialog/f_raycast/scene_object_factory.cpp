@@ -344,7 +344,14 @@ static void constructRegion_r(EntityManager& em, AudioManager& audioManager,
 
   DBG_PRINT("Constructing Region\n");
 
-  entityId_t entityId = Component::getNextId();
+  entityId_t entityId = -1;
+  if (contains<string>(obj.dict, "name")) {
+    entityId = Component::getIdFromString(getValue(obj.dict, "name"));
+  }
+  else {
+    entityId = Component::getNextId();
+  }
+
   entityId_t parentId = parentZone == nullptr ? -1 : parentZone->entityId();
 
   CZone* zone = new CZone(entityId, parentId);

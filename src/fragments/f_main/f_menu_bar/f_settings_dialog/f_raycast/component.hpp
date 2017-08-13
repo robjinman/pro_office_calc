@@ -15,7 +15,7 @@ struct GameEvent {
     : name(name) {}
 
   std::string name;
-  std::set<entityId_t> entitiesInRange;
+  //std::set<entityId_t> entitiesInRange;
 
   virtual ~GameEvent() {}
 };
@@ -23,6 +23,7 @@ struct GameEvent {
 class Component {
   public:
     static entityId_t getNextId();
+    static entityId_t getIdFromString(const std::string& s);
 
     Component(entityId_t entityId, ComponentKind kind)
       : m_entityId(entityId),

@@ -27,9 +27,9 @@
      inkscape:window-height="975"
      id="namedview65"
      showgrid="false"
-     inkscape:zoom="0.5"
-     inkscape:cx="642.76966"
-     inkscape:cy="772.49097"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="939.94427"
+     inkscape:cy="626.44671"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -2144,18 +2144,6 @@
                id="tspan5334"
                x="780.34058"
                y="625.75165">type=patrol_path</tspan></text>
-          <text
-             xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.95786333px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="780.62048"
-             y="630.78918"
-             id="text5336"
-             sodipodi:linespacing="125%"
-             transform="scale(0.98991241,1.0101904)"><tspan
-               sodipodi:role="line"
-               id="tspan5338"
-               x="780.62048"
-               y="630.78918">name=main_room_patrol</tspan></text>
         </g>
         <path
            inkscape:connector-curvature="0"
@@ -2189,39 +2177,27 @@
         <text
            transform="scale(1.0074508,0.99260431)"
            sodipodi:linespacing="125%"
-           id="text5345"
-           y="616.24988"
-           x="905.98212"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.96973348px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="616.24988"
-             x="905.98212"
-             id="tspan5347"
-             sodipodi:role="line">patrol_path=main_room_patrol</tspan></text>
-        <text
-           transform="scale(1.0074508,0.99260431)"
-           sodipodi:linespacing="125%"
            id="text5345-3"
-           y="621.2915"
-           x="906.06793"
+           y="616.30487"
+           x="906.24341"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.96973348px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="621.2915"
-             x="906.06793"
+             y="616.30487"
+             x="906.24341"
              id="tspan5347-6"
-             sodipodi:role="line">idle-&gt;patrolling=pillar_room</tspan></text>
+             sodipodi:role="line">st_patrolling_trigger=pillar_room</tspan></text>
         <text
            transform="scale(1.0074508,0.99260431)"
            sodipodi:linespacing="125%"
            id="text5345-7"
-           y="626.27814"
-           x="905.89246"
+           y="622.00391"
+           x="906.06793"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.96973348px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="626.27814"
-             x="905.89246"
+             y="622.00391"
+             x="906.06793"
              id="tspan5347-5"
-             sodipodi:role="line">patrolling-&gt;chasing=main_room</tspan></text>
+             sodipodi:role="line">st_chasing_trigger=main_room</tspan></text>
       </g>
       <text
          xml:space="preserve"

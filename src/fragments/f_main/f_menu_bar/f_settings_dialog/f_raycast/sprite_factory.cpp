@@ -194,6 +194,14 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
   }});
 
   CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, frameRate);
+  string s = getValue(obj.dict, "st_patrolling_trigger", "");
+  if (s != "") {
+    behaviour->stPatrollingTrigger = Component::getIdFromString(s);
+  }
+  s = getValue(obj.dict, "st_chasing_trigger", "");
+  if (s != "") {
+    behaviour->stChasingTrigger = Component::getIdFromString(s);
+  }
   behaviourSystem.addComponent(pComponent_t(behaviour));
 
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));

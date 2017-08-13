@@ -2,6 +2,9 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 
 
+using std::set;
+
+
 //===========================================
 // EntityManager::getNextId
 //===========================================
@@ -72,5 +75,15 @@ void EntityManager::broadcastEvent(const GameEvent& event) const {
   for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
     System& system = *it->second;
     system.handleEvent(event);
+  }
+}
+
+//===========================================
+// EntityManager::broadcastEvent
+//===========================================
+void EntityManager::broadcastEvent(const GameEvent& event, const set<entityId_t>& entities) const {
+  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+    System& system = *it->second;
+    system.handleEvent(event, entities);
   }
 }

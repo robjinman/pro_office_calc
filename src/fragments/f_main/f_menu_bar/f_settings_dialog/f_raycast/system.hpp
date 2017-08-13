@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <set>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
@@ -10,6 +11,7 @@ class System {
   public:
     virtual void update() = 0;
     virtual void handleEvent(const GameEvent& event) = 0;
+    virtual void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) = 0;
     virtual void addComponent(pComponent_t component) = 0;
     virtual bool hasComponent(entityId_t entityId) const = 0;
     virtual Component& getComponent(entityId_t entityId) const = 0;

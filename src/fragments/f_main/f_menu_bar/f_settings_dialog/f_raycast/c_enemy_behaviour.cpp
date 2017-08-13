@@ -42,14 +42,8 @@ void CEnemyBehaviour::update() {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
 
-  if (m_state == ST_CHASING) {
-    const Point& target = spatialSystem.sg.player->pos();
+  if (m_state == ST_IDLE) {
 
-    double speed = 50.0 / m_frameRate;
-    Vec2f v = normalise(target - body.pos) * speed;
-    body.angle = atan2(v.y, v.x);
-
-    spatialSystem.moveEntity(entityId(), v);
   }
   else if (m_state == ST_PATROLLING && patrolPath.size() > 0) {
     if (m_waypointIdx == -1) {
@@ -68,11 +62,33 @@ void CEnemyBehaviour::update() {
       m_waypointIdx = (m_waypointIdx + 1) % patrolPath.size();
     }
   }
+  else if (m_state == ST_CHASING) {
+    const Point& target = spatialSystem.sg.player->pos();
+
+    double speed = 50.0 / m_frameRate;
+    Vec2f v = normalise(target - body.pos) * speed;
+    body.angle = atan2(v.y, v.x);
+
+    spatialSystem.moveEntity(entityId(), v);
+  }
 }
 
 //===========================================
 // CEnemyBehaviour::handleEvent
 //===========================================
-void CEnemyBehaviour::handleEvent(const GameEvent& e) {
+void CEnemyBehaviour::handleEvent(const GameEvent& event) {
+  if (event.name == "entityChangedZone") {
+    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    const Player& player = *spatialSystem.sg.player;
+    const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
 
+    if (e.entityId == player.body.entityId()) {
+      if (e.newZone == stPatrollingTrigger && m_state == ST_IDLE) {
+        m_state = ST_PATROLLING;
+      }
+      else if (e.newZone == stChasingTrigger) {
+        m_state = ST_CHASING;
+      }
+    }
+  }
 }

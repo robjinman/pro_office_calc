@@ -7,6 +7,7 @@
 
 using std::make_pair;
 using std::string;
+using std::set;
 
 
 //===========================================
@@ -17,12 +18,17 @@ void InventorySystem::update() {}
 //===========================================
 // InventorySystem::handleEvent
 //===========================================
-void InventorySystem::handleEvent(const GameEvent& event) {
+void InventorySystem::handleEvent(const GameEvent& event) {}
+
+//===========================================
+// InventorySystem::handleEvent
+//===========================================
+void InventorySystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
   if (event.name == "playerMove") {
     for (auto it = m_collectables.begin(); it != m_collectables.end(); ++it) {
       CCollectable& collectable = *it->second;
 
-      if (event.entitiesInRange.count(it->first)) {
+      if (entities.count(it->first)) {
         addToBucket(collectable);
       }
     }
