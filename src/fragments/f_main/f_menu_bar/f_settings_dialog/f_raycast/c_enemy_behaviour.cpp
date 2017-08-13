@@ -5,6 +5,27 @@
 #include "event.hpp"
 
 
+using std::vector;
+
+
+//===========================================
+// indexOfClosestPoint
+//===========================================
+static int indexOfClosestPoint(const Point& point, const vector<Point>& points) {
+  int idx = 0;
+  double closest = 1000000;
+
+  for (unsigned int i = 0; i < points.size(); ++i) {
+    double d = distance(point, points[i]);
+    if (d < closest) {
+      closest = d;
+      idx = i;
+    }
+  }
+
+  return idx;
+}
+
 //===========================================
 // CEnemyBehaviour::CEnemyBehaviour
 //===========================================
@@ -18,10 +39,10 @@ CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManag
 // CEnemyBehaviour::update
 //===========================================
 void CEnemyBehaviour::update() {
-  if (m_state == ST_CHASING) {
-    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
 
+  if (m_state == ST_CHASING) {
     const Point& target = spatialSystem.sg.player->pos();
 
     double speed = 50.0 / m_frameRate;
@@ -30,8 +51,22 @@ void CEnemyBehaviour::update() {
 
     spatialSystem.moveEntity(entityId(), v);
   }
-  else if (m_state == ST_PATROLLING) {
+  else if (m_state == ST_PATROLLING && patrolPath.size() > 0) {
+    if (m_waypointIdx == -1) {
+      m_waypointIdx = indexOfClosestPoint(body.pos, patrolPath);
+    }
 
+    const Point& target = patrolPath[m_waypointIdx];
+
+    double speed = 50.0 / m_frameRate;
+    Vec2f v = normalise(target - body.pos) * speed;
+    body.angle = atan2(v.y, v.x);
+
+    spatialSystem.moveEntity(entityId(), v);
+
+    if (distance(body.pos, target) < 10) {
+      m_waypointIdx = (m_waypointIdx + 1) % patrolPath.size();
+    }
   }
 }
 

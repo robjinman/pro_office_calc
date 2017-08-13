@@ -251,13 +251,13 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 
   list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
 
-  LineSegment projPlane(Point(cam.F, -rg.viewport.y / 2), Point(cam.F, rg.viewport.y * 0.5));
+  LineSegment projPlane(Point(cam.F, -rg.viewport.y * 0.5), Point(cam.F, rg.viewport.y * 0.5));
 
   Matrix m(cam.vAngle, Vec2f(0, 0));
   LineSegment rotProjPlane = transform(projPlane, m);
 
-  LineSegment projRay0(Point(0, 0), rotProjPlane.A * 999.9);
-  LineSegment projRay1(Point(0, 0), rotProjPlane.B * 999.9);
+  LineSegment projRay0(Point(0, 0), rotProjPlane.A * 9999.9);
+  LineSegment projRay1(Point(0, 0), rotProjPlane.B * 9999.9);
   double subview0 = 0;
   double subview1 = rg.viewport.y;
 
@@ -423,12 +423,12 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 
       if (proj_bw1 > subview0) {
         subview0 = proj_bw1;
-        projRay0 = LineSegment(Point(0, 0), vw0 * 999.9);
+        projRay0 = LineSegment(Point(0, 0), vw0 * 9999.9);
       }
 
       if (proj_tw0 < subview1) {
         subview1 = proj_tw0;
-        projRay1 = LineSegment(Point(0, 0), vw1 * 999.9);
+        projRay1 = LineSegment(Point(0, 0), vw1 * 9999.9);
       }
 
       zone = nextZone;

@@ -16,6 +16,9 @@
 #include "utils.hpp"
 
 
+using std::string;
+
+
 //===========================================
 // constructAmmo
 //===========================================
@@ -194,6 +197,15 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
   behaviourSystem.addComponent(pComponent_t(behaviour));
 
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+
+  for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+    parser::Object& child = **it;
+    string type = child.dict.at("type");
+
+    if (type == "patrol_path") {
+      behaviour->patrolPath = child.path.points;
+    }
+  }
 }
 
 //===========================================
