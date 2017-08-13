@@ -28,7 +28,7 @@ static void constructAmmo(EntityManager& em, const parser::Object& obj, CZone& z
 
   entityId_t id = Component::getNextId();
 
-  CVRect* vRect = new CVRect(id, zone.entityId(), Size(30, 15));
+  CVRect* vRect = new CVRect(id, zone.entityId(), Size(25, 15));
   Matrix m = transformFromTriangle(obj.path);
   vRect->setTransform(parentTransform * obj.transform * m);
   vRect->zone = &zone;
@@ -42,7 +42,7 @@ static void constructAmmo(EntityManager& em, const parser::Object& obj, CZone& z
 
   renderSystem.addComponent(pComponent_t(sprite));
 
-  CCollectable* collectable = new CCollectable(id, "ammo", 20);
+  CCollectable* collectable = new CCollectable(id, "ammo", 5);
   inventorySystem.addComponent(pComponent_t(collectable));
 }
 

@@ -436,7 +436,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
     else if (X->kind == XWrapperKind::SPRITE) {
       SpriteX& spriteX = dynamic_cast<SpriteX&>(*X);
 
-      double floorHeight = zone->floorHeight;
+      double floorHeight = spriteX.vRect->zone->floorHeight;
       const Point& pt = spriteX.X->point_rel;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
@@ -775,9 +775,7 @@ static void shadeSlice(QImage& target, double distance) {
 //===========================================
 void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
   const CSprite& sprite, const SpatialSystem& spatialSystem, const RenderGraph& rg,
-  const Player& player, const Size& viewport_px, const SpriteX& X, double screenX_px) {
-
-  const Camera& cam = player.camera();
+  const Camera& camera, const Size& viewport_px, const SpriteX& X, double screenX_px) {
 
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
@@ -785,7 +783,7 @@ void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
   const Slice& slice = X.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
-  const QRectF& uv = sprite.getView(vRect, cam.pos);
+  const QRectF& uv = sprite.getView(vRect, camera.pos);
   QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());
@@ -795,7 +793,7 @@ void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
 
   const CZone& zone = *vRect.zone;
 
-  QRect srcRect = sampleSpriteTexture(frame, X, cam.height, vRect.size.x, vRect.size.y,
+  QRect srcRect = sampleSpriteTexture(frame, X, camera.height, vRect.size.x, vRect.size.y,
     zone.floorHeight);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
@@ -1025,8 +1023,8 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
       }
       else if (X.kind == XWrapperKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(painter, bufferPainter, sliceBuffer, *spriteX.sprite, spatialSystem, rg, player,
-          viewport_px, spriteX, screenX_px);
+        drawSprite(painter, bufferPainter, sliceBuffer, *spriteX.sprite, spatialSystem, rg,
+          player.camera(), viewport_px, spriteX, screenX_px);
       }
     }
   }

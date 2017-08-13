@@ -18,15 +18,21 @@ CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManag
 // CEnemyBehaviour::update
 //===========================================
 void CEnemyBehaviour::update() {
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
+  if (m_state == ST_CHASING) {
+    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
 
-  const Point& target = spatialSystem.sg.player->pos();
+    const Point& target = spatialSystem.sg.player->pos();
 
-  double speed = 100.0 / m_frameRate;
-  Vec2f v = normalise(target - body.pos) * speed;
+    double speed = 50.0 / m_frameRate;
+    Vec2f v = normalise(target - body.pos) * speed;
+    body.angle = atan2(v.y, v.x);
 
-  spatialSystem.moveEntity(entityId(), v);
+    spatialSystem.moveEntity(entityId(), v);
+  }
+  else if (m_state == ST_PATROLLING) {
+
+  }
 }
 
 //===========================================

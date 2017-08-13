@@ -15,8 +15,14 @@ class CEnemyBehaviour : public CBehaviour {
     virtual void handleEvent(const GameEvent& e) override;
 
   private:
+    enum state_t {
+      ST_PATROLLING,
+      ST_CHASING
+    };
+
     EntityManager& m_entityManager;
     double m_frameRate;
+    state_t m_state = ST_CHASING;
 };
 
 
