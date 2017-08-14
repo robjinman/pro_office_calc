@@ -5,9 +5,12 @@
 #include <vector>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/timing.hpp"
 
 
 class EntityManager;
+class SpatialSystem;
+class CVRect;
 
 class CEnemyBehaviour : public CBehaviour {
   public:
@@ -32,6 +35,12 @@ class CEnemyBehaviour : public CBehaviour {
     state_t m_state = ST_IDLE;
 
     int m_waypointIdx = -1;
+
+    std::unique_ptr<TimePattern> m_gunfireTiming;
+
+    void doPatrollingBehaviour(SpatialSystem& spatialSystem, CVRect& body);
+    void doChasingBehaviour(SpatialSystem& spatialSystem, CVRect& body);
+    void attemptShot(SpatialSystem& spatialSystem, const CVRect& body);
 };
 
 
