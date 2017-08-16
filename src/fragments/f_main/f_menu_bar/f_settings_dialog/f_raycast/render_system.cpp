@@ -199,7 +199,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
         if (keepAlive) {
           it->release();
         }
-        region.children.erase(it);
+        erase(region.children, it);
         found = true;
       }
       break;
@@ -211,7 +211,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
 
         return b == dynamic_cast<const CBoundary*>(&child);
       });
-      region.boundaries.erase(it);
+      erase(region.boundaries, it);
       auto jt = find_if(rg.boundaries.begin(), rg.boundaries.end(), [&](const pCBoundary_t& b) {
         return b.get() == dynamic_cast<const CBoundary*>(&child);
       });
@@ -219,7 +219,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
         if (keepAlive) {
           jt->release();
         }
-        rg.boundaries.erase(jt);
+        erase(rg.boundaries, jt);
         found = true;
       }
       break;
@@ -234,7 +234,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
         if (keepAlive) {
           it->release();
         }
-        region.floorDecals.erase(it);
+        erase(region.floorDecals, it);
         found = true;
       }
       break;
@@ -247,7 +247,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
         if (keepAlive) {
           it->release();
         }
-        region.sprites.erase(it);
+        erase(region.sprites, it);
         found = true;
       }
       break;
@@ -276,7 +276,7 @@ static bool removeFromWall(CWall& boundary, const CRender& child, bool keepAlive
         if (keepAlive) {
           it->release();
         }
-        boundary.decals.erase(it);
+        erase(boundary.decals, it);
         found = true;
       }
       break;

@@ -45,6 +45,7 @@ void DamageSystem::damageEntity(entityId_t id, double damage) {
   auto it = m_components.find(id);
 
   if (it != m_components.end()) {
+    DBG_PRINT("Damaging entity " << id << "\n");
     CDamage& component = *it->second;
 
     EventHandlerSystem& eventHandlerSystem = m_entityManager
@@ -81,10 +82,9 @@ void DamageSystem::damageWithinRadius(const Point& pos, double radius, int damag
 //===========================================
 // DamageSystem::damageAtIntersection
 //===========================================
-void DamageSystem::damageAtIntersection(double camSpaceHAngle, double camSpaceVAngle, int damage) {
+void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage) {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(camSpaceHAngle,
-    camSpaceVAngle);
+  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(ray, camSpaceVAngle);
 
   if (intersections.size() > 0) {
     damageEntity(intersections.front()->entityId, damage);

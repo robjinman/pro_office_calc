@@ -145,7 +145,7 @@ void Player::shoot() {
     animationSystem.playAnimation(sprite, "shoot", false);
     m_audioManager.playSound("pistol_shoot");
     inventorySystem.subtractFromBucket("ammo", 1);
-    damageSystem.damageAtIntersection(0, 0, 1);
+    damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
   }
 }
 

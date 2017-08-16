@@ -11,9 +11,9 @@ inline static unsigned long getTime() {
 }
 
 TRandomIntervals::TRandomIntervals(unsigned long min, unsigned long max) {
-  std::random_device rd;
+  //std::random_device rd;
 
-  m_randEngine.seed(rd());
+  m_randEngine.seed(1/*rd()*/);
   m_distribution = std::uniform_real_distribution<>(min, max);
 
   calcDueTime();

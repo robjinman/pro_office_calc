@@ -51,7 +51,7 @@ class DamageSystem : public System {
     void damageWithinRadius(const Point& pos, double radius, int damage,
       AttenuationCurve attenuation = AttenuationCurve::LINEAR);
 
-    void damageAtIntersection(double camSpaceHAngle, double camSpaceVAngle, int damage);
+    void damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage);
 
     virtual ~DamageSystem() override {}
 

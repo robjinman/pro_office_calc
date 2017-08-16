@@ -45,6 +45,13 @@ bool contains(const std::map<T, U>& map, const T& key) {
   return map.find(key) != map.end();
 }
 
+template<class T>
+void erase(T& container, const typename T::iterator& it) {
+  if (it != container.end()) {
+    container.erase(it);
+  }
+}
+
 typedef std::hash<std::string> hashString;
 
 #ifdef DEBUG

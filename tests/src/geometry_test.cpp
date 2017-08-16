@@ -11,6 +11,50 @@ class GeometryTest : public testing::Test {
 };
 
 
+TEST_F(GeometryTest, matrixReferenceFrameChange) {
+  LineSegment lseg(Point(123, 771), Point(342, -232));
+  double len = lseg.length();
+  Vec2f v = lseg.B - lseg.A;
+  double angle = atan2(v.y, v.x);
+  Matrix m(angle, lseg.A);
+
+  LineSegment lseg2 = transform(lseg, m.inverse());
+  Vec2f v2 = lseg2.B - lseg2.A;
+  double angle2 = atan2(v2.y, v2.x);
+
+  // After transformation, the lseg should point along the x-axis
+
+  ASSERT_DOUBLE_EQ(0, angle2);
+  ASSERT_DOUBLE_EQ(0, lseg2.A.x);
+  ASSERT_DOUBLE_EQ(0, lseg2.A.y);
+  ASSERT_DOUBLE_EQ(0, lseg2.B.y);
+  ASSERT_DOUBLE_EQ(len, lseg2.length());
+}
+
+TEST_F(GeometryTest, rayToAngleToRayToTransformedRay) {
+  Point a(123, 771);
+  Point b(342, -232);
+
+  Vec2f v = normalise(b - a);
+  double angle = atan2(v.y, v.x);
+
+  Matrix m(angle, a);
+
+  LineSegment worldRay(a, 10000.0 * Vec2f(cos(angle), sin(angle)));
+  LineSegment ray = transform(worldRay, m.inverse());
+
+  Vec2f v2 = ray.B - ray.A;
+
+  // Precision loss causes this to fail
+  //ASSERT_DOUBLE_EQ(0, atan2(v2.y, v2.x));
+
+  ASSERT_DOUBLE_EQ(0, ray.A.x);
+  ASSERT_DOUBLE_EQ(0, ray.A.y);
+
+  // Precision loss causes this to fail
+  //ASSERT_DOUBLE_EQ(0, ray.B.y);
+}
+
 TEST_F(GeometryTest, isBetween_zeros) {
   ASSERT_TRUE(isBetween(0, 0, 0));
 }

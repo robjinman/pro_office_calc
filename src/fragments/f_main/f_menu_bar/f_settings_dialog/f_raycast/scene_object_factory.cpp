@@ -213,6 +213,8 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
   AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
   DamageSystem& damageSystem = em.system<DamageSystem>(ComponentKind::C_DAMAGE);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  EventHandlerSystem& eventHandlerSystem =
+    em.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
@@ -229,6 +231,14 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
 
   CDamage* damage = new CDamage(bodyId, 10, 10);
   damageSystem.addComponent(pCDamage_t(damage));
+
+  CEventHandler* takeDamage = new CEventHandler(bodyId);
+  takeDamage->handlers.push_back(EventHandler{"entityDamaged",
+    [=, &em](const GameEvent& e) {
+
+    DBG_PRINT("Player health: " << damage->health << "\n");
+  }});
+  eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
   Player* player = new Player(em, audioManager, tallness, unique_ptr<Camera>(camera), *body);
   player->sprite = Component::getNextId();

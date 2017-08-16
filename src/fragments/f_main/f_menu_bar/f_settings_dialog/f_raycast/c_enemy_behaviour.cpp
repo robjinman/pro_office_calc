@@ -29,6 +29,38 @@ static int indexOfClosestPoint(const Point& point, const vector<Point>& points) 
 }
 
 //===========================================
+// hasLineOfSight
+//===========================================
+static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, const Player& player) {
+  const Point& target_wld = player.body.pos;
+
+  double targetHeight = player.feetHeight() + 0.5 * player.getTallness();
+  Vec2f v = target_wld - body.pos;
+  double hAngle = atan2(v.y, v.x);
+
+  Matrix t(hAngle, body.pos);
+  Matrix m = t.inverse();
+
+  Point target_rel = m * target_wld;
+  Vec2f ray = normalise(target_rel);
+
+  double height = body.zone->floorHeight + body.size.y * 0.5;
+  double vAngle = atan2(targetHeight - height, length(target_rel));
+
+  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, ray * 0.00001,
+    height, ray, vAngle, m);
+
+  if (intersections.size() > 0) {
+    entityId_t id = intersections.front()->entityId;
+    if (id == player.body.entityId()) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+//===========================================
 // CEnemyBehaviour::CEnemyBehaviour
 //===========================================
 CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager,
@@ -37,7 +69,7 @@ CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManag
     m_entityManager(entityManager),
     m_frameRate(frameRate) {
 
-  m_gunfireTiming.reset(new TRandomIntervals(300, 7000));
+  m_gunfireTiming.reset(new TRandomIntervals(400, 4000));
 }
 
 //===========================================
@@ -79,24 +111,14 @@ void CEnemyBehaviour::doChasingBehaviour(SpatialSystem& spatialSystem, CVRect& b
 //===========================================
 void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, const CVRect& body) {
   DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
   const Player& player = *spatialSystem.sg.player;
-  const Point& target = player.pos();
-  Vec2f v = target - body.pos;
-  Vec2f dv = normalise(v) * 0.0001;
-  double hAngle = atan2(v.y, v.x);
-  double vAngle = 0; // TODO
-  Matrix m; // TODO
 
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, body.pos + dv,
-    hAngle, vAngle, m);
-
-  if (intersections.front()->entityId == player.body.entityId()) {
-    m_gunfireTiming->doIfReady([&]() {
+  m_gunfireTiming->doIfReady([&]() {
+    if (hasLineOfSight(spatialSystem, body, player)) {
       DBG_PRINT("Bang!\n");
       damageSystem.damageEntity(player.body.entityId(), 1);
-    });
-  }
+    }
+  });
 }
 
 //===========================================

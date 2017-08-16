@@ -245,11 +245,11 @@ static XWrapper* constructXWrapper(const SpatialSystem& spatialSystem,
 // castRay
 //===========================================
 static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
-  double camSpaceAngle, const RenderGraph& rg, const Player& player, CastResult& result) {
+  const Vec2f& dir, const RenderGraph& rg, const Player& player, CastResult& result) {
 
   const Camera& cam = player.camera();
 
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(camSpaceAngle);
+  list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(dir);
 
   LineSegment projPlane(Point(cam.F, -rg.viewport.y * 0.5), Point(cam.F, rg.viewport.y * 0.5));
 
@@ -959,13 +959,13 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   QRect rect(QPoint(), QSize(viewport_px.x, viewport_px.y));
   painter.fillRect(rect, QBrush(QColor(0, 0, 0)));
 
-  double da = cam.hFov / viewport_px.x;
-
   for (int screenX_px = 0; screenX_px < viewport_px.x; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
+    Vec2f ray(cam.F, projX_wd);
+
     CastResult result;
-    castRay(spatialSystem, renderSystem, screenX_px * da - 0.5 * cam.hFov, rg, player, result);
+    castRay(spatialSystem, renderSystem, ray, rg, player, result);
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       XWrapper& X = **it;

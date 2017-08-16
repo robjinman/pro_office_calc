@@ -479,7 +479,7 @@ static bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) {
 //===========================================
 // connectSubzones_r
 //===========================================
-static void connectSubzones_r(CZone& zone) {
+void connectSubzones_r(CZone& zone) {
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
     CZone& r = **it;
     connectSubzones_r(r);
@@ -532,19 +532,18 @@ void SpatialSystem::connectZones() {
 //===========================================
 // findIntersections_r
 //===========================================
-static void findIntersections_r(const Point& point, double angle, const Matrix& matrix,
+void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
   const CZone& zone, list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
   set<entityId_t>& visitedJoins) {
 
   Matrix invMatrix = matrix.inverse();
 
-  LineSegment worldRay(point, 10000 * Vec2f(cos(angle), sin(angle)));
-  LineSegment ray = transform(worldRay, matrix);
+  LineSegment ray(point, 10000.0 * dir);
   visitedZones.insert(&zone);
 
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
     if (visitedZones.find(it->get()) == visitedZones.end()) {
-      findIntersections_r(point, angle, matrix, **it, intersections, visitedZones, visitedJoins);
+      findIntersections_r(point, dir, matrix, **it, intersections, visitedZones, visitedJoins);
     }
   }
 
@@ -559,7 +558,6 @@ static void findIntersections_r(const Point& point, double angle, const Matrix& 
     if (lineSegmentIntersect(ray, lseg, pt)) {
       Intersection* X = new Intersection(CSpatialKind::V_RECT);
       intersections.push_back(pIntersection_t(X));
-
       X->entityId = vRect.entityId();
       X->point_rel = pt;
       X->point_wld = invMatrix * pt;
@@ -595,7 +593,7 @@ static void findIntersections_r(const Point& point, double angle, const Matrix& 
         }
 
         if (visitedZones.find(&next) == visitedZones.end()) {
-          findIntersections_r(point, angle, matrix, next, intersections, visitedZones,
+          findIntersections_r(point, dir, matrix, next, intersections, visitedZones,
             visitedJoins);
         }
       }
@@ -609,32 +607,18 @@ static void findIntersections_r(const Point& point, double angle, const Matrix& 
 //===========================================
 // SpatialSystem::entitiesAlongRay
 //===========================================
-list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) const {
+list<pIntersection_t> SpatialSystem::entitiesAlongRay(const Vec2f& ray) const {
   const Camera& camera = sg.player->camera();
 
-  list<pIntersection_t> intersections;
-  set<const CZone*> visitedZones;
-  set<entityId_t> visitedJoins;
-  findIntersections_r(camera.pos, camSpaceAngle + camera.angle, camera.matrix().inverse(),
-    getCurrentZone(), intersections, visitedZones, visitedJoins);
+  Matrix matrix = camera.matrix().inverse();
+  list<pIntersection_t> intersections = entitiesAlongRay(getCurrentZone(), Point(0, 0), ray,
+    matrix);
 
-  intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
-    return a->distanceFromOrigin < b->distanceFromOrigin;
-  });
-
-  auto it = find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
-    return i->kind == CSpatialKind::HARD_EDGE;
-  });
-
-  if (it != intersections.end()) {
-    intersections.erase(++it, intersections.end());
-  }
-
-  auto jt = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
+  auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
     return i->entityId == sg.player->body.entityId();
   });
 
-  intersections.erase(jt);
+  erase(intersections, it);
 
   return intersections;
 }
@@ -643,12 +627,12 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(double camSpaceAngle) cons
 // SpatialSystem::entitiesAlongRay
 //===========================================
 list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const Point& pos,
-  double angle, const Matrix& matrix) const {
+  const Vec2f& dir, const Matrix& matrix) const {
 
   list<pIntersection_t> intersections;
   set<const CZone*> visitedZones;
   set<entityId_t> visitedJoins;
-  findIntersections_r(pos, angle, matrix, zone, intersections, visitedZones, visitedJoins);
+  findIntersections_r(pos, dir, matrix, zone, intersections, visitedZones, visitedJoins);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromOrigin < b->distanceFromOrigin;
@@ -698,54 +682,50 @@ pair<Range, Range> SpatialSystem::getHeightRangeForEntity(entityId_t id) const {
 // SpatialSystem::entitiesAlong3dRay
 //===========================================
 list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const CZone& zone, const Point& pos,
-  double hAngle, double vAngle, const Matrix& matrix) const {
+  double height, const Vec2f& dir, double vAngle, const Matrix& matrix) const {
 
-  list<pIntersection_t> intersections = entitiesAlongRay(zone, pos, hAngle, matrix);
-  list<pIntersection_t> result;
+  list<pIntersection_t> intersections = entitiesAlongRay(zone, pos, dir, matrix);
 
-  for (auto it = intersections.begin(); it != intersections.end(); ++it) {
+  for (auto it = intersections.begin(); it != intersections.end();) {
     const Intersection& X = **it;
 
-    double y = X.distanceFromOrigin * tan(vAngle);
+    double y = height + X.distanceFromOrigin * tan(vAngle);
     auto ranges = getHeightRangeForEntity(X.entityId);
 
-    if (isBetween(y, ranges.first.a, ranges.first.b)
-      || isBetween(y, ranges.second.a, ranges.second.b)) {
+    if (!isBetween(y, ranges.first.a, ranges.first.b)
+      && !isBetween(y, ranges.second.a, ranges.second.b)) {
 
-      result.push_back(std::move(*it));
+      intersections.erase(it++);
+    }
+    else {
+      ++it;
     }
   }
 
-  return result;
+  return intersections;
 }
 
 //===========================================
 // SpatialSystem::entitiesAlong3dRay
 //===========================================
-list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(double camSpaceHAngle,
+list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
   double camSpaceVAngle) const {
 
-  const Camera& cam = sg.player->camera();
+  const Camera& camera = sg.player->camera();
+  double height = camera.height;
+  double vAngle = camSpaceVAngle + camera.vAngle;
+  Matrix matrix = camera.matrix().inverse();
 
-  list<pIntersection_t> intersections = entitiesAlongRay(camSpaceHAngle);
-  double vAngle = cam.vAngle + camSpaceVAngle;
+  list<pIntersection_t> intersections = entitiesAlong3dRay(getCurrentZone(), Point(0, 0), height,
+    ray, vAngle, matrix);
 
-  list<pIntersection_t> result;
+  auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
+    return i->entityId == sg.player->body.entityId();
+  });
 
-  for (auto it = intersections.begin(); it != intersections.end(); ++it) {
-    const Intersection& X = **it;
+  erase(intersections, it);
 
-    double y = X.distanceFromOrigin * tan(vAngle);
-    auto ranges = getHeightRangeForEntity(X.entityId);
-
-    if (isBetween(y, ranges.first.a - cam.height, ranges.first.b - cam.height)
-      || isBetween(y, ranges.second.a - cam.height, ranges.second.b - cam.height)) {
-
-      result.push_back(std::move(*it));
-    }
-  }
-
-  return result;
+  return intersections;
 }
 
 //===========================================
@@ -862,7 +842,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
         if (keepAlive) {
           it->release();
         }
-        zone.children.erase(it);
+        erase(zone.children, it);
         found = true;
       }
       break;
@@ -872,7 +852,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
       auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const CEdge* e) {
         return e == dynamic_cast<const CEdge*>(&child);
       });
-      zone.edges.erase(it);
+      erase(zone.edges, it);
       auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
         return e.get() == dynamic_cast<const CEdge*>(&child);
       });
@@ -880,7 +860,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
         if (keepAlive) {
           jt->release();
         }
-        sg.edges.erase(jt);
+        erase(sg.edges, jt);
         found = true;
       }
       break;
@@ -893,7 +873,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
         if (keepAlive) {
           it->release();
         }
-        zone.hRects.erase(it);
+        erase(zone.hRects, it);
         found = true;
       }
       break;
@@ -906,7 +886,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
         if (keepAlive) {
           it->release();
         }
-        zone.vRects.erase(it);
+        erase(zone.vRects, it);
         found = true;
       }
       break;
@@ -933,7 +913,7 @@ static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keep
         if (keepAlive) {
           it->release();
         }
-        edge.vRects.erase(it);
+        erase(edge.vRects, it);
         found = true;
       }
       break;

@@ -28,8 +28,8 @@
      id="namedview65"
      showgrid="false"
      inkscape:zoom="1.4142136"
-     inkscape:cx="889.45126"
-     inkscape:cy="588.10362"
+     inkscape:cx="175.85632"
+     inkscape:cy="971.61954"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -858,28 +858,28 @@
         <path
            inkscape:connector-curvature="0"
            id="path4611"
-           d="m 705.65552,129.93286 -10.71749,3.66146 -0.32901,-6.78437 z"
+           d="m 717.01822,115.86514 -10.71749,3.66146 -0.32901,-6.78437 z"
            style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
         <text
            sodipodi:linespacing="125%"
            id="text4613"
-           y="110.73225"
-           x="691.70416"
+           y="96.66452"
+           x="703.06683"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="110.73225"
-             x="691.70416"
+             y="96.66452"
+             x="703.06683"
              id="tspan4615"
              sodipodi:role="line">type=player</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5515"
-           y="117.74526"
-           x="692.08075"
+           y="103.67754"
+           x="703.44342"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="117.74526"
-             x="692.08075"
+             y="103.67754"
+             x="703.44342"
              sodipodi:role="line"
              id="tspan4507">tallness=50</tspan></text>
       </g>
