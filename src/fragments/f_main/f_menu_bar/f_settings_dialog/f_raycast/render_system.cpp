@@ -444,7 +444,15 @@ void RenderSystem::removeEntity(entityId_t id) {
     removeChildFromComponent(rg, parent, c);
   }
   else {
-    assert(isRoot(c));
+    if (c.kind == CRenderKind::REGION) {
+      assert(isRoot(c));
+    }
+    else if (c.kind == CRenderKind::OVERLAY) {
+      auto it = find_if(rg.overlays.begin(), rg.overlays.end(), [&](const pCOverlay_t& o) {
+        return o.get() == &c;
+      });
+      erase(rg.overlays, it);
+    }
   }
 
   removeEntity_r(id);

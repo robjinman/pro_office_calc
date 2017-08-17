@@ -232,17 +232,39 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
   CDamage* damage = new CDamage(bodyId, 10, 10);
   damageSystem.addComponent(pCDamage_t(damage));
 
-  CEventHandler* takeDamage = new CEventHandler(bodyId);
-  takeDamage->handlers.push_back(EventHandler{"entityDamaged",
-    [=, &em](const GameEvent& e) {
-
-    DBG_PRINT("Player health: " << damage->health << "\n");
-  }});
-  eventHandlerSystem.addComponent(pComponent_t(takeDamage));
-
   Player* player = new Player(em, audioManager, tallness, unique_ptr<Camera>(camera), *body);
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
+
+  CEventHandler* takeDamage = new CEventHandler(bodyId);
+  takeDamage->handlers.push_back(EventHandler{"entityDamaged",
+    [=, &em, &spatialSystem, &renderSystem, &viewport](const GameEvent& e) {
+
+    DBG_PRINT("Player health: " << damage->health << "\n");
+
+    if (player->red != -1) {
+      em.deleteEntity(player->red);
+    }
+
+    player->red = Component::getNextId();
+
+    double maxAlpha = 80;
+    double t = 0.33;
+    int da = maxAlpha / (t * frameRate);
+
+    CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
+      Point(0, 0), viewport);
+
+    renderSystem.addComponent(pCRender_t(overlay));
+
+    spatialSystem.addTween(Tween{[=]() -> bool {
+      int alpha = overlay->colour.alpha() - da;
+      overlay->colour.setAlpha(alpha);
+
+      return alpha > 0;
+    }, []() {}}, "redFade");
+  }});
+  eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
   Size sz(0.5, 0.5);
   CImageOverlay* crosshair = new CImageOverlay(player->crosshair, "crosshair",

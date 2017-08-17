@@ -857,6 +857,22 @@ static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sl
 }
 
 //===========================================
+// drawColourOverlay
+//===========================================
+static void drawColourOverlay(QPainter& painter, const CColourOverlay& overlay,
+  const RenderGraph& rg, const Size& viewport_px) {
+
+  double x = (overlay.pos.x / rg.viewport.x) * viewport_px.x;
+  double y = (1.0 - overlay.pos.y / rg.viewport.y) * viewport_px.y;
+  double w = (overlay.size.x / rg.viewport.x) * viewport_px.x;
+  double h = (overlay.size.y / rg.viewport.y) * viewport_px.y;
+
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(overlay.colour);
+  painter.drawRect(x, y - h, w, h);
+}
+
+//===========================================
 // drawImageOverlay
 //===========================================
 static void drawImageOverlay(QPainter& painter, const CImageOverlay& overlay, const RenderGraph& rg,
@@ -1031,11 +1047,16 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
   for (auto it = rg.overlays.begin(); it != rg.overlays.end(); ++it) {
     const COverlay& overlay = **it;
-    if (overlay.kind == COverlayKind::IMAGE) {
-      drawImageOverlay(painter, dynamic_cast<const CImageOverlay&>(overlay), rg, viewport_px);
-    }
-    else if (overlay.kind == COverlayKind::TEXT) {
-      drawTextOverlay(painter, dynamic_cast<const CTextOverlay&>(overlay), rg, viewport_px);
+    switch (overlay.kind) {
+      case COverlayKind::IMAGE:
+        drawImageOverlay(painter, dynamic_cast<const CImageOverlay&>(overlay), rg, viewport_px);
+        break;
+      case COverlayKind::TEXT:
+        drawTextOverlay(painter, dynamic_cast<const CTextOverlay&>(overlay), rg, viewport_px);
+        break;
+      case COverlayKind::COLOUR:
+        drawColourOverlay(painter, dynamic_cast<const CColourOverlay&>(overlay), rg, viewport_px);
+        break;
     }
   }
 

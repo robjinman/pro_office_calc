@@ -26,8 +26,9 @@ class Player {
     double collectionRadius = 50.0;
     entityId_t currentRegion = -1;
 
-    entityId_t crosshair;
-    entityId_t sprite;
+    entityId_t crosshair = -1;
+    entityId_t sprite = -1;
+    entityId_t red = -1;
     CVRect& body;
 
     bool aboveGround(const CZone& zone) const;

@@ -43,7 +43,8 @@ typedef std::unique_ptr<CRender> pCRender_t;
 
 enum class COverlayKind {
   IMAGE,
-  TEXT
+  TEXT,
+  COLOUR
 };
 
 class COverlay : public CRender {
@@ -55,6 +56,19 @@ class COverlay : public CRender {
 
     COverlayKind kind;
     Point pos;
+};
+
+typedef std::unique_ptr<COverlay> pCOverlay_t;
+
+class CColourOverlay : public COverlay {
+  public:
+    CColourOverlay(entityId_t entityId, const QColor& colour, const Point& pos, const Size& size)
+      : COverlay(COverlayKind::COLOUR, entityId, pos),
+        colour(colour),
+        size(size) {}
+
+    QColor colour;
+    Size size;
 };
 
 typedef std::unique_ptr<COverlay> pCOverlay_t;
@@ -72,7 +86,7 @@ class CImageOverlay : public COverlay {
     Size size;
 };
 
-typedef std::unique_ptr<COverlay> pCOverlay_t;
+typedef std::unique_ptr<CImageOverlay> pCImageOverlay_t;
 
 class CTextOverlay : public COverlay {
   public:

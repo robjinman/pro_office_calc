@@ -27,9 +27,9 @@
      inkscape:window-height="975"
      id="namedview65"
      showgrid="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="175.85632"
-     inkscape:cy="971.61954"
+     inkscape:zoom="4.0000002"
+     inkscape:cx="237.36501"
+     inkscape:cy="602.50145"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -2674,7 +2674,7 @@
              id="tspan7746-5"
              y="677.91455"
              x="596.78265"
-             sodipodi:role="line">subtype=ammo</tspan></text>
+             sodipodi:role="line">subtype=bad_guy</tspan></text>
       </g>
       <g
          id="g6931">
