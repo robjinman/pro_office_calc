@@ -3,6 +3,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 #include "event.hpp"
 
 
@@ -64,9 +65,10 @@ static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, con
 // CEnemyBehaviour::CEnemyBehaviour
 //===========================================
 CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager,
-  double frameRate)
+  AudioManager& audioManager, double frameRate)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
+    m_audioManager(audioManager),
     m_frameRate(frameRate) {
 
   m_gunfireTiming.reset(new TRandomIntervals(400, 4000));
@@ -116,6 +118,7 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, const CVRect& bo
   m_gunfireTiming->doIfReady([&]() {
     if (hasLineOfSight(spatialSystem, body, player)) {
       DBG_PRINT("Bang!\n");
+      m_audioManager.playSoundAtPos("shotgun_shoot", body.pos);
       damageSystem.damageEntity(player.body.entityId(), 1);
     }
   });

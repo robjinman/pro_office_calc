@@ -511,6 +511,7 @@ static void constructRootRegion(EntityManager& em, AudioManager& audioManager,
   rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
 
   audioManager.addSound("pistol_shoot", "data/pistol_shoot.wav");
+  audioManager.addSound("shotgun_shoot", "data/shotgun_shoot.wav");
   audioManager.addSound("monster_hurt", "data/monster_hurt.wav");
   audioManager.addSound("monster_death", "data/monster_death.wav");
 

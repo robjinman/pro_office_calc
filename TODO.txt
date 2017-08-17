@@ -1,6 +1,4 @@
-- Player health
 - Multiple guns
-- Enemy AI
 - Lighting (e.g. distant surfaces darker)
 - Levers/switches
 - Ceiling decals
