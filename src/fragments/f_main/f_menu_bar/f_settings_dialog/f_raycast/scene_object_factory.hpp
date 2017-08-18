@@ -10,7 +10,7 @@ class AudioManager;
 class TimeService;
 
 void loadMap(const std::string& mapFilePath, EntityManager& entityManager, TimeService& timeService,
-  AudioManager& audioManager, double frameRate);
+  AudioManager& audioManager);
 
 
 #endif

@@ -4,13 +4,14 @@
 
 class EntityManager;
 class AudioManager;
+class TimeService;
 class CZone;
 class CRegion;
 class Matrix;
 namespace parser { class Object; }
 
 void constructSprite(EntityManager& em, AudioManager& audioManager, const parser::Object& obj,
-  double frameRate, CZone& zone, CRegion& region, const Matrix& parentTransform);
+  TimeService& timeService, CZone& zone, CRegion& region, const Matrix& parentTransform);
 
 
 #endif

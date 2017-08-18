@@ -190,19 +190,20 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
 // playerBounce
 //===========================================
 static void playerBounce(SpatialSystem& spatialSystem, TimeService& timeService, double frameRate) {
-  double dy = 5.0;
-  double frames = frameRate / 3;
-  double dy_ = dy / (frames / 2);
-  int i = 0;
-  timeService.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
-    if (i < frames / 2) {
-      spatialSystem.sg.player->changeTallness(dy_);
+  double y = 5.0;
+  double duration = 0.33;
+  int nFrames = duration * timeService.frameRate;
+  double dy = y / (0.5 * nFrames);
+
+  timeService.addTween(Tween{[&, nFrames, dy](long i, double, double) -> bool {
+    if (i < 0.5 * nFrames) {
+      spatialSystem.sg.player->changeTallness(dy);
     }
     else {
-      spatialSystem.sg.player->changeTallness(-dy_);
+      spatialSystem.sg.player->changeTallness(-dy);
     }
-    return ++i < frames;
-  }, []() {}}, "playerBounce");
+    return i < nFrames;
+  }, [](long, double, double) {}}, "playerBounce");
 }
 
 //===========================================

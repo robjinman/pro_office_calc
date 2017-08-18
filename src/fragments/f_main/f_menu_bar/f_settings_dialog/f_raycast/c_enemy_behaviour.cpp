@@ -4,6 +4,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "event.hpp"
 
 
@@ -67,11 +68,11 @@ static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, con
 // CEnemyBehaviour::CEnemyBehaviour
 //===========================================
 CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager,
-  AudioManager& audioManager, double frameRate)
+  AudioManager& audioManager, TimeService& timeService)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
     m_audioManager(audioManager),
-    m_frameRate(frameRate) {
+    m_timeService(timeService) {
 
   m_gunfireTiming.reset(new TRandomIntervals(400, 4000));
 }
@@ -80,20 +81,22 @@ CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManag
 // CEnemyBehaviour::doPatrollingBehaviour
 //===========================================
 void CEnemyBehaviour::doPatrollingBehaviour(SpatialSystem& spatialSystem, CVRect& body) {
-  if (m_waypointIdx == -1) {
-    m_waypointIdx = indexOfClosestPoint(body.pos, patrolPath);
-  }
+  if (!m_shooting) {
+    if (m_waypointIdx == -1) {
+      m_waypointIdx = indexOfClosestPoint(body.pos, patrolPath);
+    }
 
-  const Point& target = patrolPath[m_waypointIdx];
+    const Point& target = patrolPath[m_waypointIdx];
 
-  double speed = 50.0 / m_frameRate;
-  Vec2f v = normalise(target - body.pos) * speed;
-  body.angle = atan2(v.y, v.x);
+    double speed = 50.0 / m_timeService.frameRate;
+    Vec2f v = normalise(target - body.pos) * speed;
+    body.angle = atan2(v.y, v.x);
 
-  spatialSystem.moveEntity(entityId(), v);
+    spatialSystem.moveEntity(entityId(), v);
 
-  if (distance(body.pos, target) < 10) {
-    m_waypointIdx = (m_waypointIdx + 1) % patrolPath.size();
+    if (distance(body.pos, target) < 10) {
+      m_waypointIdx = (m_waypointIdx + 1) % patrolPath.size();
+    }
   }
 }
 
@@ -103,11 +106,13 @@ void CEnemyBehaviour::doPatrollingBehaviour(SpatialSystem& spatialSystem, CVRect
 void CEnemyBehaviour::doChasingBehaviour(SpatialSystem& spatialSystem, CVRect& body) {
   const Point& target = spatialSystem.sg.player->pos();
 
-  double speed = 50.0 / m_frameRate;
+  double speed = 50.0 / m_timeService.frameRate;
   Vec2f v = normalise(target - body.pos) * speed;
   body.angle = atan2(v.y, v.x);
 
-  spatialSystem.moveEntity(entityId(), v);
+  if (!m_shooting) {
+    spatialSystem.moveEntity(entityId(), v);
+  }
 }
 
 //===========================================
@@ -120,13 +125,12 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
   m_gunfireTiming->doIfReady([&]() {
     double angle = 0;
     if (hasLineOfSight(spatialSystem, body, player, angle)) {
-      body.angle = angle;/*
-      state_t state = m_state;
-      m_state = ST_SHOOTING;
+      body.angle = angle;
+      m_shooting = true;
 
-      m_timing.onTimeout([=, &m_state]() {
-        m_state = state;
-      }, 1000);*/
+      m_timeService.onTimeout([&]() {
+        m_shooting = false;
+      }, 1.0);
 
       m_audioManager.playSoundAtPos("shotgun_shoot", body.pos);
       damageSystem.damageEntity(player.body.entityId(), 1);

@@ -203,8 +203,8 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 // constructPlayer
 //===========================================
 static Player* constructPlayer(EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, const parser::Object& obj, double frameRate, CZone& zone,
-  const Matrix& parentTransform, const Size& viewport) {
+  AudioManager& audioManager, const parser::Object& obj, CZone& zone, const Matrix& parentTransform,
+  const Size& viewport) {
 
   const double COLLISION_RADIUS = 10;
 
@@ -243,27 +243,28 @@ static Player* constructPlayer(EntityManager& em, TimeService& timeService,
 
     DBG_PRINT("Player health: " << damage->health << "\n");
 
-    if (player->red != -1) {
-      em.deleteEntity(player->red);
+    if (player->red == -1) {
+      player->red = Component::getNextId();
+
+      double maxAlpha = 80;
+      CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
+        Point(0, 0), viewport);
+
+      renderSystem.addComponent(pCRender_t(overlay));
+
+      double duration = 0.33;
+      int da = maxAlpha / (duration * timeService.frameRate);
+
+      timeService.addTween(Tween{[=](long, double, double) -> bool {
+        int alpha = overlay->colour.alpha() - da;
+        overlay->colour.setAlpha(alpha);
+
+        return alpha > 0;
+      }, [&, player](long, double, double) {
+        em.deleteEntity(player->red);
+        player->red = -1;
+      }}, "redFade");
     }
-
-    player->red = Component::getNextId();
-
-    double maxAlpha = 80;
-    double t = 0.33;
-    int da = maxAlpha / (t * frameRate);
-
-    CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
-      Point(0, 0), viewport);
-
-    renderSystem.addComponent(pCRender_t(overlay));
-
-    timeService.addTween(Tween{[&, overlay, da]() -> bool {
-      int alpha = overlay->colour.alpha() - da;
-      overlay->colour.setAlpha(alpha);
-
-      return alpha > 0;
-    }, []() {}}, "redFade");
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
@@ -278,7 +279,7 @@ static Player* constructPlayer(EntityManager& em, TimeService& timeService,
   renderSystem.addComponent(pCRender_t(sprite));
 
   CAnimation* shoot = new CAnimation(player->sprite);
-  shoot->animations.insert(std::make_pair("shoot", Animation(frameRate, 0.4, {
+  shoot->animations.insert(std::make_pair("shoot", Animation(timeService.frameRate, 0.4, {
     AnimationFrame{{
       QRectF(0.75, 0, 0.25, 1)
     }},
@@ -367,8 +368,8 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, entityId
 // constructRegion_r
 //===========================================
 static void constructRegion_r(EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, const parser::Object& obj, double frameRate, CZone* parentZone,
-  CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
+  AudioManager& audioManager, const parser::Object& obj, CZone* parentZone, CRegion* parentRegion,
+  const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -436,8 +437,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(em, timeService, audioManager, child, frameRate, zone, region, transform,
-          endpoints);
+        constructRegion_r(em, timeService, audioManager, child, zone, region, transform, endpoints);
       }
       else if (type == "wall") {
         constructWalls(em, endpoints, child, *zone, *region, transform);
@@ -446,7 +446,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
         constructBoundaries(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
-        constructSprite(em, audioManager, child, frameRate, *zone, *region, transform);
+        constructSprite(em, audioManager, child, timeService, *zone, *region, transform);
       }
       else if (type == "floor_decal") {
         constructFloorDecal(em, child, transform, entityId);
@@ -455,14 +455,14 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(em, timeService, audioManager, child, frameRate, *zone,
-          transform, rg.viewport));
+        sg.player.reset(constructPlayer(em, timeService, audioManager, child, *zone, transform,
+          rg.viewport));
         sg.player->currentRegion = entityId;
       }
     }
 
     if (getValue(obj.dict, "subtype", "") == "door") {
-      constructDoor(em, obj, entityId, frameRate);
+      constructDoor(em, obj, entityId, timeService.frameRate);
     }
   }
   catch (Exception& ex) {
@@ -480,7 +480,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
 // constructRootRegion
 //===========================================
 static void constructRootRegion(EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, const parser::Object& obj, double frameRate) {
+  AudioManager& audioManager, const parser::Object& obj) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -502,7 +502,7 @@ static void constructRootRegion(EntityManager& em, TimeService& timeService,
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(em, timeService, audioManager, obj, frameRate, nullptr, nullptr, m, endpoints);
+  constructRegion_r(em, timeService, audioManager, obj, nullptr, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -579,13 +579,13 @@ void constructPlayerInventory(EntityManager& em) {
 // loadMap
 //===========================================
 void loadMap(const string& mapFilePath, EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, double frameRate) {
+  AudioManager& audioManager) {
 
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(em, timeService, audioManager, **objects.begin(), frameRate);
+  constructRootRegion(em, timeService, audioManager, **objects.begin());
 
   constructPlayerInventory(em);
 }

@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_enemy_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -53,7 +54,7 @@ static void constructAmmo(EntityManager& em, const parser::Object& obj, CZone& z
 // constructBadGuy
 //===========================================
 static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
-  const parser::Object& obj, double frameRate, CZone& zone, CRegion& region,
+  const parser::Object& obj, TimeService& timeService, CZone& zone, CRegion& region,
   const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -88,7 +89,7 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
   renderSystem.addComponent(pComponent_t(sprite));
 
   CAnimation* anim = new CAnimation(id);
-  anim->animations.insert(std::make_pair("idle", Animation(frameRate, 1.0, {
+  anim->animations.insert(std::make_pair("idle", Animation(timeService.frameRate, 1.0, {
     AnimationFrame{{
       QRectF(0, 0, 0.125, 0.125),
       QRectF(0.125, 0, 0.125, 0.125),
@@ -194,7 +195,7 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
-  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, audioManager, frameRate);
+  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, audioManager, timeService);
   string s = getValue(obj.dict, "st_patrolling_trigger", "");
   if (s != "") {
     behaviour->stPatrollingTrigger = Component::getIdFromString(s);
@@ -219,12 +220,12 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
 // constructSprite
 //===========================================
 void constructSprite(EntityManager& em, AudioManager& audioManager, const parser::Object& obj,
-  double frameRate, CZone& zone, CRegion& region, const Matrix& parentTransform) {
+  TimeService& timeService, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing Sprite\n");
 
   if (getValue(obj.dict, "subtype") == "bad_guy") {
-    constructBadGuy(em, audioManager, obj, frameRate, zone, region, parentTransform);
+    constructBadGuy(em, audioManager, obj, timeService, zone, region, parentTransform);
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
     constructAmmo(em, obj, zone, region, parentTransform);

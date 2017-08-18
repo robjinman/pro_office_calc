@@ -10,13 +10,14 @@
 
 class EntityManager;
 class AudioManager;
+class TimeService;
 class SpatialSystem;
 class CVRect;
 
 class CEnemyBehaviour : public CBehaviour {
   public:
     CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager, AudioManager& audioManager,
-      double frameRate);
+      TimeService& timeService);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
@@ -35,8 +36,9 @@ class CEnemyBehaviour : public CBehaviour {
 
     EntityManager& m_entityManager;
     AudioManager& m_audioManager;
-    double m_frameRate;
+    TimeService& m_timeService;
     state_t m_state = ST_IDLE;
+    bool m_shooting = false;
 
     int m_waypointIdx = -1;
 
