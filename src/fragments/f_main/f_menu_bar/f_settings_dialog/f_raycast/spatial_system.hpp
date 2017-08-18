@@ -16,11 +16,6 @@ namespace tinyxml2 { class XMLElement; }
 namespace parser { class Object; }
 
 
-struct Tween {
-  std::function<bool()> tick;
-  std::function<void()> finish;
-};
-
 struct Intersection {
   Intersection(CSpatialKind kind)
     : kind(kind) {}
@@ -48,10 +43,11 @@ struct EChangedZone : public GameEvent {
 };
 
 class EntityManager;
+class TimeService;
 
 class SpatialSystem : public System {
   public:
-    SpatialSystem(EntityManager& entityManager, double frameRate);
+    SpatialSystem(EntityManager& entityManager, TimeService& timeService, double frameRate);
 
     SceneGraph sg;
 
@@ -86,16 +82,13 @@ class SpatialSystem : public System {
     // TODO: Move this
     void jump();
 
-    // TODO: Move this
-    void addTween(const Tween& tween, const char* name = nullptr);
-
     virtual ~SpatialSystem() override;
 
   private:
     EntityManager& m_entityManager;
+    TimeService& m_timeService;
 
     double m_frameRate;
-    std::map<std::string, Tween> m_tweens;
 
     std::map<entityId_t, CSpatial*> m_components;
     std::map<entityId_t, std::set<entityId_t>> m_entityChildren;

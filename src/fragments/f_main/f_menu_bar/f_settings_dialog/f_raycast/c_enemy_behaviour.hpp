@@ -29,7 +29,8 @@ class CEnemyBehaviour : public CBehaviour {
     enum state_t {
       ST_IDLE,
       ST_PATROLLING,
-      ST_CHASING
+      ST_CHASING,
+      ST_SHOOTING
     };
 
     EntityManager& m_entityManager;
@@ -43,7 +44,7 @@ class CEnemyBehaviour : public CBehaviour {
 
     void doPatrollingBehaviour(SpatialSystem& spatialSystem, CVRect& body);
     void doChasingBehaviour(SpatialSystem& spatialSystem, CVRect& body);
-    void attemptShot(SpatialSystem& spatialSystem, const CVRect& body);
+    void attemptShot(SpatialSystem& spatialSystem, CVRect& body);
 };
 
 

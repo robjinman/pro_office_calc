@@ -10,6 +10,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/tween_curves.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
@@ -188,12 +189,12 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
 //===========================================
 // playerBounce
 //===========================================
-static void playerBounce(SpatialSystem& spatialSystem, double frameRate) {
+static void playerBounce(SpatialSystem& spatialSystem, TimeService& timeService, double frameRate) {
   double dy = 5.0;
   double frames = frameRate / 3;
   double dy_ = dy / (frames / 2);
   int i = 0;
-  spatialSystem.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
+  timeService.addTween(Tween{[&, dy_, i, frames]() mutable -> bool {
     if (i < frames / 2) {
       spatialSystem.sg.player->changeTallness(dy_);
     }
@@ -207,8 +208,10 @@ static void playerBounce(SpatialSystem& spatialSystem, double frameRate) {
 //===========================================
 // SpatialSystem::SpatialSystem
 //===========================================
-SpatialSystem::SpatialSystem(EntityManager& entityManager, double frameRate)
-  : m_entityManager(entityManager) {
+SpatialSystem::SpatialSystem(EntityManager& entityManager, TimeService& timeService,
+  double frameRate)
+  : m_entityManager(entityManager),
+    m_timeService(timeService) {
 
   m_frameRate = frameRate;
 }
@@ -333,7 +336,7 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
   moveEntity(player.body.entityId(), dv, player.feetHeight() - player.body.zone->floorHeight);
   player.setPosition(player.body.zone->entityId(), player.body.pos);
 
-  playerBounce(*this, m_frameRate);
+  playerBounce(*this, m_timeService, m_frameRate);
 
   Point pos = player.pos();
   Vec2i cell(pos.x / GRID_CELL_SIZE, pos.y / GRID_CELL_SIZE);
@@ -352,25 +355,6 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
 void SpatialSystem::jump() {
   if (!sg.player->aboveGround(getCurrentZone())) {
     sg.player->vVelocity = 220;
-  }
-}
-
-//===========================================
-// SpatialSystem::addTween
-//===========================================
-void SpatialSystem::addTween(const Tween& tween, const char* name) {
-  string s;
-  if (name != nullptr) {
-    s.assign(name);
-  }
-  else {
-    stringstream ss;
-    ss << "tween" << rand();
-    s = ss.str();
-  }
-
-  if (m_tweens.find(s) == m_tweens.end()) {
-    m_tweens[s] = tween;
   }
 }
 
@@ -746,18 +730,6 @@ set<entityId_t> SpatialSystem::entitiesInRadius(const Point& pos, double radius)
 // SpatialSystem::update
 //===========================================
 void SpatialSystem::update() {
-  for (auto it = m_tweens.begin(); it != m_tweens.end();) {
-    const Tween& tween = it->second;
-
-    if (!tween.tick()) {
-      tween.finish();
-      m_tweens.erase(it++);
-    }
-    else {
-      ++it;
-    }
-  }
-
   buoyancy();
   gravity();
 }

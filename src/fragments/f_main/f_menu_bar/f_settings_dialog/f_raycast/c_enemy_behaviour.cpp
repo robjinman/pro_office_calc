@@ -32,12 +32,14 @@ static int indexOfClosestPoint(const Point& point, const vector<Point>& points) 
 //===========================================
 // hasLineOfSight
 //===========================================
-static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, const Player& player) {
+static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, const Player& player,
+  double& hAngle) {
+
   const Point& target_wld = player.body.pos;
 
   double targetHeight = player.feetHeight() + 0.5 * player.getTallness();
   Vec2f v = target_wld - body.pos;
-  double hAngle = atan2(v.y, v.x);
+  hAngle = atan2(v.y, v.x);
 
   Matrix t(hAngle, body.pos);
   Matrix m = t.inverse();
@@ -111,13 +113,21 @@ void CEnemyBehaviour::doChasingBehaviour(SpatialSystem& spatialSystem, CVRect& b
 //===========================================
 // CEnemyBehaviour::attemptShot
 //===========================================
-void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, const CVRect& body) {
+void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
   DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   const Player& player = *spatialSystem.sg.player;
 
   m_gunfireTiming->doIfReady([&]() {
-    if (hasLineOfSight(spatialSystem, body, player)) {
-      DBG_PRINT("Bang!\n");
+    double angle = 0;
+    if (hasLineOfSight(spatialSystem, body, player, angle)) {
+      body.angle = angle;/*
+      state_t state = m_state;
+      m_state = ST_SHOOTING;
+
+      m_timing.onTimeout([=, &m_state]() {
+        m_state = state;
+      }, 1000);*/
+
       m_audioManager.playSoundAtPos("shotgun_shoot", body.pos);
       damageSystem.damageEntity(player.body.entityId(), 1);
     }

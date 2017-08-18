@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
@@ -201,9 +202,9 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 //===========================================
 // constructPlayer
 //===========================================
-static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
-  const parser::Object& obj, double frameRate, CZone& zone, const Matrix& parentTransform,
-  const Size& viewport) {
+static Player* constructPlayer(EntityManager& em, TimeService& timeService,
+  AudioManager& audioManager, const parser::Object& obj, double frameRate, CZone& zone,
+  const Matrix& parentTransform, const Size& viewport) {
 
   const double COLLISION_RADIUS = 10;
 
@@ -238,7 +239,7 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
 
   CEventHandler* takeDamage = new CEventHandler(bodyId);
   takeDamage->handlers.push_back(EventHandler{"entityDamaged",
-    [=, &em, &spatialSystem, &renderSystem, &viewport](const GameEvent& e) {
+    [=, &em, &timeService, &spatialSystem, &renderSystem, &viewport](const GameEvent& e) {
 
     DBG_PRINT("Player health: " << damage->health << "\n");
 
@@ -257,7 +258,7 @@ static Player* constructPlayer(EntityManager& em, AudioManager& audioManager,
 
     renderSystem.addComponent(pCRender_t(overlay));
 
-    spatialSystem.addTween(Tween{[=]() -> bool {
+    timeService.addTween(Tween{[&, overlay, da]() -> bool {
       int alpha = overlay->colour.alpha() - da;
       overlay->colour.setAlpha(alpha);
 
@@ -365,9 +366,9 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, entityId
 //===========================================
 // constructRegion_r
 //===========================================
-static void constructRegion_r(EntityManager& em, AudioManager& audioManager,
-  const parser::Object& obj, double frameRate, CZone* parentZone, CRegion* parentRegion,
-  const Matrix& parentTransform, map<Point, bool>& endpoints) {
+static void constructRegion_r(EntityManager& em, TimeService& timeService,
+  AudioManager& audioManager, const parser::Object& obj, double frameRate, CZone* parentZone,
+  CRegion* parentRegion, const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -435,7 +436,8 @@ static void constructRegion_r(EntityManager& em, AudioManager& audioManager,
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(em, audioManager, child, frameRate, zone, region, transform, endpoints);
+        constructRegion_r(em, timeService, audioManager, child, frameRate, zone, region, transform,
+          endpoints);
       }
       else if (type == "wall") {
         constructWalls(em, endpoints, child, *zone, *region, transform);
@@ -453,8 +455,8 @@ static void constructRegion_r(EntityManager& em, AudioManager& audioManager,
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(em, audioManager, child, frameRate, *zone, transform,
-          rg.viewport));
+        sg.player.reset(constructPlayer(em, timeService, audioManager, child, frameRate, *zone,
+          transform, rg.viewport));
         sg.player->currentRegion = entityId;
       }
     }
@@ -477,8 +479,8 @@ static void constructRegion_r(EntityManager& em, AudioManager& audioManager,
 //===========================================
 // constructRootRegion
 //===========================================
-static void constructRootRegion(EntityManager& em, AudioManager& audioManager,
-  const parser::Object& obj, double frameRate) {
+static void constructRootRegion(EntityManager& em, TimeService& timeService,
+  AudioManager& audioManager, const parser::Object& obj, double frameRate) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -500,7 +502,7 @@ static void constructRootRegion(EntityManager& em, AudioManager& audioManager,
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(em, audioManager, obj, frameRate, nullptr, nullptr, m, endpoints);
+  constructRegion_r(em, timeService, audioManager, obj, frameRate, nullptr, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -576,14 +578,14 @@ void constructPlayerInventory(EntityManager& em) {
 //===========================================
 // loadMap
 //===========================================
-void loadMap(const string& mapFilePath, EntityManager& em, AudioManager& audioManager,
-  double frameRate) {
+void loadMap(const string& mapFilePath, EntityManager& em, TimeService& timeService,
+  AudioManager& audioManager, double frameRate) {
 
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(em, audioManager, **objects.begin(), frameRate);
+  constructRootRegion(em, timeService, audioManager, **objects.begin(), frameRate);
 
   constructPlayerInventory(em);
 }

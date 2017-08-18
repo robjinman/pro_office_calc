@@ -64,7 +64,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   RenderSystem* renderSystem = new RenderSystem(m_entityManager, m_buffer);
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderSystem));
 
-  SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, FRAME_RATE);
+  SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, m_timeService, FRAME_RATE);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
 
   AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, FRAME_RATE);
@@ -79,7 +79,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  loadMap("data/map.svg", m_entityManager, m_audioManager, FRAME_RATE);
+  loadMap("data/map.svg", m_entityManager, m_timeService, m_audioManager, FRAME_RATE);
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
@@ -182,6 +182,8 @@ void FRaycast::tick() {
 
   m_entityManager.purgeEntities();
   m_entityManager.update();
+
+  m_timeService.update();
 
   if (m_keyStates[Qt::Key_Space]) {
     spatialSystem.jump();
