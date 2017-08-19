@@ -91,7 +91,7 @@ static void constructWallDecal(EntityManager& em, const parser::Object& obj,
   double y = std::stod(getValue(obj.dict, "y"));
   Point pos(a, y);
 
-  string texture = getValue(obj.dict, "texture");
+  string texture = getValue(obj.dict, "texture", "default");
 
   entityId_t id = Component::getNextId();
 
@@ -149,7 +149,7 @@ static void constructWalls(EntityManager& em, map<Point, bool>& endpoints,
     CWall* wall = new CWall(id, region.entityId());
 
     wall->region = &region;
-    wall->texture = getValue(obj.dict, "texture");
+    wall->texture = getValue(obj.dict, "texture", "default");
 
     renderSystem.addComponent(pComponent_t(wall));
 
@@ -175,7 +175,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 
   DBG_PRINT("Constructing FloorDecal\n");
 
-  string texture = getValue(obj.dict, "texture");
+  string texture = getValue(obj.dict, "texture", "default");
 
   Point pos = obj.path.points[0];
   Size size = obj.path.points[2] - obj.path.points[0];
@@ -337,13 +337,8 @@ static void constructBoundaries(EntityManager& em, map<Point, bool>& endpoints,
     spatialSystem.addComponent(pComponent_t(edge));
 
     CJoin* boundary = new CJoin(entityId, parentId, Component::getNextId());
-
-    if (contains<string>(obj.dict, "top_texture")) {
-      boundary->topTexture = getValue(obj.dict, "top_texture");
-    }
-    if (contains<string>(obj.dict, "bottom_texture")) {
-      boundary->bottomTexture = getValue(obj.dict, "bottom_texture");
-    }
+    boundary->topTexture = getValue(obj.dict, "top_texture", "default");
+    boundary->bottomTexture = getValue(obj.dict, "bottom_texture", "default");
 
     renderSystem.addComponent(pComponent_t(boundary));
   }
@@ -426,11 +421,8 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
     zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
       std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
 
-    region->floorTexture = contains<string>(obj.dict, "floor_texture") ?
-      getValue(obj.dict, "floor_texture") : rg.defaults.floorTexture;
-
-    region->ceilingTexture = contains<string>(obj.dict, "ceiling_texture") ?
-      getValue(obj.dict, "ceiling_texture") : rg.defaults.ceilingTexture;
+    region->floorTexture = getValue(obj.dict, "floor_texture", rg.defaults.floorTexture);
+    region->ceilingTexture =  getValue(obj.dict, "ceiling_texture", rg.defaults.ceilingTexture);
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       const parser::Object& child = **it;

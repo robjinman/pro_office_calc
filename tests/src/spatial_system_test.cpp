@@ -85,7 +85,7 @@ TEST_F(SpatialSystemTest, nestedZone) {
   zone0->edges.push_back(he2);
   zone0->edges.push_back(he3);
 
-  connectSubzones_r(*zone0);
+  connectSubzones(*zone0);
 
   list<pIntersection_t> intersections;
   set<const CZone*> visitedZones;

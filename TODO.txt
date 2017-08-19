@@ -1,5 +1,6 @@
+- Player death
 - Multiple guns
-- Lighting (e.g. distant surfaces darker)
+- Advanced lighting
 - Levers/switches
 - Ceiling decals
 - Sprites at different heights (possibly attached to wall/ceiling)

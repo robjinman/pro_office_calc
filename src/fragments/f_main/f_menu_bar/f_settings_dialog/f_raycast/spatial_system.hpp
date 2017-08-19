@@ -112,7 +112,7 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
   const CZone& zone, std::list<pIntersection_t>& intersections,
   std::set<const CZone*>& visitedZones, std::set<entityId_t>& visitedJoins);
 
-void connectSubzones_r(CZone& zone);
+void connectSubzones(CZone& zone);
 
 
 #endif

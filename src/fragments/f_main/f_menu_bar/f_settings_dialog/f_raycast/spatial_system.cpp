@@ -449,7 +449,7 @@ static void entitiesInRadius_r(const CZone& zone, const Circle& circle,
 // similar
 //===========================================
 static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 4.0;
+  double delta = 2.0;
   return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
     || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
 }
@@ -462,16 +462,13 @@ static bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) {
 }
 
 //===========================================
-// connectSubzones_r
+// connectSubzones
 //===========================================
-void connectSubzones_r(CZone& zone) {
-  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
-    CZone& r = **it;
-    connectSubzones_r(r);
-
-    for (auto jt = r.edges.begin(); jt != r.edges.end(); ++jt) {
-      if ((*jt)->kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge* se = dynamic_cast<CSoftEdge*>(*jt);
+void connectSubzones(CZone& zone) {
+  forEachZone(zone, [&](CZone& r) {
+    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+      if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
+        CSoftEdge* se = dynamic_cast<CSoftEdge*>(*it);
         assert(se != nullptr);
 
         bool hasTwin = false;
@@ -500,18 +497,18 @@ void connectSubzones_r(CZone& zone) {
 
         if (!hasTwin) {
           se->zoneA = &r;
-          se->zoneB = &zone;
+          se->zoneB = r.parent;
         }
       }
     }
-  };
+  });
 }
 
 //===========================================
 // SpatialSystem::connectZones
 //===========================================
 void SpatialSystem::connectZones() {
-  connectSubzones_r(*sg.rootZone);
+  connectSubzones(*sg.rootZone);
 }
 
 //===========================================
