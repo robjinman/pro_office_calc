@@ -149,6 +149,9 @@ void Player::shoot() {
       inventorySystem.subtractFromBucket("ammo", 1);
       damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
     }
+    else {
+      m_audioManager.playSound("click");
+    }
   }
 }
 

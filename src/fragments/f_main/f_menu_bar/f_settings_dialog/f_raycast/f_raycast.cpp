@@ -186,15 +186,15 @@ void FRaycast::tick() {
 
   m_timeService.update();
 
-  if (m_keyStates[Qt::Key_Space]) {
+  if (m_keyStates[Qt::Key_E]) {
     spatialSystem.jump();
   }
 
-  if (m_keyStates[Qt::Key_X]) {
+  if (m_keyStates[Qt::Key_Space]) {
     GameEvent e("playerActivate");
     spatialSystem.handleEvent(e);
 
-    m_keyStates[Qt::Key_X] = false;
+    m_keyStates[Qt::Key_Space] = false;
   }
 
   Vec2f v; // The vector is in camera space

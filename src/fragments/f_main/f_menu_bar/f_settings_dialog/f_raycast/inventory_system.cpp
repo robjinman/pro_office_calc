@@ -116,6 +116,7 @@ void InventorySystem::addToBucket(const CCollectable& item) {
     CBucket& bucket = *m_buckets.at(id);
 
     if (bucket.count < bucket.capacity) {
+      int prev = bucket.count;
       bucket.count += item.value;
 
       if (bucket.count > bucket.capacity) {
@@ -125,7 +126,7 @@ void InventorySystem::addToBucket(const CCollectable& item) {
       EventHandlerSystem& eventHandlerSystem = m_entityManager
         .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
-      eventHandlerSystem.sendEvent(id, GameEvent("bucketCountChange"));
+      eventHandlerSystem.sendEvent(id, EBucketCountChange(prev, bucket.count));
 
       m_entityManager.deleteEntity(item.entityId());
     }
@@ -140,6 +141,7 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
   if (it != m_bucketAssignment.end()) {
     entityId_t id = it->second;
     CBucket& bucket = *m_buckets.at(id);
+    int prev = bucket.count;
 
     if (bucket.count >= value) {
       bucket.count -= value;
@@ -148,7 +150,7 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
     EventHandlerSystem& eventHandlerSystem = m_entityManager
       .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
-    eventHandlerSystem.sendEvent(id, GameEvent("bucketCountChange"));
+    eventHandlerSystem.sendEvent(id, EBucketCountChange(prev, bucket.count));
 
     return bucket.count;
   }

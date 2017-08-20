@@ -530,6 +530,8 @@ static void constructRootRegion(EntityManager& em, TimeService& timeService,
   audioManager.addSound("shotgun_shoot", "data/shotgun_shoot.wav");
   audioManager.addSound("monster_hurt", "data/monster_hurt.wav");
   audioManager.addSound("monster_death", "data/monster_death.wav");
+  audioManager.addSound("ammo_collect", "data/ammo_collect.wav");
+  audioManager.addSound("click", "data/click.wav");
 
   audioManager.addMusicTrack("loop1", "data/loop1.mp3");
   audioManager.addMusicTrack("loop2", "data/loop2.mp3");
@@ -542,7 +544,7 @@ static void constructRootRegion(EntityManager& em, TimeService& timeService,
 //===========================================
 // constructPlayerInventory
 //===========================================
-void constructPlayerInventory(EntityManager& em) {
+void constructPlayerInventory(EntityManager& em, AudioManager& audioManager) {
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
   EventHandlerSystem& eventHandlerSystem = em
@@ -558,10 +560,18 @@ void constructPlayerInventory(EntityManager& em) {
   renderSystem.addComponent(pComponent_t(ammoCounter));
 
   CEventHandler* syncCounter = new CEventHandler(ammoId);
-  syncCounter->handlers.push_back(EventHandler{"bucketCountChange", [=](const GameEvent& e) {
+  syncCounter->handlers.push_back(EventHandler{"bucketCountChange",
+    [=, &audioManager](const GameEvent& e_) {
+
+    const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
+
     stringstream ss;
     ss << "AMMO " << ammoBucket->count << "/" << ammoBucket->capacity;
     ammoCounter->text = ss.str();
+
+    if (e.currentCount > e.prevCount) {
+      audioManager.playSound("ammo_collect");
+    }
   }});
 
   eventHandlerSystem.addComponent(pComponent_t(syncCounter));
@@ -579,5 +589,5 @@ void loadMap(const string& mapFilePath, EntityManager& em, TimeService& timeServ
   assert(objects.size() == 1);
   constructRootRegion(em, timeService, audioManager, **objects.begin());
 
-  constructPlayerInventory(em);
+  constructPlayerInventory(em, audioManager);
 }

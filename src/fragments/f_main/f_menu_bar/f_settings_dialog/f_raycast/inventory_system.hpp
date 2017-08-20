@@ -55,6 +55,16 @@ struct CCollectable : public CInventory {
 
 typedef std::unique_ptr<CCollectable> pCCollectable_t;
 
+struct EBucketCountChange : public GameEvent {
+  EBucketCountChange(int prevCount, int currentCount)
+    : GameEvent("bucketCountChange"),
+      prevCount(prevCount),
+      currentCount(currentCount) {}
+
+  int prevCount;
+  int currentCount;
+};
+
 class EntityManager;
 
 class InventorySystem : public System {
