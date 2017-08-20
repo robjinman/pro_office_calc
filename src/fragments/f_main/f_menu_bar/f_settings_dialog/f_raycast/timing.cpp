@@ -14,6 +14,32 @@ inline static unsigned long getTime() {
 }
 
 //===========================================
+// now
+//===========================================
+inline static double now() {
+  return 0.001 * getTime();
+}
+
+//===========================================
+// Debouncer::Debouncer
+//===========================================
+Debouncer::Debouncer(double seconds)
+  : m_duration(seconds),
+    m_start(now()) {}
+
+//===========================================
+// Debouncer::ready
+//===========================================
+bool Debouncer::ready() {
+  double t = now();
+  if (t - m_start >= m_duration) {
+    m_start = t;
+    return true;
+  }
+  return false;
+}
+
+//===========================================
 // TRandomIntervals::TRandomIntervals
 //===========================================
 TRandomIntervals::TRandomIntervals(unsigned long min, unsigned long max) {

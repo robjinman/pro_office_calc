@@ -6,6 +6,17 @@
 #include <random>
 
 
+class Debouncer {
+  public:
+    Debouncer(double seconds);
+
+    bool ready();
+
+  private:
+    double m_duration;
+    double m_start;
+};
+
 class TimePattern {
   public:
     virtual bool doIfReady(std::function<void()> fn) = 0;

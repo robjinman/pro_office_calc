@@ -5,6 +5,7 @@
 #include <memory>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/camera.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/timing.hpp"
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
@@ -59,6 +60,7 @@ class Player {
     AudioManager& m_audioManager;
     std::unique_ptr<Camera> m_camera;
     double m_tallness = 50;
+    Debouncer m_shootTimer;
 };
 
 

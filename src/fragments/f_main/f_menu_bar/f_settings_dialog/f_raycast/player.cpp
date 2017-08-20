@@ -16,7 +16,8 @@ Player::Player(EntityManager& entityManager, AudioManager& audioManager, double 
     m_entityManager(entityManager),
     m_audioManager(audioManager),
     m_camera(std::move(camera)),
-    m_tallness(tallness) {}
+    m_tallness(tallness),
+    m_shootTimer(0.5) {}
 
 //===========================================
 // Player::aboveGround
@@ -132,20 +133,22 @@ void Player::vRotate(double da) {
 // Player::shoot
 //===========================================
 void Player::shoot() {
-  InventorySystem& inventorySystem = m_entityManager
-    .system<InventorySystem>(ComponentKind::C_INVENTORY);
+  if (m_shootTimer.ready()) {
+    InventorySystem& inventorySystem = m_entityManager
+      .system<InventorySystem>(ComponentKind::C_INVENTORY);
 
-  if (inventorySystem.getBucketValue("ammo") > 0) {
-    AnimationSystem& animationSystem = m_entityManager
-      .system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    if (inventorySystem.getBucketValue("ammo") > 0) {
+      AnimationSystem& animationSystem = m_entityManager
+        .system<AnimationSystem>(ComponentKind::C_ANIMATION);
 
-    DamageSystem& damageSystem = m_entityManager
-      .system<DamageSystem>(ComponentKind::C_DAMAGE);
+      DamageSystem& damageSystem = m_entityManager
+        .system<DamageSystem>(ComponentKind::C_DAMAGE);
 
-    animationSystem.playAnimation(sprite, "shoot", false);
-    m_audioManager.playSound("pistol_shoot");
-    inventorySystem.subtractFromBucket("ammo", 1);
-    damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
+      animationSystem.playAnimation(sprite, "shoot", false);
+      m_audioManager.playSound("pistol_shoot");
+      inventorySystem.subtractFromBucket("ammo", 1);
+      damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
+    }
   }
 }
 
