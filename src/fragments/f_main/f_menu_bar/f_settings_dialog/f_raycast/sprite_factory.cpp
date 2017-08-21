@@ -11,7 +11,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_enemy_behaviour.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -53,7 +53,7 @@ static void constructAmmo(EntityManager& em, const parser::Object& obj, CZone& z
 //===========================================
 // constructBadGuy
 //===========================================
-static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
+static void constructBadGuy(EntityManager& em, AudioService& audioService,
   const parser::Object& obj, TimeService& timeService, CZone& zone, CRegion& region,
   const Matrix& parentTransform) {
 
@@ -180,22 +180,22 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
 
   CEventHandler* takeDamage = new CEventHandler(id);
   takeDamage->handlers.push_back(EventHandler{"entityDamaged",
-    [=, &em, &audioManager, &animationSystem](const GameEvent& e) {
+    [=, &em, &audioService, &animationSystem](const GameEvent& e) {
 
     DBG_PRINT("Enemy health: " << damage->health << "\n");
     animationSystem.playAnimation(id, "hurt", false);
 
     if (damage->health == 0) {
-      audioManager.playSoundAtPos("monster_death", vRect->pos);
+      audioService.playSoundAtPos("monster_death", vRect->pos);
       em.deleteEntity(id);
     }
     else {
-      audioManager.playSoundAtPos("monster_hurt", vRect->pos);
+      audioService.playSoundAtPos("monster_hurt", vRect->pos);
     }
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
-  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, audioManager, timeService);
+  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, audioService, timeService);
   string s = getValue(obj.dict, "st_patrolling_trigger", "");
   if (s != "") {
     behaviour->stPatrollingTrigger = Component::getIdFromString(s);
@@ -219,13 +219,13 @@ static void constructBadGuy(EntityManager& em, AudioManager& audioManager,
 //===========================================
 // constructSprite
 //===========================================
-void constructSprite(EntityManager& em, AudioManager& audioManager, const parser::Object& obj,
+void constructSprite(EntityManager& em, AudioService& audioService, const parser::Object& obj,
   TimeService& timeService, CZone& zone, CRegion& region, const Matrix& parentTransform) {
 
   DBG_PRINT("Constructing Sprite\n");
 
   if (getValue(obj.dict, "subtype") == "bad_guy") {
-    constructBadGuy(em, audioManager, obj, timeService, zone, region, parentTransform);
+    constructBadGuy(em, audioService, obj, timeService, zone, region, parentTransform);
   }
   else if (getValue(obj.dict, "subtype") == "ammo") {
     constructAmmo(em, obj, zone, region, parentTransform);

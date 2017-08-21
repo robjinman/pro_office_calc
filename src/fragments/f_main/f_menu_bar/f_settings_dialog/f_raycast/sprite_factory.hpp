@@ -3,14 +3,14 @@
 
 
 class EntityManager;
-class AudioManager;
+class AudioService;
 class TimeService;
 class CZone;
 class CRegion;
 class Matrix;
 namespace parser { class Object; }
 
-void constructSprite(EntityManager& em, AudioManager& audioManager, const parser::Object& obj,
+void constructSprite(EntityManager& em, AudioService& audioService, const parser::Object& obj,
   TimeService& timeService, CZone& zone, CRegion& region, const Matrix& parentTransform);
 
 

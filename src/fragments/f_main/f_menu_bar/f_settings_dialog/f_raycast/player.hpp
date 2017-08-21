@@ -15,11 +15,11 @@ class CZone;
 class CVRect;
 class Camera;
 class EntityManager;
-class AudioManager;
+class AudioService;
 
 class Player {
   public:
-    Player(EntityManager& entityManager, AudioManager& audioManager, double tallness,
+    Player(EntityManager& entityManager, AudioService& audioService, double tallness,
       std::unique_ptr<Camera> camera, CVRect& body);
 
     double vVelocity = 0;
@@ -57,7 +57,7 @@ class Player {
 
   private:
     EntityManager& m_entityManager;
-    AudioManager& m_audioManager;
+    AudioService& m_audioService;
     std::unique_ptr<Camera> m_camera;
     double m_tallness = 50;
     Debouncer m_shootTimer;

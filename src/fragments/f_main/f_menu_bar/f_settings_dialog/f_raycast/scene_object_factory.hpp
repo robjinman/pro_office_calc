@@ -6,11 +6,11 @@
 
 
 class EntityManager;
-class AudioManager;
+class AudioService;
 class TimeService;
 
 void loadMap(const std::string& mapFilePath, EntityManager& entityManager, TimeService& timeService,
-  AudioManager& audioManager);
+  AudioService& audioService);
 
 
 #endif

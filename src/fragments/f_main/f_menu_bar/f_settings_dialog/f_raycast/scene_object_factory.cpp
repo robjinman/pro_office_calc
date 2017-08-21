@@ -13,7 +13,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
@@ -203,7 +203,7 @@ static void constructFloorDecal(EntityManager& em, const parser::Object& obj,
 // constructPlayer
 //===========================================
 static Player* constructPlayer(EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, const parser::Object& obj, CZone& zone, const Matrix& parentTransform,
+  AudioService& audioService, const parser::Object& obj, CZone& zone, const Matrix& parentTransform,
   const Size& viewport) {
 
   const double COLLISION_RADIUS = 10;
@@ -233,7 +233,7 @@ static Player* constructPlayer(EntityManager& em, TimeService& timeService,
   CDamage* damage = new CDamage(bodyId, 10, 10);
   damageSystem.addComponent(pCDamage_t(damage));
 
-  Player* player = new Player(em, audioManager, tallness, unique_ptr<Camera>(camera), *body);
+  Player* player = new Player(em, audioService, tallness, unique_ptr<Camera>(camera), *body);
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 
@@ -363,7 +363,7 @@ static void constructDoor(EntityManager& em, const parser::Object& obj, entityId
 // constructRegion_r
 //===========================================
 static void constructRegion_r(EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, const parser::Object& obj, CZone* parentZone, CRegion* parentRegion,
+  AudioService& audioService, const parser::Object& obj, CZone* parentZone, CRegion* parentRegion,
   const Matrix& parentTransform, map<Point, bool>& endpoints) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -429,7 +429,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
       string type = getValue(child.dict, "type");
 
       if (type == "region") {
-        constructRegion_r(em, timeService, audioManager, child, zone, region, transform, endpoints);
+        constructRegion_r(em, timeService, audioService, child, zone, region, transform, endpoints);
       }
       else if (type == "wall") {
         constructWalls(em, endpoints, child, *zone, *region, transform);
@@ -438,7 +438,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
         constructBoundaries(em, endpoints, child, entityId, transform);
       }
       else if (type == "sprite") {
-        constructSprite(em, audioManager, child, timeService, *zone, *region, transform);
+        constructSprite(em, audioService, child, timeService, *zone, *region, transform);
       }
       else if (type == "floor_decal") {
         constructFloorDecal(em, child, transform, entityId);
@@ -447,7 +447,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
         if (sg.player) {
           EXCEPTION("Player already exists");
         }
-        sg.player.reset(constructPlayer(em, timeService, audioManager, child, *zone, transform,
+        sg.player.reset(constructPlayer(em, timeService, audioService, child, *zone, transform,
           rg.viewport));
         sg.player->currentRegion = entityId;
       }
@@ -472,7 +472,7 @@ static void constructRegion_r(EntityManager& em, TimeService& timeService,
 // constructRootRegion
 //===========================================
 static void constructRootRegion(EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager, const parser::Object& obj) {
+  AudioService& audioService, const parser::Object& obj) {
 
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -494,7 +494,7 @@ static void constructRootRegion(EntityManager& em, TimeService& timeService,
   map<Point, bool> endpoints;
   Matrix m;
 
-  constructRegion_r(em, timeService, audioManager, obj, nullptr, nullptr, m, endpoints);
+  constructRegion_r(em, timeService, audioService, obj, nullptr, nullptr, m, endpoints);
 
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
     if (it->second == false) {
@@ -526,25 +526,25 @@ static void constructRootRegion(EntityManager& em, TimeService& timeService,
   rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
   rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
 
-  audioManager.addSound("pistol_shoot", "data/pistol_shoot.wav");
-  audioManager.addSound("shotgun_shoot", "data/shotgun_shoot.wav");
-  audioManager.addSound("monster_hurt", "data/monster_hurt.wav");
-  audioManager.addSound("monster_death", "data/monster_death.wav");
-  audioManager.addSound("ammo_collect", "data/ammo_collect.wav");
-  audioManager.addSound("click", "data/click.wav");
+  audioService.addSound("pistol_shoot", "data/pistol_shoot.wav");
+  audioService.addSound("shotgun_shoot", "data/shotgun_shoot.wav");
+  audioService.addSound("monster_hurt", "data/monster_hurt.wav");
+  audioService.addSound("monster_death", "data/monster_death.wav");
+  audioService.addSound("ammo_collect", "data/ammo_collect.wav");
+  audioService.addSound("click", "data/click.wav");
 
-  audioManager.addMusicTrack("loop1", "data/loop1.mp3");
-  audioManager.addMusicTrack("loop2", "data/loop2.mp3");
-  audioManager.addMusicTrack("loop3", "data/loop3.mp3");
+  audioService.addMusicTrack("loop1", "data/loop1.mp3");
+  audioService.addMusicTrack("loop2", "data/loop2.mp3");
+  audioService.addMusicTrack("loop3", "data/loop3.mp3");
 
-  audioManager.setMusicVolume(0.25);
-  audioManager.playMusic("loop3");
+  audioService.setMusicVolume(0.25);
+  audioService.playMusic("loop3");
 }
 
 //===========================================
 // constructPlayerInventory
 //===========================================
-void constructPlayerInventory(EntityManager& em, AudioManager& audioManager) {
+void constructPlayerInventory(EntityManager& em, AudioService& audioService) {
   RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
   InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
   EventHandlerSystem& eventHandlerSystem = em
@@ -561,7 +561,7 @@ void constructPlayerInventory(EntityManager& em, AudioManager& audioManager) {
 
   CEventHandler* syncCounter = new CEventHandler(ammoId);
   syncCounter->handlers.push_back(EventHandler{"bucketCountChange",
-    [=, &audioManager](const GameEvent& e_) {
+    [=, &audioService](const GameEvent& e_) {
 
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
 
@@ -570,7 +570,7 @@ void constructPlayerInventory(EntityManager& em, AudioManager& audioManager) {
     ammoCounter->text = ss.str();
 
     if (e.currentCount > e.prevCount) {
-      audioManager.playSound("ammo_collect");
+      audioService.playSound("ammo_collect");
     }
   }});
 
@@ -581,13 +581,13 @@ void constructPlayerInventory(EntityManager& em, AudioManager& audioManager) {
 // loadMap
 //===========================================
 void loadMap(const string& mapFilePath, EntityManager& em, TimeService& timeService,
-  AudioManager& audioManager) {
+  AudioService& audioService) {
 
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
   assert(objects.size() == 1);
-  constructRootRegion(em, timeService, audioManager, **objects.begin());
+  constructRootRegion(em, timeService, audioService, **objects.begin());
 
-  constructPlayerInventory(em, audioManager);
+  constructPlayerInventory(em, audioService);
 }

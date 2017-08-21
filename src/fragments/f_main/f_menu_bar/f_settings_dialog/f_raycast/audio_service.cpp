@@ -1,6 +1,6 @@
 #include <QFileInfo>
 #include <QUrl>
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 
@@ -11,9 +11,9 @@ using std::unique_ptr;
 
 
 //===========================================
-// AudioManager::AudioManager
+// AudioService::AudioService
 //===========================================
-AudioManager::AudioManager(EntityManager& entityManager)
+AudioService::AudioService(EntityManager& entityManager)
   : m_entityManager(entityManager) {
 
   m_musicVolume = 0.5;
@@ -23,9 +23,9 @@ AudioManager::AudioManager(EntityManager& entityManager)
 }
 
 //===========================================
-// AudioManager::addSound
+// AudioService::addSound
 //===========================================
-void AudioManager::addSound(const string& name, const string& resourcePath) {
+void AudioService::addSound(const string& name, const string& resourcePath) {
   pSoundEffect_t sound(new SoundEffect);
 
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
@@ -35,17 +35,17 @@ void AudioManager::addSound(const string& name, const string& resourcePath) {
 }
 
 //===========================================
-// AudioManager::addMusicTrack
+// AudioService::addMusicTrack
 //===========================================
-void AudioManager::addMusicTrack(const string& name, const string& resourcePath) {
+void AudioService::addMusicTrack(const string& name, const string& resourcePath) {
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
   m_musicTracks[name] = QMediaContent(QUrl::fromLocalFile(absPath));
 }
 
 //===========================================
-// AudioManager::playSound
+// AudioService::playSound
 //===========================================
-void AudioManager::playSound(const string& name) {
+void AudioService::playSound(const string& name) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
@@ -56,9 +56,9 @@ void AudioManager::playSound(const string& name) {
 }
 
 //===========================================
-// AudioManager::playSoundAtPos
+// AudioService::playSoundAtPos
 //===========================================
-void AudioManager::playSoundAtPos(const string& name, const Point& pos) {
+void AudioService::playSoundAtPos(const string& name, const Point& pos) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
@@ -75,9 +75,9 @@ void AudioManager::playSoundAtPos(const string& name, const Point& pos) {
 }
 
 //===========================================
-// AudioManager::playMusic
+// AudioService::playMusic
 //===========================================
-void AudioManager::playMusic(const string& name) {
+void AudioService::playMusic(const string& name) {
   auto it = m_musicTracks.find(name);
 
   if (it != m_musicTracks.end()) {
@@ -90,24 +90,24 @@ void AudioManager::playMusic(const string& name) {
 }
 
 //===========================================
-// AudioManager::stopMusic
+// AudioService::stopMusic
 //===========================================
-void AudioManager::stopMusic() {
+void AudioService::stopMusic() {
   m_mediaPlayer.stop();
 }
 
 //===========================================
-// AudioManager::setMusicVolume
+// AudioService::setMusicVolume
 //===========================================
-void AudioManager::setMusicVolume(double volume) {
+void AudioService::setMusicVolume(double volume) {
   m_musicVolume = volume;
   m_mediaPlayer.setVolume(m_masterVolume * m_musicVolume * 100);
 }
 
 //===========================================
-// AudioManager::setMasterVolume
+// AudioService::setMasterVolume
 //===========================================
-void AudioManager::setMasterVolume(double volume) {
+void AudioService::setMasterVolume(double volume) {
   m_masterVolume = volume;
   setMusicVolume(m_musicVolume);
 }

@@ -34,7 +34,7 @@ const int FRAME_RATE = 60;
 FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   : Fragment("FRaycast", parent_, parentData_, m_data),
     m_timeService(FRAME_RATE),
-    m_audioManager(m_entityManager) {
+    m_audioService(m_entityManager) {
 
   auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
@@ -80,7 +80,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  loadMap("data/map.svg", m_entityManager, m_timeService, m_audioManager);
+  loadMap("data/map.svg", m_entityManager, m_timeService, m_audioService);
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

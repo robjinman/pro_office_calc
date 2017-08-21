@@ -9,7 +9,7 @@
 #include <QImage>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #ifdef DEBUG
@@ -47,7 +47,7 @@ class FRaycast : public QWidget, public Fragment {
 
     EntityManager m_entityManager;
     TimeService m_timeService;
-    AudioManager m_audioManager;
+    AudioService m_audioService;
     EventSystem* m_eventSystem;
     std::unique_ptr<QTimer> m_timer;
     QImage m_buffer;

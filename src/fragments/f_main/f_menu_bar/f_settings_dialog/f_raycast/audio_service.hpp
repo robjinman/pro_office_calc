@@ -20,9 +20,9 @@ typedef std::unique_ptr<SoundEffect> pSoundEffect_t;
 
 class EntityManager;
 
-class AudioManager {
+class AudioService {
   public:
-    AudioManager(EntityManager& entityManager);
+    AudioService(EntityManager& entityManager);
 
     void addSound(const std::string& name, const std::string& resourcePath);
     void addMusicTrack(const std::string& name, const std::string& resourcePath);

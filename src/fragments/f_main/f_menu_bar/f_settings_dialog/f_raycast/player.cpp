@@ -1,7 +1,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/player.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
@@ -10,11 +10,11 @@
 //===========================================
 // Player::Player
 //===========================================
-Player::Player(EntityManager& entityManager, AudioManager& audioManager, double tallness,
+Player::Player(EntityManager& entityManager, AudioService& audioService, double tallness,
   std::unique_ptr<Camera> camera, CVRect& body)
   : body(body),
     m_entityManager(entityManager),
-    m_audioManager(audioManager),
+    m_audioService(audioService),
     m_camera(std::move(camera)),
     m_tallness(tallness),
     m_shootTimer(0.5) {}
@@ -145,12 +145,12 @@ void Player::shoot() {
         .system<DamageSystem>(ComponentKind::C_DAMAGE);
 
       animationSystem.playAnimation(sprite, "shoot", false);
-      m_audioManager.playSound("pistol_shoot");
+      m_audioService.playSound("pistol_shoot");
       inventorySystem.subtractFromBucket("ammo", 1);
       damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
     }
     else {
-      m_audioManager.playSound("click");
+      m_audioService.playSound("click");
     }
   }
 }

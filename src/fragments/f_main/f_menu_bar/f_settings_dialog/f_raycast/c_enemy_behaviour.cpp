@@ -3,7 +3,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_components.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "event.hpp"
 
@@ -68,10 +68,10 @@ static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, con
 // CEnemyBehaviour::CEnemyBehaviour
 //===========================================
 CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager,
-  AudioManager& audioManager, TimeService& timeService)
+  AudioService& audioService, TimeService& timeService)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
-    m_audioManager(audioManager),
+    m_audioService(audioService),
     m_timeService(timeService) {
 
   m_gunfireTiming.reset(new TRandomIntervals(400, 4000));
@@ -132,7 +132,7 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
         m_shooting = false;
       }, 1.0);
 
-      m_audioManager.playSoundAtPos("shotgun_shoot", body.pos);
+      m_audioService.playSoundAtPos("shotgun_shoot", body.pos);
       damageSystem.damageEntity(player.body.entityId(), 1);
     }
   });

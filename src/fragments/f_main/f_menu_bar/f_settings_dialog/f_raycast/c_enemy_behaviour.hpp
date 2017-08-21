@@ -9,14 +9,14 @@
 
 
 class EntityManager;
-class AudioManager;
+class AudioService;
 class TimeService;
 class SpatialSystem;
 class CVRect;
 
 class CEnemyBehaviour : public CBehaviour {
   public:
-    CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager, AudioManager& audioManager,
+    CEnemyBehaviour(entityId_t entityId, EntityManager& entityManager, AudioService& audioService,
       TimeService& timeService);
 
     virtual void update() override;
@@ -35,7 +35,7 @@ class CEnemyBehaviour : public CBehaviour {
     };
 
     EntityManager& m_entityManager;
-    AudioManager& m_audioManager;
+    AudioService& m_audioService;
     TimeService& m_timeService;
     state_t m_state = ST_IDLE;
     bool m_shooting = false;
