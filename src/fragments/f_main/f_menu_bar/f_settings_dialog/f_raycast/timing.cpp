@@ -40,6 +40,13 @@ bool Debouncer::ready() {
 }
 
 //===========================================
+// Debouncer::reset
+//===========================================
+void Debouncer::reset() {
+  m_start = now();
+}
+
+//===========================================
 // TRandomIntervals::TRandomIntervals
 //===========================================
 TRandomIntervals::TRandomIntervals(unsigned long min, unsigned long max) {

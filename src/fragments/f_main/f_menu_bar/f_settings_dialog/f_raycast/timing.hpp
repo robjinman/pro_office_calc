@@ -11,6 +11,7 @@ class Debouncer {
     Debouncer(double seconds);
 
     bool ready();
+    void reset();
 
   private:
     double m_duration;

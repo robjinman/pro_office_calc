@@ -3,6 +3,7 @@
 
 
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/timing.hpp"
 
 
 class EntityManager;
@@ -27,6 +28,7 @@ class CDoorBehaviour : public CBehaviour {
     state_t m_state = ST_CLOSED;
     double m_y0;
     double m_y1;
+    Debouncer m_timer;
 };
 
 

@@ -11,7 +11,8 @@
 CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
-    m_frameRate(frameRate) {
+    m_frameRate(frameRate),
+    m_timer(5.0) {
 
   CZone& zone = entityManager.getComponent<CZone>(entityId, ComponentKind::C_SPATIAL);
 
@@ -35,12 +36,18 @@ void CDoorBehaviour::update() {
     case ST_CLOSED:
       return;
     case ST_OPEN:
+      if (m_timer.ready()) {
+        m_state = ST_CLOSING;
+      }
       return;
     case ST_OPENING:
       zone.ceilingHeight += dy;
 
       if (zone.ceilingHeight + dy >= m_y1) {
         m_state = ST_OPEN;
+      }
+      else {
+        m_timer.reset();
       }
 
       break;
