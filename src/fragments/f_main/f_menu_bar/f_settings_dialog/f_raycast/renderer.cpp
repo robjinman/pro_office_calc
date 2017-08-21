@@ -975,6 +975,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   QRect rect(QPoint(), QSize(viewport_px.x, viewport_px.y));
   painter.fillRect(rect, QBrush(QColor(0, 0, 0)));
 
+  CastResult prev;
   for (int screenX_px = 0; screenX_px < viewport_px.x; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
@@ -982,6 +983,11 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
     CastResult result;
     castRay(spatialSystem, renderSystem, ray, rg, player, result);
+
+    // Hack to fill gaps where regions don't connect properly
+    if (result.intersections.size() == 0) {
+      result = std::move(prev);
+    }
 
     for (auto it = result.intersections.rbegin(); it != result.intersections.rend(); ++it) {
       XWrapper& X = **it;
@@ -1043,6 +1049,8 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           player.camera(), viewport_px, spriteX, screenX_px);
       }
     }
+
+    prev = std::move(result);
   }
 
   for (auto it = rg.overlays.begin(); it != rg.overlays.end(); ++it) {
