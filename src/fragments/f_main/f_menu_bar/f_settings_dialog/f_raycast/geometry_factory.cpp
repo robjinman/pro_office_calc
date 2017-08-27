@@ -1,0 +1,534 @@
+#include <list>
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry_factory.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/root_factory.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/render_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/animation_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
+
+
+using std::stringstream;
+using std::unique_ptr;
+using std::function;
+using std::string;
+using std::list;
+using std::map;
+using std::set;
+
+
+const double SNAP_DISTANCE = 4.0;
+
+
+//===========================================
+// snapEndpoint
+//===========================================
+static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
+  for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
+    if (distance(pt, it->first) <= SNAP_DISTANCE) {
+      pt = it->first;
+      it->second = true;
+      return;
+    }
+  }
+
+  endpoints[pt] = false;
+};
+
+//===========================================
+// GeometryFactory::constructWallDecal
+//===========================================
+void GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem&>(ComponentKind::C_RENDER);
+
+  const CEdge& edge = dynamic_cast<const CEdge&>(spatialSystem.getComponent(parentId));
+  const LineSegment& wall = edge.lseg;
+
+  Point A = parentTransform * obj.transform * obj.path.points[0];
+  Point B = parentTransform * obj.transform * obj.path.points[1];
+
+  double a_ = distance(wall.A, A);
+  double b_ = distance(wall.A, B);
+
+  double a = smallest(a_, b_);
+  double b = largest(a_, b_);
+  double w = b - a;
+
+  if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
+    || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
+
+    return;
+  }
+  if (a < 0 || b < 0) {
+    return;
+  }
+  if (a > wall.length() || b > wall.length()) {
+    return;
+  }
+
+  DBG_PRINT("Constructing WallDecal\n");
+
+  double r = std::stod(getValue(obj.dict, "aspect_ratio"));
+  Size size(w, w / r);
+
+  double y = std::stod(getValue(obj.dict, "y"));
+  Point pos(a, y);
+
+  string texture = getValue(obj.dict, "texture", "default");
+
+  if (entityId == -1) {
+    entityId = Component::getNextId();
+  }
+
+  CVRect* vRect = new CVRect(entityId, parentId, size);
+  vRect->pos = pos;
+
+  spatialSystem.addComponent(pComponent_t(vRect));
+
+  CWallDecal* decal = new CWallDecal(entityId, parentId);
+  decal->texture = texture;
+
+  renderSystem.addComponent(pComponent_t(decal));
+}
+
+//===========================================
+// GeometryFactory::constructWalls
+//===========================================
+void GeometryFactory::constructWalls(const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  DBG_PRINT("Constructing Walls\n");
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+  CRegion& region = dynamic_cast<CRegion&>(renderSystem.getComponent(parentId));
+
+  Matrix m = parentTransform * obj.transform;
+
+  list<CHardEdge*> edges;
+
+  for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
+    int j = i - 1;
+
+    if (i == 0) {
+      if (obj.path.closed) {
+        j = obj.path.points.size() - 1;
+      }
+      else {
+        continue;
+      }
+    }
+
+    entityId_t entityId = Component::getNextId();
+
+    CHardEdge* edge = new CHardEdge(entityId, zone.entityId());
+
+    edge->lseg.A = obj.path.points[j];
+    edge->lseg.B = obj.path.points[i];
+    edge->lseg = transform(edge->lseg, m);
+    edge->zone = &zone;
+
+    edges.push_back(edge);
+
+    spatialSystem.addComponent(pComponent_t(edge));
+
+    CWall* wall = new CWall(entityId, region.entityId());
+
+    wall->region = &region;
+    wall->texture = getValue(obj.dict, "texture", "default");
+
+    renderSystem.addComponent(pComponent_t(wall));
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      m_rootFactory.constructObject(getValue((*it)->dict, "type"), -1, **it, entityId, m);
+    }
+  }
+
+  snapEndpoint(m_endpoints, edges.front()->lseg.A);
+  snapEndpoint(m_endpoints, edges.back()->lseg.B);
+}
+
+//===========================================
+// GeometryFactory::constructFloorDecal
+//===========================================
+void GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  DBG_PRINT("Constructing FloorDecal\n");
+
+  string texture = getValue(obj.dict, "texture", "default");
+
+  Point pos = obj.path.points[0];
+  Size size = obj.path.points[2] - obj.path.points[0];
+
+  assert(size.x > 0);
+  assert(size.y > 0);
+
+  Matrix m(0, pos);
+
+  if (entityId == -1) {
+    entityId = Component::getNextId();
+  }
+
+  CHRect* hRect = new CHRect(entityId, parentId);
+  hRect->size = size;
+  hRect->transform = parentTransform * obj.transform * m;
+
+  spatialSystem.addComponent(pComponent_t(hRect));
+
+  CFloorDecal* decal = new CFloorDecal(entityId, parentId);
+  decal->texture = texture;
+
+  renderSystem.addComponent(pComponent_t(decal));
+}
+
+//===========================================
+// constructPlayer
+//===========================================
+void GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  const double COLLISION_RADIUS = 10;
+
+  DBG_PRINT("Constructing Player\n");
+
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  AnimationSystem& animationSystem =
+    m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+  DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  EventHandlerSystem& eventHandlerSystem =
+    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+
+  const Size& viewport = renderSystem.rg.viewport;
+
+  double tallness = std::stod(getValue(obj.dict, "tallness"));
+
+  Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
+  camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
+  camera->height = tallness + zone.floorHeight;
+
+  entityId_t bodyId = Component::getNextId();
+
+  CVRect* body = new CVRect(bodyId, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
+  body->setTransform(camera->matrix());
+  body->zone = &zone;
+  spatialSystem.addComponent(pCSpatial_t(body));
+
+  CDamage* damage = new CDamage(bodyId, 10, 10);
+  damageSystem.addComponent(pCDamage_t(damage));
+
+  Player* player = new Player(m_entityManager, m_audioService, tallness, unique_ptr<Camera>(camera),
+    *body);
+  player->currentRegion = parentId;
+  player->sprite = Component::getNextId();
+  player->crosshair = Component::getNextId();
+
+  CEventHandler* takeDamage = new CEventHandler(bodyId);
+  takeDamage->handlers.push_back(EventHandler{"entityDamaged", [=, &spatialSystem, &renderSystem,
+    &viewport](const GameEvent& e) {
+
+    DBG_PRINT("Player health: " << damage->health << "\n");
+
+    if (player->red == -1) {
+      player->red = Component::getNextId();
+
+      double maxAlpha = 80;
+      CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
+        Point(0, 0), viewport);
+
+      renderSystem.addComponent(pCRender_t(overlay));
+
+      double duration = 0.33;
+      int da = maxAlpha / (duration * m_timeService.frameRate);
+
+      m_timeService.addTween(Tween{[=](long, double, double) -> bool {
+        int alpha = overlay->colour.alpha() - da;
+        overlay->colour.setAlpha(alpha);
+
+        return alpha > 0;
+      }, [&, player](long, double, double) {
+        m_entityManager.deleteEntity(player->red);
+        player->red = -1;
+      }}, "redFade");
+    }
+  }});
+  eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+
+  Size sz(0.5, 0.5);
+  CImageOverlay* crosshair = new CImageOverlay(player->crosshair, "crosshair",
+    viewport / 2 - sz / 2, sz);
+  renderSystem.addComponent(pCRender_t(crosshair));
+
+  CImageOverlay* sprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.6, 0),
+    Size(3, 3));
+  sprite->texRect = QRectF(0, 0, 0.25, 1);
+  renderSystem.addComponent(pCRender_t(sprite));
+
+  CAnimation* shoot = new CAnimation(player->sprite);
+  shoot->animations.insert(std::make_pair("shoot", Animation(m_timeService.frameRate, 0.4, {
+    AnimationFrame{{
+      QRectF(0.75, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0.5, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0.25, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0, 0, 0.25, 1)
+    }}
+  })));
+
+  animationSystem.addComponent(pCAnimation_t(shoot));
+
+  spatialSystem.sg.player.reset(player);
+}
+
+//===========================================
+// GeometryFactory::constructBoundaries
+//===========================================
+void GeometryFactory::constructBoundaries(const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  DBG_PRINT("Constructing Boundaries\n");
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  list<CSoftEdge*> edges;
+
+  for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
+    int j = i - 1;
+
+    if (i == 0) {
+      if (obj.path.closed) {
+        j = obj.path.points.size() - 1;
+      }
+      else {
+        continue;
+      }
+    }
+
+    entityId_t entityId = Component::getNextId();
+
+    CSoftEdge* edge = new CSoftEdge(entityId, parentId, Component::getNextId());
+
+    edge->lseg.A = obj.path.points[j];
+    edge->lseg.B = obj.path.points[i];
+    edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
+
+    edges.push_back(edge);
+
+    spatialSystem.addComponent(pComponent_t(edge));
+
+    CJoin* boundary = new CJoin(entityId, parentId, Component::getNextId());
+    boundary->topTexture = getValue(obj.dict, "top_texture", "default");
+    boundary->bottomTexture = getValue(obj.dict, "bottom_texture", "default");
+
+    renderSystem.addComponent(pComponent_t(boundary));
+  }
+
+  snapEndpoint(m_endpoints, edges.front()->lseg.A);
+  snapEndpoint(m_endpoints, edges.back()->lseg.B);
+}
+
+//===========================================
+// GeometryFactory::constructRegion_r
+//===========================================
+void GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  DBG_PRINT("Constructing Region\n");
+
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  SceneGraph& sg = spatialSystem.sg;
+  RenderGraph& rg = renderSystem.rg;
+
+  CZone* parentZone = parentId == -1 ? nullptr
+    : dynamic_cast<CZone*>(&spatialSystem.getComponent(parentId));
+
+  if (entityId == -1) {
+    if (contains<string>(obj.dict, "name")) {
+      entityId = Component::getIdFromString(getValue(obj.dict, "name"));
+    }
+    else {
+      entityId = Component::getNextId();
+    }
+  }
+
+  CZone* zone = new CZone(entityId, parentId);
+  zone->parent = parentZone;
+
+  CRegion* region = new CRegion(entityId, parentId);
+
+  try {
+    spatialSystem.addComponent(pComponent_t(zone));
+    renderSystem.addComponent(pComponent_t(region));
+
+    if (obj.path.points.size() > 0) {
+      EXCEPTION("Region has unexpected path");
+    }
+
+    Matrix transform = parentTransform * obj.transform;
+
+    if (contains<string>(obj.dict, "has_ceiling")) {
+      string s = getValue(obj.dict, "has_ceiling");
+      if (s == "true") {
+        region->hasCeiling = true;
+      }
+      else if (s == "false") {
+        region->hasCeiling = false;
+      }
+      else {
+        EXCEPTION("has_ceiling must be either 'true' or 'false'");
+      }
+    }
+
+    zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
+      std::stod(getValue(obj.dict, "floor_height")) : sg.defaults.floorHeight;
+
+    zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
+      std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
+
+    region->floorTexture = getValue(obj.dict, "floor_texture", rg.defaults.floorTexture);
+    region->ceilingTexture =  getValue(obj.dict, "ceiling_texture", rg.defaults.ceilingTexture);
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      const parser::Object& child = **it;
+      string type = getValue(child.dict, "type");
+
+      m_rootFactory.constructObject(type, -1, child, entityId, transform);
+    }
+  }
+  catch (Exception& ex) {
+    //delete zone;
+    ex.prepend("Error constructing region; ");
+    throw ex;
+  }
+  catch (const std::exception& ex) {
+    //delete zone;
+    EXCEPTION("Error constructing region; " << ex.what());
+  }
+}
+
+//===========================================
+// GeometryFactory::constructRootRegion
+//===========================================
+void GeometryFactory::constructRootRegion(const parser::Object& obj) {
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+  RenderGraph& rg = renderSystem.rg;
+  SceneGraph& sg = spatialSystem.sg;
+
+  if (getValue(obj.dict, "type") != "region") {
+    EXCEPTION("Expected object of type 'region'");
+  }
+
+  if (sg.rootZone || rg.rootRegion) {
+    EXCEPTION("Root region already exists");
+  }
+
+  rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
+  rg.viewport.y = 10.0;
+
+  m_endpoints.clear();
+  Matrix m;
+
+  constructRegion_r(-1, obj, -1, m);
+
+  for (auto it = m_endpoints.begin(); it != m_endpoints.end(); ++it) {
+    if (it->second == false) {
+      EXCEPTION("There are unconnected endpoints");
+    }
+  }
+
+  if (!sg.player) {
+    EXCEPTION("SpatialSystem must contain the player");
+  }
+
+  spatialSystem.connectZones();
+  renderSystem.connectRegions();
+}
+
+//===========================================
+// GeometryFactory::constructRegion
+//===========================================
+void GeometryFactory::constructRegion(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (parentId == -1) {
+    constructRootRegion(obj);
+  }
+  else {
+    constructRegion_r(entityId, obj, parentId, parentTransform);
+  }
+}
+
+//===========================================
+// GeometryFactory::GeometryFactory
+//===========================================
+GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager,
+  AudioService& audioService, TimeService& timeService)
+  : m_rootFactory(rootFactory),
+    m_entityManager(entityManager),
+    m_audioService(audioService),
+    m_timeService(timeService) {}
+
+//===========================================
+// GeometryFactory::types
+//===========================================
+const set<string>& GeometryFactory::types() const {
+  static const set<string> types{
+    "player",
+    "region",
+    "joining_edge",
+    "wall",
+    "wall_decal",
+    "floor_decal"
+  };
+
+  return types;
+}
+
+//===========================================
+// GeometryFactory::constructObject
+//===========================================
+void GeometryFactory::constructObject(const string& type, entityId_t entityId,
+  const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
+
+  if (type == "player") {
+    constructPlayer(obj, parentId, parentTransform);
+  }
+  else if (type == "region") {
+    constructRegion(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "joining_edge") {
+    constructBoundaries(obj, parentId, parentTransform);
+  }
+  else if (type == "wall") {
+    constructWalls(obj, parentId, parentTransform);
+  }
+  else if (type == "wall_decal") {
+    constructWallDecal(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "floor_decal") {
+    constructFloorDecal(entityId, obj, parentId, parentTransform);
+  }
+}

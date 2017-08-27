@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/root_factory.hpp"
 #ifdef DEBUG
 #  include <chrono>
 #endif
@@ -49,6 +50,7 @@ class FRaycast : public QWidget, public Fragment {
     TimeService m_timeService;
     AudioService m_audioService;
     EventSystem* m_eventSystem;
+    std::unique_ptr<RootFactory> m_rootFactory;
     std::unique_ptr<QTimer> m_timer;
     QImage m_buffer;
     std::map<int, bool> m_keyStates;
@@ -62,6 +64,8 @@ class FRaycast : public QWidget, public Fragment {
     double m_frameRate = 0;
     long m_frame = 0;
 #endif
+
+    void loadMap(const std::string& mapFilePath);
 };
 
 

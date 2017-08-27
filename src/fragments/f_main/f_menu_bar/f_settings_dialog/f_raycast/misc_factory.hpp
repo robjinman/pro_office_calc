@@ -1,5 +1,5 @@
-#ifndef __PROCALC_FRAGMENTS_F_RAYCAST_SPRITE_FACTORY_HPP__
-#define __PROCALC_FRAGMENTS_F_RAYCAST_SPRITE_FACTORY_HPP__
+#ifndef __PROCALC_FRAGMENTS_F_RAYCAST_MISC_FACTORY_HPP__
+#define __PROCALC_FRAGMENTS_F_RAYCAST_MISC_FACTORY_HPP__
 
 
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/game_object_factory.hpp"
@@ -12,17 +12,17 @@ class Matrix;
 class RootFactory;
 namespace parser { class Object; }
 
-class SpriteFactory : public GameObjectFactory {
+class MiscFactory : public GameObjectFactory {
   public:
-    SpriteFactory(RootFactory& rootFactory, EntityManager& entityManager,
+    MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
       AudioService& audioService, TimeService& timeService);
 
     virtual const std::set<std::string>& types() const override;
 
     virtual void constructObject(const std::string& type, entityId_t entityId,
-      const parser::Object& obj, entityId_t region, const Matrix& parentTransform) override;
+      const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) override;
 
-    virtual ~SpriteFactory() override {}
+    virtual ~MiscFactory() override {}
 
   private:
     RootFactory& m_rootFactory;
@@ -30,9 +30,8 @@ class SpriteFactory : public GameObjectFactory {
     AudioService& m_audioService;
     TimeService& m_timeService;
 
-    void constructAmmo(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-    void constructBadGuy(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    void constructPlayerInventory();
+    void constructDoor(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };
 

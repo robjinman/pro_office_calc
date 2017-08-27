@@ -7,7 +7,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/tween_curves.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"

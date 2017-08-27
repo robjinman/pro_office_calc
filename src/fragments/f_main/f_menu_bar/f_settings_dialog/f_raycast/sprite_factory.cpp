@@ -18,63 +18,77 @@
 
 
 using std::string;
+using std::set;
 
 
 //===========================================
-// constructAmmo
+// SpriteFactory::constructAmmo
 //===========================================
-static void constructAmmo(EntityManager& em, const parser::Object& obj, CZone& zone,
-  CRegion& region, const Matrix& parentTransform) {
+void SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
 
-  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
-  InventorySystem& inventorySystem = em.system<InventorySystem>(ComponentKind::C_INVENTORY);
+  DBG_PRINT("Constructing Ammo\n");
 
-  entityId_t id = Component::getNextId();
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  InventorySystem& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
 
-  CVRect* vRect = new CVRect(id, zone.entityId(), Size(25, 15));
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+
+  if (entityId == -1) {
+    entityId = Component::getNextId();
+  }
+
+  CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(25, 15));
   Matrix m = transformFromTriangle(obj.path);
   vRect->setTransform(parentTransform * obj.transform * m);
   vRect->zone = &zone;
 
   spatialSystem.addComponent(pComponent_t(vRect));
 
-  CSprite* sprite = new CSprite(id, zone.entityId(), "ammo");
+  CSprite* sprite = new CSprite(entityId, zone.entityId(), "ammo");
   sprite->texViews = {
     QRectF(0, 0, 1, 1)
   };
 
   renderSystem.addComponent(pComponent_t(sprite));
 
-  CCollectable* collectable = new CCollectable(id, "ammo", 5);
+  CCollectable* collectable = new CCollectable(entityId, "ammo", 5);
   inventorySystem.addComponent(pComponent_t(collectable));
 }
 
 //===========================================
-// constructBadGuy
+// SpriteFactory::constructBadGuy
 //===========================================
-static void constructBadGuy(EntityManager& em, AudioService& audioService,
-  const parser::Object& obj, TimeService& timeService, CZone& zone, CRegion& region,
-  const Matrix& parentTransform) {
+void SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
 
-  SpatialSystem& spatialSystem = em.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = em.system<RenderSystem>(ComponentKind::C_RENDER);
-  AnimationSystem& animationSystem = em.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-  DamageSystem& damageSystem = em.system<DamageSystem>(ComponentKind::C_DAMAGE);
+  DBG_PRINT("Constructing BadGuy\n");
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  AnimationSystem& animationSystem =
+    m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+  DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   EventHandlerSystem& eventHandlerSystem =
-    em.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  BehaviourSystem& behaviourSystem = em.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+  BehaviourSystem& behaviourSystem =
+    m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-  entityId_t id = Component::getNextId();
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
-  CVRect* vRect = new CVRect(id, zone.entityId(), Size(70, 70));
+  if (entityId == -1) {
+    entityId = Component::getNextId();
+  }
+
+  CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(70, 70));
   Matrix m = transformFromTriangle(obj.path);
   vRect->setTransform(parentTransform * obj.transform * m);
   vRect->zone = &zone;
 
   spatialSystem.addComponent(pComponent_t(vRect));
 
-  CSprite* sprite = new CSprite(id, zone.entityId(), "bad_guy");
+  CSprite* sprite = new CSprite(entityId, zone.entityId(), "bad_guy");
   sprite->texViews = {
     QRectF(0, 0, 0.125, 0.125),
     QRectF(0.125, 0, 0.125, 0.125),
@@ -88,8 +102,8 @@ static void constructBadGuy(EntityManager& em, AudioService& audioService,
 
   renderSystem.addComponent(pComponent_t(sprite));
 
-  CAnimation* anim = new CAnimation(id);
-  anim->animations.insert(std::make_pair("idle", Animation(timeService.frameRate, 1.0, {
+  CAnimation* anim = new CAnimation(entityId);
+  anim->animations.insert(std::make_pair("idle", Animation(m_timeService.frameRate, 1.0, {
     AnimationFrame{{
       QRectF(0, 0, 0.125, 0.125),
       QRectF(0.125, 0, 0.125, 0.125),
@@ -173,29 +187,31 @@ static void constructBadGuy(EntityManager& em, AudioService& audioService,
   })));
 
   animationSystem.addComponent(pComponent_t(anim));
-  animationSystem.playAnimation(id, "idle", true);
+  animationSystem.playAnimation(entityId, "idle", true);
 
-  CDamage* damage = new CDamage(id, 5, 5);
+  CDamage* damage = new CDamage(entityId, 5, 5);
   damageSystem.addComponent(pComponent_t(damage));
 
-  CEventHandler* takeDamage = new CEventHandler(id);
+  CEventHandler* takeDamage = new CEventHandler(entityId);
   takeDamage->handlers.push_back(EventHandler{"entityDamaged",
-    [=, &em, &audioService, &animationSystem](const GameEvent& e) {
+    [=, &animationSystem](const GameEvent& e) {
 
     DBG_PRINT("Enemy health: " << damage->health << "\n");
-    animationSystem.playAnimation(id, "hurt", false);
+    animationSystem.playAnimation(entityId, "hurt", false);
 
     if (damage->health == 0) {
-      audioService.playSoundAtPos("monster_death", vRect->pos);
-      em.deleteEntity(id);
+      m_audioService.playSoundAtPos("monster_death", vRect->pos);
+      m_entityManager.deleteEntity(entityId);
     }
     else {
-      audioService.playSoundAtPos("monster_hurt", vRect->pos);
+      m_audioService.playSoundAtPos("monster_hurt", vRect->pos);
     }
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
-  CEnemyBehaviour* behaviour = new CEnemyBehaviour(id, em, audioService, timeService);
+  CEnemyBehaviour* behaviour = new CEnemyBehaviour(entityId, m_entityManager, m_audioService,
+    m_timeService);
+
   string s = getValue(obj.dict, "st_patrolling_trigger", "");
   if (s != "") {
     behaviour->stPatrollingTrigger = Component::getIdFromString(s);
@@ -217,18 +233,34 @@ static void constructBadGuy(EntityManager& em, AudioService& audioService,
 }
 
 //===========================================
-// constructSprite
+// SpriteFactory::SpriteFactory
 //===========================================
-void constructSprite(EntityManager& em, AudioService& audioService, const parser::Object& obj,
-  TimeService& timeService, CZone& zone, CRegion& region, const Matrix& parentTransform) {
+SpriteFactory::SpriteFactory(RootFactory& rootFactory, EntityManager& entityManager,
+  AudioService& audioService, TimeService& timeService)
+  : m_rootFactory(rootFactory),
+    m_entityManager(entityManager),
+    m_audioService(audioService),
+    m_timeService(timeService) {}
 
-  DBG_PRINT("Constructing Sprite\n");
+//===========================================
+// SpriteFactory::types
+//===========================================
+const set<string>& SpriteFactory::types() const {
+  static const set<string> types{"bad_guy", "ammo"};
+  return types;
+}
 
-  if (getValue(obj.dict, "subtype") == "bad_guy") {
-    constructBadGuy(em, audioService, obj, timeService, zone, region, parentTransform);
+//===========================================
+// SpriteFactory::constructObject
+//===========================================
+void SpriteFactory::constructObject(const string& type, entityId_t entityId,
+  const parser::Object& obj, entityId_t region, const Matrix& parentTransform) {
+
+  if (type == "bad_guy") {
+    constructBadGuy(entityId, obj, region, parentTransform);
   }
-  else if (getValue(obj.dict, "subtype") == "ammo") {
-    constructAmmo(em, obj, zone, region, parentTransform);
+  else if (type == "ammo") {
+    constructAmmo(entityId, obj, region, parentTransform);
   }
   else {
     EXCEPTION("Error constructing sprite of unknown type");

@@ -1,3 +1,4 @@
+#include <list>
 #include <QMessageBox>
 #include <QMenuBar>
 #include <QPainter>
@@ -15,12 +16,15 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/scene_object_factory.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
 
 
 #ifdef DEBUG
 namespace chrono = std::chrono;
 #endif
+
+using std::string;
+using std::list;
 
 
 const int SCREEN_WIDTH = 320;
@@ -41,6 +45,8 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 
   m_eventSystem = parentData.eventSystem;
 
+  m_rootFactory.reset(new RootFactory(m_entityManager, m_audioService, m_timeService));
+
   parentData.vbox->addWidget(this);
   setMouseTracking(true);
 
@@ -51,6 +57,53 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   m_buffer = QImage(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
 
   setFocus();
+}
+
+//===========================================
+// FRaycast::loadMap
+//===========================================
+void FRaycast::loadMap(const string& mapFilePath) {
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem&>(ComponentKind::C_RENDER);
+  RenderGraph& rg = renderSystem.rg;
+
+  // TODO: Read from map file
+  rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
+  rg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
+  rg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
+  rg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
+  rg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
+  rg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
+  rg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
+  rg.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
+  rg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
+  rg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
+  rg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
+  rg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
+  rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
+  rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
+  rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
+  rg.textures["switch"] = Texture{QImage("data/switch.png"), Size()};
+
+  m_audioService.addSound("pistol_shoot", "data/pistol_shoot.wav");
+  m_audioService.addSound("shotgun_shoot", "data/shotgun_shoot.wav");
+  m_audioService.addSound("monster_hurt", "data/monster_hurt.wav");
+  m_audioService.addSound("monster_death", "data/monster_death.wav");
+  m_audioService.addSound("ammo_collect", "data/ammo_collect.wav");
+  m_audioService.addSound("click", "data/click.wav");
+
+  m_audioService.addMusicTrack("loop1", "data/loop1.mp3");
+  m_audioService.addMusicTrack("loop2", "data/loop2.mp3");
+  m_audioService.addMusicTrack("loop3", "data/loop3.mp3");
+
+  m_audioService.setMusicVolume(0.0); // TODO
+  m_audioService.playMusic("loop3");
+
+  list<parser::pObject_t> objects;
+  parser::parse(mapFilePath, objects);
+
+  assert(objects.size() == 1);
+  m_rootFactory->constructObject("region", -1, *objects.front(), -1, Matrix());
+  m_rootFactory->constructObject("player_inventory", -1, parser::Object(), -1, Matrix());
 }
 
 //===========================================
@@ -80,7 +133,7 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  loadMap("data/map.svg", m_entityManager, m_timeService, m_audioService);
+  loadMap("data/map.svg");
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
