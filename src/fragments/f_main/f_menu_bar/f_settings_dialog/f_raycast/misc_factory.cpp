@@ -89,7 +89,7 @@ bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, 
   const Matrix& parentTransform) {
 
   if (entityId == -1) {
-    entityId = Component::getNextId();
+    entityId = makeIdForObj(obj);
   }
 
   if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
@@ -103,9 +103,8 @@ bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, 
 
     return true;
   }
-  else {
-    return false;
-  }
+
+  return false;
 }
 
 //===========================================
@@ -115,7 +114,7 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
   entityId_t parentId, const Matrix& parentTransform) {
 
   if (entityId == -1) {
-    entityId = Component::getNextId();
+    entityId = makeIdForObj(obj);
   }
 
   if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
@@ -131,7 +130,7 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
 
     CEventHandler* handler = new CEventHandler(entityId);
     handler->handlers.push_back(EventHandler{"playerActivateEntity",
-      [=, &decal](const GameEvent& e_) {
+      [=, &decal](const GameEvent& e) {
 
       decal.texRect = QRectF(0.5, 0, 0.5, 1);
       m_entityManager.broadcastEvent(GameEvent("switchActivateEntity"), set<entityId_t>{targetId});
@@ -141,9 +140,8 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
 
     return true;
   }
-  else {
-    return false;
-  }
+
+  return false;
 }
 
 //===========================================
@@ -152,9 +150,41 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
 bool MiscFactory::constructElevator(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  // TODO
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
 
-  return true;
+  if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
+    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(entityId));
+
+    double targetH = std::stod(getValue(obj.dict, "target_floor_height"));
+    double speed = 60.0;
+    double dy = speed / m_timeService.frameRate;
+
+    EventHandlerSystem& eventHandlerSystem
+      = m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CEventHandler* handler = new CEventHandler(entityId);
+    handler->handlers.push_back(EventHandler{"switchActivateEntity",
+      [=, &zone](const GameEvent& e) {
+
+      DBG_PRINT("Elevator activated\n");
+
+      if (fabs(targetH - zone.floorHeight) >= dy) {
+        m_timeService.addTween(Tween{[=, &zone](long, double, double) {
+          zone.floorHeight += dy;
+          return fabs(targetH - zone.floorHeight) >= dy;
+        }, [](long, double, double) {}});
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(handler));
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================

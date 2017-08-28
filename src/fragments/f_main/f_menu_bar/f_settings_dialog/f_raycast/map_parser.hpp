@@ -8,6 +8,7 @@
 #include <memory>
 #include <tinyxml2.h>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
 namespace parser {
@@ -54,6 +55,7 @@ Object* constructObject_r(const tinyxml2::XMLElement& node);
 const std::string& getValue(const std::map<std::string, std::string>& m, const std::string& key);
 const std::string& getValue(const std::map<std::string, std::string>& m, const std::string& key,
   const std::string& default_);
+entityId_t makeIdForObj(const parser::Object& obj);
 
 
 #endif

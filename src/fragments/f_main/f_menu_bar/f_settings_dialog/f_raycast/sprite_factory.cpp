@@ -34,7 +34,7 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
   if (entityId == -1) {
-    entityId = Component::getNextId();
+    entityId = makeIdForObj(obj);
   }
 
   CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(25, 15));
@@ -76,7 +76,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
   if (entityId == -1) {
-    entityId = Component::getNextId();
+    entityId = makeIdForObj(obj);
   }
 
   CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(70, 70));
@@ -187,7 +187,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   animationSystem.addComponent(pComponent_t(anim));
   animationSystem.playAnimation(entityId, "idle", true);
 
-  CDamage* damage = new CDamage(entityId, 5, 5);
+  CDamage* damage = new CDamage(entityId, 2, 2);
   damageSystem.addComponent(pComponent_t(damage));
 
   CEventHandler* takeDamage = new CEventHandler(entityId);

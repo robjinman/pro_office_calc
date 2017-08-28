@@ -2,6 +2,7 @@
 #include <sstream>
 #include "exception.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp"
+#include "utils.hpp"
 
 
 using std::list;
@@ -347,5 +348,17 @@ const string& getValue(const map<string, string>& m, const string& key, const st
   }
   else {
     return default_;
+  }
+}
+
+//===========================================
+// makeIdForObj
+//===========================================
+entityId_t makeIdForObj(const parser::Object& obj) {
+  if (contains<string>(obj.dict, "name")) {
+    return Component::getIdFromString(getValue(obj.dict, "name"));
+  }
+  else {
+    return Component::getNextId();
   }
 }

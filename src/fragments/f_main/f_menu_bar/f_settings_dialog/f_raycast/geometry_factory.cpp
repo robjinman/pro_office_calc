@@ -81,7 +81,7 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
   string texture = getValue(obj.dict, "texture", "default");
 
   if (entityId == -1) {
-    entityId = Component::getNextId();
+    entityId = makeIdForObj(obj);
   }
 
   CVRect* vRect = new CVRect(entityId, parentId, size);
@@ -176,7 +176,7 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Obj
   Matrix m(0, pos);
 
   if (entityId == -1) {
-    entityId = Component::getNextId();
+    entityId = makeIdForObj(obj);
   }
 
   CHRect* hRect = new CHRect(entityId, parentId);
@@ -362,12 +362,7 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
     : dynamic_cast<CZone*>(&spatialSystem.getComponent(parentId));
 
   if (entityId == -1) {
-    if (contains<string>(obj.dict, "name")) {
-      entityId = Component::getIdFromString(getValue(obj.dict, "name"));
-    }
-    else {
-      entityId = Component::getNextId();
-    }
+    entityId = makeIdForObj(obj);
   }
 
   CZone* zone = new CZone(entityId, parentId);

@@ -1,7 +1,6 @@
 - Player death
 - Multiple guns
 - Advanced lighting
-- Levers/switches
 - Ceiling decals
 - Sprites at different heights (possibly attached to wall/ceiling)
 - Animated wall/floor/ceiling textures/decals
