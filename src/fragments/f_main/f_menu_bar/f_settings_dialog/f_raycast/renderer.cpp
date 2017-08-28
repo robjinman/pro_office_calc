@@ -816,6 +816,11 @@ static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sl
 
   const Texture& decalTex = rg.textures.at(decal.texture);
 
+  int texX_px = decal.texRect.x() * decalTex.image.width();
+  int texY_px = decal.texRect.y() * decalTex.image.height();
+  int texW_px = decal.texRect.width() * decalTex.image.width();
+  int texH_px = decal.texRect.height() * decalTex.image.height();
+
   double projSliceH_wd = X.slice.projSliceTop_wd - X.slice.projSliceBottom_wd;
   double sliceH_wd = X.slice.sliceTop_wd - X.slice.sliceBottom_wd;
   double sliceToProjScale = projSliceH_wd / sliceH_wd;
@@ -835,16 +840,16 @@ static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sl
   const CZone& zone = *X.hardEdge->zone;
   double floorH = zone.floorHeight;
 
-  double x = X.X->distanceAlongTarget - vRect.pos.x;
-  int i = decalTex.image.width() * x / vRect.size.x;
-
   double y0 = floorH + vRect.pos.y;
   double y1 = floorH + vRect.pos.y + vRect.size.y;
 
   int y0_px = fnProjToScreenY(fnSliceToProjY(y0));
   int y1_px = fnProjToScreenY(fnSliceToProjY(y1));
 
-  QRect srcRect(i, 0, 1, decalTex.image.height());
+  double x = X.X->distanceAlongTarget - vRect.pos.x;
+  int i = texX_px + texW_px * x / vRect.size.x;
+
+  QRect srcRect(i, texY_px, 1, texH_px);
   QRect trgRect(screenX_px, y1_px, 1, y0_px - y1_px);
 
   double h = clipNumber(trgRect.height(), Range(0, sliceBuffer.height()));

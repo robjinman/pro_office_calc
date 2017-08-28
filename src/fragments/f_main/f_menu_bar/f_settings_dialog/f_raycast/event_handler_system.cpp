@@ -2,6 +2,19 @@
 
 
 //===========================================
+// sendEventToComponent
+//===========================================
+static void sendEventToComponent(CEventHandler& c, const GameEvent& e) {
+  for (auto it = c.handlers.begin(); it != c.handlers.end(); ++it) {
+    EventHandler handler = *it;
+
+    if (handler.name == e.name) {
+      handler.handler(e);
+    }
+  }
+}
+
+//===========================================
 // EventHandlerSystem::addComponent
 //===========================================
 void EventHandlerSystem::addComponent(pComponent_t component) {
@@ -31,18 +44,22 @@ void EventHandlerSystem::removeEntity(entityId_t id) {
 }
 
 //===========================================
-// EventHandlerSystem::sendEvent
+// EventHandlerSystem::handleEvent
 //===========================================
-void EventHandlerSystem::sendEvent(entityId_t entityId, const GameEvent& event) {
-  auto it = m_components.find(entityId);
-  if (it != m_components.end()) {
-    CEventHandler& c = *it->second;
+void EventHandlerSystem::handleEvent(const GameEvent& event) {
+  for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+    sendEventToComponent(*it->second, event);
+  }
+}
 
-    for (auto jt = c.handlers.begin(); jt != c.handlers.end(); ++jt) {
-      EventHandler handler = *jt;
-      if (handler.name == event.name) {
-        handler.handler(event);
-      }
+//===========================================
+// EventHandlerSystem::handleEvent
+//===========================================
+void EventHandlerSystem::handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) {
+  for (auto it = entities.begin(); it != entities.end(); ++it) {
+    auto jt = m_components.find(*it);
+    if (jt != m_components.end()) {
+      sendEventToComponent(*jt->second, event);
     }
   }
 }

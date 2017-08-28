@@ -1,6 +1,5 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/damage_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/spatial_system.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 
 
@@ -48,16 +47,13 @@ void DamageSystem::damageEntity(entityId_t id, double damage) {
     DBG_PRINT("Damaging entity " << id << "\n");
     CDamage& component = *it->second;
 
-    EventHandlerSystem& eventHandlerSystem = m_entityManager
-      .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
     if (component.health > 0) {
       component.health -= damage;
-      eventHandlerSystem.sendEvent(id, GameEvent("entityDamaged"));
+      m_entityManager.broadcastEvent(GameEvent("entityDamaged"), set<entityId_t>{id});
 
       if (component.health <= 0) {
         component.health = 0;
-        eventHandlerSystem.sendEvent(id, GameEvent("entityDestroyed"));
+        m_entityManager.broadcastEvent(GameEvent("entityDestroyed"), set<entityId_t>{id});
       }
     }
   }

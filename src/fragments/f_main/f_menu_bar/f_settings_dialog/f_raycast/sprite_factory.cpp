@@ -24,10 +24,8 @@ using std::set;
 //===========================================
 // SpriteFactory::constructAmmo
 //===========================================
-void SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj,
+bool SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  DBG_PRINT("Constructing Ammo\n");
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -55,15 +53,15 @@ void SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj
 
   CCollectable* collectable = new CCollectable(entityId, "ammo", 5);
   inventorySystem.addComponent(pComponent_t(collectable));
+
+  return true;
 }
 
 //===========================================
 // SpriteFactory::constructBadGuy
 //===========================================
-void SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& obj,
+bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  DBG_PRINT("Constructing BadGuy\n");
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -230,6 +228,8 @@ void SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
       behaviour->patrolPath = child.path.points;
     }
   }
+
+  return true;
 }
 
 //===========================================
@@ -253,16 +253,15 @@ const set<string>& SpriteFactory::types() const {
 //===========================================
 // SpriteFactory::constructObject
 //===========================================
-void SpriteFactory::constructObject(const string& type, entityId_t entityId,
+bool SpriteFactory::constructObject(const string& type, entityId_t entityId,
   const parser::Object& obj, entityId_t region, const Matrix& parentTransform) {
 
   if (type == "bad_guy") {
-    constructBadGuy(entityId, obj, region, parentTransform);
+    return constructBadGuy(entityId, obj, region, parentTransform);
   }
   else if (type == "ammo") {
-    constructAmmo(entityId, obj, region, parentTransform);
+    return constructAmmo(entityId, obj, region, parentTransform);
   }
-  else {
-    EXCEPTION("Error constructing sprite of unknown type");
-  }
+
+  return false;
 }

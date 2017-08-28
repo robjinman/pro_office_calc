@@ -44,14 +44,21 @@ const set<string>& RootFactory::types() const {
 //===========================================
 // RootFactory::constructObject
 //===========================================
-void RootFactory::constructObject(const string& type, entityId_t entityId,
+bool RootFactory::constructObject(const string& type, entityId_t entityId,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
+
+  DBG_PRINT(string(m_dbgIndentLvl++, '\t') << "Constructing " << type << "...\n");
 
   auto it = m_factoriesByType.find(type);
   if (it != m_factoriesByType.end()) {
-    it->second->constructObject(type, entityId, obj, parentId, parentTransform);
+    bool success = it->second->constructObject(type, entityId, obj, parentId, parentTransform);
+
+    DBG_PRINT(string(--m_dbgIndentLvl, '\t') << (success ? "Success\n" : "Fail\n"));
+    return success;
   }
   else {
     DBG_PRINT("No factory knows how to make object of type '" << type << "'\n");
   }
+
+  return false;
 }

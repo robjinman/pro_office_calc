@@ -19,7 +19,7 @@ class SpriteFactory : public GameObjectFactory {
 
     virtual const std::set<std::string>& types() const override;
 
-    virtual void constructObject(const std::string& type, entityId_t entityId,
+    virtual bool constructObject(const std::string& type, entityId_t entityId,
       const parser::Object& obj, entityId_t region, const Matrix& parentTransform) override;
 
     virtual ~SpriteFactory() override {}
@@ -30,9 +30,9 @@ class SpriteFactory : public GameObjectFactory {
     AudioService& m_audioService;
     TimeService& m_timeService;
 
-    void constructAmmo(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructAmmo(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructBadGuy(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructBadGuy(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };
 

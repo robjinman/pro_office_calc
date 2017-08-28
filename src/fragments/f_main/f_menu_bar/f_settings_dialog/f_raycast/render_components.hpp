@@ -182,6 +182,7 @@ struct CWallDecal : public CRender {
     : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
 
   std::string texture;
+  QRectF texRect = QRectF(0, 0, 1, 1);
 
   virtual ~CWallDecal() override {}
 };

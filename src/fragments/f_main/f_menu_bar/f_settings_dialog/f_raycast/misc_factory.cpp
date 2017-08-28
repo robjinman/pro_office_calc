@@ -16,7 +16,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "exception.hpp"
-#include "utils.hpp"
 
 
 using std::stringstream;
@@ -42,14 +41,14 @@ MiscFactory::MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
 // MiscFactory::types
 //===========================================
 const set<string>& MiscFactory::types() const {
-  static const set<string> types{"player_inventory", "door"};
+  static const set<string> types{"player_inventory", "door", "switch", "elevator"};
   return types;
 }
 
 //===========================================
 // MiscFactory::constructPlayerInventory
 //===========================================
-void MiscFactory::constructPlayerInventory() {
+bool MiscFactory::constructPlayerInventory() {
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   InventorySystem& inventorySystem =
     m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
@@ -79,39 +78,103 @@ void MiscFactory::constructPlayerInventory() {
   }});
 
   eventHandlerSystem.addComponent(pComponent_t(syncCounter));
+
+  return true;
 }
 
 //===========================================
 // MiscFactory::constructDoor
 //===========================================
-void MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   if (entityId == -1) {
     entityId = Component::getNextId();
   }
 
-  m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform);
+  if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
+    BehaviourSystem& behaviourSystem =
+      m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-  BehaviourSystem& behaviourSystem =
-    m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+    CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, m_entityManager,
+      m_timeService.frameRate);
 
-  CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, m_entityManager,
-    m_timeService.frameRate);
+    behaviourSystem.addComponent(pComponent_t(behaviour));
 
-  behaviourSystem.addComponent(pComponent_t(behaviour));
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+//===========================================
+// MiscFactory::constructSwitch
+//===========================================
+bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = Component::getNextId();
+  }
+
+  if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
+    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    CWallDecal& decal = dynamic_cast<CWallDecal&>(renderSystem.getComponent(entityId));
+
+    decal.texRect = QRectF(0, 0, 0.5, 1);
+
+    entityId_t targetId = Component::getIdFromString(getValue(obj.dict, "target"));
+
+    EventHandlerSystem& eventHandlerSystem
+      = m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CEventHandler* handler = new CEventHandler(entityId);
+    handler->handlers.push_back(EventHandler{"playerActivateEntity",
+      [=, &decal](const GameEvent& e_) {
+
+      decal.texRect = QRectF(0.5, 0, 0.5, 1);
+      m_entityManager.broadcastEvent(GameEvent("switchActivateEntity"), set<entityId_t>{targetId});
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(handler));
+
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+//===========================================
+// MiscFactory::constructElevator
+//===========================================
+bool MiscFactory::constructElevator(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  // TODO
+
+  return true;
 }
 
 //===========================================
 // MiscFactory::constructObject
 //===========================================
-void MiscFactory::constructObject(const string& type, entityId_t entityId,
+bool MiscFactory::constructObject(const string& type, entityId_t entityId,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
   if (type == "player_inventory") {
-    constructPlayerInventory();
+    return constructPlayerInventory();
   }
   else if (type == "door") {
-    constructDoor(entityId, obj, parentId, parentTransform);
+    return constructDoor(entityId, obj, parentId, parentTransform);
   }
+  else if (type == "switch") {
+    return constructSwitch(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "elevator") {
+    return constructElevator(entityId, obj, parentId, parentTransform);
+  }
+
+  return false;
 }

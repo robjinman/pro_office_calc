@@ -16,7 +16,7 @@ namespace parser { class Object; }
 
 class GameObjectFactory {
   public:
-    virtual void constructObject(const std::string& type, entityId_t entityId,
+    virtual bool constructObject(const std::string& type, entityId_t entityId,
       const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) = 0;
 
     virtual const std::set<std::string>& types() const = 0;

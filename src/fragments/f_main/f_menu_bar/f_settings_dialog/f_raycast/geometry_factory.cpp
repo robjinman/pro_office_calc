@@ -41,7 +41,7 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 //===========================================
 // GeometryFactory::constructWallDecal
 //===========================================
-void GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -63,16 +63,14 @@ void GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
   if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
     || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
 
-    return;
+    return false;
   }
   if (a < 0 || b < 0) {
-    return;
+    return false;
   }
   if (a > wall.length() || b > wall.length()) {
-    return;
+    return false;
   }
-
-  DBG_PRINT("Constructing WallDecal\n");
 
   double r = std::stod(getValue(obj.dict, "aspect_ratio"));
   Size size(w, w / r);
@@ -95,15 +93,15 @@ void GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
   decal->texture = texture;
 
   renderSystem.addComponent(pComponent_t(decal));
+
+  return true;
 }
 
 //===========================================
 // GeometryFactory::constructWalls
 //===========================================
-void GeometryFactory::constructWalls(const parser::Object& obj,
+bool GeometryFactory::constructWalls(const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  DBG_PRINT("Constructing Walls\n");
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -154,18 +152,18 @@ void GeometryFactory::constructWalls(const parser::Object& obj,
 
   snapEndpoint(m_endpoints, edges.front()->lseg.A);
   snapEndpoint(m_endpoints, edges.back()->lseg.B);
+
+  return true;
 }
 
 //===========================================
 // GeometryFactory::constructFloorDecal
 //===========================================
-void GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  DBG_PRINT("Constructing FloorDecal\n");
 
   string texture = getValue(obj.dict, "texture", "default");
 
@@ -191,17 +189,17 @@ void GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Obj
   decal->texture = texture;
 
   renderSystem.addComponent(pComponent_t(decal));
+
+  return true;
 }
 
 //===========================================
 // constructPlayer
 //===========================================
-void GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t parentId,
+bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   const double COLLISION_RADIUS = 10;
-
-  DBG_PRINT("Constructing Player\n");
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   AnimationSystem& animationSystem =
@@ -297,15 +295,15 @@ void GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
   animationSystem.addComponent(pCAnimation_t(shoot));
 
   spatialSystem.sg.player.reset(player);
+
+  return true;
 }
 
 //===========================================
 // GeometryFactory::constructBoundaries
 //===========================================
-void GeometryFactory::constructBoundaries(const parser::Object& obj,
+bool GeometryFactory::constructBoundaries(const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  DBG_PRINT("Constructing Boundaries\n");
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -345,15 +343,15 @@ void GeometryFactory::constructBoundaries(const parser::Object& obj,
 
   snapEndpoint(m_endpoints, edges.front()->lseg.A);
   snapEndpoint(m_endpoints, edges.back()->lseg.B);
+
+  return true;
 }
 
 //===========================================
 // GeometryFactory::constructRegion_r
 //===========================================
-void GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  DBG_PRINT("Constructing Region\n");
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -425,12 +423,14 @@ void GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
     //delete zone;
     EXCEPTION("Error constructing region; " << ex.what());
   }
+
+  return true;
 }
 
 //===========================================
 // GeometryFactory::constructRootRegion
 //===========================================
-void GeometryFactory::constructRootRegion(const parser::Object& obj) {
+bool GeometryFactory::constructRootRegion(const parser::Object& obj) {
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
@@ -451,33 +451,38 @@ void GeometryFactory::constructRootRegion(const parser::Object& obj) {
   m_endpoints.clear();
   Matrix m;
 
-  constructRegion_r(-1, obj, -1, m);
-
-  for (auto it = m_endpoints.begin(); it != m_endpoints.end(); ++it) {
-    if (it->second == false) {
-      EXCEPTION("There are unconnected endpoints");
+  if (constructRegion_r(-1, obj, -1, m)) {
+    for (auto it = m_endpoints.begin(); it != m_endpoints.end(); ++it) {
+      if (it->second == false) {
+        EXCEPTION("There are unconnected endpoints");
+      }
     }
-  }
 
-  if (!sg.player) {
-    EXCEPTION("SpatialSystem must contain the player");
-  }
+    if (!sg.player) {
+      EXCEPTION("SpatialSystem must contain the player");
+    }
 
-  spatialSystem.connectZones();
-  renderSystem.connectRegions();
+    spatialSystem.connectZones();
+    renderSystem.connectRegions();
+
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 //===========================================
 // GeometryFactory::constructRegion
 //===========================================
-void GeometryFactory::constructRegion(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructRegion(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
   if (parentId == -1) {
-    constructRootRegion(obj);
+    return constructRootRegion(obj);
   }
   else {
-    constructRegion_r(entityId, obj, parentId, parentTransform);
+    return constructRegion_r(entityId, obj, parentId, parentTransform);
   }
 }
 
@@ -510,25 +515,27 @@ const set<string>& GeometryFactory::types() const {
 //===========================================
 // GeometryFactory::constructObject
 //===========================================
-void GeometryFactory::constructObject(const string& type, entityId_t entityId,
+bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
   if (type == "player") {
-    constructPlayer(obj, parentId, parentTransform);
+    return constructPlayer(obj, parentId, parentTransform);
   }
   else if (type == "region") {
-    constructRegion(entityId, obj, parentId, parentTransform);
+    return constructRegion(entityId, obj, parentId, parentTransform);
   }
   else if (type == "joining_edge") {
-    constructBoundaries(obj, parentId, parentTransform);
+    return constructBoundaries(obj, parentId, parentTransform);
   }
   else if (type == "wall") {
-    constructWalls(obj, parentId, parentTransform);
+    return constructWalls(obj, parentId, parentTransform);
   }
   else if (type == "wall_decal") {
-    constructWallDecal(entityId, obj, parentId, parentTransform);
+    return constructWallDecal(entityId, obj, parentId, parentTransform);
   }
   else if (type == "floor_decal") {
-    constructFloorDecal(entityId, obj, parentId, parentTransform);
+    return constructFloorDecal(entityId, obj, parentId, parentTransform);
   }
+
+  return false;
 }

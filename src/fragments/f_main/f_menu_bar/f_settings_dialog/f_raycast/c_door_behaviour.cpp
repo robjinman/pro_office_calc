@@ -71,7 +71,7 @@ void CDoorBehaviour::update() {
 // CDoorBehaviour::handleEvent
 //===========================================
 void CDoorBehaviour::handleEvent(const GameEvent& e) {
-  if (e.name == "activateEntity") {
+  if (e.name == "playerActivateEntity" || e.name == "switchActivateEntity") {
     switch (m_state) {
       case ST_CLOSED:
         m_state = ST_OPENING;

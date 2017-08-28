@@ -21,7 +21,7 @@ class GeometryFactory : public GameObjectFactory {
 
     virtual const std::set<std::string>& types() const override;
 
-    virtual void constructObject(const std::string& type, entityId_t entityId,
+    virtual bool constructObject(const std::string& type, entityId_t entityId,
       const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) override;
 
     virtual ~GeometryFactory() override {}
@@ -34,20 +34,20 @@ class GeometryFactory : public GameObjectFactory {
 
     std::map<Point, bool> m_endpoints;
 
-    void constructWallDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructWallDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructWalls(const parser::Object& obj, entityId_t parentId,
+    bool constructWalls(const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructFloorDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructFloorDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructPlayer(const parser::Object& obj, entityId_t parentId,
+    bool constructPlayer(const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructBoundaries(const parser::Object& obj, entityId_t parentId,
+    bool constructBoundaries(const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructRegion_r(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructRegion_r(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    void constructRootRegion(const parser::Object& obj);
-    void constructRegion(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructRootRegion(const parser::Object& obj);
+    bool constructRegion(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };
 

@@ -1,7 +1,6 @@
 #include <cassert>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/inventory_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
-#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/event_handler_system.hpp"
 #include "utils.hpp"
 
 
@@ -123,11 +122,7 @@ void InventorySystem::addToBucket(const CCollectable& item) {
         bucket.count = bucket.capacity;
       }
 
-      EventHandlerSystem& eventHandlerSystem = m_entityManager
-        .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-      eventHandlerSystem.sendEvent(id, EBucketCountChange(prev, bucket.count));
-
+      m_entityManager.broadcastEvent(EBucketCountChange(prev, bucket.count), set<entityId_t>{id});
       m_entityManager.deleteEntity(item.entityId());
     }
   }
@@ -147,10 +142,7 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
       bucket.count -= value;
     }
 
-    EventHandlerSystem& eventHandlerSystem = m_entityManager
-      .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-    eventHandlerSystem.sendEvent(id, EBucketCountChange(prev, bucket.count));
+    m_entityManager.broadcastEvent(EBucketCountChange(prev, bucket.count), set<entityId_t>{id});
 
     return bucket.count;
   }

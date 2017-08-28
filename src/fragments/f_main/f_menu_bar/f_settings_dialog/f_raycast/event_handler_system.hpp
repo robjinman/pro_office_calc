@@ -29,16 +29,13 @@ typedef std::unique_ptr<CEventHandler> pCEventHandler_t;
 class EventHandlerSystem : public System {
   public:
     virtual void update() override {}
-    virtual void handleEvent(const GameEvent& event) override {}
-    virtual void handleEvent(const GameEvent& event,
-      const std::set<entityId_t>& entities) override {}
+    virtual void handleEvent(const GameEvent& event) override;
+    virtual void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override;
 
     virtual void addComponent(pComponent_t component) override;
     virtual bool hasComponent(entityId_t entityId) const override;
     virtual Component& getComponent(entityId_t entityId) const override;
     virtual void removeEntity(entityId_t id) override;
-
-    void sendEvent(entityId_t entityId, const GameEvent& event);
 
     virtual ~EventHandlerSystem() override {}
 

@@ -221,9 +221,9 @@ SpatialSystem::SpatialSystem(EntityManager& entityManager, TimeService& timeServ
 //===========================================
 void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "playerActivate") {
-    GameEvent e("activateEntity");
-    m_entityManager.broadcastEvent(e,
-      entitiesInRadius(sg.player->pos(), sg.player->activationRadius));
+    GameEvent e("playerActivateEntity");
+    m_entityManager.broadcastEvent(e, entitiesInRadius(sg.player->pos(),
+      sg.player->activationRadius));
   }
 }
 
@@ -408,6 +408,14 @@ static bool overlapsCircle(const Circle& circle, const CVRect& vRect) {
 //===========================================
 // overlapsCircle
 //===========================================
+static bool overlapsCircle(const Circle& circle, const LineSegment& wall, const CVRect& vRect) {
+  Vec2f v = normalise(wall.B - wall.A);
+  return distance(circle.pos, wall.A + v * vRect.pos.x) <= circle.radius;
+}
+
+//===========================================
+// overlapsCircle
+//===========================================
 static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
   // TODO
 
@@ -424,6 +432,16 @@ static void entitiesInRadius_r(const CZone& zone, const Circle& circle,
     if (overlapsCircle(circle, **it)) {
       entities.insert((*it)->entityId());
       entities.insert(zone.entityId());
+
+      if ((*it)->kind == CSpatialKind::HARD_EDGE) {
+        const CHardEdge& he = dynamic_cast<const CHardEdge&>(**it);
+
+        for (auto jt = he.vRects.begin(); jt != he.vRects.end(); ++jt) {
+          if (overlapsCircle(circle, he.lseg, **jt)) {
+            entities.insert((*jt)->entityId());
+          }
+        }
+      }
     }
   }
 

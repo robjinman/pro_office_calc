@@ -14,7 +14,7 @@ class RootFactory : public GameObjectFactory {
 
     virtual const std::set<std::string>& types() const override;
 
-    virtual void constructObject(const std::string& type, entityId_t entityId,
+    virtual bool constructObject(const std::string& type, entityId_t entityId,
       const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) override;
 
     virtual ~RootFactory() override {}
@@ -24,6 +24,10 @@ class RootFactory : public GameObjectFactory {
     std::map<std::string, GameObjectFactory*> m_factoriesByType;
 
     std::set<std::string> m_types;
+
+#ifdef DEBUG
+    int m_dbgIndentLvl = 0;
+#endif
 };
 
 
