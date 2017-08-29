@@ -28,8 +28,8 @@
      id="namedview65"
      showgrid="false"
      inkscape:zoom="8.0000004"
-     inkscape:cx="918.67922"
-     inkscape:cy="502.64329"
+     inkscape:cx="944.23908"
+     inkscape:cy="703.07803"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -4208,7 +4208,7 @@
                sodipodi:role="line"
                id="tspan44528"
                x="969.66156"
-               y="501.39484">behaviour=tween_floor</tspan></text>
+               y="501.39484">toggle_delay=1.0</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.92043614px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:0.98999999;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"

@@ -13,6 +13,7 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_enemy_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_door_behaviour.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/c_switch_behaviour.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/time_service.hpp"
 #include "exception.hpp"
@@ -118,25 +119,17 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
   }
 
   if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
-    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-    CWallDecal& decal = dynamic_cast<CWallDecal&>(renderSystem.getComponent(entityId));
+    BehaviourSystem& behaviourSystem =
+      m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-    decal.texRect = QRectF(0, 0, 0.5, 1);
+    entityId_t target = Component::getIdFromString(getValue(obj.dict, "target"));
+    bool toggleable = getValue(obj.dict, "toggleable", "false") == "true";
+    double toggleDelay = std::stod(getValue(obj.dict, "toggle_delay", "0.0"));
 
-    entityId_t targetId = Component::getIdFromString(getValue(obj.dict, "target"));
+    CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target,
+      toggleable, toggleDelay);
 
-    EventHandlerSystem& eventHandlerSystem
-      = m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-    CEventHandler* handler = new CEventHandler(entityId);
-    handler->handlers.push_back(EventHandler{"playerActivateEntity",
-      [=, &decal](const GameEvent& e) {
-
-      decal.texRect = QRectF(0.5, 0, 0.5, 1);
-      m_entityManager.broadcastEvent(GameEvent("switchActivateEntity"), set<entityId_t>{targetId});
-    }});
-
-    eventHandlerSystem.addComponent(pComponent_t(handler));
+    behaviourSystem.addComponent(pComponent_t(behaviour));
 
     return true;
   }
