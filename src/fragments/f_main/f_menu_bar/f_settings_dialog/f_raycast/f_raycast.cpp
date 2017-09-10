@@ -27,8 +27,8 @@ using std::string;
 using std::list;
 
 
-const int SCREEN_WIDTH = 320;
-const int SCREEN_HEIGHT = 200;
+const int SCREEN_WIDTH = 600;
+const int SCREEN_HEIGHT = 400;
 const int FRAME_RATE = 60;
 
 

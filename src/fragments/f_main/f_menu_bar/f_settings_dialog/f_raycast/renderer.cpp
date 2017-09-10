@@ -630,7 +630,7 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
 //===========================================
 static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
   double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double targetH_wd,
-  double distanceAlongTarget, const Slice& slice, const Size& texSz_wd, vector<QRectF>& trgRects,
+  double distanceAlongTarget, const Slice& slice, const Size& texSz_wd, vector<QRect>& trgRects,
   vector<QRect>& srcRects) {
 
   double H_tx = texRect.height();
@@ -675,21 +675,21 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
 
     double y = j * texSz_wd.y;
 
-    QRectF trgRect;
+    QRect trgRect;
     trgRect.setX(screenX_px);
-    trgRect.setY(fnProjToScreenY(fnSliceToProjY(y) + projTexH_wd));
+    trgRect.setY(round(fnProjToScreenY(fnSliceToProjY(y) + projTexH_wd)));
     trgRect.setWidth(1);
-    trgRect.setHeight(projTexH_wd * vWorldUnit_px);
+    trgRect.setHeight(round(projTexH_wd * vWorldUnit_px));
 
     // Note that screen y-axis is inverted
     if (j == j0) {
       srcRect.setHeight(srcRect.height() - bottomOffset_wd * vWorldUnit_tx);
-      trgRect.setHeight(trgRect.height() - bottomOffset_wd * sliceToProjScale * vWorldUnit_px);
+      trgRect.setHeight(round(trgRect.height() - bottomOffset_wd * sliceToProjScale * vWorldUnit_px));
     }
     if (j + 1 == j1) {
       // QRect::setY() also changes the height!
       srcRect.setY(srcRect.y() + topOffset_wd * vWorldUnit_tx);
-      trgRect.setY(trgRect.y() + topOffset_wd * sliceToProjScale * vWorldUnit_px);
+      trgRect.setY(round(trgRect.y() + topOffset_wd * sliceToProjScale * vWorldUnit_px));
     }
 
     srcRects.push_back(srcRect);
@@ -721,11 +721,63 @@ static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double cam
 }
 
 //===========================================
+// blend
+//===========================================
+static inline QColor blend(const QRgb& A, const QRgb& B, double alphaB) {
+  double alphaA = 1.0 - alphaB;
+  return QColor(alphaA * qRed(A) + alphaB * qRed(B),
+    alphaA * qGreen(A) + alphaB * qGreen(B),
+    alphaA * qBlue(A) + alphaB * qBlue(B),
+    255);
+}
+
+//===========================================
+// pixel
+//===========================================
+static inline QRgb pixel(const QImage& img, int x, int y) {
+  return reinterpret_cast<const QRgb*>(img.constScanLine(y))[x];
+}
+
+//===========================================
+// drawImage
+//===========================================
+static void drawImage(QImage& target, const QRect& trgRect, const QImage& tex, const QRect& srcRect,
+  double distance = 0) {
+
+  int y0 = clipNumber(trgRect.y(), Range(0, target.height()));
+  int y1 = clipNumber(trgRect.y() + trgRect.height(), Range(0, target.height()));
+  int x0 = clipNumber(trgRect.x(), Range(0, target.width()));
+  int x1 = clipNumber(trgRect.x() + trgRect.width(), Range(0, target.width()));
+
+  double trgW_rp = 1.0 / trgRect.width();
+  double trgH_rp = 1.0 / trgRect.height();
+
+  for (int j = y0; j < y1; ++j) {
+    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+
+    for (int i = x0; i < x1; ++i) {
+      double x = static_cast<double>(i - trgRect.x()) * trgW_rp;
+      double y = static_cast<double>(j - trgRect.y()) * trgH_rp;
+
+      int srcX = srcRect.x() + x * srcRect.width();
+      int srcY = srcRect.y() + y * srcRect.height();
+
+      QRgb srcPx = tex.pixel(srcX, srcY);
+      double srcAlpha = qAlpha(srcPx);
+
+      if (srcAlpha > 0) {
+        pixels[i] = applyShade(blend(pixels[i], srcPx, 0.00392156862 * srcAlpha).rgb(), distance);
+      }
+    }
+  }
+}
+
+//===========================================
 // drawSlice
 //===========================================
-static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Player& player,
-  double F, const Intersection& X, const Slice& slice, const string& texture,
-  double screenX_px, const Size& viewport_px, double targetH_wd = 0) {
+static ScreenSlice drawSlice(QImage& target, const RenderGraph& rg, const Player& player, double F,
+  const Intersection& X, const Slice& slice, const string& texture, double screenX_px,
+  const Size& viewport_px, double targetH_wd = 0) {
 
   double hWorldUnit_px = viewport_px.x / rg.viewport.x;
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
@@ -737,7 +789,7 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 
   if (screenSliceBottom_px - screenSliceTop_px > 0) {
     vector<QRect> srcRects;
-    vector<QRectF> trgRects;
+    vector<QRect> trgRects;
     sampleWallTexture(wallTex.image.rect(), player.camera().height, viewport_px, screenX_px,
       hWorldUnit_px, vWorldUnit_px, targetH_wd, X.distanceAlongTarget, slice, wallTex.size_wd,
       trgRects, srcRects);
@@ -745,8 +797,7 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
     assert(srcRects.size() == trgRects.size());
 
     for (unsigned int i = 0; i < srcRects.size(); ++i) {
-      painter.drawImage(trgRects[i], wallTex.image, srcRects[i]);
-      painter.fillRect(trgRects[i], QBrush(QColor(0, 0, 0, getShade(X.distanceFromOrigin))));
+      drawImage(target, trgRects[i], wallTex.image, srcRects[i], X.distanceFromOrigin);
     }
   }
 
@@ -757,25 +808,11 @@ static ScreenSlice drawSlice(QPainter& painter, const RenderGraph& rg, const Pla
 }
 
 //===========================================
-// shadeSlice
-//===========================================
-static void shadeSlice(QImage& target, double distance) {
-  for (int i = 0; i < target.width(); ++i) {
-    for (int j = 0; j < target.height(); ++j) {
-      QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-      if (qAlpha(pixels[i]) != 0) {
-        pixels[i] = applyShade(pixels[i], distance);
-      }
-    }
-  }
-}
-
-//===========================================
 // drawSprite
 //===========================================
-void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
-  const CSprite& sprite, const SpatialSystem& spatialSystem, const RenderGraph& rg,
-  const Camera& camera, const Size& viewport_px, const SpriteX& X, double screenX_px) {
+void drawSprite(QImage& target, const CSprite& sprite, const SpatialSystem& spatialSystem,
+  const RenderGraph& rg, const Camera& camera, const Size& viewport_px, const SpriteX& X,
+  double screenX_px) {
 
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
@@ -797,20 +834,15 @@ void drawSprite(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
     zone.floorHeight);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
-  QRect bufRect(0, 0, 1, trgRect.height());
-
-  sliceBuffer.fill(0);
-  bufferPainter.drawImage(bufRect, tex.image, srcRect);
-  shadeSlice(sliceBuffer, X.X->distanceFromOrigin);
-  painter.drawImage(trgRect, sliceBuffer, bufRect);
+  drawImage(target, trgRect, tex.image, srcRect, X.X->distanceFromOrigin);
 }
 
 //===========================================
 // drawWallDecal
 //===========================================
-static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sliceBuffer,
-  const SpatialSystem& spatialSystem, const RenderGraph& rg, const CWallDecal& decal,
-  const WallX& X, int screenX_px, const Size& viewport_px, double camHeight, double vWorldUnit_px) {
+static void drawWallDecal(QImage& target, const SpatialSystem& spatialSystem, const RenderGraph& rg,
+  const CWallDecal& decal, const WallX& X, int screenX_px, const Size& viewport_px,
+  double camHeight, double vWorldUnit_px) {
 
   const CVRect& vRect = getVRect(spatialSystem, decal);
 
@@ -852,13 +884,7 @@ static void drawWallDecal(QPainter& painter, QPainter& bufferPainter, QImage& sl
   QRect srcRect(i, texY_px, 1, texH_px);
   QRect trgRect(screenX_px, y1_px, 1, y0_px - y1_px);
 
-  double h = clipNumber(trgRect.height(), Range(0, sliceBuffer.height()));
-  QRect bufRect(0, 0, 1, h);
-
-  sliceBuffer.fill(0);
-  bufferPainter.drawImage(bufRect, decalTex.image, srcRect);
-  shadeSlice(sliceBuffer, X.X->distanceFromOrigin);
-  painter.drawImage(trgRect, sliceBuffer, bufRect);
+  drawImage(target, trgRect, decalTex.image, srcRect, X.X->distanceFromOrigin);
 }
 
 //===========================================
@@ -966,11 +992,6 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   QPainter painter;
   painter.begin(&m_target);
 
-  QPainter bufferPainter;
-  QImage sliceBuffer(1, m_target.height(), QImage::Format_ARGB32);
-
-  bufferPainter.begin(&sliceBuffer);
-
   Size viewport_px(m_target.width(), m_target.height());
   const Camera& cam = player.camera();
 
@@ -1000,13 +1021,13 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
       if (X.kind == XWrapperKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(X);
 
-        ScreenSlice slice = drawSlice(painter, rg, player, cam.F, *wallX.X, wallX.slice,
+        ScreenSlice slice = drawSlice(m_target, rg, player, cam.F, *wallX.X, wallX.slice,
           wallX.wall->texture, screenX_px, viewport_px);
 
         CWallDecal* decal = getWallDecal(spatialSystem, *wallX.wall, wallX.X->distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(painter, bufferPainter, sliceBuffer, spatialSystem, rg, *decal, wallX,
-            screenX_px, viewport_px, cam.height, vWorldUnit_px);
+          drawWallDecal(m_target, spatialSystem, rg, *decal, wallX, screenX_px,
+            viewport_px, cam.height, vWorldUnit_px);
         }
 
         CZone& zone = *wallX.hardEdge->zone;
@@ -1026,7 +1047,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
       else if (X.kind == XWrapperKind::JOIN) {
         const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
-        ScreenSlice slice0 = drawSlice(painter, rg, player, cam.F, *joinX.X, joinX.slice0,
+        ScreenSlice slice0 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice0,
           joinX.join->bottomTexture, screenX_px, viewport_px);
 
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
@@ -1036,7 +1057,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           joinX.nearZone->floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd,
           vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
-        ScreenSlice slice1 = drawSlice(painter, rg, player, cam.F, *joinX.X, joinX.slice1,
+        ScreenSlice slice1 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice1,
           joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
 
         if (nearRegion.hasCeiling) {
@@ -1050,8 +1071,8 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
       }
       else if (X.kind == XWrapperKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(painter, bufferPainter, sliceBuffer, *spriteX.sprite, spatialSystem, rg,
-          player.camera(), viewport_px, spriteX, screenX_px);
+        drawSprite(m_target, *spriteX.sprite, spatialSystem, rg, player.camera(), viewport_px,
+          spriteX, screenX_px);
       }
     }
 
@@ -1073,6 +1094,5 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
     }
   }
 
-  bufferPainter.end();
   painter.end();
 }
