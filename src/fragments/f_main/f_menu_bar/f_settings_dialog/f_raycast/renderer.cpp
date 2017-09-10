@@ -176,20 +176,21 @@ static double fastATan(const atanMap_t& atanMap, double x) {
 }
 
 //===========================================
-// worldPointToFloorTexel
+// blend
 //===========================================
-static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, const Size& texSz_px) {
-  double nx = p.x * texSz_wd_rp.x;
-  double ny = p.y * texSz_wd_rp.y;
+static inline QColor blend(const QRgb& A, const QRgb& B, double alphaB) {
+  double alphaA = 1.0 - alphaB;
+  return QColor(alphaA * qRed(A) + alphaB * qRed(B),
+    alphaA * qGreen(A) + alphaB * qGreen(B),
+    alphaA * qBlue(A) + alphaB * qBlue(B),
+    255);
+}
 
-  if (nx < 0 || std::isinf(nx) || std::isnan(nx)) {
-    nx = 0;
-  }
-  if (ny < 0 || std::isinf(ny) || std::isnan(ny)) {
-    ny = 0;
-  }
-
-  return Point((nx - floor(nx)) * texSz_px.x, (ny - floor(ny)) * texSz_px.y);
+//===========================================
+// pixel
+//===========================================
+static inline QRgb pixel(const QImage& img, int x, int y) {
+  return reinterpret_cast<const QRgb*>(img.constScanLine(y))[x];
 }
 
 //===========================================
@@ -205,6 +206,57 @@ static inline double getShade(double distance) {
 static inline QRgb applyShade(const QRgb& c, double distance) {
   double s = 1.0 - getShade(distance) / 255.0;
   return qRgba(qRed(c) * s, qGreen(c) * s, qBlue(c) * s, qAlpha(c));
+}
+
+//===========================================
+// drawImage
+//===========================================
+static void drawImage(QImage& target, const QRect& trgRect, const QImage& tex, const QRect& srcRect,
+  double distance = 0) {
+
+  int y0 = clipNumber(trgRect.y(), Range(0, target.height()));
+  int y1 = clipNumber(trgRect.y() + trgRect.height(), Range(0, target.height()));
+  int x0 = clipNumber(trgRect.x(), Range(0, target.width()));
+  int x1 = clipNumber(trgRect.x() + trgRect.width(), Range(0, target.width()));
+
+  double trgW_rp = 1.0 / trgRect.width();
+  double trgH_rp = 1.0 / trgRect.height();
+
+  for (int j = y0; j < y1; ++j) {
+    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+
+    for (int i = x0; i < x1; ++i) {
+      double x = static_cast<double>(i - trgRect.x()) * trgW_rp;
+      double y = static_cast<double>(j - trgRect.y()) * trgH_rp;
+
+      int srcX = srcRect.x() + x * srcRect.width();
+      int srcY = srcRect.y() + y * srcRect.height();
+
+      QRgb srcPx = pixel(tex, srcX, srcY);
+      double srcAlpha = qAlpha(srcPx);
+
+      if (srcAlpha > 0) {
+        pixels[i] = applyShade(blend(pixels[i], srcPx, 0.00392156862 * srcAlpha).rgb(), distance);
+      }
+    }
+  }
+}
+
+//===========================================
+// worldPointToFloorTexel
+//===========================================
+static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, const Size& texSz_px) {
+  double nx = p.x * texSz_wd_rp.x;
+  double ny = p.y * texSz_wd_rp.y;
+
+  if (nx < 0 || std::isinf(nx) || std::isnan(nx)) {
+    nx = 0;
+  }
+  if (ny < 0 || std::isinf(ny) || std::isnan(ny)) {
+    ny = 0;
+  }
+
+  return Point((nx - floor(nx)) * texSz_px.x, (ny - floor(ny)) * texSz_px.y);
 }
 
 //===========================================
@@ -508,7 +560,7 @@ static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& pl
     assert(isBetween(s, 0.0, 1.0));
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-    pixels[screenX_px] = skyTex.image.pixel(x, s * texSz_px.y);
+    pixels[screenX_px] = pixel(skyTex.image, x, s * texSz_px.y);
   }
 }
 
@@ -546,7 +598,7 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player
     Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-    pixels[screenX_px] = applyShade(ceilingTex.image.pixel(texel.x, texel.y), d);
+    pixels[screenX_px] = applyShade(pixel(ceilingTex.image, texel.x, texel.y), d);
   }
 }
 
@@ -615,12 +667,12 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
 
       Point texel(texSz_px.x * decalPt.x / hRect.size.x, texSz_px.y * decalPt.y / hRect.size.y);
       QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-      pixels[screenX_px] = decalTex.image.pixel(texel.x, texel.y);
+      pixels[screenX_px] = pixel(decalTex.image, texel.x, texel.y);
     }
     else {
       Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
       QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-      pixels[screenX_px] = applyShade(floorTex.image.pixel(texel.x, texel.y), d);
+      pixels[screenX_px] = applyShade(pixel(floorTex.image, texel.x, texel.y), d);
     }
   }
 }
@@ -684,7 +736,8 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     // Note that screen y-axis is inverted
     if (j == j0) {
       srcRect.setHeight(srcRect.height() - bottomOffset_wd * vWorldUnit_tx);
-      trgRect.setHeight(round(trgRect.height() - bottomOffset_wd * sliceToProjScale * vWorldUnit_px));
+      trgRect.setHeight(round(trgRect.height()
+        - bottomOffset_wd * sliceToProjScale * vWorldUnit_px));
     }
     if (j + 1 == j1) {
       // QRect::setY() also changes the height!
@@ -718,58 +771,6 @@ static QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, double cam
   int i = x * hWorldUnit_px;
 
   return QRect(rect.x() + i, rect.y() + texTop_px, 1, texBottom_px - texTop_px);
-}
-
-//===========================================
-// blend
-//===========================================
-static inline QColor blend(const QRgb& A, const QRgb& B, double alphaB) {
-  double alphaA = 1.0 - alphaB;
-  return QColor(alphaA * qRed(A) + alphaB * qRed(B),
-    alphaA * qGreen(A) + alphaB * qGreen(B),
-    alphaA * qBlue(A) + alphaB * qBlue(B),
-    255);
-}
-
-//===========================================
-// pixel
-//===========================================
-static inline QRgb pixel(const QImage& img, int x, int y) {
-  return reinterpret_cast<const QRgb*>(img.constScanLine(y))[x];
-}
-
-//===========================================
-// drawImage
-//===========================================
-static void drawImage(QImage& target, const QRect& trgRect, const QImage& tex, const QRect& srcRect,
-  double distance = 0) {
-
-  int y0 = clipNumber(trgRect.y(), Range(0, target.height()));
-  int y1 = clipNumber(trgRect.y() + trgRect.height(), Range(0, target.height()));
-  int x0 = clipNumber(trgRect.x(), Range(0, target.width()));
-  int x1 = clipNumber(trgRect.x() + trgRect.width(), Range(0, target.width()));
-
-  double trgW_rp = 1.0 / trgRect.width();
-  double trgH_rp = 1.0 / trgRect.height();
-
-  for (int j = y0; j < y1; ++j) {
-    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
-
-    for (int i = x0; i < x1; ++i) {
-      double x = static_cast<double>(i - trgRect.x()) * trgW_rp;
-      double y = static_cast<double>(j - trgRect.y()) * trgH_rp;
-
-      int srcX = srcRect.x() + x * srcRect.width();
-      int srcY = srcRect.y() + y * srcRect.height();
-
-      QRgb srcPx = tex.pixel(srcX, srcY);
-      double srcAlpha = qAlpha(srcPx);
-
-      if (srcAlpha > 0) {
-        pixels[i] = applyShade(blend(pixels[i], srcPx, 0.00392156862 * srcAlpha).rgb(), distance);
-      }
-    }
-  }
 }
 
 //===========================================
