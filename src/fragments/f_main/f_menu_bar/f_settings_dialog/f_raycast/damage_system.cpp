@@ -86,3 +86,18 @@ void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle,
     damageEntity(intersections.front()->entityId, damage);
   }
 }
+
+//===========================================
+// DamageSystem::damageAtIntersection
+//===========================================
+void DamageSystem::damageAtIntersection(const CZone& zone, const Point& pos, double height,
+  const Vec2f& dir, double vAngle, const Matrix& matrix, int damage) {
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(zone, pos, height, dir,
+    vAngle, matrix);
+
+  if (intersections.size() > 0) {
+    damageEntity(intersections.front()->entityId, damage);
+  }
+}

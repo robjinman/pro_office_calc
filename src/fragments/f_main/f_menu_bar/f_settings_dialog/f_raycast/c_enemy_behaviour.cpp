@@ -34,7 +34,7 @@ static int indexOfClosestPoint(const Point& point, const vector<Point>& points) 
 // hasLineOfSight
 //===========================================
 static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, const Player& player,
-  double& hAngle) {
+  Matrix& m, Vec2f& ray, double& hAngle, double& vAngle, double& height) {
 
   const Point& target_wld = player.body.pos;
 
@@ -43,13 +43,13 @@ static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, con
   hAngle = atan2(v.y, v.x);
 
   Matrix t(hAngle, body.pos);
-  Matrix m = t.inverse();
+  m = t.inverse();
 
   Point target_rel = m * target_wld;
-  Vec2f ray = normalise(target_rel);
+  ray = normalise(target_rel);
 
-  double height = body.zone->floorHeight + body.size.y * 0.5;
-  double vAngle = atan2(targetHeight - height, length(target_rel));
+  height = body.zone->floorHeight + body.size.y * 0.5;
+  vAngle = atan2(targetHeight - height, length(target_rel));
 
   list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, ray * 0.00001,
     height, ray, vAngle, m);
@@ -123,9 +123,14 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
   const Player& player = *spatialSystem.sg.player;
 
   m_gunfireTiming->doIfReady([&]() {
-    double angle = 0;
-    if (hasLineOfSight(spatialSystem, body, player, angle)) {
-      body.angle = angle;
+    double hAngle = 0;
+    double vAngle = 0;
+    Matrix m;
+    Vec2f ray;
+    double height = 0;
+
+    if (hasLineOfSight(spatialSystem, body, player, m, ray, hAngle, vAngle, height)) {
+      body.angle = hAngle;
       m_shooting = true;
 
       m_timeService.onTimeout([&]() {
@@ -133,7 +138,10 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
       }, 1.0);
 
       m_audioService.playSoundAtPos("shotgun_shoot", body.pos);
-      damageSystem.damageEntity(player.body.entityId(), 1);
+
+      // TODO: Move ray randomly to simulate inaccurate aim
+
+      damageSystem.damageAtIntersection(*body.zone, ray * 0.00001, height, ray, vAngle, m, 1);
     }
   });
 }

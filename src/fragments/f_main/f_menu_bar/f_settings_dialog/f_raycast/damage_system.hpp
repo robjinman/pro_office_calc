@@ -30,6 +30,7 @@ enum class AttenuationCurve {
 };
 
 class EntityManager;
+class CZone;
 
 class DamageSystem : public System {
   public:
@@ -52,6 +53,9 @@ class DamageSystem : public System {
       AttenuationCurve attenuation = AttenuationCurve::LINEAR);
 
     void damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage);
+
+    void damageAtIntersection(const CZone& zone, const Point& pos, double height, const Vec2f& dir,
+      double vAngle, const Matrix& matrix, int damage);
 
     virtual ~DamageSystem() override {}
 
