@@ -27,9 +27,11 @@ using std::string;
 using std::list;
 
 
-const int SCREEN_WIDTH = 600;
-const int SCREEN_HEIGHT = 400;
+const int SCREEN_WIDTH = 320;
+const int SCREEN_HEIGHT = 240;
 const int FRAME_RATE = 60;
+
+const double PLAYER_SPEED = 250.0;
 
 
 //===========================================
@@ -265,7 +267,7 @@ void FRaycast::tick() {
   }
 
   if (v.x != 0 || v.y != 0) {
-    double ds = 300.0 / FRAME_RATE;
+    double ds = PLAYER_SPEED / FRAME_RATE;
     spatialSystem.movePlayer(normalise(v) * ds);
   }
 
@@ -288,12 +290,12 @@ void FRaycast::tick() {
     }
 
     if (fabs(v.x) > 0) {
-      double da = 0.0008 * PI * v.x;
+      double da = 0.0006 * PI * v.x;
       spatialSystem.hRotateCamera(da);
     }
 
     if (fabs(v.y) > 0) {
-      double da = 0.0008 * PI * v.y;
+      double da = 0.0006 * PI * v.y;
       spatialSystem.vRotateCamera(da);
     }
 

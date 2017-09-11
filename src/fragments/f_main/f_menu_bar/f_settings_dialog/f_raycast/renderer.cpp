@@ -245,7 +245,9 @@ static void drawImage(QImage& target, const QRect& trgRect, const QImage& tex, c
 //===========================================
 // worldPointToFloorTexel
 //===========================================
-static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, const Size& texSz_px) {
+inline static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp,
+  const Size& texSz_px) {
+
   double nx = p.x * texSz_wd_rp.x;
   double ny = p.y * texSz_wd_rp.y;
 
@@ -256,7 +258,7 @@ static Point worldPointToFloorTexel(const Point& p, const Size& texSz_wd_rp, con
     ny = 0;
   }
 
-  return Point((nx - floor(nx)) * texSz_px.x, (ny - floor(ny)) * texSz_px.y);
+  return Point((nx - static_cast<int>(nx)) * texSz_px.x, (ny - static_cast<int>(ny)) * texSz_px.y);
 }
 
 //===========================================
@@ -588,6 +590,8 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
+    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+
     double projY_wd = (screenH_px * 0.5 - j) * vWorldUnit_px_rp;
     double vAngle = fastATan(atanMap, projY_wd * F_rp) + cam.vAngle;
     double d_ = (ceilingHeight - cam.height) * fastTan_rp(tanMap_rp, vAngle);
@@ -596,8 +600,6 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
     Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
-
-    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
     pixels[screenX_px] = applyShade(pixel(ceilingTex.image, texel.x, texel.y), d);
   }
 }
@@ -649,6 +651,8 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceBottom_px; j < slice.viewportBottom_px; ++j) {
+    QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+
     double projY_wd = (j - screenH_px * 0.5) * vWorldUnit_px_rp;
     double vAngle = fastATan(atanMap, projY_wd * F_rp) - cam.vAngle;
     double d_ = (cam.height - floorHeight) * fastTan_rp(tanMap_rp, vAngle);
@@ -666,12 +670,10 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
       Size texSz_px(decalTex.image.rect().width(), decalTex.image.rect().height());
 
       Point texel(texSz_px.x * decalPt.x / hRect.size.x, texSz_px.y * decalPt.y / hRect.size.y);
-      QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
       pixels[screenX_px] = pixel(decalTex.image, texel.x, texel.y);
     }
     else {
       Point texel = worldPointToFloorTexel(p, texSz_wd_rp, texSz_px);
-      QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
       pixels[screenX_px] = applyShade(pixel(floorTex.image, texel.x, texel.y), d);
     }
   }
