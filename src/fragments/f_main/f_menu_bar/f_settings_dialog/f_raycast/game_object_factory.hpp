@@ -8,9 +8,6 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/component.hpp"
 
 
-class EntityManager;
-class AudioService;
-class TimeService;
 class Matrix;
 namespace parser { class Object; }
 

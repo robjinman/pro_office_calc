@@ -8,6 +8,10 @@
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/game_object_factory.hpp"
 
 
+class EntityManager;
+class AudioService;
+class TimeService;
+
 class RootFactory : public GameObjectFactory {
   public:
     RootFactory(EntityManager& entityManager, AudioService& audioService, TimeService& timeService);

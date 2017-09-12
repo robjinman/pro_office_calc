@@ -696,7 +696,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double projTexH_wd = texSz_wd.y * sliceToProjScale;
 
   // World space
-  double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd - targetH_wd;
+  double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd/* - targetH_wd*/;
   double sliceTop_wd = slice.sliceTop_wd + camHeight_wd;
 
   // World space (not camera space)
@@ -1035,7 +1035,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
         CZone& zone = *wallX.hardEdge->zone;
         CRegion& region = *wallX.wall->region;
-
+/*
         drawFloorSlice(m_target, spatialSystem, rg, player, &region, zone.floorHeight,
           wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
@@ -1045,24 +1045,24 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         }
         else {
           drawSkySlice(m_target, rg, player, slice, screenX_px);
-        }
+        }*/
       }
       else if (X.kind == XWrapperKind::JOIN) {
         const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
         ScreenSlice slice0 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice0,
-          joinX.join->bottomTexture, screenX_px, viewport_px);
+          joinX.join->bottomTexture, screenX_px, viewport_px, joinX.farZone->floorHeight);
 
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
-
+/*
         drawFloorSlice(m_target, spatialSystem, rg, player, &nearRegion,
           joinX.nearZone->floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd,
           vWorldUnit_px, m_tanMap_rp, m_atanMap);
-
+*/
         ScreenSlice slice1 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice1,
           joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
-
+/*
         if (nearRegion.hasCeiling) {
           drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
             joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
@@ -1070,7 +1070,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         }
         else {
           drawSkySlice(m_target, rg, player, slice1, screenX_px);
-        }
+        }*/
       }
       else if (X.kind == XWrapperKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
