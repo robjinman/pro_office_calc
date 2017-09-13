@@ -683,7 +683,7 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
 // sampleWallTexture
 //===========================================
 static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const Size& viewport_px,
-  double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double targetH_wd,
+  double screenX_px, double hWorldUnit_px, double vWorldUnit_px, double texAnchor_wd,
   double distanceAlongTarget, const Slice& slice, const Size& texSz_wd, vector<QRect>& trgRects,
   vector<QRect>& srcRects) {
 
@@ -714,11 +714,19 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double nx = distanceAlongTarget / texSz_wd.x;
   double x = (nx - floor(nx)) * texSz_wd.x;
 
-  int j0 = floor(sliceBottom_wd / texSz_wd.y);
-  int j1 = ceil(sliceTop_wd / texSz_wd.y);
+  // Relative to tex anchor
+  double texY0 = floor((sliceBottom_wd - texAnchor_wd) / texSz_wd.y) * texSz_wd.y;
+  double texY1 = ceil((sliceTop_wd - texAnchor_wd) / texSz_wd.y) * texSz_wd.y;
 
-  double bottomOffset_wd = sliceBottom_wd - j0 * texSz_wd.y;
-  double topOffset_wd = j1 * texSz_wd.y - sliceTop_wd;
+  // World space
+  double y0 = texY0 + texAnchor_wd;
+  double y1 = texY1 + texAnchor_wd;
+
+  double bottomOffset_wd = sliceBottom_wd - y0;
+  double topOffset_wd = y1 - sliceTop_wd;
+
+  int j0 = floor(texY0 / texSz_wd.y);
+  int j1 = ceil(texY1 / texSz_wd.y);
 
   for (int j = j0; j < j1; ++j) {
     QRect srcRect;
@@ -727,7 +735,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     srcRect.setWidth(1);
     srcRect.setHeight(texRect.height());
 
-    double y = j * texSz_wd.y;
+    double y = texAnchor_wd + j * texSz_wd.y;
 
     QRect trgRect;
     trgRect.setX(screenX_px);
@@ -1035,7 +1043,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
         CZone& zone = *wallX.hardEdge->zone;
         CRegion& region = *wallX.wall->region;
-/*
+
         drawFloorSlice(m_target, spatialSystem, rg, player, &region, zone.floorHeight,
           wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
@@ -1045,7 +1053,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         }
         else {
           drawSkySlice(m_target, rg, player, slice, screenX_px);
-        }*/
+        }
       }
       else if (X.kind == XWrapperKind::JOIN) {
         const JoinX& joinX = dynamic_cast<const JoinX&>(X);
@@ -1055,14 +1063,14 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
-/*
+
         drawFloorSlice(m_target, spatialSystem, rg, player, &nearRegion,
           joinX.nearZone->floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd,
           vWorldUnit_px, m_tanMap_rp, m_atanMap);
-*/
+
         ScreenSlice slice1 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice1,
           joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
-/*
+
         if (nearRegion.hasCeiling) {
           drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
             joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
@@ -1070,7 +1078,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         }
         else {
           drawSkySlice(m_target, rg, player, slice1, screenX_px);
-        }*/
+        }
       }
       else if (X.kind == XWrapperKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
