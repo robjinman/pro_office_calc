@@ -139,9 +139,20 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
 
       m_audioService.playSoundAtPos("shotgun_shoot", body.pos);
 
-      // TODO: Move ray randomly to simulate inaccurate aim
+      // Move ray randomly to simulate inaccurate aim
+      //
 
-      damageSystem.damageAtIntersection(*body.zone, ray * 0.00001, height, ray, vAngle, m, 1);
+      std::random_device rd;
+      m_randEngine.seed(rd());
+      std::normal_distribution<double> dist(0, DEG_TO_RAD(2));
+
+      double vDa = dist(m_randEngine);
+      double hDa = dist(m_randEngine);
+
+      Matrix rot(hDa, Vec2f(0, 0));
+      ray = rot * ray;
+
+      damageSystem.damageAtIntersection(*body.zone, ray * 0.00001, height, ray, vAngle + vDa, m, 1);
     }
   });
 }

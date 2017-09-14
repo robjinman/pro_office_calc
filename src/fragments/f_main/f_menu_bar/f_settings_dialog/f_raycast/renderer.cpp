@@ -696,7 +696,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double projTexH_wd = texSz_wd.y * sliceToProjScale;
 
   // World space
-  double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd/* - targetH_wd*/;
+  double sliceBottom_wd = slice.sliceBottom_wd + camHeight_wd;
   double sliceTop_wd = slice.sliceTop_wd + camHeight_wd;
 
   // World space (not camera space)

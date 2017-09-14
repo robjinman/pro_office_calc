@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <random>
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/behaviour_system.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/geometry.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/timing.hpp"
@@ -33,6 +34,8 @@ class CEnemyBehaviour : public CBehaviour {
       ST_CHASING,
       ST_SHOOTING
     };
+
+    std::mt19937 m_randEngine;
 
     EntityManager& m_entityManager;
     AudioService& m_audioService;
