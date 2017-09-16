@@ -700,14 +700,14 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double sliceTop_wd = slice.sliceTop_wd + camHeight_wd;
 
   // World space (not camera space)
-  auto fnSliceToProjY = [&](double y) {
+  auto fnSliceToProjY = [&](double y) -> double {
     return slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
   };
 
   double hWorldUnit_tx = W_tx / texSz_wd.x;
   double vWorldUnit_tx = H_tx / texSz_wd.y;
 
-  auto fnProjToScreenY = [&](double y) {
+  auto fnProjToScreenY = [&](double y) -> double {
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
@@ -725,38 +725,43 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
   double bottomOffset_wd = sliceBottom_wd - y0;
   double topOffset_wd = y1 - sliceTop_wd;
 
+  // Ensure offsets are texel-aligned
+  bottomOffset_wd = floor(bottomOffset_wd * vWorldUnit_tx) / vWorldUnit_tx;
+  topOffset_wd = floor(topOffset_wd * vWorldUnit_tx) / vWorldUnit_tx;
+
   int j0 = floor(texY0 / texSz_wd.y);
   int j1 = ceil(texY1 / texSz_wd.y);
 
   for (int j = j0; j < j1; ++j) {
-    QRect srcRect;
-    srcRect.setX(texRect.x() + x * hWorldUnit_tx);
-    srcRect.setY(texRect.y());
-    srcRect.setWidth(1);
-    srcRect.setHeight(texRect.height());
+    double srcX = texRect.x() + x * hWorldUnit_tx;
+    double srcY = texRect.y();
+    double srcW = 1;
+    double srcH = texRect.height();
 
     double y = texAnchor_wd + j * texSz_wd.y;
 
-    QRect trgRect;
-    trgRect.setX(screenX_px);
-    trgRect.setY(round(fnProjToScreenY(fnSliceToProjY(y) + projTexH_wd)));
-    trgRect.setWidth(1);
-    trgRect.setHeight(round(projTexH_wd * vWorldUnit_px));
+    double trgX = screenX_px;
+    double trgY = fnProjToScreenY(fnSliceToProjY(y) + projTexH_wd);
+    double trgW = 1;
+    double trgH = projTexH_wd * vWorldUnit_px;
 
     // Note that screen y-axis is inverted
     if (j == j0) {
-      srcRect.setHeight(srcRect.height() - bottomOffset_wd * vWorldUnit_tx);
-      trgRect.setHeight(round(trgRect.height()
-        - bottomOffset_wd * sliceToProjScale * vWorldUnit_px));
+      srcH -= bottomOffset_wd * vWorldUnit_tx;
+      trgH -= bottomOffset_wd * sliceToProjScale * vWorldUnit_px;
     }
     if (j + 1 == j1) {
-      // QRect::setY() also changes the height!
-      srcRect.setY(srcRect.y() + topOffset_wd * vWorldUnit_tx);
-      trgRect.setY(round(trgRect.y() + topOffset_wd * sliceToProjScale * vWorldUnit_px));
+      double srcDy = topOffset_wd * vWorldUnit_tx;
+      srcY += srcDy;
+      srcH -= srcDy;
+
+      double trgDy = topOffset_wd * sliceToProjScale * vWorldUnit_px;
+      trgY += trgDy;
+      trgH -= trgDy;
     }
 
-    srcRects.push_back(srcRect);
-    trgRects.push_back(trgRect);
+    srcRects.push_back(QRect(srcX, srcY, srcW, srcH));
+    trgRects.push_back(QRect(trgX, trgY, trgW, trgH));
   }
 }
 
