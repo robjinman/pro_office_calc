@@ -29,7 +29,7 @@ using std::list;
 
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
-const int FRAME_RATE = 60;
+const int FRAME_RATE = 35;
 
 const double PLAYER_SPEED = 250.0;
 
@@ -49,6 +49,8 @@ FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
 
   m_rootFactory.reset(new RootFactory(m_entityManager, m_audioService, m_timeService));
 
+  parentData.vbox->setSpacing(0);
+  parentData.vbox->setContentsMargins(0, 0, 0, 0);
   parentData.vbox->addWidget(this);
   setMouseTracking(true);
 
