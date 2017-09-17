@@ -16,10 +16,14 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->calculatorSpec.normalCalcTriggerSpec.targetDisplayColour = QColor(160, 120, 120);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
   mainSpec->menuBarSpec.setEnabled(true);
-  mainSpec->menuBarSpec.aboutDialogText = "<p align='center'><big>Pro Office Calculator</big>"
-    "<br>Version 1.0.0</p>"
-    "<p align='center'>Copyright (c) 2017 Acme Inc. All rights reserved.</p>"
-    "<font size=6>⚠∞</font>";
+  mainSpec->menuBarSpec.aboutDialogText =
+    "<div>"
+    "  <img src='data/apex.svg'>"
+    "  <p align='center'><big>Pro Office Calculator</big>"
+    "  <br>Version 1.0.0</p>"
+    "  <p align='center'>Copyright (c) 2017 Apex Systems Inc. All rights reserved.</p>"
+    "  <p><font size=6>⚠∞</font></p>"
+    "</div>";
 
   return mainSpec;
 }

@@ -29,7 +29,8 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  InventorySystem& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+  InventorySystem& inventorySystem =
+    m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
 
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
