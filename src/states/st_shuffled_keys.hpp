@@ -41,9 +41,6 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <p align='center'>" + targetValue + "</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
-  mainSpec->menuBarSpec.settingsDialogSpec.setEnabled(true);
-  mainSpec->menuBarSpec.settingsDialogSpec.width = 320;
-  mainSpec->menuBarSpec.settingsDialogSpec.height = 240;
 
   return mainSpec;
 }
