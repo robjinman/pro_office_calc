@@ -18,7 +18,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->menuBarSpec.setEnabled(true);
   mainSpec->menuBarSpec.aboutDialogText =
     "<div>"
-    "  <img src='data/apex.svg'>"
+    "  <img src='data/apex.png'>"
     "  <p align='center'><big>Pro Office Calculator</big>"
     "  <br>Version 1.0.0</p>"
     "  <p align='center'>Copyright (c) 2017 Apex Systems Inc. All rights reserved.</p>"
