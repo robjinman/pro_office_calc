@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QImage>
+#include <QMargins>
 #include "fragment.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/entity_manager.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/audio_service.hpp"
@@ -45,6 +46,11 @@ class FRaycast : public QWidget, public Fragment {
 
   private:
     FRaycastData m_data;
+
+    struct {
+      int spacing;
+      QMargins margins;
+    } m_origParentState;
 
     EntityManager m_entityManager;
     TimeService m_timeService;

@@ -43,7 +43,7 @@ TEST_F(GeometryTest, rayToAngleToRayToTransformedRay) {
   LineSegment worldRay(a, 10000.0 * Vec2f(cos(angle), sin(angle)));
   LineSegment ray = transform(worldRay, m.inverse());
 
-  Vec2f v2 = ray.B - ray.A;
+  //Vec2f v2 = ray.B - ray.A;
 
   // Precision loss causes this to fail
   //ASSERT_DOUBLE_EQ(0, atan2(v2.y, v2.x));

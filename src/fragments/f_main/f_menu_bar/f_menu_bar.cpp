@@ -9,8 +9,19 @@
 // FMenuBar::FMenuBar
 //===========================================
 FMenuBar::FMenuBar(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FMenuBar", parent_, parentData_, m_data) {
+  : Fragment("FMenuBar", parent_, parentData_, m_data) {}
 
+//===========================================
+// FMenuBar::close
+//===========================================
+void FMenuBar::onClose() {
+  parentFrag<FMain>().close();
+}
+
+//===========================================
+// FMenuBar::rebuild
+//===========================================
+void FMenuBar::rebuild(const FragmentSpec& spec_) {
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
 
@@ -26,19 +37,7 @@ FMenuBar::FMenuBar(Fragment& parent_, FragmentData& parentData_)
 
   connect(m_data.actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
   connect(m_data.actQuit.get(), SIGNAL(triggered()), this, SLOT(onClose()));
-}
 
-//===========================================
-// FMenuBar::close
-//===========================================
-void FMenuBar::onClose() {
-  parentFrag<FMain>().close();
-}
-
-//===========================================
-// FMenuBar::rebuild
-//===========================================
-void FMenuBar::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FMenuBarSpec&>(spec_);
 
   m_aboutDialogTitle = spec.aboutDialogTitle;

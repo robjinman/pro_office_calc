@@ -2,6 +2,7 @@
 #define __PROCALC_FRAGMENTS_F_COUNTDOWN_TO_START_HPP__
 
 
+#include <functional>
 #include "fragment.hpp"
 
 
@@ -16,6 +17,10 @@ class FCountdownToStart : public Fragment {
 
   private:
     void onQuit();
+
+    struct {
+      std::function<void()> fnOnQuit;
+    } m_origParentState;
 
     FCountdownToStartData m_data;
     int m_stateId;

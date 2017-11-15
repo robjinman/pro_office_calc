@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cassert>
-#include <QVBoxLayout>
 #include <QPushButton>
 #include <QButtonGroup>
 #include <vector>
@@ -43,16 +42,15 @@ static QChar idToChar(int id) {
 //===========================================
 FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
   : QWidget(nullptr),
-    Fragment("FShuffledCalc", parent_, parentData_, m_data) {
+    Fragment("FShuffledCalc", parent_, parentData_, m_data) {}
 
+//===========================================
+// FShuffledCalc::rebuild
+//===========================================
+void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
 
-  m_window = &parent;
-
-  parent.setCentralWidget(this);
-
-  QWidget::setParent(&parent);
   m_eventSystem = &parentData.eventSystem;
   m_updateLoop = &parentData.updateLoop;
 
@@ -63,18 +61,18 @@ FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
 
   m_wgtButtonGrid.reset(new ButtonGrid(this));
 
-  QVBoxLayout* vbox = new QVBoxLayout;
-  vbox->addWidget(m_wgtDigitDisplay.get());
-  vbox->addWidget(m_wgtButtonGrid.get());
-  setLayout(vbox);
+  m_vbox.reset(new QVBoxLayout);
+  m_vbox->addWidget(m_wgtDigitDisplay.get());
+  m_vbox->addWidget(m_wgtButtonGrid.get());
+  setLayout(m_vbox.get());
 
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(onButtonClick(int)));
-}
 
-//===========================================
-// FShuffledCalc::rebuild
-//===========================================
-void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
+  m_origParentState.centralWidget = parent.centralWidget();
+
+  parent.setCentralWidget(this);
+  QWidget::setParent(&parent);
+
   auto& spec = dynamic_cast<const FShuffledCalcSpec&>(spec_);
   m_targetValue = spec.targetValue;
 
@@ -128,7 +126,9 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
 // FShuffledCalc::cleanUp
 //===========================================
 void FShuffledCalc::cleanUp() {
+  auto& parent = parentFrag<FMain>();
 
+  parent.setCentralWidget(m_origParentState.centralWidget);
 }
 
 //===========================================

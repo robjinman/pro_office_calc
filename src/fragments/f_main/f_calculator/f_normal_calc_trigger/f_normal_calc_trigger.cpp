@@ -14,8 +14,12 @@
 // FNormalCalcTrigger::FNormalCalcTrigger
 //===========================================
 FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {
+  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {}
 
+//===========================================
+// FNormalCalcTrigger::rebuild
+//===========================================
+void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
   auto& parentData = parentFragData<FCalculatorData>();
   auto& parent = parentFrag<FCalculator>();
 
@@ -23,12 +27,7 @@ FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentDa
     SLOT(onButtonClick(int)));
   connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
-}
 
-//===========================================
-// FNormalCalcTrigger::rebuild
-//===========================================
-void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FNormalCalcTriggerSpec&>(spec_);
 
   m_targetWindowColour = spec.targetWindowColour;

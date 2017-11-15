@@ -1,4 +1,3 @@
-#include <QVBoxLayout>
 #include "event_system.hpp"
 #include "update_loop.hpp"
 #include "effects.hpp"
@@ -12,13 +11,18 @@
 //===========================================
 FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
   : QWidget(nullptr),
-    Fragment("FCalculator", parent_, parentData_, m_data) {
+    Fragment("FCalculator", parent_, parentData_, m_data) {}
 
+//===========================================
+// FCalculator::rebuild
+//===========================================
+void FCalculator::rebuild(const FragmentSpec& spec_) {
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
 
   m_data.window = &parent;
 
+  m_origParentState.centralWidget = parent.centralWidget();
   parent.setCentralWidget(this);
 
   QWidget::setParent(&parent);
@@ -32,18 +36,13 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
 
   m_data.wgtButtonGrid.reset(new ButtonGrid(this));
 
-  QVBoxLayout* vbox = new QVBoxLayout;
-  vbox->addWidget(m_data.wgtDigitDisplay.get());
-  vbox->addWidget(m_data.wgtButtonGrid.get());
-  setLayout(vbox);
+  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox->addWidget(m_data.wgtDigitDisplay.get());
+  m_data.vbox->addWidget(m_data.wgtButtonGrid.get());
+  setLayout(m_data.vbox.get());
 
   connect(m_data.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(onButtonClick(int)));
-}
 
-//===========================================
-// FCalculator::rebuild
-//===========================================
-void FCalculator::rebuild(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FCalculatorSpec&>(spec_);
   setColour(*m_data.wgtDigitDisplay, spec.displayColour, QPalette::Base);
 
@@ -54,7 +53,9 @@ void FCalculator::rebuild(const FragmentSpec& spec_) {
 // FCalculator::cleanUp
 //===========================================
 void FCalculator::cleanUp() {
+  auto& parent = parentFrag<FMain>();
 
+  parent.setCentralWidget(m_origParentState.centralWidget);
 }
 
 //===========================================

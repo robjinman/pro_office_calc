@@ -15,16 +15,15 @@ using std::unique_ptr;
 FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
   : QMainWindow(nullptr),
     Fragment("FMain", m_data),
-    m_data(eventSystem, updateLoop) {
-
-  setFixedSize(300, 260);
-  setWindowTitle("Pro Office Calculator");
-}
+    m_data(eventSystem, updateLoop) {}
 
 //===========================================
 // FMain::rebuild
 //===========================================
 void FMain::rebuild(const FragmentSpec& spec_) {
+  setFixedSize(300, 260);
+  setWindowTitle("Pro Office Calculator");
+
   auto& spec = dynamic_cast<const FMainSpec&>(spec_);
 
   setColour(*this, spec.bgColour, QPalette::Window);

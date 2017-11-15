@@ -5,6 +5,7 @@
 #include <memory>
 #include <QLabel>
 #include <QPixmap>
+#include <QMargins>
 #include "fragment.hpp"
 
 
@@ -23,6 +24,11 @@ class FLoadingScreen : public QLabel, public Fragment {
 
   private:
     FLoadingScreenData m_data;
+
+    struct {
+      int spacing;
+      QMargins margins;
+    } m_origParentState;
 };
 
 

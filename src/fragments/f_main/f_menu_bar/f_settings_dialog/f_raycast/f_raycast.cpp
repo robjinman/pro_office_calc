@@ -40,28 +40,7 @@ const double PLAYER_SPEED = 250.0;
 FRaycast::FRaycast(Fragment& parent_, FragmentData& parentData_)
   : Fragment("FRaycast", parent_, parentData_, m_data),
     m_timeService(FRAME_RATE),
-    m_audioService(m_entityManager) {
-
-  auto& parent = parentFrag<FSettingsDialog>();
-  auto& parentData = parentFragData<FSettingsDialogData>();
-
-  m_eventSystem = parentData.eventSystem;
-
-  m_rootFactory.reset(new RootFactory(m_entityManager, m_audioService, m_timeService));
-
-  parentData.vbox->setSpacing(0);
-  parentData.vbox->setContentsMargins(0, 0, 0, 0);
-  parentData.vbox->addWidget(this);
-  setMouseTracking(true);
-
-  m_defaultCursor = cursor().shape();
-  m_cursorCaptured = false;
-  m_mouseBtnState = false;
-
-  m_buffer = QImage(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
-
-  setFocus();
-}
+    m_audioService(m_entityManager) {}
 
 //===========================================
 // FRaycast::loadMap
@@ -114,7 +93,27 @@ void FRaycast::loadMap(const string& mapFilePath) {
 // FRaycast::rebuild
 //===========================================
 void FRaycast::rebuild(const FragmentSpec& spec_) {
-  auto& spec = dynamic_cast<const FRaycastSpec&>(spec_);
+  auto& parentData = parentFragData<FSettingsDialogData>();
+
+  m_eventSystem = parentData.eventSystem;
+
+  m_rootFactory.reset(new RootFactory(m_entityManager, m_audioService, m_timeService));
+
+  m_origParentState.spacing = parentData.vbox->spacing();
+  m_origParentState.margins = parentData.vbox->contentsMargins();
+
+  parentData.vbox->setSpacing(0);
+  parentData.vbox->setContentsMargins(0, 0, 0, 0);
+  parentData.vbox->addWidget(this);
+  setMouseTracking(true);
+
+  m_defaultCursor = cursor().shape();
+  m_cursorCaptured = false;
+  m_mouseBtnState = false;
+
+  m_buffer = QImage(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
+
+  setFocus();
 
   BehaviourSystem* behaviourSystem = new BehaviourSystem;
   m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
@@ -151,7 +150,11 @@ void FRaycast::rebuild(const FragmentSpec& spec_) {
 // FRaycast::cleanUp
 //===========================================
 void FRaycast::cleanUp() {
-  // TODO
+  auto& parentData = parentFragData<FSettingsDialogData>();
+
+  parentData.vbox->setSpacing(m_origParentState.spacing);
+  parentData.vbox->setContentsMargins(m_origParentState.margins);
+  parentData.vbox->removeWidget(this);
 }
 
 //===========================================

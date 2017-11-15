@@ -14,19 +14,22 @@ FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_)
 // FLoadingScreen::rebuild
 //===========================================
 void FLoadingScreen::rebuild(const FragmentSpec& spec_) {
-  auto& spec = dynamic_cast<const FLoadingScreenSpec&>(spec_);
-
   auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
+
+  m_origParentState.spacing = parentData.vbox->spacing();
+  m_origParentState.margins = parentData.vbox->contentsMargins();
+
+  parentData.vbox->setSpacing(0);
+  parentData.vbox->setContentsMargins(0, 0, 0, 0);
+  parentData.vbox->addWidget(this);
+
+  auto& spec = dynamic_cast<const FLoadingScreenSpec&>(spec_);
 
   QPixmap tmp(spec.backgroundImage);
   m_data.background.reset(new QPixmap(tmp.scaledToHeight(parent.size().height())));
 
   setPixmap(*m_data.background);
-
-  parentData.vbox->setSpacing(0);
-  parentData.vbox->setContentsMargins(0, 0, 0, 0);
-  parentData.vbox->addWidget(this);
 
   Fragment::rebuild(spec_);
 }
@@ -35,5 +38,9 @@ void FLoadingScreen::rebuild(const FragmentSpec& spec_) {
 // FLoadingScreen::cleanUp
 //===========================================
 void FLoadingScreen::cleanUp() {
-  // TODO
+  auto& parentData = parentFragData<FSettingsDialogData>();
+
+  parentData.vbox->setSpacing(m_origParentState.spacing);
+  parentData.vbox->setContentsMargins(m_origParentState.margins);
+  parentData.vbox->removeWidget(this);
 }

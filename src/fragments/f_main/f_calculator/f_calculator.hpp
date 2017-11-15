@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <QVBoxLayout>
 #include <QWidget>
 #include <QLineEdit>
 #include "fragment.hpp"
@@ -16,6 +17,7 @@ class UpdateLoop;
 
 struct FCalculatorData : public FragmentData {
   Calculator calculator;
+  std::unique_ptr<QVBoxLayout> vbox;
   std::unique_ptr<QLineEdit> wgtDigitDisplay;
   std::unique_ptr<ButtonGrid> wgtButtonGrid;
   EventSystem* eventSystem;
@@ -37,6 +39,10 @@ class FCalculator : public QWidget, public Fragment {
 
   private:
     FCalculatorData m_data;
+
+    struct {
+      QWidget* centralWidget;
+    } m_origParentState;
 };
 
 

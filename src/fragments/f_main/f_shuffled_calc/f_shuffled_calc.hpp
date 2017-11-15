@@ -7,6 +7,7 @@
 #include <map>
 #include <QWidget>
 #include <QLineEdit>
+#include <QVBoxLayout>
 #include "fragment.hpp"
 #include "button_grid.hpp"
 #include "calculator.hpp"
@@ -35,12 +36,16 @@ class FShuffledCalc : public QWidget, public Fragment {
 
     FShuffledCalcData m_data;
 
+    struct {
+      QWidget* centralWidget;
+    } m_origParentState;
+
     Calculator m_calculator;
+    std::unique_ptr<QVBoxLayout> m_vbox;
     std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
     std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
     EventSystem* m_eventSystem;
     UpdateLoop* m_updateLoop;
-    QMainWindow* m_window;
 
     std::string m_targetValue;
 

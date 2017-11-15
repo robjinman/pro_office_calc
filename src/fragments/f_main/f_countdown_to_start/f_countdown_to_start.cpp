@@ -11,16 +11,17 @@
 // FCountdownToStart::FCountdownToStart
 //===========================================
 FCountdownToStart::FCountdownToStart(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FCountdownToStart", parent_, parentData_, m_data) {
-
-  auto& parentData = parentFragData<FMainData>();
-  parentData.fnOnQuit = [this]() { onQuit(); };
-}
+  : Fragment("FCountdownToStart", parent_, parentData_, m_data) {}
 
 //===========================================
 // FCountdownToStart::rebuild
 //===========================================
 void FCountdownToStart::rebuild(const FragmentSpec& spec_) {
+  auto& parentData = parentFragData<FMainData>();
+
+  m_origParentState.fnOnQuit = parentData.fnOnQuit;
+  parentData.fnOnQuit = [this]() { onQuit(); };
+
   auto& spec = dynamic_cast<const FCountdownToStartSpec&>(spec_);
   m_stateId = spec.stateId;
 
@@ -31,7 +32,7 @@ void FCountdownToStart::rebuild(const FragmentSpec& spec_) {
 // FCountdownToStart::cleanUp
 //===========================================
 void FCountdownToStart::cleanUp() {
-  parentFragData<FMainData>().fnOnQuit = []() {};
+  parentFragData<FMainData>().fnOnQuit = m_origParentState.fnOnQuit;
 }
 
 //===========================================
