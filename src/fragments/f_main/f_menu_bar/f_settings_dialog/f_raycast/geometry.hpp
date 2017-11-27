@@ -183,6 +183,16 @@ inline Point clipToLineSegment(const Point& p, const LineSegment& lseg) {
   return p;
 }
 
+inline double clipNumber(double x, const Range& range) {
+  if (x < range.a) {
+    x = range.a;
+  }
+  else if (x > range.b) {
+    x = range.b;
+  }
+  return x;
+}
+
 struct Circle {
   Point pos;
   double radius;
@@ -198,7 +208,6 @@ Vec2f normalise(const Vec2f& v);
 double normaliseAngle(double a);
 
 enum clipResult_t { CLIPPED_TO_TOP, CLIPPED_TO_BOTTOM, NOT_CLIPPED };
-double clipNumber(double x, const Range& range);
 clipResult_t clipNumber(double x, const Range& range, double& result);
 
 #ifdef DEBUG

@@ -6,6 +6,7 @@
 #include <vector>
 #include <ostream>
 #include <functional>
+#include <omp.h>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QBrush>
@@ -178,9 +179,9 @@ static double fastATan(const atanMap_t& atanMap, double x) {
 //===========================================
 // blend
 //===========================================
-static inline QColor blend(const QRgb& A, const QRgb& B, double alphaB) {
+static inline QRgb blend(const QRgb& A, const QRgb& B, double alphaB) {
   double alphaA = 1.0 - alphaB;
-  return QColor(alphaA * qRed(A) + alphaB * qRed(B),
+  return qRgba(alphaA * qRed(A) + alphaB * qRed(B),
     alphaA * qGreen(A) + alphaB * qGreen(B),
     alphaA * qBlue(A) + alphaB * qBlue(B),
     255);
@@ -197,14 +198,15 @@ static inline QRgb pixel(const QImage& img, int x, int y) {
 // getShade
 //===========================================
 static inline double getShade(double distance) {
-  return clipNumber(distance * 0.2, Range(0, 255));
+  static const Range r(0, 255);
+  return clipNumber(distance * 0.2, r);
 }
 
 //===========================================
 // applyShade
 //===========================================
 static inline QRgb applyShade(const QRgb& c, double distance) {
-  double s = 1.0 - getShade(distance) / 255.0;
+  double s = 1.0 - getShade(distance) * 0.00392156862;
   return qRgba(qRed(c) * s, qGreen(c) * s, qBlue(c) * s, qAlpha(c));
 }
 
@@ -224,19 +226,18 @@ static void drawImage(QImage& target, const QRect& trgRect, const QImage& tex, c
 
   for (int j = y0; j < y1; ++j) {
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
+    double y = static_cast<double>(j - trgRect.y()) * trgH_rp;
+    int srcY = srcRect.y() + y * srcRect.height();
 
     for (int i = x0; i < x1; ++i) {
       double x = static_cast<double>(i - trgRect.x()) * trgW_rp;
-      double y = static_cast<double>(j - trgRect.y()) * trgH_rp;
-
       int srcX = srcRect.x() + x * srcRect.width();
-      int srcY = srcRect.y() + y * srcRect.height();
 
       QRgb srcPx = pixel(tex, srcX, srcY);
       double srcAlpha = qAlpha(srcPx);
 
       if (srcAlpha > 0) {
-        pixels[i] = applyShade(blend(pixels[i], srcPx, 0.00392156862 * srcAlpha).rgb(), distance);
+        pixels[i] = applyShade(blend(pixels[i], srcPx, 0.00392156862 * srcAlpha), distance);
       }
     }
   }
@@ -1017,8 +1018,11 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   QRect rect(QPoint(), QSize(viewport_px.x, viewport_px.y));
   painter.fillRect(rect, QBrush(QColor(0, 0, 0)));
 
+  const int W = viewport_px.x;
   CastResult prev;
-  for (int screenX_px = 0; screenX_px < viewport_px.x; ++screenX_px) {
+
+#pragma omp parallel for private(prev)
+  for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
     Vec2f ray(cam.F, projX_wd);
