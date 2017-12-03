@@ -10,6 +10,7 @@
 class UpdateLoop;
 class QWidget;
 class QString;
+class QImage;
 
 
 QColor tweenColour(const QColor& a, const QColor& b, double i);
@@ -20,6 +21,8 @@ void transitionColour(UpdateLoop& updateLoop, QWidget& widget, const QColor& col
   QPalette::ColorRole colourRole, double duration, std::function<void()> fnOnFinish = []() {});
 
 void setBackgroundImage(QWidget& widget, const QString& path);
+
+void garbleImage(const QImage& src, QImage& dest);
 
 
 #endif

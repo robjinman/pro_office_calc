@@ -75,6 +75,9 @@ CEnemyBehaviour::CEnemyBehaviour(entityId_t entityId, EntityManager& entityManag
     m_timeService(timeService) {
 
   m_gunfireTiming.reset(new TRandomIntervals(400, 4000));
+
+  std::random_device rd;
+  m_randEngine.seed(rd());
 }
 
 //===========================================
@@ -142,8 +145,6 @@ void CEnemyBehaviour::attemptShot(SpatialSystem& spatialSystem, CVRect& body) {
       // Move ray randomly to simulate inaccurate aim
       //
 
-      std::random_device rd;
-      m_randEngine.seed(rd());
       std::normal_distribution<double> dist(0, DEG_TO_RAD(2));
 
       double vDa = dist(m_randEngine);

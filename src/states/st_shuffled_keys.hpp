@@ -22,7 +22,7 @@ FMainSpec* makeFMainSpec(int stateId) {
 
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
-  mainSpec->bgColour = QColor(160, 160, 160);
+  mainSpec->bgColour = QColor(160, 180, 180);
   mainSpec->shuffledCalcSpec.setEnabled(true);
   mainSpec->shuffledCalcSpec.targetValue = targetValue.toStdString();
   mainSpec->shuffledCalcSpec.displayColour = QColor(160, 120, 120);

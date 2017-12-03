@@ -1,4 +1,5 @@
 #include <QWidget>
+#include <QImage>
 #include "effects.hpp"
 #include "update_loop.hpp"
 #include "exception.hpp"
@@ -60,4 +61,41 @@ void setBackgroundImage(QWidget& widget, const QString& path) {
   QPalette palette = widget.palette();
   palette.setBrush(QPalette::Background, bg);
   widget.setPalette(palette);
+}
+
+//===========================================
+// rotateHue
+//===========================================
+static void rotateHue(QImage& img, int deg) {
+  for (int i = 0; i < img.width(); ++i) {
+    for (int j = 0; j < img.height(); ++j) {
+      QColor c = img.pixel(i, j);
+
+      c.setHsv((c.hue() + deg) % 360, c.saturation(), c.value());
+      img.setPixel(i, j, c.rgb());
+    }
+  }
+}
+
+//===========================================
+// garbleImage
+//===========================================
+void garbleImage(const QImage& src, QImage& dest) {
+  if (src.size() != dest.size()) {
+    EXCEPTION("Source and destination images must be of same size");
+  }
+
+  for (int i = 0; i < dest.width(); ++i) {
+    for (int j = 0; j < dest.height(); ++j) {
+      // TODO
+      if (i % 10 == 0 && j % 10 == 0) {
+        dest.setPixel(i, j, qRgb(255, 0, 0));
+      }
+      else {
+        dest.setPixel(i, j, src.pixel(i, j));
+      }
+    }
+  }
+
+  rotateHue(dest, 100);
 }

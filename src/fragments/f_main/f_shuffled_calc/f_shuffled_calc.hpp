@@ -5,9 +5,13 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <random>
 #include <QWidget>
 #include <QLineEdit>
 #include <QVBoxLayout>
+#include <QImage>
+#include <QTimer>
+#include <QLabel>
 #include "fragment.hpp"
 #include "button_grid.hpp"
 #include "calculator.hpp"
@@ -30,6 +34,10 @@ class FShuffledCalc : public QWidget, public Fragment {
 
   public slots:
     void onButtonClick(int id);
+    void tick();
+
+  protected:
+    virtual void paintEvent(QPaintEvent* event) override;
 
   private:
     QString translateToSymbols(const QString& str) const;
@@ -50,6 +58,11 @@ class FShuffledCalc : public QWidget, public Fragment {
     std::string m_targetValue;
 
     std::map<QChar, QChar> m_symbols;
+
+    std::unique_ptr<QLabel> m_glitchOverlay;
+    std::unique_ptr<QImage> m_glitchBuffer;
+    std::unique_ptr<QTimer> m_glitchTimer;
+    std::mt19937 m_randEngine;
 };
 
 

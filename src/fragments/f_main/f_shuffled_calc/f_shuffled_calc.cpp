@@ -2,6 +2,8 @@
 #include <cassert>
 #include <QPushButton>
 #include <QButtonGroup>
+#include <QPainter>
+#include <QLabel>
 #include <vector>
 #include "event_system.hpp"
 #include "update_loop.hpp"
@@ -10,6 +12,7 @@
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 #include "utils.hpp"
+#include "effects.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc_spec.hpp"
 #include "fragments/f_main/f_main.hpp"
@@ -61,12 +64,22 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
 
   m_wgtButtonGrid.reset(new ButtonGrid(this));
 
+  m_glitchOverlay.reset(new QLabel(this));
+  m_glitchBuffer.reset(new QImage(size(), QImage::Format_ARGB32));
+  m_glitchTimer.reset(new QTimer(this));
+  m_glitchOverlay->setGeometry(rect());
+  m_glitchOverlay->setScaledContents(true);
+  m_glitchOverlay->show();
+
   m_vbox.reset(new QVBoxLayout);
   m_vbox->addWidget(m_wgtDigitDisplay.get());
   m_vbox->addWidget(m_wgtButtonGrid.get());
   setLayout(m_vbox.get());
 
+  connect(m_glitchTimer.get(), SIGNAL(timeout()), this, SLOT(tick()));
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(onButtonClick(int)));
+
+  m_glitchTimer->start(1000);
 
   m_origParentState.centralWidget = parent.centralWidget();
 
@@ -143,6 +156,43 @@ QString FShuffledCalc::translateToSymbols(const QString& str) const {
   }
 
   return result;
+}
+
+//===========================================
+// FShuffledCalc::paintEvent
+//===========================================
+void FShuffledCalc::paintEvent(QPaintEvent* event) {
+  if (m_glitchOverlay->isVisible()) {
+    m_glitchOverlay->setVisible(false);
+    QWidget::paintEvent(event);
+    m_glitchOverlay->setVisible(true);
+  }
+  else {
+    QWidget::paintEvent(event);
+  }
+}
+
+//===========================================
+// FShuffledCalc::tick
+//===========================================
+void FShuffledCalc::tick() {
+  if (!m_glitchOverlay->isVisible()) {
+    QImage buf(m_glitchBuffer->size(), m_glitchBuffer->format());
+
+    render(&buf);
+    garbleImage(buf, *m_glitchBuffer);
+
+    m_glitchOverlay->setPixmap(QPixmap::fromImage(*m_glitchBuffer));
+    m_glitchOverlay->setVisible(true);
+
+    m_glitchTimer->setInterval(100);
+  }
+  else {
+    m_glitchOverlay->setVisible(false);
+
+    std::uniform_int_distribution<int> dist(100, 2000);
+    m_glitchTimer->setInterval(dist(m_randEngine));
+  }
 }
 
 //===========================================
