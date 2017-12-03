@@ -26,6 +26,8 @@ void FCalculator::rebuild(const FragmentSpec& spec_) {
   parent.setCentralWidget(this);
 
   QWidget::setParent(&parent);
+  setGeometry(parent.geometry());
+
   m_data.eventSystem = &parentData.eventSystem;
   m_data.updateLoop = &parentData.updateLoop;
 

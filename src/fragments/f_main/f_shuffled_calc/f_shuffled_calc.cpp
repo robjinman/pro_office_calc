@@ -57,6 +57,10 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
   m_eventSystem = &parentData.eventSystem;
   m_updateLoop = &parentData.updateLoop;
 
+  parent.setCentralWidget(this);
+  QWidget::setParent(&parent);
+  setGeometry(parent.geometry());
+
   m_wgtDigitDisplay.reset(new QLineEdit(this));
   m_wgtDigitDisplay->setMaximumHeight(40);
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
@@ -82,9 +86,6 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
   m_glitchTimer->start(1000);
 
   m_origParentState.centralWidget = parent.centralWidget();
-
-  parent.setCentralWidget(this);
-  QWidget::setParent(&parent);
 
   auto& spec = dynamic_cast<const FShuffledCalcSpec&>(spec_);
   m_targetValue = spec.targetValue;

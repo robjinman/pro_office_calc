@@ -1,3 +1,4 @@
+#include <random>
 #include <QWidget>
 #include <QImage>
 #include "effects.hpp"
@@ -7,6 +8,35 @@
 
 using std::function;
 
+
+static std::mt19937 randEngine;
+
+
+//===========================================
+// rotateHue
+//===========================================
+static void rotateHue(QImage& img, int deg) {
+  for (int i = 0; i < img.width(); ++i) {
+    for (int j = 0; j < img.height(); ++j) {
+      QColor c = img.pixel(i, j);
+
+      c.setHsv((c.hue() + deg) % 360, c.saturation(), c.value());
+      img.setPixel(i, j, c.rgb());
+    }
+  }
+}
+
+//===========================================
+// mod
+//===========================================
+static int mod(int n, int quot) {
+  if (n < 1) {
+    return mod(quot + n, quot);
+  }
+  else {
+    return n % quot;
+  }
+}
 
 //===========================================
 // tweenColour
@@ -64,20 +94,6 @@ void setBackgroundImage(QWidget& widget, const QString& path) {
 }
 
 //===========================================
-// rotateHue
-//===========================================
-static void rotateHue(QImage& img, int deg) {
-  for (int i = 0; i < img.width(); ++i) {
-    for (int j = 0; j < img.height(); ++j) {
-      QColor c = img.pixel(i, j);
-
-      c.setHsv((c.hue() + deg) % 360, c.saturation(), c.value());
-      img.setPixel(i, j, c.rgb());
-    }
-  }
-}
-
-//===========================================
 // garbleImage
 //===========================================
 void garbleImage(const QImage& src, QImage& dest) {
@@ -85,17 +101,24 @@ void garbleImage(const QImage& src, QImage& dest) {
     EXCEPTION("Source and destination images must be of same size");
   }
 
-  for (int i = 0; i < dest.width(); ++i) {
-    for (int j = 0; j < dest.height(); ++j) {
-      // TODO
-      if (i % 10 == 0 && j % 10 == 0) {
-        dest.setPixel(i, j, qRgb(255, 0, 0));
-      }
-      else {
-        dest.setPixel(i, j, src.pixel(i, j));
-      }
+  int w = dest.width();
+  int h = dest.height();
+
+  const float prob = 0.03;
+  std::uniform_int_distribution<int> rollDie(0, 1.0 / prob);
+  std::normal_distribution<double> randShift(0, 10);
+  int shift = randShift(randEngine);
+
+  for (int j = 0; j < h; ++j) {
+    if (rollDie(randEngine) == 0) {
+      shift = randShift(randEngine);
+    }
+
+    for (int i = 0; i < w; ++i) {
+      dest.setPixel(i, j, src.pixel(mod(i + shift, w), j));
     }
   }
 
-  rotateHue(dest, 100);
+  std::uniform_int_distribution<int> randHue(0, 359);
+  rotateHue(dest, randHue(randEngine));
 }
