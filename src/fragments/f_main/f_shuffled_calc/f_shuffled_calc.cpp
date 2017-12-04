@@ -160,20 +160,6 @@ QString FShuffledCalc::translateToSymbols(const QString& str) const {
 }
 
 //===========================================
-// FShuffledCalc::paintEvent
-//===========================================
-void FShuffledCalc::paintEvent(QPaintEvent* event) {
-  if (m_glitchOverlay->isVisible()) {
-    m_glitchOverlay->setVisible(false);
-    QWidget::paintEvent(event);
-    m_glitchOverlay->setVisible(true);
-  }
-  else {
-    QWidget::paintEvent(event);
-  }
-}
-
-//===========================================
 // FShuffledCalc::tick
 //===========================================
 void FShuffledCalc::tick() {

@@ -29,7 +29,7 @@ static void rotateHue(QImage& img, int deg) {
 //===========================================
 // mod
 //===========================================
-static int mod(int n, int quot) {
+inline static int mod(int n, int quot) {
   if (n < 1) {
     return mod(quot + n, quot);
   }

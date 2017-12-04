@@ -36,9 +36,6 @@ class FShuffledCalc : public QWidget, public Fragment {
     void onButtonClick(int id);
     void tick();
 
-  protected:
-    virtual void paintEvent(QPaintEvent* event) override;
-
   private:
     QString translateToSymbols(const QString& str) const;
 
