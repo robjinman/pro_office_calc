@@ -5,6 +5,7 @@
 #include "states/st_danger_infinity.hpp"
 #include "states/st_shuffled_keys.hpp"
 #include "states/st_login_screen.hpp"
+#include "states/st_raycast.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 
 
@@ -27,6 +28,8 @@ FMainSpec* makeFMainSpec(int stateId) {
       return st_shuffled_keys::makeFMainSpec(stateId);
     case ST_LOGIN_SCREEN:
       return st_login_screen::makeFMainSpec(stateId);
+    case ST_RAYCAST:
+      return st_raycast::makeFMainSpec(stateId);
     default:
       EXCEPTION("Unrecognised state id");
   }

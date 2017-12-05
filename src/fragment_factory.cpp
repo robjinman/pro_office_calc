@@ -6,6 +6,7 @@
 #include "fragments/f_main/f_menu_bar/f_menu_bar.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_loading_screen/f_loading_screen.hpp"
+#include "fragments/f_main/f_menu_bar/f_settings_dialog/f_login_screen/f_login_screen.hpp"
 #include "fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/f_raycast.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
@@ -41,6 +42,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FLoadingScreen") {
     return new FLoadingScreen(parent, parentData);
+  }
+  else if (name == "FLoginScreen") {
+    return new FLoginScreen(parent, parentData);
   }
   else if (name == "FRaycast") {
     return new FRaycast(parent, parentData);
