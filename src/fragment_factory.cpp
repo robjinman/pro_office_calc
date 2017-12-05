@@ -1,6 +1,7 @@
 #include "fragment_factory.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
+#include "fragments/relocatable/f_glitch/f_glitch.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
 #include "fragments/f_main/f_menu_bar/f_menu_bar.hpp"
@@ -24,6 +25,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
 
   if (name == "FMenuBar") {
     return new FMenuBar(parent, parentData);
+  }
+  else if (name == "FGlitch") {
+    return new FGlitch(parent, parentData);
   }
   else if (name == "FCalculator") {
     return new FCalculator(parent, parentData);

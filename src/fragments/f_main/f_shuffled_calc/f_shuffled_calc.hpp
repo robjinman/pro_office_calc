@@ -34,7 +34,6 @@ class FShuffledCalc : public QWidget, public Fragment {
 
   public slots:
     void onButtonClick(int id);
-    void tick();
 
   private:
     QString translateToSymbols(const QString& str) const;

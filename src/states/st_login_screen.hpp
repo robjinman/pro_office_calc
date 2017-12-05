@@ -15,6 +15,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
   mainSpec->calculatorSpec.setEnabled(true);
+  mainSpec->glitchSpec.setEnabled(true);
   mainSpec->menuBarSpec.setEnabled(true);
   mainSpec->menuBarSpec.fileLabel = "Fi͝l̨e";
   mainSpec->menuBarSpec.quitLabel = "Qui͢t";
@@ -31,8 +32,10 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->menuBarSpec.settingsDialogSpec.setEnabled(true);
   mainSpec->menuBarSpec.settingsDialogSpec.width = 640;
   mainSpec->menuBarSpec.settingsDialogSpec.height = 480;
+  mainSpec->menuBarSpec.settingsDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->menuBarSpec.settingsDialogSpec.loginScreenSpec.setEnabled(true);
   mainSpec->menuBarSpec.settingsDialogSpec.loginScreenSpec.backgroundImage = "data/login.png";
+
 
   return mainSpec;
 }
