@@ -3,9 +3,12 @@
 
 
 #include <memory>
+#include <random>
 #include <QLabel>
 #include <QPixmap>
 #include <QMargins>
+#include <QTimer>
+#include <QImage>
 #include "fragment.hpp"
 
 
@@ -22,6 +25,9 @@ class FLoadingScreen : public QLabel, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+  public slots:
+    void tick();
+
   private:
     FLoadingScreenData m_data;
 
@@ -29,6 +35,11 @@ class FLoadingScreen : public QLabel, public Fragment {
       int spacing;
       QMargins margins;
     } m_origParentState;
+
+    std::unique_ptr<QLabel> m_glitchOverlay;
+    std::unique_ptr<QImage> m_glitchBuffer;
+    std::unique_ptr<QTimer> m_glitchTimer;
+    std::mt19937 m_randEngine;
 };
 
 

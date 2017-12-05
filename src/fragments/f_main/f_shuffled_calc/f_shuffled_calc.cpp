@@ -3,7 +3,6 @@
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QPainter>
-#include <QLabel>
 #include <vector>
 #include "event_system.hpp"
 #include "update_loop.hpp"
