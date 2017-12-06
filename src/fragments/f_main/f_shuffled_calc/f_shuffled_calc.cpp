@@ -60,6 +60,10 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
   QWidget::setParent(&parent);
   setGeometry(parent.geometry());
 
+  QFont f = font();
+  f.setPointSize(16);
+  setFont(f);
+
   m_wgtDigitDisplay.reset(new QLineEdit(this));
   m_wgtDigitDisplay->setMaximumHeight(40);
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);

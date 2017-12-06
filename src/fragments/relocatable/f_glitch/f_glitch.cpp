@@ -26,6 +26,8 @@ void FGlitch::rebuild(const FragmentSpec& spec_) {
   setGeometry(parent.rect());
   setScaledContents(true);
 
+  setAttribute(Qt::WA_TransparentForMouseEvents);
+
   m_glitchBuffer.reset(new QImage(parent.size(), QImage::Format_ARGB32));
   m_glitchTimer.reset(new QTimer(this));
 
