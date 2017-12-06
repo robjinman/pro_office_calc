@@ -22,10 +22,12 @@ FMainSpec* makeFMainSpec(int stateId) {
 
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
-  mainSpec->bgColour = QColor(160, 180, 180);
+  mainSpec->bgColour = QColor(180, 180, 180);
+  mainSpec->glitchSpec.setEnabled(true);
+  mainSpec->glitchSpec.glitchFreqMax = 10.0;
   mainSpec->shuffledCalcSpec.setEnabled(true);
   mainSpec->shuffledCalcSpec.targetValue = targetValue.toStdString();
-  mainSpec->shuffledCalcSpec.displayColour = QColor(160, 120, 120);
+  mainSpec->shuffledCalcSpec.displayColour = QColor(200, 200, 180);
   mainSpec->shuffledCalcSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
   mainSpec->menuBarSpec.setEnabled(true);
   mainSpec->menuBarSpec.fileLabel = "Fi͝l̨e";

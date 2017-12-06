@@ -9,8 +9,9 @@ struct FGlitchSpec : public FragmentSpec {
   FGlitchSpec()
     : FragmentSpec("FGlitch", {}) {}
 
-  // TODO
-  // Glitch effect
+  double glitchFreqMin = 0.1;
+  double glitchFreqMax = 2.0;
+  double glitchDuration = 0.1;
 };
 
 

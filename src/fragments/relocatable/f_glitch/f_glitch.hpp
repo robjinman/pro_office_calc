@@ -26,6 +26,10 @@ class FGlitch : public QLabel, public Fragment {
   private:
     FGlitchData m_data;
 
+    double m_glitchFreqMin;
+    double m_glitchFreqMax;
+    double m_glitchDuration;
+
     std::unique_ptr<QImage> m_glitchBuffer;
     std::unique_ptr<QTimer> m_glitchTimer;
     std::mt19937 m_randEngine;

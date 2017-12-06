@@ -14,7 +14,12 @@ FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_)
 // FGlitch::rebuild
 //===========================================
 void FGlitch::rebuild(const FragmentSpec& spec_) {
+  auto& spec = dynamic_cast<const FGlitchSpec&>(spec_);
   auto& parent = parentFrag<QWidget>();
+
+  m_glitchFreqMin = spec.glitchFreqMin;
+  m_glitchFreqMax = spec.glitchFreqMax;
+  m_glitchDuration = spec.glitchDuration;
 
   setParent(&parent);
 
@@ -26,7 +31,7 @@ void FGlitch::rebuild(const FragmentSpec& spec_) {
 
   connect(m_glitchTimer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-  m_glitchTimer->start(1000);
+  m_glitchTimer->start(m_glitchFreqMin * 1000);
   show();
 
   Fragment::rebuild(spec_);
@@ -48,12 +53,12 @@ void FGlitch::tick() {
     setVisible(true);
     raise();
 
-    m_glitchTimer->setInterval(100);
+    m_glitchTimer->setInterval(m_glitchDuration * 1000);
   }
   else {
     setVisible(false);
 
-    std::uniform_int_distribution<int> dist(100, 2000);
+    std::uniform_int_distribution<int> dist(m_glitchFreqMin * 1000, m_glitchFreqMax * 1000);
     m_glitchTimer->setInterval(dist(m_randEngine));
   }
 }
