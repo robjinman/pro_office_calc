@@ -24,5 +24,9 @@ void setBackgroundImage(QWidget& widget, const QString& path);
 
 void garbleImage(const QImage& src, QImage& dest);
 
+void rotateHue(QImage& img, int deg);
+
+void colourize(QImage& img, const QColor& c, double i);
+
 
 #endif

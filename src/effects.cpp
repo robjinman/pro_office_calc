@@ -13,20 +13,6 @@ static std::mt19937 randEngine;
 
 
 //===========================================
-// rotateHue
-//===========================================
-static void rotateHue(QImage& img, int deg) {
-  for (int i = 0; i < img.width(); ++i) {
-    for (int j = 0; j < img.height(); ++j) {
-      QColor c = img.pixel(i, j);
-
-      c.setHsv((c.hue() + deg) % 360, c.saturation(), c.value());
-      img.setPixel(i, j, c.rgb());
-    }
-  }
-}
-
-//===========================================
 // mod
 //===========================================
 inline static int mod(int n, int quot) {
@@ -39,7 +25,37 @@ inline static int mod(int n, int quot) {
 }
 
 //===========================================
+// rotateHue
+//===========================================
+void rotateHue(QImage& img, int deg) {
+  for (int i = 0; i < img.width(); ++i) {
+    for (int j = 0; j < img.height(); ++j) {
+      QColor c = img.pixel(i, j);
+
+      c.setHsv((c.hue() + deg) % 360, c.saturation(), c.value());
+      img.setPixel(i, j, c.rgb());
+    }
+  }
+}
+
+//===========================================
+// colourize
+//===========================================
+void colourize(QImage& img, const QColor& c, double x) {
+  int w = img.width();
+  int h = img.height();
+
+  for (int j = 0; j < h; ++j) {
+    for (int i = 0; i < w; ++i) {
+      img.setPixel(i, j, tweenColour(img.pixel(i, j), c, x).rgb());
+    }
+  }
+}
+
+//===========================================
 // tweenColour
+//
+// Ignores alpha
 //===========================================
 QColor tweenColour(const QColor& a, const QColor& b, double i) {
   if (i < 0.0 || i > 1.0) {
@@ -120,5 +136,6 @@ void garbleImage(const QImage& src, QImage& dest) {
   }
 
   std::uniform_int_distribution<int> randHue(0, 359);
+  colourize(dest, QColor(255, 0, 0), 0.08);
   rotateHue(dest, randHue(randEngine));
 }
