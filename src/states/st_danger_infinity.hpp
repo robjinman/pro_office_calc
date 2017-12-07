@@ -15,8 +15,8 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->calculatorSpec.normalCalcTriggerSpec.targetWindowColour = QColor(180, 180, 180);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.targetDisplayColour = QColor(200, 200, 180);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
-  mainSpec->menuBarSpec.setEnabled(true);
-  mainSpec->menuBarSpec.aboutDialogText += "<p align='center'><big>Pro Office Calculator</big>"
+  mainSpec->aboutDialogSpec.setEnabled(true);
+  mainSpec->aboutDialogSpec.aboutDialogText += "<p align='center'><big>Pro Office Calculator</big>"
     "<br>Version 1.0.0</p>"
     "<p align='center'>Copyright (c) 2017 Rob Jinman. All rights reserved.</p>"
     "<font size=6>⚠∞</font>";

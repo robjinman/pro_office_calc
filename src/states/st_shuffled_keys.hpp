@@ -29,13 +29,13 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->shuffledCalcSpec.targetValue = targetValue.toStdString();
   mainSpec->shuffledCalcSpec.displayColour = QColor(200, 200, 180);
   mainSpec->shuffledCalcSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
-  mainSpec->menuBarSpec.setEnabled(true);
-  mainSpec->menuBarSpec.fileLabel = "Fi͝l̨e";
-  mainSpec->menuBarSpec.quitLabel = "Qui͢t";
-  mainSpec->menuBarSpec.helpLabel = "H͠e͘l͢p";
-  mainSpec->menuBarSpec.aboutLabel = "A͡b҉ou͞t̵";
-  mainSpec->menuBarSpec.aboutDialogTitle = "A͞b̶out";
-  mainSpec->menuBarSpec.aboutDialogText =
+  mainSpec->fileLabel = "Fi͝l̨e";
+  mainSpec->quitLabel = "Qui͢t";
+  mainSpec->aboutDialogSpec.setEnabled(true);
+  mainSpec->aboutDialogSpec.helpLabel = "H͠e͘l͢p";
+  mainSpec->aboutDialogSpec.aboutLabel = "A͡b҉ou͞t̵";
+  mainSpec->aboutDialogSpec.aboutDialogTitle = "A͞b̶out";
+  mainSpec->aboutDialogSpec.aboutDialogText =
     "<div>"
     "  <img src='data/apex.png'>"
     "  <p align='center'><big>P̸ro͡ ͏Office͟ ̀Ca͘l̶cu҉l̴at͘or̛</big>"
@@ -43,12 +43,12 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <p align='center'>" + targetValue + "</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
-  mainSpec->menuBarSpec.settingsDialogSpec.setEnabled(true);
-  mainSpec->menuBarSpec.settingsDialogSpec.width = 640;
-  mainSpec->menuBarSpec.settingsDialogSpec.height = 480;
-  mainSpec->menuBarSpec.settingsDialogSpec.glitchSpec.setEnabled(true);
-  mainSpec->menuBarSpec.settingsDialogSpec.loadingScreenSpec.setEnabled(true);
-  mainSpec->menuBarSpec.settingsDialogSpec.loadingScreenSpec.backgroundImage = "data/loading.png";
+  mainSpec->settingsDialogSpec.setEnabled(true);
+  mainSpec->settingsDialogSpec.width = 640;
+  mainSpec->settingsDialogSpec.height = 480;
+  mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
+  mainSpec->settingsDialogSpec.loadingScreenSpec.setEnabled(true);
+  mainSpec->settingsDialogSpec.loadingScreenSpec.backgroundImage = "data/loading.png";
 
   return mainSpec;
 }

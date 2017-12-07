@@ -1,7 +1,7 @@
 #include <string>
 #include <gtest/gtest.h>
 #include <tinyxml2.h>
-#include <fragments/f_main/f_menu_bar/f_settings_dialog/f_raycast/map_parser.hpp>
+#include <fragments/f_main/f_settings_dialog/f_raycast/map_parser.hpp>
 #include "utils.hpp"
 
 

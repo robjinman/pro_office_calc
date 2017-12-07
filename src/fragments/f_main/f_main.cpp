@@ -1,3 +1,4 @@
+#include <QMenuBar>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 #include "utils.hpp"
@@ -24,7 +25,16 @@ void FMain::rebuild(const FragmentSpec& spec_) {
   setFixedSize(300, 260);
   setWindowTitle("Pro Office Calculator");
 
+  m_data.mnuFile.reset(menuBar()->addMenu("File"));
+  m_data.actQuit.reset(new QAction("Quit", this));
+  m_data.mnuFile->addAction(m_data.actQuit.get());
+
+  connect(m_data.actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
+
   auto& spec = dynamic_cast<const FMainSpec&>(spec_);
+
+  m_data.mnuFile->setTitle(spec.fileLabel);
+  m_data.actQuit->setText(spec.quitLabel);
 
   setColour(*this, spec.bgColour, QPalette::Window);
   setWindowTitle(spec.windowTitle);
@@ -33,18 +43,18 @@ void FMain::rebuild(const FragmentSpec& spec_) {
 }
 
 //===========================================
-// FMain::cleanUp
-//===========================================
-void FMain::cleanUp() {
-
-}
-
-//===========================================
 // FMain::closeEvent
 //===========================================
 void FMain::closeEvent(QCloseEvent*) {
   m_data.fnOnQuit();
   DBG_PRINT("Quitting\n");
+}
+
+//===========================================
+// FMain::cleanUp
+//===========================================
+void FMain::cleanUp() {
+
 }
 
 //===========================================
