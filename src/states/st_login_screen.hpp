@@ -37,7 +37,6 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.loginScreenSpec.backgroundImage = "data/login.png";
   mainSpec->preferencesDialogSpec.setEnabled(true);
 
-
   return mainSpec;
 }
 

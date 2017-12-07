@@ -30,6 +30,12 @@ void FLoginScreen::rebuild(const FragmentSpec& spec_) {
   QPixmap tmp(spec.backgroundImage);
   m_data.background.reset(new QPixmap(tmp.scaledToHeight(parent.size().height())));
 
+  m_data.wgtUser.reset(new QLineEdit(this));
+  m_data.wgtUser->setGeometry(330, 290, 150, 30);
+
+  m_data.wgtPassword.reset(new QLineEdit(this));
+  m_data.wgtPassword->setGeometry(330, 330, 150, 30);
+
   setPixmap(*m_data.background);
 
   Fragment::rebuild(spec_);

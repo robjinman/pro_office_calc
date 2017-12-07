@@ -7,11 +7,14 @@
 #include <QMargins>
 #include <QTimer>
 #include <QImage>
+#include <QLineEdit>
 #include "fragment.hpp"
 
 
 struct FLoginScreenData : public FragmentData {
   std::unique_ptr<QPixmap> background;
+  std::unique_ptr<QLineEdit> wgtUser;
+  std::unique_ptr<QLineEdit> wgtPassword;
 };
 
 class FLoginScreen : public QLabel, public Fragment {
