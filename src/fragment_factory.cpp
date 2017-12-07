@@ -10,6 +10,7 @@
 #include "fragments/f_main/f_settings_dialog/f_login_screen/f_login_screen.hpp"
 #include "fragments/f_main/f_settings_dialog/f_raycast/f_raycast.hpp"
 #include "fragments/f_main/f_preferences_dialog/f_preferences_dialog.hpp"
+#include "fragments/f_main/f_preferences_dialog/f_config_maze/f_config_maze.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
@@ -56,6 +57,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FPreferencesDialog") {
     return new FPreferencesDialog(parent, parentData);
+  }
+  else if (name == "FConfigMaze") {
+    return new FConfigMaze(parent, parentData);
   }
 
   EXCEPTION("Cannot construct fragment with unrecognised name '" << name << "'\n");

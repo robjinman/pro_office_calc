@@ -36,6 +36,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.loginScreenSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loginScreenSpec.backgroundImage = "data/login.png";
   mainSpec->preferencesDialogSpec.setEnabled(true);
+  mainSpec->preferencesDialogSpec.configMazeSpec.setEnabled(true);
 
   return mainSpec;
 }

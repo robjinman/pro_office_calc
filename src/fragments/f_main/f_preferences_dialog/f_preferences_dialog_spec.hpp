@@ -5,15 +5,18 @@
 #include <QString>
 #include "fragment_spec.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
+#include "fragments/f_main/f_preferences_dialog/f_config_maze/f_config_maze_spec.hpp"
 
 
 struct FPreferencesDialogSpec : public FragmentSpec {
   FPreferencesDialogSpec()
     : FragmentSpec("FPreferencesDialog", {
-        &glitchSpec
+        &glitchSpec,
+        &configMazeSpec
       }) {}
 
   FGlitchSpec glitchSpec;
+  FConfigMazeSpec configMazeSpec;
 
   QString titleText = "Preferences";
   int width = 640;
