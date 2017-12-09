@@ -24,7 +24,7 @@ class RaycastWidget : public QWidget {
   Q_OBJECT
 
   public:
-    RaycastWidget(EventSystem& eventSystem);
+    RaycastWidget(QWidget* parent, EventSystem& eventSystem);
 
     void initialise();
 

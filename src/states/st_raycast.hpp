@@ -28,6 +28,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.width = 320;
   mainSpec->settingsDialogSpec.height = 240;
+  mainSpec->settingsDialogSpec.maze3dSpec.setEnabled(true);
 
   return mainSpec;
 }
