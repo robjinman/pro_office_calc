@@ -119,7 +119,7 @@ void EvasiveButton::tick() {
 
   move(btnPos + (A + B).toPoint());
 
-  if (distance(pos(), m_originalPos) <= minReturnSpeed / FRAME_RATE) { // TODO
+  if (distance(pos(), m_originalPos) <= minReturnSpeed / FRAME_RATE) {
     move(m_originalPos);
     m_timer->stop();
   }
