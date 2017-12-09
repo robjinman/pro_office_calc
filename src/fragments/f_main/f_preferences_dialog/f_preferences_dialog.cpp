@@ -18,6 +18,7 @@ void FPreferencesDialog::rebuild(const FragmentSpec& spec_) {
   auto& parentData = parentFragData<FMainData>();
 
   m_data.eventSystem = &parentData.eventSystem;
+  m_data.updateLoop = &parentData.updateLoop;
 
   m_data.vbox.reset(new QVBoxLayout);
   setLayout(m_data.vbox.get());

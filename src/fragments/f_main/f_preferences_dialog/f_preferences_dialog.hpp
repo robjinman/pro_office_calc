@@ -10,9 +10,11 @@
 
 
 class EventSystem;
+class UpdateLoop;
 
 struct FPreferencesDialogData : public FragmentData {
   EventSystem* eventSystem;
+  UpdateLoop* updateLoop;
   std::unique_ptr<QAction> actPreferences;
   std::unique_ptr<QVBoxLayout> vbox;
 };

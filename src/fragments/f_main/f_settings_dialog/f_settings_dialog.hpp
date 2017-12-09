@@ -10,9 +10,11 @@
 
 
 class EventSystem;
+class UpdateLoop;
 
 struct FSettingsDialogData : public FragmentData {
   EventSystem* eventSystem;
+  UpdateLoop* updateLoop;
   std::unique_ptr<QAction> actSettings;
   std::unique_ptr<QVBoxLayout> vbox;
 };
