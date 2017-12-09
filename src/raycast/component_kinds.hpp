@@ -1,0 +1,16 @@
+#ifndef __PROCALC_RAYCAST_COMPONENT_KINDS_HPP__
+#define __PROCALC_RAYCAST_COMPONENT_KINDS_HPP__
+
+
+enum class ComponentKind {
+  C_BEHAVIOUR,
+  C_SPATIAL,
+  C_RENDER,
+  C_ANIMATION,
+  C_INVENTORY,
+  C_EVENT_HANDLER,
+  C_DAMAGE
+};
+
+
+#endif

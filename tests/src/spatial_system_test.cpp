@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <fragments/f_main/f_settings_dialog/f_raycast/spatial_system.hpp>
+#include <raycast/spatial_system.hpp>
 
 
 using std::list;
