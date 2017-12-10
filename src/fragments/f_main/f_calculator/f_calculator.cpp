@@ -25,11 +25,12 @@ void FCalculator::rebuild(const FragmentSpec& spec_) {
   m_origParentState.centralWidget = parent.centralWidget();
   parent.setCentralWidget(this);
 
-  QWidget::setParent(&parent);
-  setGeometry(parent.geometry());
-
   m_data.eventSystem = &parentData.eventSystem;
   m_data.updateLoop = &parentData.updateLoop;
+
+  QFont f = font();
+  f.setPointSize(16);
+  setFont(f);
 
   m_data.wgtDigitDisplay.reset(new QLineEdit(this));
   m_data.wgtDigitDisplay->setMaximumHeight(40);

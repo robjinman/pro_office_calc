@@ -11,6 +11,7 @@
 #include "fragments/f_main/f_about_dialog/f_about_dialog_spec.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
+#include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
 #include "fragments/f_main/f_preferences_dialog/f_preferences_dialog_spec.hpp"
 
 
@@ -20,6 +21,7 @@ struct FMainSpec : public FragmentSpec {
         &glitchSpec,
         &calculatorSpec,
         &shuffledCalcSpec,
+        &loginScreenSpec,
         &aboutDialogSpec,
         &countdownToStartSpec,
         &settingsDialogSpec,
@@ -29,12 +31,15 @@ struct FMainSpec : public FragmentSpec {
   FGlitchSpec glitchSpec;
   FCalculatorSpec calculatorSpec;
   FShuffledCalcSpec shuffledCalcSpec;
+  FLoginScreenSpec loginScreenSpec;
   FAboutDialogSpec aboutDialogSpec;
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
   FPreferencesDialogSpec preferencesDialogSpec;
 
   QString windowTitle = "Pro Office Calculator";
+  int width = 400;
+  int height = 300;
   QColor bgColour = QColor(240, 240, 240);
   QString fileLabel = "File";
   QString quitLabel = "Quit";

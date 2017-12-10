@@ -44,8 +44,8 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
   mainSpec->settingsDialogSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.width = 640;
-  mainSpec->settingsDialogSpec.height = 480;
+  mainSpec->settingsDialogSpec.width = 400;
+  mainSpec->settingsDialogSpec.height = 300;
   mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loadingScreenSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loadingScreenSpec.backgroundImage = "data/loading.png";

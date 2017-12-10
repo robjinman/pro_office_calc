@@ -15,6 +15,9 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->calculatorSpec.normalCalcTriggerSpec.targetWindowColour = QColor(180, 180, 180);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.targetDisplayColour = QColor(200, 200, 180);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
+  mainSpec->glitchSpec.setEnabled(true);
+  mainSpec->glitchSpec.glitchFreqMin = 10.0;
+  mainSpec->glitchSpec.glitchFreqMax = 20.0;
   mainSpec->aboutDialogSpec.setEnabled(true);
   mainSpec->aboutDialogSpec.aboutDialogText += "<p align='center'><big>Pro Office Calculator</big>"
     "<br>Version 1.0.0</p>"

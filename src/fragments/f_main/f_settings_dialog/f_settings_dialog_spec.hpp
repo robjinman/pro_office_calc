@@ -6,8 +6,8 @@
 #include "fragment_spec.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_loading_screen/f_loading_screen_spec.hpp"
-#include "fragments/f_main/f_settings_dialog/f_login_screen/f_login_screen_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d_spec.hpp"
+#include "fragments/f_main/f_settings_dialog/f_config_maze/f_config_maze_spec.hpp"
 
 
 struct FSettingsDialogSpec : public FragmentSpec {
@@ -15,18 +15,18 @@ struct FSettingsDialogSpec : public FragmentSpec {
     : FragmentSpec("FSettingsDialog", {
         &glitchSpec,
         &loadingScreenSpec,
-        &loginScreenSpec,
-        &maze3dSpec
+        &maze3dSpec,
+        &configMazeSpec
       }) {}
 
   FGlitchSpec glitchSpec;
   FLoadingScreenSpec loadingScreenSpec;
-  FLoginScreenSpec loginScreenSpec;
   FMaze3dSpec maze3dSpec;
+  FConfigMazeSpec configMazeSpec;
 
   QString titleText = "Settings";
-  int width = 640;
-  int height = 480;
+  int width = 400;
+  int height = 300;
 };
 
 

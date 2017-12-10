@@ -22,7 +22,9 @@ FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
 // FMain::rebuild
 //===========================================
 void FMain::rebuild(const FragmentSpec& spec_) {
-  setFixedSize(300, 260);
+  auto& spec = dynamic_cast<const FMainSpec&>(spec_);
+
+  setFixedSize(spec.width, spec.height);
   setWindowTitle("Pro Office Calculator");
 
   m_data.mnuFile.reset(menuBar()->addMenu("File"));
@@ -30,8 +32,6 @@ void FMain::rebuild(const FragmentSpec& spec_) {
   m_data.mnuFile->addAction(m_data.actQuit.get());
 
   connect(m_data.actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
-
-  auto& spec = dynamic_cast<const FMainSpec&>(spec_);
 
   m_data.mnuFile->setTitle(spec.fileLabel);
   m_data.actQuit->setText(spec.quitLabel);

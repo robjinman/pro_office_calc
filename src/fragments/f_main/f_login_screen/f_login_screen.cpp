@@ -1,6 +1,6 @@
-#include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
-#include "fragments/f_main/f_settings_dialog/f_login_screen/f_login_screen.hpp"
-#include "fragments/f_main/f_settings_dialog/f_login_screen/f_login_screen_spec.hpp"
+#include "fragments/f_main/f_main.hpp"
+#include "fragments/f_main/f_login_screen/f_login_screen.hpp"
+#include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
 #include "effects.hpp"
 
 
@@ -15,15 +15,11 @@ FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_)
 // FLoginScreen::rebuild
 //===========================================
 void FLoginScreen::rebuild(const FragmentSpec& spec_) {
-  auto& parent = parentFrag<FSettingsDialog>();
-  auto& parentData = parentFragData<FSettingsDialogData>();
+  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<FMainData>();
 
-  m_origParentState.spacing = parentData.vbox->spacing();
-  m_origParentState.margins = parentData.vbox->contentsMargins();
-
-  parentData.vbox->setSpacing(0);
-  parentData.vbox->setContentsMargins(0, 0, 0, 0);
-  parentData.vbox->addWidget(this);
+  m_origParentState.centralWidget = parent.centralWidget();
+  parent.setCentralWidget(this);
 
   auto& spec = dynamic_cast<const FLoginScreenSpec&>(spec_);
 
@@ -31,10 +27,10 @@ void FLoginScreen::rebuild(const FragmentSpec& spec_) {
   m_data.background.reset(new QPixmap(tmp.scaledToHeight(parent.size().height())));
 
   m_data.wgtUser.reset(new QLineEdit(this));
-  m_data.wgtUser->setGeometry(330, 290, 150, 30);
+  m_data.wgtUser->setGeometry(205, 170, 100, 20);
 
   m_data.wgtPassword.reset(new QLineEdit(this));
-  m_data.wgtPassword->setGeometry(330, 330, 150, 30);
+  m_data.wgtPassword->setGeometry(205, 195, 100, 20);
 
   setPixmap(*m_data.background);
 
@@ -45,9 +41,7 @@ void FLoginScreen::rebuild(const FragmentSpec& spec_) {
 // FLoginScreen::cleanUp
 //===========================================
 void FLoginScreen::cleanUp() {
-  auto& parentData = parentFragData<FSettingsDialogData>();
+  auto& parent = parentFrag<FMain>();
 
-  parentData.vbox->setSpacing(m_origParentState.spacing);
-  parentData.vbox->setContentsMargins(m_origParentState.margins);
-  parentData.vbox->removeWidget(this);
+  parent.setCentralWidget(m_origParentState.centralWidget);
 }

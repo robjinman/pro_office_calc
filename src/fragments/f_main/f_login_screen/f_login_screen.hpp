@@ -4,7 +4,6 @@
 
 #include <memory>
 #include <QLabel>
-#include <QMargins>
 #include <QTimer>
 #include <QImage>
 #include <QLineEdit>
@@ -30,8 +29,7 @@ class FLoginScreen : public QLabel, public Fragment {
     FLoginScreenData m_data;
 
     struct {
-      int spacing;
-      QMargins margins;
+      QWidget* centralWidget;
     } m_origParentState;
 };
 

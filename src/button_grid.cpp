@@ -16,7 +16,7 @@ using std::string;
 static QPushButton* makeButton(QWidget* parent, const QString& text) {
   QPushButton* btn = new QPushButton(text, parent);
 
-  btn->setMaximumWidth(60);
+  //btn->setMaximumWidth(100);
   btn->setMaximumHeight(60);
 
   return btn;

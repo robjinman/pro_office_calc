@@ -14,7 +14,6 @@ namespace st_login_screen {
 FMainSpec* makeFMainSpec(int stateId) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
-  mainSpec->calculatorSpec.setEnabled(true);
   mainSpec->glitchSpec.setEnabled(true);
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
@@ -29,14 +28,12 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1993 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
+  mainSpec->loginScreenSpec.setEnabled(true);
+  mainSpec->loginScreenSpec.backgroundImage = "data/login.png";
   mainSpec->settingsDialogSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.width = 640;
-  mainSpec->settingsDialogSpec.height = 480;
-  mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.loginScreenSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.loginScreenSpec.backgroundImage = "data/login.png";
-  mainSpec->preferencesDialogSpec.setEnabled(true);
-  mainSpec->preferencesDialogSpec.configMazeSpec.setEnabled(true);
+  mainSpec->settingsDialogSpec.width = 400;
+  mainSpec->settingsDialogSpec.height = 300;
+  mainSpec->settingsDialogSpec.configMazeSpec.setEnabled(true);
 
   return mainSpec;
 }
