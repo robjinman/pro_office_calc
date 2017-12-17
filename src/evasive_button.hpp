@@ -11,7 +11,10 @@ class EvasiveButton : public QPushButton {
   Q_OBJECT
 
   public:
-    EvasiveButton(const QString& caption, const QPoint& pos, QWidget* parent);
+    EvasiveButton(const QString& caption);
+
+    // Must be called after the button's position has been set, e.g. by being added to a layout
+    void reset();
 
     void onMouseMove();
 

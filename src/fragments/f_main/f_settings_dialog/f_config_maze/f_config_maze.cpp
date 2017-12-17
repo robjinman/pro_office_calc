@@ -2,7 +2,19 @@
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_settings_dialog/f_config_maze/f_config_maze.hpp"
 #include "fragments/f_main/f_settings_dialog/f_config_maze/f_config_maze_spec.hpp"
+#include "fragments/f_main/f_settings_dialog/f_config_maze/f_are_you_sure/f_are_you_sure_spec.hpp"
 #include "utils.hpp"
+
+
+
+struct ContentSpec : public FragmentSpec {
+  ContentSpec()
+    : FragmentSpec("FConfigMaze", {
+        &areYouSureSpec
+      }) {}
+
+  FAreYouSureSpec areYouSureSpec;
+};
 
 
 //===========================================
@@ -22,15 +34,20 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   m_data.eventSystem = parentData.eventSystem;
   m_data.updateLoop = parentData.updateLoop;
 
-  parentData.vbox->addWidget(this);
-
   setMouseTracking(true);
+
+  m_data.wgtButton.reset(new QPushButton("Admin console"));
+
+  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox->addWidget(m_data.wgtButton.get());
+
+  connect(m_data.wgtButton.get(), SIGNAL(pressed()), this, SLOT(onBtnClick()));
 
   auto& spec = dynamic_cast<const FConfigMazeSpec&>(spec_);
 
-  m_data.wgtButton.reset(new EvasiveButton("Click me!", QPoint(160, 140), this));
+  setLayout(m_data.vbox.get());
 
-  connect(m_data.wgtButton.get(), SIGNAL(pressed()), this, SLOT(onBtnClick()));
+  parentData.vbox->addWidget(this);
 
   Fragment::rebuild(spec_);
 }
@@ -40,13 +57,11 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
 //===========================================
 void FConfigMaze::onBtnClick() {
   DBG_PRINT("Button clicked!\n");
-}
 
-//===========================================
-// FConfigMaze::mouseMoveEvent
-//===========================================
-void FConfigMaze::mouseMoveEvent(QMouseEvent*) {
-  m_data.wgtButton->onMouseMove();
+  ContentSpec spec;
+  spec.areYouSureSpec.setEnabled(true);
+
+  Fragment::rebuild(spec);
 }
 
 //===========================================

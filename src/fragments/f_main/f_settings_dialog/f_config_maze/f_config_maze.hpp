@@ -3,9 +3,9 @@
 
 
 #include <memory>
-#include <QWidget>
+//#include <QVBoxLayout>
+#include <QPushButton>
 #include "fragment.hpp"
-#include "evasive_button.hpp"
 
 
 class EventSystem;
@@ -14,7 +14,8 @@ class UpdateLoop;
 struct FConfigMazeData : public FragmentData {
   EventSystem* eventSystem;
   UpdateLoop* updateLoop;
-  std::unique_ptr<EvasiveButton> wgtButton;
+  //std::unique_ptr<QVBoxLayout> vbox;
+  std::unique_ptr<QPushButton> wgtButton;
 };
 
 class FConfigMaze : public QWidget, public Fragment {
@@ -25,9 +26,6 @@ class FConfigMaze : public QWidget, public Fragment {
 
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
-
-  protected:
-    void mouseMoveEvent(QMouseEvent* event) override;
 
   private slots:
     void onBtnClick();

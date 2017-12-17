@@ -44,18 +44,23 @@ inline static double clamp(double x, double min, double max) {
 //===========================================
 // EvasiveButton::EvasiveButton
 //===========================================
-EvasiveButton::EvasiveButton(const QString& caption, const QPoint& pos, QWidget* parent)
-  : QPushButton(caption, parent),
+EvasiveButton::EvasiveButton(const QString& caption)
+  : QPushButton(caption),
     m_active(false) {
 
-  move(pos);
-  m_originalPos = pos;
+    setMouseTracking(true);
 
-  setMouseTracking(true);
+    m_timer.reset(new QTimer(this));
+    connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-  m_timer.reset(new QTimer(this));
+    reset();
+}
 
-  connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+//===========================================
+// EvasiveButton::reset
+//===========================================
+void EvasiveButton::reset() {
+  m_originalPos = pos();
 }
 
 //===========================================
