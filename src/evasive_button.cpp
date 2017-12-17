@@ -49,12 +49,13 @@ EvasiveButton::EvasiveButton(const QString& caption)
   : QPushButton(caption),
     m_active(false) {
 
-    setMouseTracking(true);
+  setMouseTracking(true);
+  setFocusPolicy(Qt::NoFocus);
 
-    m_timer.reset(new QTimer(this));
-    connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+  m_timer.reset(new QTimer(this));
+  connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-    reset();
+  reset();
 }
 
 //===========================================

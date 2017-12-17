@@ -6,6 +6,7 @@
 #include <map>
 #include <QPushButton>
 #include <QLabel>
+#include <QStackedLayout>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include "evasive_button.hpp"
@@ -26,6 +27,7 @@ class AreYouSureWidget : public QWidget {
     void onYesClick();
     void onNoClick();
     void onFinalYesClick();
+    void onFinalNoClick();
 
   private:
     void restart();
@@ -53,12 +55,25 @@ class AreYouSureWidget : public QWidget {
 
     EventSystem& m_eventSystem;
 
-    std::unique_ptr<QGridLayout> m_grid;
-    std::unique_ptr<QPushButton> m_wgtYes;
-    std::unique_ptr<QPushButton> m_wgtNo;
-    std::unique_ptr<QLabel> m_wgtPrompt;
-    std::unique_ptr<QLabel> m_wgtIcon;
-    std::unique_ptr<EvasiveButton> m_wgtFinalYes;
+    std::unique_ptr<QStackedLayout> m_pages;
+
+    struct {
+      std::unique_ptr<QWidget> widget;
+      std::unique_ptr<QGridLayout> grid;
+      std::unique_ptr<QPushButton> wgtYes;
+      std::unique_ptr<QPushButton> wgtNo;
+      std::unique_ptr<QLabel> wgtPrompt;
+      std::unique_ptr<QLabel> wgtWarning;
+    } m_page1;
+
+    struct {
+      std::unique_ptr<QWidget> widget;
+      std::unique_ptr<QGridLayout> grid;
+      std::unique_ptr<EvasiveButton> wgtYes;
+      std::unique_ptr<QPushButton> wgtNo;
+      std::unique_ptr<QLabel> wgtPrompt;
+      std::unique_ptr<QLabel> wgtConsole;
+    } m_page2;
 
     TemplateMap m_templates;
     int m_count;

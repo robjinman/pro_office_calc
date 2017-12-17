@@ -11,7 +11,7 @@
 using std::string;
 
 
-const int NUM_QUESTIONS = 8;
+const int NUM_QUESTIONS = 1;
 
 static std::random_device rd;
 static std::mt19937 randEngine(rd());
@@ -97,33 +97,75 @@ AreYouSureWidget::AreYouSureWidget(EventSystem& eventSystem)
   : QWidget(nullptr),
     m_eventSystem(eventSystem) {
 
-  m_grid.reset(new QGridLayout(this));
+  setMouseTracking(true);
 
-  m_wgtIcon.reset(new QLabel());
-  m_wgtIcon->setPixmap(QPixmap("data/warning.png"));
+  m_pages.reset(new QStackedLayout(this));
 
-  m_wgtPrompt.reset(new QLabel());
-  m_wgtPrompt->setWordWrap(true);
+  // Page1
+  //
 
-  const int btnWidth = 1000;
+  m_page1.widget.reset(new QWidget);
+  m_page1.widget->setMouseTracking(true);
 
-  m_wgtYes.reset(new QPushButton("Yes"));
-  m_wgtYes->setMaximumWidth(btnWidth);
+  m_page1.grid.reset(new QGridLayout);
+  m_page1.widget->setLayout(m_page1.grid.get());
 
-  m_wgtNo.reset(new QPushButton("No"));
-  m_wgtNo->setMaximumWidth(btnWidth);
+  m_page1.wgtWarning.reset(new QLabel());
+  m_page1.wgtWarning->setMouseTracking(true);
+  m_page1.wgtWarning->setPixmap(QPixmap("data/warning.png"));
 
-  m_wgtFinalYes.reset(new EvasiveButton("Yes"));
-  m_wgtFinalYes->setMaximumWidth(btnWidth);
+  m_page1.wgtPrompt.reset(new QLabel());
+  m_page1.wgtPrompt->setWordWrap(true);
+  m_page1.wgtPrompt->setMouseTracking(true);
 
-  m_grid->addWidget(m_wgtIcon.get(), 0, 1);
-  m_grid->addWidget(m_wgtPrompt.get(), 1, 0, 1, -1);
-  m_grid->addWidget(m_wgtNo.get(), 2, 0);
-  m_grid->addWidget(m_wgtYes.get(), 2, 2);
+  m_page1.wgtYes.reset(new QPushButton("Yes"));
 
-  connect(m_wgtYes.get(), SIGNAL(clicked()), this, SLOT(onYesClick()));
-  connect(m_wgtNo.get(), SIGNAL(clicked()), this, SLOT(onNoClick()));
-  connect(m_wgtFinalYes.get(), SIGNAL(pressed()), this, SLOT(onFinalYesClick()));
+  m_page1.wgtNo.reset(new QPushButton("No"));
+
+  m_page1.grid->addWidget(m_page1.wgtWarning.get(), 0, 1);
+  m_page1.grid->addWidget(m_page1.wgtPrompt.get(), 1, 0, 1, 3);
+  m_page1.grid->addWidget(m_page1.wgtNo.get(), 2, 0);
+  m_page1.grid->addWidget(m_page1.wgtYes.get(), 2, 2);
+
+  connect(m_page1.wgtYes.get(), SIGNAL(clicked()), this, SLOT(onYesClick()));
+  connect(m_page1.wgtNo.get(), SIGNAL(clicked()), this, SLOT(onNoClick()));
+
+  m_pages->addWidget(m_page1.widget.get());
+
+  // Page 2
+  //
+
+  m_page2.widget.reset(new QWidget);
+  m_page2.widget->setMouseTracking(true);
+
+  m_page2.grid.reset(new QGridLayout);
+  m_page2.widget->setLayout(m_page2.grid.get());
+
+  m_page2.wgtConsole.reset(new QLabel());
+  m_page2.wgtConsole->setMouseTracking(true);
+  m_page2.wgtConsole->setPixmap(QPixmap("data/console.png"));
+
+  m_page2.wgtPrompt.reset(new QLabel("Click proceed to enter admin console"));
+  m_page2.wgtPrompt->setWordWrap(true);
+  m_page2.wgtPrompt->setMouseTracking(true);
+
+  m_page2.wgtNo.reset(new QPushButton("Back to safety"));
+
+  m_page2.wgtYes.reset(new EvasiveButton("Proceed"));
+  m_page2.wgtYes->setMaximumWidth(90);
+
+  m_page2.grid->addWidget(m_page2.wgtConsole.get(), 0, 1);
+  m_page2.grid->addWidget(m_page2.wgtPrompt.get(), 2, 0, 1, 3);
+  m_page2.grid->addWidget(m_page2.wgtNo.get(), 3, 0);
+  m_page2.grid->addWidget(m_page2.wgtYes.get(), 1, 1, Qt::AlignCenter);
+
+  connect(m_page2.wgtYes.get(), SIGNAL(pressed()), this, SLOT(onFinalYesClick()));
+  connect(m_page2.wgtNo.get(), SIGNAL(clicked()), this, SLOT(onFinalNoClick()));
+
+  m_pages->addWidget(m_page2.widget.get());
+
+  // Setup templates
+  //
 
   m_templates["not"] = Template("not");
   m_templates["sureYou"] = Template("<not,0-3>sure you");
@@ -150,9 +192,7 @@ AreYouSureWidget::AreYouSureWidget(EventSystem& eventSystem)
 //===========================================
 void AreYouSureWidget::restart() {
   m_count = 0;
-
-  m_wgtFinalYes->hide();
-  m_wgtYes->show();
+  m_pages->setCurrentIndex(0);
 
   nextQuestion();
 }
@@ -168,16 +208,11 @@ void AreYouSureWidget::nextQuestion() {
 
     DBG_PRINT((numNegatives(question) % 2 ? "N\n" : "Y\n"));
 
-    m_wgtPrompt->setText(question.c_str());
+    m_page1.wgtPrompt->setText(question.c_str());
   }
   else {
-    m_wgtPrompt->setText("Are you sure?");
-
-    m_wgtYes->hide();
-
-    m_grid->addWidget(m_wgtFinalYes.get(), 2, 2);
-    m_wgtFinalYes->show();
-    m_wgtFinalYes->reset();
+    m_pages->setCurrentIndex(1);
+    m_page2.wgtYes->reset();
   }
 
   ++m_count;
@@ -187,7 +222,7 @@ void AreYouSureWidget::nextQuestion() {
 // AreYouSureWidget::onYesClick
 //===========================================
 void AreYouSureWidget::onYesClick() {
-  string question = m_wgtPrompt->text().toStdString();
+  string question = m_page1.wgtPrompt->text().toStdString();
   bool yesToContinue = numNegatives(question) % 2 == 0;
 
   if (yesToContinue) {
@@ -203,7 +238,7 @@ void AreYouSureWidget::onYesClick() {
 // AreYouSureWidget::onNoClick
 //===========================================
 void AreYouSureWidget::onNoClick() {
-  string question = m_wgtPrompt->text().toStdString();
+  string question = m_page1.wgtPrompt->text().toStdString();
   bool yesToContinue = numNegatives(question) % 2 == 0;
 
   if (yesToContinue) {
@@ -223,8 +258,16 @@ void AreYouSureWidget::onFinalYesClick() {
 }
 
 //===========================================
+// AreYouSureWidget::onFinalNoClick
+//===========================================
+void AreYouSureWidget::onFinalNoClick() {
+  m_eventSystem.fire("areYouSureFail");
+  restart();
+}
+
+//===========================================
 // AreYouSureWidget::mouseMoveEvent
 //===========================================
 void AreYouSureWidget::mouseMoveEvent(QMouseEvent*) {
-  m_wgtFinalYes->onMouseMove();
+  m_page2.wgtYes->onMouseMove();
 }
