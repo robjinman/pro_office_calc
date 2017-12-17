@@ -23,6 +23,14 @@ ostream& operator<<(ostream& os, const QRectF& rect) {
   os << rect.x() << ", " << rect.y() << ", " << rect.width() << ", " << rect.height();
   return os;
 }
+ostream& operator<<(ostream& os, const QPoint& p) {
+  os << p.x() << ", " << p.y();
+  return os;
+}
+ostream& operator<<(ostream& os, const QPointF& p) {
+  os << p.x() << ", " << p.y();
+  return os;
+}
 #endif
 
 string readString(istream& is) {

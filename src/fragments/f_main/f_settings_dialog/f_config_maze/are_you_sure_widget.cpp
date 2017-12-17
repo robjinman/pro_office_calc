@@ -3,24 +3,24 @@
 #include <cassert>
 #include <algorithm>
 #include <QPixmap>
-#include "fragments/f_main/f_settings_dialog/f_config_maze/f_config_maze.hpp"
-#include "fragments/f_main/f_settings_dialog/f_config_maze/f_are_you_sure/f_are_you_sure.hpp"
-#include "fragments/f_main/f_settings_dialog/f_config_maze/f_are_you_sure/f_are_you_sure_spec.hpp"
+#include "fragments/f_main/f_settings_dialog/f_config_maze/are_you_sure_widget.hpp"
+#include "event_system.hpp"
+#include "utils.hpp"
 
 
 using std::string;
 
 
-const int NUM_QUESTIONS = 5;
+const int NUM_QUESTIONS = 8;
 
 static std::random_device rd;
 static std::mt19937 randEngine(rd());
 
 
 //===========================================
-// FAreYouSure::Template::generate
+// AreYouSureWidget::Template::generate
 //===========================================
-string FAreYouSure::Template::generate(const TemplateMap& templates, int maxDepth) const {
+string AreYouSureWidget::Template::generate(const TemplateMap& templates, int maxDepth) const {
   string text = text1;
   if (text2.length() > 0) {
     std::uniform_int_distribution<int> flipCoin(0, 1);
@@ -91,55 +91,39 @@ static inline int numNegatives(const string& str) {
 }
 
 //===========================================
-// FAreYouSure::FAreYouSure
+// AreYouSureWidget::AreYouSureWidget
 //===========================================
-FAreYouSure::FAreYouSure(Fragment& parent_, FragmentData& parentData_)
+AreYouSureWidget::AreYouSureWidget(EventSystem& eventSystem)
   : QWidget(nullptr),
-    Fragment("FAreYouSure", parent_, parentData_, m_data) {
+    m_eventSystem(eventSystem) {
 
-  auto& parentData = parentFragData<FConfigMazeData>();
+  m_grid.reset(new QGridLayout(this));
 
-  m_origParentData.layout = parentData.vbox.get();
-}
+  m_wgtIcon.reset(new QLabel());
+  m_wgtIcon->setPixmap(QPixmap("data/warning.png"));
 
-//===========================================
-// FAreYouSure::rebuild
-//===========================================
-void FAreYouSure::rebuild(const FragmentSpec& spec_) {
-  auto& parent = parentFrag<FConfigMaze>();
-  auto& parentData = parentFragData<FConfigMazeData>();
+  m_wgtPrompt.reset(new QLabel());
+  m_wgtPrompt->setWordWrap(true);
 
-  auto& spec = dynamic_cast<const FAreYouSureSpec&>(spec_);
+  const int btnWidth = 1000;
 
-  m_data.vbox.reset(new QVBoxLayout(this));
-  m_data.hbox.reset(new QHBoxLayout());
+  m_wgtYes.reset(new QPushButton("Yes"));
+  m_wgtYes->setMaximumWidth(btnWidth);
 
-  m_data.wgtIcon.reset(new QLabel());
-  m_data.wgtIcon->setPixmap(QPixmap("data/warning.png"));
+  m_wgtNo.reset(new QPushButton("No"));
+  m_wgtNo->setMaximumWidth(btnWidth);
 
-  m_data.wgtPrompt.reset(new QLabel());
-  m_data.wgtPrompt->setWordWrap(true);
+  m_wgtFinalYes.reset(new EvasiveButton("Yes"));
+  m_wgtFinalYes->setMaximumWidth(btnWidth);
 
-  m_data.wgtYes.reset(new QPushButton("Yes"));
-  m_data.wgtNo.reset(new QPushButton("No"));
+  m_grid->addWidget(m_wgtIcon.get(), 0, 1);
+  m_grid->addWidget(m_wgtPrompt.get(), 1, 0, 1, -1);
+  m_grid->addWidget(m_wgtNo.get(), 2, 0);
+  m_grid->addWidget(m_wgtYes.get(), 2, 2);
 
-  m_data.wgtFinalYes.reset(new EvasiveButton("Click me!"));
-
-  m_data.hbox->addWidget(m_data.wgtNo.get());
-  m_data.hbox->addWidget(m_data.wgtYes.get());
-
-  m_data.vbox->addWidget(m_data.wgtIcon.get());
-  m_data.vbox->addWidget(m_data.wgtPrompt.get());
-  m_data.vbox->addLayout(m_data.hbox.get());
-
-  connect(m_data.wgtYes.get(), SIGNAL(pressed()), this, SLOT(onYesClick()));
-  connect(m_data.wgtNo.get(), SIGNAL(pressed()), this, SLOT(onNoClick()));
-
-  m_data.outerVbox.reset(new QVBoxLayout);
-  m_data.outerVbox->addWidget(this);
-
-  parent.setLayout(nullptr);
-  parent.setLayout(m_data.outerVbox.get());
+  connect(m_wgtYes.get(), SIGNAL(clicked()), this, SLOT(onYesClick()));
+  connect(m_wgtNo.get(), SIGNAL(clicked()), this, SLOT(onNoClick()));
+  connect(m_wgtFinalYes.get(), SIGNAL(pressed()), this, SLOT(onFinalYesClick()));
 
   m_templates["not"] = Template("not");
   m_templates["sureYou"] = Template("<not,0-3>sure you");
@@ -158,65 +142,72 @@ void FAreYouSure::rebuild(const FragmentSpec& spec_) {
   m_templates["verb_"] = Template("<verbIng,1-1>", "<verbVerb,1-1>");
   m_templates["question"] = Template("Are you sure you are <sureYouWantTo,1-1><verb_,1-1>");
 
-  Fragment::rebuild(spec_);
-
   restart();
 }
 
 //===========================================
-// FAreYouSure::restart
+// AreYouSureWidget::restart
 //===========================================
-void FAreYouSure::restart() {
+void AreYouSureWidget::restart() {
   m_count = 0;
-  m_data.hbox->removeWidget(m_data.wgtFinalYes.get());
-  m_data.hbox->addWidget(m_data.wgtYes.get());
+
+  m_wgtFinalYes->hide();
+  m_wgtYes->show();
+
   nextQuestion();
 }
 
 //===========================================
-// FAreYouSure::nextQuestion
+// AreYouSureWidget::nextQuestion
 //===========================================
-void FAreYouSure::nextQuestion() {
+void AreYouSureWidget::nextQuestion() {
   if (m_count < NUM_QUESTIONS) {
     string question = m_templates.at("question").generate(m_templates, 6 + m_count);
     question.pop_back();
     question.push_back('?');
 
-    m_data.wgtPrompt->setText(question.c_str());
+    DBG_PRINT((numNegatives(question) % 2 ? "N\n" : "Y\n"));
+
+    m_wgtPrompt->setText(question.c_str());
   }
   else {
-    m_data.wgtPrompt->setText("Are you sure?");
-    m_data.hbox->removeWidget(m_data.wgtYes.get());
-    m_data.hbox->addWidget(m_data.wgtFinalYes.get());
-    m_data.wgtFinalYes->reset();
+    m_wgtPrompt->setText("Are you sure?");
+
+    m_wgtYes->hide();
+
+    m_grid->addWidget(m_wgtFinalYes.get(), 2, 2);
+    m_wgtFinalYes->show();
+    m_wgtFinalYes->reset();
   }
 
   ++m_count;
 }
 
 //===========================================
-// FAreYouSure::onYesClick
+// AreYouSureWidget::onYesClick
 //===========================================
-void FAreYouSure::onYesClick() {
-  string question = m_data.wgtPrompt->text().toStdString();
+void AreYouSureWidget::onYesClick() {
+  string question = m_wgtPrompt->text().toStdString();
   bool yesToContinue = numNegatives(question) % 2 == 0;
 
   if (yesToContinue) {
     nextQuestion();
   }
   else {
+    m_eventSystem.fire("areYouSureFail");
     restart();
   }
 }
 
 //===========================================
-// FAreYouSure::onNoClick
+// AreYouSureWidget::onNoClick
 //===========================================
-void FAreYouSure::onNoClick() {
-  string question = m_data.wgtPrompt->text().toStdString();
+void AreYouSureWidget::onNoClick() {
+  string question = m_wgtPrompt->text().toStdString();
   bool yesToContinue = numNegatives(question) % 2 == 0;
 
   if (yesToContinue) {
+    m_eventSystem.fire("areYouSureFail");
     restart();
   }
   else {
@@ -225,18 +216,15 @@ void FAreYouSure::onNoClick() {
 }
 
 //===========================================
-// FAreYouSure::mouseMoveEvent
+// AreYouSureWidget::onFinalYesClick
 //===========================================
-void FAreYouSure::mouseMoveEvent(QMouseEvent*) {
-  m_data.wgtFinalYes->onMouseMove();
+void AreYouSureWidget::onFinalYesClick() {
+  m_eventSystem.fire("areYouSurePass");
 }
 
 //===========================================
-// FAreYouSure::cleanUp
+// AreYouSureWidget::mouseMoveEvent
 //===========================================
-void FAreYouSure::cleanUp() {
-  if (m_origParentData.layout) {
-    auto& parent = parentFrag<FConfigMaze>();
-    parent.setLayout(m_origParentData.layout);
-  }
+void AreYouSureWidget::mouseMoveEvent(QMouseEvent*) {
+  m_wgtFinalYes->onMouseMove();
 }

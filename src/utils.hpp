@@ -57,8 +57,12 @@ typedef std::hash<std::string> hashString;
 #ifdef DEBUG
 class QRect;
 class QRectF;
+class QPoint;
+class QPointF;
 std::ostream& operator<<(std::ostream& os, const QRect& rect);
 std::ostream& operator<<(std::ostream& os, const QRectF& rect);
+std::ostream& operator<<(std::ostream& os, const QPoint& p);
+std::ostream& operator<<(std::ostream& os, const QPointF& p);
 #endif
 
 

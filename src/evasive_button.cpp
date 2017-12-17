@@ -1,6 +1,7 @@
 #include <cmath>
 #include <QMouseEvent>
 #include "evasive_button.hpp"
+#include "utils.hpp"
 
 
 static const double FRAME_RATE = 20.0;
@@ -61,6 +62,8 @@ EvasiveButton::EvasiveButton(const QString& caption)
 //===========================================
 void EvasiveButton::reset() {
   m_originalPos = pos();
+
+  DBG_PRINT_VAR(m_originalPos);
 }
 
 //===========================================

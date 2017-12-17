@@ -6,6 +6,9 @@
 
 
 struct Event {
+  Event(const char* name)
+    : name(name) {}
+
   Event(const std::string& name)
     : name(name) {}
 

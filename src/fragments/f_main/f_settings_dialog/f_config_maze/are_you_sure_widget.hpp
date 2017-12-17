@@ -1,36 +1,23 @@
-#ifndef __PROCALC_FRAGMENTS_F_ARE_YOU_SURE_HPP__
-#define __PROCALC_FRAGMENTS_F_ARE_YOU_SURE_HPP__
+#ifndef __PROCALC_FRAGMENTS_ARE_YOU_SURE_WIDGET_HPP__
+#define __PROCALC_FRAGMENTS_ARE_YOU_SURE_WIDGET_HPP__
 
 
 #include <memory>
 #include <map>
 #include <QPushButton>
 #include <QLabel>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QHBoxLayout>
-#include "fragment.hpp"
 #include "evasive_button.hpp"
 
 
-struct FAreYouSureData : public FragmentData {
-  std::unique_ptr<QVBoxLayout> outerVbox;
-  std::unique_ptr<QVBoxLayout> vbox;
-  std::unique_ptr<QHBoxLayout> hbox;
-  std::unique_ptr<QPushButton> wgtYes;
-  std::unique_ptr<QPushButton> wgtNo;
-  std::unique_ptr<QLabel> wgtPrompt;
-  std::unique_ptr<QLabel> wgtIcon;
-  std::unique_ptr<EvasiveButton> wgtFinalYes;
-};
+class EventSystem;
 
-class FAreYouSure : public QWidget, public Fragment {
+class AreYouSureWidget : public QWidget {
   Q_OBJECT
 
   public:
-    FAreYouSure(Fragment& parent, FragmentData& parentData);
-
-    virtual void rebuild(const FragmentSpec& spec) override;
-    virtual void cleanUp() override;
+    AreYouSureWidget(EventSystem& eventSystem);
 
   protected:
     void mouseMoveEvent(QMouseEvent* event) override;
@@ -38,6 +25,7 @@ class FAreYouSure : public QWidget, public Fragment {
   private slots:
     void onYesClick();
     void onNoClick();
+    void onFinalYesClick();
 
   private:
     void restart();
@@ -63,11 +51,14 @@ class FAreYouSure : public QWidget, public Fragment {
       std::string text2;
     };
 
-    FAreYouSureData m_data;
+    EventSystem& m_eventSystem;
 
-    struct {
-      QLayout* layout;
-    } m_origParentData;
+    std::unique_ptr<QGridLayout> m_grid;
+    std::unique_ptr<QPushButton> m_wgtYes;
+    std::unique_ptr<QPushButton> m_wgtNo;
+    std::unique_ptr<QLabel> m_wgtPrompt;
+    std::unique_ptr<QLabel> m_wgtIcon;
+    std::unique_ptr<EvasiveButton> m_wgtFinalYes;
 
     TemplateMap m_templates;
     int m_count;
