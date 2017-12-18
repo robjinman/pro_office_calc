@@ -11,7 +11,7 @@
 using std::string;
 
 
-const int NUM_QUESTIONS = 10;
+const int NUM_QUESTIONS = 8;
 
 static std::random_device rd;
 static std::mt19937 randEngine(rd());
@@ -234,24 +234,10 @@ void AreYouSureWidget::nextQuestion() {
   if (m_count < NUM_QUESTIONS) {
     string question;
 
-    switch (m_count) {
-      case 0:
-        question = "Are you sure you want to continue?";
-        break;
-      case 1:
-        question = "Are you certain beyond any doubt that you want to continue?";
-        break;
-      case 2:
-        question = "Would you like to abort continuing?";
-        break;
-      default: {
-        while (question.length() == 0 || question.length() > 300) {
-          question = m_templates.at("question").generate(m_templates, 3 + m_count);
-          question.pop_back();
-          question.push_back('?');
-        }
-        break;
-      }
+    while (question.length() == 0 || question.length() > 300) {
+      question = m_templates.at("question").generate(m_templates, 6 + m_count);
+      question.pop_back();
+      question.push_back('?');
     }
 
     DBG_PRINT((numNegatives(question) % 2 ? "N\n" : "Y\n"));

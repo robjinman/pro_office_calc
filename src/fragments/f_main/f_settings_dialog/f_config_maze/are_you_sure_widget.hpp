@@ -1,5 +1,5 @@
-#ifndef __PROCALC_FRAGMENTS_ARE_YOU_SURE_WIDGET_HPP__
-#define __PROCALC_FRAGMENTS_ARE_YOU_SURE_WIDGET_HPP__
+#ifndef __PROCALC_FRAGMENTS_F_CONFIG_MAZE_ARE_YOU_SURE_WIDGET_HPP__
+#define __PROCALC_FRAGMENTS_F_CONFIG_MAZE_ARE_YOU_SURE_WIDGET_HPP__
 
 
 #include <memory>
@@ -20,6 +20,8 @@ class AreYouSureWidget : public QWidget {
   public:
     AreYouSureWidget(EventSystem& eventSystem);
 
+    void restart();
+
   protected:
     void mouseMoveEvent(QMouseEvent* event) override;
 
@@ -30,7 +32,6 @@ class AreYouSureWidget : public QWidget {
     void onFinalNoClick();
 
   private:
-    void restart();
     void nextQuestion();
 
     class Template;
@@ -55,6 +56,7 @@ class AreYouSureWidget : public QWidget {
       std::string text2;
     };
 
+    // TODO: Use signals instead of the EventSystem
     EventSystem& m_eventSystem;
 
     std::unique_ptr<QStackedLayout> m_pages;

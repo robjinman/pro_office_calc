@@ -17,7 +17,6 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
 // FConfigMaze::rebuild
 //===========================================
 void FConfigMaze::rebuild(const FragmentSpec& spec_) {
-  auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   m_data.eventSystem = parentData.eventSystem;
@@ -25,13 +24,39 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
 
   setMouseTracking(true);
 
-  m_data.wgtButton.reset(new QPushButton("Admin console"));
-  m_data.wgtAreYouSure.reset(new AreYouSureWidget(*m_data.eventSystem));
+  m_data.pages.reset(new QStackedLayout(this));
+  setLayout(m_data.pages.get());
 
-  m_data.grid.reset(new QGridLayout);
-  m_data.grid->addWidget(m_data.wgtButton.get(), 0, 0);
+  m_data.consoleLaunchPage.widget.reset(new QWidget);
+  m_data.consoleLaunchPage.wgtToConsole.reset(new QPushButton("Admin console"));
+  m_data.consoleLaunchPage.vbox.reset(new QVBoxLayout);
+  m_data.consoleLaunchPage.vbox->addWidget(m_data.consoleLaunchPage.wgtToConsole.get());
+  m_data.consoleLaunchPage.widget->setLayout(m_data.consoleLaunchPage.vbox.get());
 
-  connect(m_data.wgtButton.get(), SIGNAL(clicked()), this, SLOT(onBtnClick()));
+  connect(m_data.consoleLaunchPage.wgtToConsole.get(), SIGNAL(clicked()), this,
+    SLOT(onEnterConsoleClick()));
+
+  m_data.pages->addWidget(m_data.consoleLaunchPage.widget.get());
+
+  m_data.consoleAreYouSurePage.widget.reset(new QWidget);
+  m_data.consoleAreYouSurePage.wgtAreYouSure.reset(new AreYouSureWidget(*m_data.eventSystem));
+  m_data.consoleAreYouSurePage.vbox.reset(new QVBoxLayout);
+  m_data.consoleAreYouSurePage.vbox->addWidget(m_data.consoleAreYouSurePage.wgtAreYouSure.get());
+  m_data.consoleAreYouSurePage.widget->setLayout(m_data.consoleAreYouSurePage.vbox.get());
+
+  m_data.pages->addWidget(m_data.consoleAreYouSurePage.widget.get());
+
+  m_data.consolePage.widget.reset(new QWidget);
+  m_data.consolePage.wgtConsole.reset(new ConsoleWidget);
+  m_data.consolePage.wgtBack.reset(new QPushButton("Back"));
+  m_data.consolePage.vbox.reset(new QVBoxLayout);
+  m_data.consolePage.vbox->addWidget(m_data.consolePage.wgtConsole.get());
+  m_data.consolePage.vbox->addWidget(m_data.consolePage.wgtBack.get());
+  m_data.consolePage.widget->setLayout(m_data.consolePage.vbox.get());
+
+  connect(m_data.consolePage.wgtBack.get(), SIGNAL(clicked()), this, SLOT(onExitConsoleClick()));
+
+  m_data.pages->addWidget(m_data.consolePage.widget.get());
 
   m_areYouSureFailId = m_data.eventSystem->listen("areYouSureFail", [=](const Event&) {
     this->onAreYouSureFail();
@@ -39,10 +64,6 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   m_areYouSurePassId = m_data.eventSystem->listen("areYouSurePass", [=](const Event&) {
     this->onAreYouSurePass();
   });
-
-  auto& spec = dynamic_cast<const FConfigMazeSpec&>(spec_);
-
-  setLayout(m_data.grid.get());
 
   parentData.vbox->addWidget(this);
 
@@ -53,45 +74,29 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
 // FConfigMaze::onAreYouSureFail
 //===========================================
 void FConfigMaze::onAreYouSureFail() {
-  DBG_PRINT("FConfigMaze::onAreYouSureFail");
-  showContinueToAdminConsole();
+  m_data.pages->setCurrentIndex(0);
 }
 
 //===========================================
 // FConfigMaze::onAreYouSurePass
 //===========================================
 void FConfigMaze::onAreYouSurePass() {
-  DBG_PRINT("FConfigMaze::onAreYouSurePass");
-  // TODO
+  m_data.pages->setCurrentIndex(2);
 }
 
 //===========================================
-// FConfigMaze::showContinueToAdminConsole
+// FConfigMaze::onEnterConsoleClick
 //===========================================
-void FConfigMaze::showContinueToAdminConsole() {
-  DBG_PRINT("FConfigMaze::showContinueToAdminConsole\n");
-
-  m_data.grid->removeWidget(m_data.wgtAreYouSure.get());
-  m_data.wgtAreYouSure->setParent(nullptr);
-  m_data.grid->addWidget(m_data.wgtButton.get(), 0, 0);
+void FConfigMaze::onEnterConsoleClick() {
+  m_data.pages->setCurrentIndex(1);
+  m_data.consoleAreYouSurePage.wgtAreYouSure->restart();
 }
 
 //===========================================
-// FConfigMaze::showAreYouSure
+// FConfigMaze::onExitConsoleClick
 //===========================================
-void FConfigMaze::showAreYouSure() {
-  DBG_PRINT("FConfigMaze::showAreYouSure\n");
-
-  m_data.grid->removeWidget(m_data.wgtButton.get());
-  m_data.wgtButton->setParent(nullptr);
-  m_data.grid->addWidget(m_data.wgtAreYouSure.get(), 0, 0);
-}
-
-//===========================================
-// FConfigMaze::onBtnClick
-//===========================================
-void FConfigMaze::onBtnClick() {
-  showAreYouSure();
+void FConfigMaze::onExitConsoleClick() {
+  m_data.pages->setCurrentIndex(0);
 }
 
 //===========================================
