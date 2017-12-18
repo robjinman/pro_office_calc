@@ -48,6 +48,8 @@ class AreYouSureWidget : public QWidget {
       Template() {}
 
       std::string generate(const TemplateMap& templates, int maxDepth = 10) const;
+      std::string generate_(const TemplateMap& templates, const std::string& text,
+        int maxDepth) const;
 
       std::string text1;
       std::string text2;

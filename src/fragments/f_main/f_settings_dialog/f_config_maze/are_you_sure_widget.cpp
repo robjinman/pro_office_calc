@@ -18,15 +18,13 @@ static std::mt19937 randEngine(rd());
 
 
 //===========================================
-// AreYouSureWidget::Template::generate
+// AreYouSureWidget::Template::generate_
 //===========================================
-string AreYouSureWidget::Template::generate(const TemplateMap& templates, int maxDepth) const {
-  string text = text1;
-  if (text2.length() > 0) {
-    std::uniform_int_distribution<int> flipCoin(0, 1);
-    int coin = flipCoin(randEngine);
+string AreYouSureWidget::Template::generate_(const TemplateMap& templates, const string& text,
+  int maxDepth) const {
 
-    text = (coin == 0 ? text1 : text2);
+  if (maxDepth < 0) {
+    return "";
   }
 
   std::regex rx("<(\\w+),(\\d+)-(\\d+)>");
@@ -43,11 +41,16 @@ string AreYouSureWidget::Template::generate(const TemplateMap& templates, int ma
     int maxReps = std::atoi(m.str(3).c_str());
 
     std::uniform_int_distribution<int> randReps(minReps, maxReps);
-    int reps = maxDepth > 0 ? randReps(randEngine) : minReps;
+    int reps = randReps(randEngine);
 
     string expanded;
     for (int rep = 0; rep < reps; ++rep) {
-      expanded += templates.at(name).generate(templates, maxDepth - 1);
+      string subresult = templates.at(name).generate(templates, maxDepth - 1);
+      if (subresult.length() == 0 && minReps > 0) {
+        return "";
+      }
+
+      expanded += subresult;
     }
 
     result.replace(m.position() + offset, m.length(), expanded);
@@ -59,6 +62,30 @@ string AreYouSureWidget::Template::generate(const TemplateMap& templates, int ma
   }
 
   return result;
+}
+
+//===========================================
+// AreYouSureWidget::Template::generate
+//===========================================
+string AreYouSureWidget::Template::generate(const TemplateMap& templates, int maxDepth) const {
+  string text = text1;
+
+  if (text2.length() > 0) {
+    std::uniform_int_distribution<int> flipCoin(0, 1);
+    int coin = flipCoin(randEngine);
+
+    text = (coin == 0 ? text1 : text2);
+    const string& altText = (coin == 1 ? text1 : text2);
+
+    string result = generate_(templates, text, maxDepth);
+    if (result.length() == 0) {
+      return generate_(templates, altText, maxDepth);
+    }
+    return result;
+  }
+  else {
+    return generate_(templates, text, maxDepth);
+  }
 }
 
 //===========================================
@@ -173,11 +200,13 @@ AreYouSureWidget::AreYouSureWidget(EventSystem& eventSystem)
   m_templates["sureYouAre"] = Template("<sureYou,1-1>are");
   m_templates["sureYou_"] = Template("<sureYouAre,0-1><sureYou,1-1>");
   m_templates["sureYouWantTo"] = Template("<sureYou_,1-1>want to");
-  m_templates["verb"] = Template("<not,0-3>continue", "<not,0-3>abort");
-  m_templates["ing"] = Template("<not,0-3>continuing", "<not,0-3>aborting");
-  m_templates["continueTo"] = Template("continue <ingTo,1-1>", "<continueTo,1-1><verbTo,1-1>");
+  m_templates["continue"] = Template("continue", "proceed");
+  m_templates["verb"] = Template("<not,0-3><continue,1-1>", "<not,0-3>abort");
+  m_templates["continuing"] = Template("continuing", "proceeding");
+  m_templates["ing"] = Template("<not,0-3><continuing,1-1>", "<not,0-3>aborting");
+  m_templates["continueTo"] = Template("<continue,1-1><ingTo,1-1>", "<continueTo,1-1><verbTo,1-1>");
   m_templates["verbTo"] = Template("<continueTo,1-1>", "abort <ingTo,1-1>");
-  m_templates["ingTo"] = Template("<ingIng,1-1>continuing to");
+  m_templates["ingTo"] = Template("<ingIng,1-1><continuing,1-1>to");
   m_templates["ingVerbIng"] = Template("<ingTo,1-1><verbIng,1-1>");
   m_templates["ingIng"] = Template("<ing,1-2><ingVerbIng,0-1>");
   m_templates["verbIng"] = Template("<verb,1-1><ingIng,1-1>");
@@ -215,11 +244,14 @@ void AreYouSureWidget::nextQuestion() {
       case 2:
         question = "Would you like to abort continuing?";
         break;
-      default:
-        question = m_templates.at("question").generate(m_templates, 3 + m_count);
-        question.pop_back();
-        question.push_back('?');
+      default: {
+        while (question.length() == 0 || question.length() > 300) {
+          question = m_templates.at("question").generate(m_templates, 3 + m_count);
+          question.pop_back();
+          question.push_back('?');
+        }
         break;
+      }
     }
 
     DBG_PRINT((numNegatives(question) % 2 ? "N\n" : "Y\n"));
