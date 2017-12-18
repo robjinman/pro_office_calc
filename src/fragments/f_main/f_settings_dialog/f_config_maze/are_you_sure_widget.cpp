@@ -11,7 +11,7 @@
 using std::string;
 
 
-const int NUM_QUESTIONS = 1;
+const int NUM_QUESTIONS = 10;
 
 static std::random_device rd;
 static std::mt19937 randEngine(rd());
@@ -145,7 +145,8 @@ AreYouSureWidget::AreYouSureWidget(EventSystem& eventSystem)
   m_page2.wgtConsole->setMouseTracking(true);
   m_page2.wgtConsole->setPixmap(QPixmap("data/console.png"));
 
-  m_page2.wgtPrompt.reset(new QLabel("Click proceed to enter admin console"));
+  m_page2.wgtPrompt.reset(new QLabel("The admin console is for advanced users only. "
+    "Enter at your own risk."));
   m_page2.wgtPrompt->setWordWrap(true);
   m_page2.wgtPrompt->setMouseTracking(true);
 
@@ -202,9 +203,24 @@ void AreYouSureWidget::restart() {
 //===========================================
 void AreYouSureWidget::nextQuestion() {
   if (m_count < NUM_QUESTIONS) {
-    string question = m_templates.at("question").generate(m_templates, 6 + m_count);
-    question.pop_back();
-    question.push_back('?');
+    string question;
+
+    switch (m_count) {
+      case 0:
+        question = "Are you sure you want to continue?";
+        break;
+      case 1:
+        question = "Are you certain beyond any doubt that you want to continue?";
+        break;
+      case 2:
+        question = "Would you like to abort continuing?";
+        break;
+      default:
+        question = m_templates.at("question").generate(m_templates, 3 + m_count);
+        question.pop_back();
+        question.push_back('?');
+        break;
+    }
 
     DBG_PRINT((numNegatives(question) % 2 ? "N\n" : "Y\n"));
 

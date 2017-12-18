@@ -5,7 +5,7 @@
 
 
 static const double FRAME_RATE = 20.0;
-static const double RADIUS = 100.0;
+static const double RADIUS = 80.0;
 
 
 //===========================================
@@ -103,7 +103,7 @@ void EvasiveButton::tick() {
   QPointF B;
 
   if (curDist >= 1.0) {
-    double maxSpeed = 600.0; // Pixels per second
+    double maxSpeed = 700.0; // Pixels per second
 
     QPointF v = normalise(btnCentre - cursorPos);
     double speed = maxSpeed * clamp(1.0 - (curDist / RADIUS), 0, 1);
