@@ -12,15 +12,16 @@
 #include "evasive_button.hpp"
 
 
-class EventSystem;
-
 class AreYouSureWidget : public QWidget {
   Q_OBJECT
 
   public:
-    AreYouSureWidget(EventSystem& eventSystem);
+    AreYouSureWidget();
 
     void restart();
+
+  signals:
+    void finished(bool pass);
 
   protected:
     void mouseMoveEvent(QMouseEvent* event) override;
@@ -55,9 +56,6 @@ class AreYouSureWidget : public QWidget {
       std::string text1;
       std::string text2;
     };
-
-    // TODO: Use signals instead of the EventSystem
-    EventSystem& m_eventSystem;
 
     std::unique_ptr<QStackedLayout> m_pages;
 

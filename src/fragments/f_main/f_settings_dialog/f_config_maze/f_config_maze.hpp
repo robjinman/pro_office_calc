@@ -15,9 +15,6 @@ class EventSystem;
 class UpdateLoop;
 
 struct FConfigMazeData : public FragmentData {
-  EventSystem* eventSystem;
-  UpdateLoop* updateLoop;
-
   std::unique_ptr<QStackedLayout> pages;
 
   struct {
@@ -54,14 +51,10 @@ class FConfigMaze : public QWidget, public Fragment {
   private slots:
     void onEnterConsoleClick();
     void onExitConsoleClick();
+    void onAreYouSureFinish(bool passed);
 
   private:
-    void onAreYouSurePass();
-    void onAreYouSureFail();
-
     FConfigMazeData m_data;
-    int m_areYouSurePassId = -1; // TODO
-    int m_areYouSureFailId = -1;
 };
 
 

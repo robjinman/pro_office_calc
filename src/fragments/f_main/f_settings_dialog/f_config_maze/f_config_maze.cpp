@@ -19,9 +19,6 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
 void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   auto& parentData = parentFragData<FSettingsDialogData>();
 
-  m_data.eventSystem = parentData.eventSystem;
-  m_data.updateLoop = parentData.updateLoop;
-
   setMouseTracking(true);
 
   m_data.pages.reset(new QStackedLayout(this));
@@ -39,10 +36,13 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   m_data.pages->addWidget(m_data.consoleLaunchPage.widget.get());
 
   m_data.consoleAreYouSurePage.widget.reset(new QWidget);
-  m_data.consoleAreYouSurePage.wgtAreYouSure.reset(new AreYouSureWidget(*m_data.eventSystem));
+  m_data.consoleAreYouSurePage.wgtAreYouSure.reset(new AreYouSureWidget);
   m_data.consoleAreYouSurePage.vbox.reset(new QVBoxLayout);
   m_data.consoleAreYouSurePage.vbox->addWidget(m_data.consoleAreYouSurePage.wgtAreYouSure.get());
   m_data.consoleAreYouSurePage.widget->setLayout(m_data.consoleAreYouSurePage.vbox.get());
+
+  connect(m_data.consoleAreYouSurePage.wgtAreYouSure.get(), SIGNAL(finished(bool)), this,
+    SLOT(onAreYouSureFinish(bool)));
 
   m_data.pages->addWidget(m_data.consoleAreYouSurePage.widget.get());
 
@@ -58,30 +58,21 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
 
   m_data.pages->addWidget(m_data.consolePage.widget.get());
 
-  m_areYouSureFailId = m_data.eventSystem->listen("areYouSureFail", [=](const Event&) {
-    this->onAreYouSureFail();
-  });
-  m_areYouSurePassId = m_data.eventSystem->listen("areYouSurePass", [=](const Event&) {
-    this->onAreYouSurePass();
-  });
-
   parentData.vbox->addWidget(this);
 
   Fragment::rebuild(spec_);
 }
 
 //===========================================
-// FConfigMaze::onAreYouSureFail
+// FConfigMaze::onAreYouSureFinish
 //===========================================
-void FConfigMaze::onAreYouSureFail() {
-  m_data.pages->setCurrentIndex(0);
-}
-
-//===========================================
-// FConfigMaze::onAreYouSurePass
-//===========================================
-void FConfigMaze::onAreYouSurePass() {
-  m_data.pages->setCurrentIndex(2);
+void FConfigMaze::onAreYouSureFinish(bool passed) {
+  if (passed) {
+    m_data.pages->setCurrentIndex(2);
+  }
+  else {
+    m_data.pages->setCurrentIndex(0);
+  }
 }
 
 //===========================================
@@ -111,7 +102,4 @@ void FConfigMaze::cleanUp() {
 //===========================================
 // FConfigMaze::~FConfigMaze
 //===========================================
-FConfigMaze::~FConfigMaze() {
-  m_data.eventSystem->forget(m_areYouSureFailId);
-  m_data.eventSystem->forget(m_areYouSurePassId);
-}
+FConfigMaze::~FConfigMaze() {}

@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <QPixmap>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/are_you_sure_widget.hpp"
-#include "event_system.hpp"
 #include "utils.hpp"
 
 
@@ -120,9 +119,8 @@ static inline int numNegatives(const string& str) {
 //===========================================
 // AreYouSureWidget::AreYouSureWidget
 //===========================================
-AreYouSureWidget::AreYouSureWidget(EventSystem& eventSystem)
-  : QWidget(nullptr),
-    m_eventSystem(eventSystem) {
+AreYouSureWidget::AreYouSureWidget()
+  : QWidget(nullptr) {
 
   setMouseTracking(true);
 
@@ -263,7 +261,7 @@ void AreYouSureWidget::onYesClick() {
     nextQuestion();
   }
   else {
-    m_eventSystem.fire("areYouSureFail");
+    emit finished(false);
     restart();
   }
 }
@@ -276,7 +274,7 @@ void AreYouSureWidget::onNoClick() {
   bool yesToContinue = numNegatives(question) % 2 == 0;
 
   if (yesToContinue) {
-    m_eventSystem.fire("areYouSureFail");
+    emit finished(false);
     restart();
   }
   else {
@@ -288,14 +286,14 @@ void AreYouSureWidget::onNoClick() {
 // AreYouSureWidget::onFinalYesClick
 //===========================================
 void AreYouSureWidget::onFinalYesClick() {
-  m_eventSystem.fire("areYouSurePass");
+  emit finished(true);
 }
 
 //===========================================
 // AreYouSureWidget::onFinalNoClick
 //===========================================
 void AreYouSureWidget::onFinalNoClick() {
-  m_eventSystem.fire("areYouSureFail");
+  emit finished(false);
   restart();
 }
 

@@ -63,8 +63,6 @@ EvasiveButton::EvasiveButton(const QString& caption)
 //===========================================
 void EvasiveButton::reset() {
   m_originalPos = pos();
-
-  DBG_PRINT_VAR(m_originalPos);
 }
 
 //===========================================
