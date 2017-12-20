@@ -48,7 +48,8 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
 
   m_data.consolePage.widget.reset(new QWidget);
   m_data.consolePage.wgtConsole.reset(new ConsoleWidget);
-  m_data.consolePage.wgtBack.reset(new QPushButton("Back"));
+  m_data.consolePage.wgtBack.reset(new QPushButton("Exit"));
+  m_data.consolePage.wgtBack->setMaximumWidth(50);
   m_data.consolePage.vbox.reset(new QVBoxLayout);
   m_data.consolePage.vbox->addWidget(m_data.consolePage.wgtConsole.get());
   m_data.consolePage.vbox->addWidget(m_data.consolePage.wgtBack.get());
