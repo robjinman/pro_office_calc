@@ -1,3 +1,4 @@
+#include <regex>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
 #include "utils.hpp"
 
@@ -31,15 +32,41 @@ ConsoleWidget::ConsoleWidget()
     "└───────────────────────────────────────┘\n"
     "> ");
 
+  m_commandHistory.insert(m_commandHistory.begin(), {
+    "logouut",
+    "hardreset -u rob -p passw0rd"
+  });
+
+  m_knownCommands["logout"] = "Error";
+  m_knownCommands["hardreset"] = "Error";
+
   m_commandPos = textCursor().position();
 }
 
 //===========================================
 // ConsoleWidget::executeCommand
 //===========================================
-void ConsoleWidget::executeCommand(const string& cmd) {
-  DBG_PRINT("Excecuting command \"" << cmd << "\"\n");
-  m_commandHistory.push_front(cmd);
+string ConsoleWidget::executeCommand(const string& commandString) {
+  std::regex rx("^([^\\s]+).*$");
+  std::smatch m;
+
+  string output;
+
+  if (std::regex_match(commandString, m, rx)) {
+    m_commandHistory.push_front(commandString);
+
+    string cmd = m.str(1);
+
+    auto it = m_knownCommands.find(cmd);
+    if (it != m_knownCommands.end()) {
+      output = it->second;
+    }
+    else {
+      output = "Unknown command";
+    }
+  }
+
+  return output;
 }
 
 //===========================================
@@ -57,10 +84,13 @@ void ConsoleWidget::cursorToEnd() {
 void ConsoleWidget::applyCommand() {
   cursorToEnd();
 
-  insertPlainText("\n> ");
-  m_commandPos = textCursor().position();
+  string output = executeCommand(m_buffer.toPlainText().toStdString());
 
-  executeCommand(m_buffer.toPlainText().toStdString());
+  insertPlainText("\n");
+  insertPlainText(output.c_str());
+  insertPlainText("\n> ");
+
+  m_commandPos = textCursor().position();
 
   m_buffer.clear();
 }

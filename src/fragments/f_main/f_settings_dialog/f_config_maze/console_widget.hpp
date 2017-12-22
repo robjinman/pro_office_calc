@@ -3,7 +3,7 @@
 
 
 #include <string>
-#include <memory>
+#include <map>
 #include <deque>
 #include <QPlainTextEdit>
 
@@ -25,7 +25,7 @@ class ConsoleWidget : public QPlainTextEdit {
     } m_buffer;
 
     void applyCommand();
-    void executeCommand(const std::string& cmd);
+    std::string executeCommand(const std::string& cmd);
     void resetCursorPos();
     void cursorToEnd();
     void syncCommandText();
@@ -33,6 +33,7 @@ class ConsoleWidget : public QPlainTextEdit {
     int m_commandPos;
     std::deque<std::string> m_commandHistory;
     int m_historyIdx = -1;
+    std::map<std::string, std::string> m_knownCommands;
 };
 
 
