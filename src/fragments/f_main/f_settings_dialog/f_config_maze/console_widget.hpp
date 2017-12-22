@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <deque>
 #include <QPlainTextEdit>
 
 
@@ -26,9 +27,12 @@ class ConsoleWidget : public QPlainTextEdit {
     void applyCommand();
     void executeCommand(const std::string& cmd);
     void resetCursorPos();
+    void cursorToEnd();
     void syncCommandText();
 
     int m_commandPos;
+    std::deque<std::string> m_commandHistory;
+    int m_historyIdx = -1;
 };
 
 

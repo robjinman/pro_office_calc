@@ -39,15 +39,23 @@ ConsoleWidget::ConsoleWidget()
 //===========================================
 void ConsoleWidget::executeCommand(const string& cmd) {
   DBG_PRINT("Excecuting command \"" << cmd << "\"\n");
+  m_commandHistory.push_front(cmd);
+}
+
+//===========================================
+// ConsoleWidget::cursorToEnd
+//===========================================
+void ConsoleWidget::cursorToEnd() {
+  QTextCursor cursor = textCursor();
+  cursor.movePosition(QTextCursor::End);
+  setTextCursor(cursor);
 }
 
 //===========================================
 // ConsoleWidget::applyCommand
 //===========================================
 void ConsoleWidget::applyCommand() {
-  QTextCursor cursor = textCursor();
-  cursor.movePosition(QTextCursor::End);
-  setTextCursor(cursor);
+  cursorToEnd();
 
   insertPlainText("\n> ");
   m_commandPos = textCursor().position();
@@ -90,9 +98,29 @@ void ConsoleWidget::keyPressEvent(QKeyEvent* event) {
   switch (event->key()) {
     case Qt::Key_Return:
       applyCommand();
+      m_historyIdx = -1;
+      break;
+    case Qt::Key_Up:
+      if (m_historyIdx < static_cast<int>(m_commandHistory.size()) - 1) {
+        m_buffer.clear();
+        m_buffer.insertPlainText(m_commandHistory[++m_historyIdx].c_str());
+        syncCommandText();
+      }
+      break;
+    case Qt::Key_Down:
+      if (m_historyIdx > 0) {
+        m_buffer.clear();
+        m_buffer.insertPlainText(m_commandHistory[--m_historyIdx].c_str());
+      }
+      else {
+        m_historyIdx = -1;
+        m_buffer.clear();
+      }
+      syncCommandText();
       break;
     default: {
       m_buffer.keyPressEvent(event);
+      m_historyIdx = -1;
       syncCommandText();
     }
   }
