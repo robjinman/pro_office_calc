@@ -1,9 +1,13 @@
 #include <regex>
+#include <random>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
 #include "utils.hpp"
 
 
 using std::string;
+
+
+static std::random_device rd;
 
 
 //===========================================
@@ -32,13 +36,24 @@ ConsoleWidget::ConsoleWidget()
     "└───────────────────────────────────────┘\n"
     "> ");
 
+  string syms("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-");
+  std::uniform_int_distribution<int> randIdx(0, syms.length() - 1);
+  std::uniform_int_distribution<int> randLen(8, 14);
+
+  int len = randLen(rd);
+  string pwd;
+
+  for (int i = 0; i < len; ++i) {
+    pwd.push_back(syms[randIdx(rd)]);
+  }
+
   m_commandHistory.insert(m_commandHistory.begin(), {
     "logouut",
-    "hardreset -u rob -p passw0rd"
+    string("chpwd ") + pwd
   });
 
-  m_knownCommands["logout"] = "Error";
-  m_knownCommands["hardreset"] = "Error";
+  m_knownCommands["logout"] = "An error occurred";
+  m_knownCommands["chpwd"] = "An error occurred";
 
   m_commandPos = textCursor().position();
 }
