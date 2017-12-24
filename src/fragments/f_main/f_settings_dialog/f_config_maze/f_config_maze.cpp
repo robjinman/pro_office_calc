@@ -1,3 +1,4 @@
+#include <random>
 #include <QMouseEvent>
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_settings_dialog/f_config_maze/f_config_maze.hpp"
@@ -5,6 +6,30 @@
 #include "utils.hpp"
 #include "event_system.hpp"
 
+
+using std::string;
+
+
+static std::random_device rd;
+
+
+//===========================================
+// generatePassword
+//===========================================
+static string generatePassword() {
+  string syms("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-");
+  std::uniform_int_distribution<int> randIdx(0, syms.length() - 1);
+  std::uniform_int_distribution<int> randLen(8, 14);
+
+  int len = randLen(rd);
+  string pwd;
+
+  for (int i = 0; i < len; ++i) {
+    pwd.push_back(syms[randIdx(rd)]);
+  }
+
+  return pwd;
+}
 
 //===========================================
 // FConfigMaze::FConfigMaze
@@ -47,7 +72,16 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   m_data.pages->addWidget(m_data.consoleAreYouSurePage.widget.get());
 
   m_data.consolePage.widget.reset(new QWidget);
-  m_data.consolePage.wgtConsole.reset(new ConsoleWidget);
+  m_data.consolePage.wgtConsole.reset(new ConsoleWidget({
+    "logouut",
+    string("chpwd ") + generatePassword()
+  }));
+  m_data.consolePage.wgtConsole->addCommand("logout", [](const ConsoleWidget::ArgList&) {
+    return "An error occurred";
+  });
+  m_data.consolePage.wgtConsole->addCommand("chpwd", [](const ConsoleWidget::ArgList&) {
+    return "An error occurred";
+  });
   m_data.consolePage.wgtBack.reset(new QPushButton("Exit"));
   m_data.consolePage.wgtBack->setMaximumWidth(50);
   m_data.consolePage.vbox.reset(new QVBoxLayout);

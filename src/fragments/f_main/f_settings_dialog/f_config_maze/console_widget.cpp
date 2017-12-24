@@ -1,20 +1,19 @@
-#include <regex>
-#include <random>
+#include <sstream>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
 #include "utils.hpp"
 
 
 using std::string;
-
-
-static std::random_device rd;
+using std::stringstream;
+using std::istream_iterator;
 
 
 //===========================================
 // ConsoleWidget::ConsoleWidget
 //===========================================
-ConsoleWidget::ConsoleWidget()
-  : QPlainTextEdit(nullptr) {
+ConsoleWidget::ConsoleWidget(std::initializer_list<string> initialHistory)
+  : QPlainTextEdit(nullptr),
+    m_commandHistory(initialHistory) {
 
   QPalette p = palette();
   p.setColor(QPalette::Base, Qt::black);
@@ -36,45 +35,33 @@ ConsoleWidget::ConsoleWidget()
     "└───────────────────────────────────────┘\n"
     "> ");
 
-  string syms("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-");
-  std::uniform_int_distribution<int> randIdx(0, syms.length() - 1);
-  std::uniform_int_distribution<int> randLen(8, 14);
-
-  int len = randLen(rd);
-  string pwd;
-
-  for (int i = 0; i < len; ++i) {
-    pwd.push_back(syms[randIdx(rd)]);
-  }
-
-  m_commandHistory.insert(m_commandHistory.begin(), {
-    "logouut",
-    string("chpwd ") + pwd
-  });
-
-  m_knownCommands["logout"] = "An error occurred";
-  m_knownCommands["chpwd"] = "An error occurred";
-
   m_commandPos = textCursor().position();
+}
+
+//===========================================
+// ConsoleWidget::addCommand
+//===========================================
+void ConsoleWidget::addCommand(const string& name, const ConsoleWidget::CommandFn& fn) {
+  m_commandFns[name] = fn;
 }
 
 //===========================================
 // ConsoleWidget::executeCommand
 //===========================================
 string ConsoleWidget::executeCommand(const string& commandString) {
-  std::regex rx("^([^\\s]+).*$");
-  std::smatch m;
-
   string output;
+  stringstream ss(commandString);
+  ArgList vec{istream_iterator<string>(ss), istream_iterator<string>{}};
 
-  if (std::regex_match(commandString, m, rx)) {
+  if (vec.size() > 0) {
     m_commandHistory.push_front(commandString);
 
-    string cmd = m.str(1);
+    const string& cmd = vec[0];
+    ArgList args(++vec.begin(), vec.end());
 
-    auto it = m_knownCommands.find(cmd);
-    if (it != m_knownCommands.end()) {
-      output = it->second;
+    auto it = m_commandFns.find(cmd);
+    if (it != m_commandFns.end()) {
+      output = it->second(args);
     }
     else {
       output = "Unknown command";
