@@ -8,12 +8,25 @@
 #include <QImage>
 #include <QLineEdit>
 #include "fragment.hpp"
+#include "event.hpp"
 
+
+class EventSystem;
 
 struct FLoginScreenData : public FragmentData {
+  EventSystem* eventSystem;
   std::unique_ptr<QPixmap> background;
   std::unique_ptr<QLineEdit> wgtUser;
   std::unique_ptr<QLineEdit> wgtPassword;
+  std::string password;
+};
+
+struct PasswordGeneratedEvent : public Event {
+  PasswordGeneratedEvent(const std::string& password)
+    : Event("PasswordGeneratedEvent"),
+      password(password) {}
+
+  std::string password;
 };
 
 class FLoginScreen : public QLabel, public Fragment {
@@ -25,12 +38,19 @@ class FLoginScreen : public QLabel, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FLoginScreen() override;
+
+  private slots:
+    void onLoginAttempt();
+
   private:
     FLoginScreenData m_data;
 
     struct {
       QWidget* centralWidget;
     } m_origParentState;
+
+    int m_pwdGenEventId;
 };
 
 

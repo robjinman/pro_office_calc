@@ -11,9 +11,6 @@
 #include "fragment.hpp"
 
 
-class EventSystem;
-class UpdateLoop;
-
 struct FConfigMazeData : public FragmentData {
   std::unique_ptr<QStackedLayout> pages;
 
