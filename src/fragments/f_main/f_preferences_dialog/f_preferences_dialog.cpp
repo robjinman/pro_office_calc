@@ -12,14 +12,21 @@
 FPreferencesDialog::FPreferencesDialog(Fragment& parent_, FragmentData& parentData_)
   : Fragment("FPreferencesDialog", parent_, parentData_, m_data) {
 
-  DBG_PRINT("FPreferencesDialog::FPreferencesDialog\n");      
+  DBG_PRINT("FPreferencesDialog::FPreferencesDialog\n");
 }
 
 //===========================================
-// FPreferencesDialog::rebuild
+// FPreferencesDialog::initialise
 //===========================================
-void FPreferencesDialog::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FPreferencesDialog::rebuild\n");
+void FPreferencesDialog::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FPreferencesDialog::initialise\n");
+}
+
+//===========================================
+// FPreferencesDialog::reload
+//===========================================
+void FPreferencesDialog::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FPreferencesDialog::reload\n");
 
   auto& parentData = parentFragData<FMainData>();
 
@@ -38,8 +45,6 @@ void FPreferencesDialog::rebuild(const FragmentSpec& spec_) {
 
   setWindowTitle(spec.titleText);
   setFixedSize(spec.width, spec.height);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

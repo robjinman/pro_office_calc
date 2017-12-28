@@ -16,10 +16,17 @@ FAboutDialog::FAboutDialog(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FAboutDialog::rebuild
+// FAboutDialog::initialise
 //===========================================
-void FAboutDialog::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FAboutDialog::rebuild\n");
+void FAboutDialog::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FAboutDialog::initialise\n");
+}
+
+//===========================================
+// FAboutDialog::reload
+//===========================================
+void FAboutDialog::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FAboutDialog::reload\n");
 
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
@@ -37,8 +44,6 @@ void FAboutDialog::rebuild(const FragmentSpec& spec_) {
 
   m_data.mnuHelp->setTitle(spec.helpLabel);
   m_data.actAbout->setText(spec.aboutLabel);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

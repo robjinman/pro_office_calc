@@ -50,10 +50,17 @@ FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FShuffledCalc::rebuild
+// FShuffledCalc::initialise
 //===========================================
-void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FShuffledCalc::rebuild\n");
+void FShuffledCalc::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FShuffledCalc::initialise\n");
+}
+
+//===========================================
+// FShuffledCalc::reload
+//===========================================
+void FShuffledCalc::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FShuffledCalc::reload\n");
 
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
@@ -61,9 +68,8 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
   m_eventSystem = &parentData.eventSystem;
   m_updateLoop = &parentData.updateLoop;
 
-  parent.setCentralWidget(this);
   QWidget::setParent(&parent);
-  setGeometry(parent.geometry());
+  parent.setCentralWidget(this);
 
   QFont f = font();
   f.setPointSize(16);
@@ -130,8 +136,6 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
   DBG_PRINT("Answer = " << translateToSymbols(m_targetValue.c_str()).toStdString() << "\n");
 
   setColour(*m_wgtDigitDisplay, spec.displayColour, QPalette::Base);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

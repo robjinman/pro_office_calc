@@ -14,10 +14,10 @@ FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FSettingsDialog::rebuild
+// FSettingsDialog::initialise
 //===========================================
-void FSettingsDialog::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FSettingsDialog::rebuild\n");
+void FSettingsDialog::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FSettingsDialog::initialise\n");
 
   auto& parentData = parentFragData<FMainData>();
 
@@ -31,13 +31,18 @@ void FSettingsDialog::rebuild(const FragmentSpec& spec_) {
   parentData.mnuFile->addAction(m_data.actSettings.get());
 
   connect(m_data.actSettings.get(), SIGNAL(triggered()), this, SLOT(showSettingsDialog()));
+}
+
+//===========================================
+// FSettingsDialog::reload
+//===========================================
+void FSettingsDialog::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FSettingsDialog::reload\n");
 
   auto& spec = dynamic_cast<const FSettingsDialogSpec&>(spec_);
 
   setWindowTitle(spec.titleText);
   setFixedSize(spec.width, spec.height);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

@@ -15,34 +15,44 @@ FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FGlitch::rebuild
+// FGlitch::initialise
 //===========================================
-void FGlitch::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FGlitch::rebuild\n");
+void FGlitch::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FGlitch::initialise\n");
+
+  auto& parent = parentFrag<QWidget>();
+
+  setParent(&parent);
+
+  setScaledContents(true);
+  setAttribute(Qt::WA_TransparentForMouseEvents);
+
+  m_glitchTimer.reset(new QTimer(this));
+
+  connect(m_glitchTimer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+
+  show();
+}
+
+//===========================================
+// FGlitch::reload
+//===========================================
+void FGlitch::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FGlitch::reload\n");
 
   auto& spec = dynamic_cast<const FGlitchSpec&>(spec_);
   auto& parent = parentFrag<QWidget>();
+
+  move(0, 0);
+  resize(parent.size());
+
+  m_glitchBuffer.reset(new QImage(parent.size(), QImage::Format_ARGB32));
 
   m_glitchFreqMin = spec.glitchFreqMin;
   m_glitchFreqMax = spec.glitchFreqMax;
   m_glitchDuration = spec.glitchDuration;
 
-  setParent(&parent);
-
-  setGeometry(parent.rect());
-  setScaledContents(true);
-
-  setAttribute(Qt::WA_TransparentForMouseEvents);
-
-  m_glitchBuffer.reset(new QImage(parent.size(), QImage::Format_ARGB32));
-  m_glitchTimer.reset(new QTimer(this));
-
-  connect(m_glitchTimer.get(), SIGNAL(timeout()), this, SLOT(tick()));
-
   m_glitchTimer->start(m_glitchFreqMin * 1000);
-  show();
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

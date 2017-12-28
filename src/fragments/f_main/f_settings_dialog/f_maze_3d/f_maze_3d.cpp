@@ -15,24 +15,37 @@ FMaze3d::FMaze3d(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FMaze3d::rebuild
+// FMaze3d::initialise
 //===========================================
-void FMaze3d::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FMaze3d::rebuild\n");
+void FMaze3d::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FMaze3d::initialise\n");
+}
 
-  auto& parent = parentFrag<FSettingsDialog>();
+//===========================================
+// FMaze3d::reload
+//===========================================
+void FMaze3d::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FMaze3d::reload\n");
+
   auto& parentData = parentFragData<FSettingsDialogData>();
 
-  parentData.vbox->addWidget(this);
-  setGeometry(parent.geometry());
+  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox->setSpacing(0);
+  m_data.vbox->setContentsMargins(0, 0, 0, 0);
 
-  auto& spec = dynamic_cast<const FMaze3dSpec&>(spec_);
+  setLayout(m_data.vbox.get());
+
+  m_origParentState.spacing = parentData.vbox->spacing();
+  m_origParentState.margins = parentData.vbox->contentsMargins();
+
+  parentData.vbox->setSpacing(0);
+  parentData.vbox->setContentsMargins(0, 0, 0, 0);
+  parentData.vbox->addWidget(this);
 
   m_data.wgtRaycast.reset(new RaycastWidget(this, *parentData.eventSystem));
-  m_data.wgtRaycast->setGeometry(geometry());
-  m_data.wgtRaycast->initialise();
+  m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
-  Fragment::rebuild(spec_);
+  m_data.wgtRaycast->initialise();
 }
 
 //===========================================
@@ -43,6 +56,8 @@ void FMaze3d::cleanUp() {
 
   auto& parentData = parentFragData<FSettingsDialogData>();
 
+  parentData.vbox->setSpacing(m_origParentState.spacing);
+  parentData.vbox->setContentsMargins(m_origParentState.margins);
   parentData.vbox->removeWidget(this);
 }
 

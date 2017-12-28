@@ -40,13 +40,6 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
     Fragment("FConfigMaze", parent_, parentData_, m_data) {
 
   DBG_PRINT("FConfigMaze::FConfigMaze\n");
-}
-
-//===========================================
-// FConfigMaze::rebuild
-//===========================================
-void FConfigMaze::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FConfigMaze::rebuild\n");
 
   auto& parentData = parentFragData<FSettingsDialogData>();
 
@@ -103,8 +96,20 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   m_data.pages->addWidget(m_data.consolePage.widget.get());
 
   parentData.vbox->addWidget(this);
+}
 
-  Fragment::rebuild(spec_);
+//===========================================
+// FConfigMaze::initialise
+//===========================================
+void FConfigMaze::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FConfigMaze::initialise\n");
+}
+
+//===========================================
+// FConfigMaze::reload
+//===========================================
+void FConfigMaze::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FConfigMaze::reload\n");
 }
 
 //===========================================

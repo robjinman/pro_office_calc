@@ -17,10 +17,17 @@ FCountdownToStart::FCountdownToStart(Fragment& parent_, FragmentData& parentData
 }
 
 //===========================================
-// FCountdownToStart::rebuild
+// FCountdownToStart::initialise
 //===========================================
-void FCountdownToStart::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FCountdownToStart::rebuild\n");
+void FCountdownToStart::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FCountdownToStart::initialise\n");
+}
+
+//===========================================
+// FCountdownToStart::reload
+//===========================================
+void FCountdownToStart::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FCountdownToStart::reload\n");
 
   auto& parentData = parentFragData<FMainData>();
 
@@ -29,8 +36,6 @@ void FCountdownToStart::rebuild(const FragmentSpec& spec_) {
 
   auto& spec = dynamic_cast<const FCountdownToStartSpec&>(spec_);
   m_stateId = spec.stateId;
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

@@ -31,7 +31,8 @@ class FCalculator : public QWidget, public Fragment {
   public:
     FCalculator(Fragment& parent, FragmentData& parentData);
 
-    virtual void rebuild(const FragmentSpec& spec) override;
+    virtual void initialise(const FragmentSpec& spec) override;
+    virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
     virtual ~FCalculator() override;

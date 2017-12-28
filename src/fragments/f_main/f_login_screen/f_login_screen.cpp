@@ -21,10 +21,17 @@ FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FLoginScreen::rebuild
+// FLoginScreen::initialise
 //===========================================
-void FLoginScreen::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FLoginScreen::rebuild\n");
+void FLoginScreen::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FLoginScreen::initialise\n");
+}
+
+//===========================================
+// FLoginScreen::reload
+//===========================================
+void FLoginScreen::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FLoginScreen::reload\n");
 
   auto& parent = parentFrag<FMain>();
 
@@ -51,8 +58,6 @@ void FLoginScreen::rebuild(const FragmentSpec& spec_) {
   connect(m_data.wgtPassword.get(), SIGNAL(returnPressed()), this, SLOT(onLoginAttempt()));
 
   setPixmap(*m_data.background);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

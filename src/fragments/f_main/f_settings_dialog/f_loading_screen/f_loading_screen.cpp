@@ -15,10 +15,17 @@ FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FLoadingScreen::rebuild
+// FLoadingScreen::initialise
 //===========================================
-void FLoadingScreen::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FLoadingScreen::rebuild\n");
+void FLoadingScreen::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FLoadingScreen::initialise\n");
+}
+
+//===========================================
+// FLoadingScreen::reload
+//===========================================
+void FLoadingScreen::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FLoadingScreen::reload\n");
 
   auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
@@ -36,8 +43,6 @@ void FLoadingScreen::rebuild(const FragmentSpec& spec_) {
   m_data.background.reset(new QPixmap(tmp.scaledToHeight(parent.size().height())));
 
   setPixmap(*m_data.background);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

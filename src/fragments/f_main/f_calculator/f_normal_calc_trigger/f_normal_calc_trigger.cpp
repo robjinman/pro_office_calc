@@ -17,14 +17,21 @@
 FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentData_)
   : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {
 
-  DBG_PRINT("FNormalCalcTrigger::FNormalCalcTrigger\n");    
+  DBG_PRINT("FNormalCalcTrigger::FNormalCalcTrigger\n");
 }
 
 //===========================================
-// FNormalCalcTrigger::rebuild
+// FNormalCalcTrigger::initialise
 //===========================================
-void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FNormalCalcTrigger::rebuild\n");
+void FNormalCalcTrigger::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FNormalCalcTrigger::initialise\n");
+}
+
+//===========================================
+// FNormalCalcTrigger::reload
+//===========================================
+void FNormalCalcTrigger::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FNormalCalcTrigger::reload\n");
 
   auto& parentData = parentFragData<FCalculatorData>();
   auto& parent = parentFrag<FCalculator>();
@@ -39,8 +46,6 @@ void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
   m_targetWindowColour = spec.targetWindowColour;
   m_targetDisplayColour = spec.targetDisplayColour;
   m_symbols = spec.symbols;
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

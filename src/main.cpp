@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
     Application app(argc, argv);
 
     FMain mainFragment(eventSystem, updateLoop);
+    mainFragment.initialise(*mainSpec);
     mainFragment.rebuild(*mainSpec);
     mainFragment.show();
 

@@ -35,7 +35,8 @@ class FLoginScreen : public QLabel, public Fragment {
   public:
     FLoginScreen(Fragment& parent, FragmentData& parentData);
 
-    virtual void rebuild(const FragmentSpec& spec) override;
+    virtual void initialise(const FragmentSpec& spec) override;
+    virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
     virtual ~FLoginScreen() override;

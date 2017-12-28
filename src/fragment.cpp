@@ -4,6 +4,9 @@
 #include "fragment_factory.hpp"
 
 
+using std::string;
+
+
 //===========================================
 // FragmentData::~FragmentData
 //===========================================
@@ -12,7 +15,7 @@ FragmentData::~FragmentData() {}
 //===========================================
 // Fragment::Fragment
 //===========================================
-Fragment::Fragment(const std::string& name, Fragment& parent,
+Fragment::Fragment(const string& name, Fragment& parent,
   FragmentData& parentData, FragmentData& ownData)
   : m_name(name),
     m_parent(&parent),
@@ -22,7 +25,7 @@ Fragment::Fragment(const std::string& name, Fragment& parent,
 //===========================================
 // Fragment::Fragment
 //===========================================
-Fragment::Fragment(const std::string& name, FragmentData& ownData)
+Fragment::Fragment(const string& name, FragmentData& ownData)
   : m_name(name),
     m_parent(nullptr),
     m_parentData(nullptr),
@@ -31,7 +34,7 @@ Fragment::Fragment(const std::string& name, FragmentData& ownData)
 //===========================================
 // Fragment::name
 //===========================================
-const std::string& Fragment::name() const {
+const string& Fragment::name() const {
   return m_name;
 }
 
@@ -40,24 +43,54 @@ const std::string& Fragment::name() const {
 //===========================================
 void Fragment::rebuild(const FragmentSpec& spec) {
   for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
-    if (it->second->isEnabled()) {
-      if (m_children.find(it->first) == m_children.end()) {
-        Fragment* frag = constructFragment(it->first, *this, m_ownData);
-        m_children.insert(std::make_pair(it->first, pFragment_t(frag)));
+    const string& chName = it->first;
+    const FragmentSpec& chSpec = *it->second;
+
+    if (!chSpec.isEnabled()) {
+      auto jt = m_children.find(chName);
+      if (jt != m_children.end()) {
+        Fragment& chFrag = *jt->second;
+
+        chFrag.detach();
+        m_children.erase(jt);
       }
     }
-    else {
-      auto ch = m_children.find(it->first);
-      if (ch != m_children.end()) {
-        ch->second->cleanUp();
-        m_children.erase(ch);
+  }
+
+  reload(spec);
+
+  for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
+    const string& chName = it->first;
+    const FragmentSpec& chSpec = *it->second;
+
+    if (chSpec.isEnabled()) {
+      if (m_children.find(chName) == m_children.end()) {
+        Fragment* frag = constructFragment(chName, *this, m_ownData);
+        frag->initialise(spec.spec(chName));
+
+        m_children.insert(std::make_pair(chName, pFragment_t(frag)));
       }
     }
   }
 
   for (auto it = m_children.begin(); it != m_children.end(); ++it) {
-    it->second->rebuild(spec.spec(it->first));
+    const string& name = it->first;
+    Fragment& frag = *it->second;
+
+    frag.rebuild(spec.spec(name));
   }
+}
+
+//===========================================
+// Fragment::detach
+//===========================================
+void Fragment::detach() {
+  for (auto it = m_children.begin(); it != m_children.end(); ++it) {
+    Fragment& frag = *it->second;
+    frag.detach();
+  }
+
+  cleanUp();
 }
 
 //===========================================

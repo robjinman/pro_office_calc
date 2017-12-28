@@ -18,10 +18,17 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FCalculator::rebuild
+// FCalculator::initialise
 //===========================================
-void FCalculator::rebuild(const FragmentSpec& spec_) {
-  DBG_PRINT("FCalculator::rebuild\n");
+void FCalculator::initialise(const FragmentSpec& spec_) {
+  DBG_PRINT("FCalculator::initialise\n");
+}
+
+//===========================================
+// FCalculator::reload
+//===========================================
+void FCalculator::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FCalculator::reload\n");
 
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
@@ -54,8 +61,6 @@ void FCalculator::rebuild(const FragmentSpec& spec_) {
 
   auto& spec = dynamic_cast<const FCalculatorSpec&>(spec_);
   setColour(*m_data.wgtDigitDisplay, spec.displayColour, QPalette::Base);
-
-  Fragment::rebuild(spec_);
 }
 
 //===========================================

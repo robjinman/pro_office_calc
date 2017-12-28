@@ -25,7 +25,20 @@ class Fragment {
       FragmentData& parentData, FragmentData& ownData);
 
     const std::string& name() const;
-    virtual void rebuild(const FragmentSpec& spec);
+
+    // Rebuild fragment tree by adding/removing children and calling their respective
+    // lifecycle functions
+    void rebuild(const FragmentSpec& spec);
+
+    // Construct and attach to / modify parent. Called immediately after construction
+    virtual void initialise(const FragmentSpec& spec) = 0;
+
+    // Reset fragment's state on rebuild. Called when the app state changes and the
+    // fragment tree is rebuilt
+    virtual void reload(const FragmentSpec& spec) = 0;
+
+    // Detach from and reverse modifications to parent. Called prior to being removed
+    // from the fragment tree and destroyed
     virtual void cleanUp() = 0;
 
     template<class T>
@@ -47,6 +60,8 @@ class Fragment {
     FragmentData& m_ownData;
 
     std::map<std::string, pFragment_t> m_children;
+
+    void detach();
 };
 
 
