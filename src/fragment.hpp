@@ -19,21 +19,18 @@ typedef std::unique_ptr<Fragment> pFragment_t;
 
 class Fragment {
   public:
+    // Use constructor to initialise the fragment and attach to / modify the parent
+
     Fragment(const std::string& name, FragmentData& ownData);
 
     Fragment(const std::string& name, Fragment& parent,
       FragmentData& parentData, FragmentData& ownData);
 
-    const std::string& name() const;
-
     // Rebuild fragment tree by adding/removing children and calling their respective
     // lifecycle functions
     void rebuild(const FragmentSpec& spec);
 
-    // Construct and attach to / modify parent. Called immediately after construction
-    virtual void initialise(const FragmentSpec& spec) = 0;
-
-    // Reset fragment's state on rebuild. Called when the app state changes and the
+    // Re-initialise fragment with new spec. Called when the app state changes and the
     // fragment tree is rebuilt
     virtual void reload(const FragmentSpec& spec) = 0;
 
@@ -50,6 +47,8 @@ class Fragment {
     T& parentFrag() {
       return dynamic_cast<T&>(*m_parent);
     }
+
+    const std::string& name() const;
 
     virtual ~Fragment() = 0;
 

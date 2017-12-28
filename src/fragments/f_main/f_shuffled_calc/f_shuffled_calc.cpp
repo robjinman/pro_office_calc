@@ -50,13 +50,6 @@ FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FShuffledCalc::initialise
-//===========================================
-void FShuffledCalc::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FShuffledCalc::initialise\n");
-}
-
-//===========================================
 // FShuffledCalc::reload
 //===========================================
 void FShuffledCalc::reload(const FragmentSpec& spec_) {

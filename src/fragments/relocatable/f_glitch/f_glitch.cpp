@@ -12,13 +12,6 @@ FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_)
     Fragment("FGlitch", parent_, parentData_, m_data) {
 
   DBG_PRINT("FGlitch::FGlitch\n");
-}
-
-//===========================================
-// FGlitch::initialise
-//===========================================
-void FGlitch::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FGlitch::initialise\n");
 
   auto& parent = parentFrag<QWidget>();
 

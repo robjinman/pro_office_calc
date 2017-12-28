@@ -99,13 +99,6 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FConfigMaze::initialise
-//===========================================
-void FConfigMaze::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FConfigMaze::initialise\n");
-}
-
-//===========================================
 // FConfigMaze::reload
 //===========================================
 void FConfigMaze::reload(const FragmentSpec& spec_) {

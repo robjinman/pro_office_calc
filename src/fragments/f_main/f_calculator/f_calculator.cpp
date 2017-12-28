@@ -18,13 +18,6 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FCalculator::initialise
-//===========================================
-void FCalculator::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FCalculator::initialise\n");
-}
-
-//===========================================
 // FCalculator::reload
 //===========================================
 void FCalculator::reload(const FragmentSpec& spec_) {

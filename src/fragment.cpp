@@ -42,6 +42,8 @@ const string& Fragment::name() const {
 // Fragment::rebuild
 //===========================================
 void Fragment::rebuild(const FragmentSpec& spec) {
+  // Remove unused child fragments, recursively triggering their cleanUp methods
+  //
   for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
     const string& chName = it->first;
     const FragmentSpec& chSpec = *it->second;
@@ -57,8 +59,12 @@ void Fragment::rebuild(const FragmentSpec& spec) {
     }
   }
 
+  // Call reload before constructing children
+  //
   reload(spec);
 
+  // Construct any newly enabled child fragments
+  //
   for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
     const string& chName = it->first;
     const FragmentSpec& chSpec = *it->second;
@@ -66,13 +72,13 @@ void Fragment::rebuild(const FragmentSpec& spec) {
     if (chSpec.isEnabled()) {
       if (m_children.find(chName) == m_children.end()) {
         Fragment* frag = constructFragment(chName, *this, m_ownData);
-        frag->initialise(spec.spec(chName));
-
         m_children.insert(std::make_pair(chName, pFragment_t(frag)));
       }
     }
   }
 
+  // Rebuild children
+  //
   for (auto it = m_children.begin(); it != m_children.end(); ++it) {
     const string& name = it->first;
     Fragment& frag = *it->second;

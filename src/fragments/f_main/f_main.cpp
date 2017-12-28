@@ -19,13 +19,6 @@ FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
     m_data(eventSystem, updateLoop) {
 
   DBG_PRINT("FMain::FMain\n");
-}
-
-//===========================================
-// FMain::initialise
-//===========================================
-void FMain::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FMain::initialise\n");
 
   setWindowTitle("Pro Office Calculator");
 

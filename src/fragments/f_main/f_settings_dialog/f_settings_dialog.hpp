@@ -25,7 +25,6 @@ class FSettingsDialog : public QDialog, public Fragment {
   public:
     FSettingsDialog(Fragment& parent, FragmentData& parentData);
 
-    virtual void initialise(const FragmentSpec& spec) override;
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 

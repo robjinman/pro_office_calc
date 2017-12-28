@@ -12,7 +12,6 @@ class FCountdownToStart : public Fragment {
   public:
     FCountdownToStart(Fragment& parent, FragmentData& parentData);
 
-    virtual void initialise(const FragmentSpec& spec) override;
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 

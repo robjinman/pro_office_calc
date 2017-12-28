@@ -16,12 +16,6 @@ FCountdownToStart::FCountdownToStart(Fragment& parent_, FragmentData& parentData
   DBG_PRINT("FCountdownToStart::FCountdownToStart\n");
 }
 
-//===========================================
-// FCountdownToStart::initialise
-//===========================================
-void FCountdownToStart::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FCountdownToStart::initialise\n");
-}
 
 //===========================================
 // FCountdownToStart::reload

@@ -21,13 +21,6 @@ FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentDa
 }
 
 //===========================================
-// FNormalCalcTrigger::initialise
-//===========================================
-void FNormalCalcTrigger::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FNormalCalcTrigger::initialise\n");
-}
-
-//===========================================
 // FNormalCalcTrigger::reload
 //===========================================
 void FNormalCalcTrigger::reload(const FragmentSpec& spec_) {

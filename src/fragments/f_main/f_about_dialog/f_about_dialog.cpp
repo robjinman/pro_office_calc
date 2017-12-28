@@ -16,20 +16,12 @@ FAboutDialog::FAboutDialog(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FAboutDialog::initialise
-//===========================================
-void FAboutDialog::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FAboutDialog::initialise\n");
-}
-
-//===========================================
 // FAboutDialog::reload
 //===========================================
 void FAboutDialog::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FAboutDialog::reload\n");
 
   auto& parent = parentFrag<FMain>();
-  auto& parentData = parentFragData<FMainData>();
 
   m_data.mnuHelp.reset(parent.menuBar()->addMenu("Help"));
   m_data.actAbout.reset(new QAction("About", this));

@@ -15,13 +15,6 @@ FMaze3d::FMaze3d(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FMaze3d::initialise
-//===========================================
-void FMaze3d::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FMaze3d::initialise\n");
-}
-
-//===========================================
 // FMaze3d::reload
 //===========================================
 void FMaze3d::reload(const FragmentSpec& spec_) {

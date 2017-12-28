@@ -21,13 +21,6 @@ FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FLoginScreen::initialise
-//===========================================
-void FLoginScreen::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FLoginScreen::initialise\n");
-}
-
-//===========================================
 // FLoginScreen::reload
 //===========================================
 void FLoginScreen::reload(const FragmentSpec& spec_) {

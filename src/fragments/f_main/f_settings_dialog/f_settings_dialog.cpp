@@ -11,13 +11,6 @@ FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_)
   : Fragment("FSettingsDialog", parent_, parentData_, m_data) {
 
   DBG_PRINT("FSettingsDialog::FSettingsDialog\n");
-}
-
-//===========================================
-// FSettingsDialog::initialise
-//===========================================
-void FSettingsDialog::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FSettingsDialog::initialise\n");
 
   auto& parentData = parentFragData<FMainData>();
 

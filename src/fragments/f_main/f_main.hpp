@@ -35,7 +35,6 @@ class FMain : public QMainWindow, public Fragment {
   public:
     FMain(EventSystem& eventSystem, UpdateLoop& updateLoop);
 
-    virtual void initialise(const FragmentSpec& spec) override;
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 

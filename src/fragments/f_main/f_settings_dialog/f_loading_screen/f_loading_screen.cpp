@@ -15,13 +15,6 @@ FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_)
 }
 
 //===========================================
-// FLoadingScreen::initialise
-//===========================================
-void FLoadingScreen::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FLoadingScreen::initialise\n");
-}
-
-//===========================================
 // FLoadingScreen::reload
 //===========================================
 void FLoadingScreen::reload(const FragmentSpec& spec_) {

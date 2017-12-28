@@ -16,13 +16,6 @@ FPreferencesDialog::FPreferencesDialog(Fragment& parent_, FragmentData& parentDa
 }
 
 //===========================================
-// FPreferencesDialog::initialise
-//===========================================
-void FPreferencesDialog::initialise(const FragmentSpec& spec_) {
-  DBG_PRINT("FPreferencesDialog::initialise\n");
-}
-
-//===========================================
 // FPreferencesDialog::reload
 //===========================================
 void FPreferencesDialog::reload(const FragmentSpec& spec_) {

@@ -21,7 +21,6 @@ class FAboutDialog : public QObject, public Fragment {
   public:
     FAboutDialog(Fragment& parent, FragmentData& parentData);
 
-    virtual void initialise(const FragmentSpec& spec) override;
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
