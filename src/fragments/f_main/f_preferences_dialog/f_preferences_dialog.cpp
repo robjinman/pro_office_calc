@@ -3,18 +3,24 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_preferences_dialog/f_preferences_dialog.hpp"
 #include "fragments/f_main/f_preferences_dialog/f_preferences_dialog_spec.hpp"
+#include "utils.hpp"
 
 
 //===========================================
 // FPreferencesDialog::FPreferencesDialog
 //===========================================
 FPreferencesDialog::FPreferencesDialog(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FPreferencesDialog", parent_, parentData_, m_data) {}
+  : Fragment("FPreferencesDialog", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FPreferencesDialog::FPreferencesDialog\n");      
+}
 
 //===========================================
 // FPreferencesDialog::rebuild
 //===========================================
 void FPreferencesDialog::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FPreferencesDialog::rebuild\n");
+
   auto& parentData = parentFragData<FMainData>();
 
   m_data.eventSystem = &parentData.eventSystem;
@@ -40,6 +46,8 @@ void FPreferencesDialog::rebuild(const FragmentSpec& spec_) {
 // FPreferencesDialog::cleanUp
 //===========================================
 void FPreferencesDialog::cleanUp() {
+  DBG_PRINT("FPreferencesDialog::cleanUp\n");
+
   auto& parentData = parentFragData<FMainData>();
 
   parentData.mnuFile->removeAction(m_data.actPreferences.get());
@@ -50,4 +58,11 @@ void FPreferencesDialog::cleanUp() {
 //===========================================
 void FPreferencesDialog::showPreferencesDialog() {
   exec();
+}
+
+//===========================================
+// FPreferencesDialog::~FPreferencesDialog
+//===========================================
+FPreferencesDialog::~FPreferencesDialog() {
+  DBG_PRINT("FPreferencesDialog::~FPreferencesDialog\n");
 }

@@ -15,6 +15,8 @@ class FCountdownToStart : public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FCountdownToStart() override;
+
   private:
     void onQuit();
 

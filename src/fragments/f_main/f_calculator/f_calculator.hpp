@@ -34,6 +34,8 @@ class FCalculator : public QWidget, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FCalculator() override;
+
   public slots:
     void onButtonClick(int id);
 

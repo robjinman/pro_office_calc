@@ -4,22 +4,37 @@
 
 #include <functional>
 #include <map>
+#include <set>
+#include <QObject>
 #include "event.hpp"
 
 
 typedef std::function<void(const Event&)> handlerFunc_t;
 
 
-class EventSystem {
+class EventSystem : public QObject {
+  Q_OBJECT
+
   public:
     int listen(const std::string& name, handlerFunc_t fn);
     void forget(int id);
-    void fire(const Event& event);
+    void fire(pEvent_t event);
 
   private:
-    void fire(const std::string& name, const Event& event);
+    bool event(QEvent* event) override;
+    void processEvent(const Event& event);
+    void processEvent_(const std::string& name, const Event& event);
+    void forget_(int id);
+    void processingStart();
+    void processingEnd();
+    void forgetPending();
+    void addPending();
 
     std::map<std::string, std::map<int, handlerFunc_t>> m_handlers;
+
+    bool m_processingEvent = false;
+    std::map<std::string, std::map<int, handlerFunc_t>> m_pendingAddition;
+    std::set<int> m_pendingForget;
 };
 
 

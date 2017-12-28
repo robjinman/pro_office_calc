@@ -11,12 +11,17 @@
 // FCountdownToStart::FCountdownToStart
 //===========================================
 FCountdownToStart::FCountdownToStart(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FCountdownToStart", parent_, parentData_, m_data) {}
+  : Fragment("FCountdownToStart", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FCountdownToStart::FCountdownToStart\n");
+}
 
 //===========================================
 // FCountdownToStart::rebuild
 //===========================================
 void FCountdownToStart::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FCountdownToStart::rebuild\n");
+
   auto& parentData = parentFragData<FMainData>();
 
   m_origParentState.fnOnQuit = parentData.fnOnQuit;
@@ -32,6 +37,8 @@ void FCountdownToStart::rebuild(const FragmentSpec& spec_) {
 // FCountdownToStart::cleanUp
 //===========================================
 void FCountdownToStart::cleanUp() {
+  DBG_PRINT("FCountdownToStart::cleanUp\n");
+
   parentFragData<FMainData>().fnOnQuit = m_origParentState.fnOnQuit;
 }
 
@@ -39,9 +46,15 @@ void FCountdownToStart::cleanUp() {
 // FCountdownToStart::onQuit
 //===========================================
 void FCountdownToStart::onQuit() {
-  DBG_PRINT("FCountdownToStart::onQuit\n");
-
   if (m_stateId <= ST_NORMAL_CALCULATOR_9) {
-    parentFragData<FMainData>().eventSystem.fire(RequestStateChangeEvent(m_stateId + 1));
+    parentFragData<FMainData>()
+      .eventSystem.fire(pEvent_t(new RequestStateChangeEvent(m_stateId + 1)));
   }
+}
+
+//===========================================
+// FCountdownToStart::~FCountdownToStart
+//===========================================
+FCountdownToStart::~FCountdownToStart() {
+  DBG_PRINT("FCountdownToStart::~FCountdownToStart\n");
 }

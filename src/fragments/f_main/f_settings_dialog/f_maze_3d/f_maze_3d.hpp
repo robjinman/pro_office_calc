@@ -21,6 +21,8 @@ class FMaze3d : public QWidget, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FMaze3d() override;
+
   private:
     FMaze3dData m_data;
 };

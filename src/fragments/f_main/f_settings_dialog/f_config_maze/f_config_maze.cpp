@@ -37,12 +37,17 @@ static string generatePassword() {
 //===========================================
 FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
   : QWidget(nullptr),
-    Fragment("FConfigMaze", parent_, parentData_, m_data) {}
+    Fragment("FConfigMaze", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FConfigMaze::FConfigMaze\n");
+}
 
 //===========================================
 // FConfigMaze::rebuild
 //===========================================
 void FConfigMaze::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FConfigMaze::rebuild\n");
+
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   setMouseTracking(true);
@@ -73,7 +78,7 @@ void FConfigMaze::rebuild(const FragmentSpec& spec_) {
   m_data.pages->addWidget(m_data.consoleAreYouSurePage.widget.get());
 
   string pwd = generatePassword();
-  parentData.eventSystem->fire(PasswordGeneratedEvent(pwd));
+  parentData.eventSystem->fire(pEvent_t(new PasswordGeneratedEvent(pwd)));
 
   m_data.consolePage.widget.reset(new QWidget);
   m_data.consolePage.wgtConsole.reset(new ConsoleWidget({
@@ -133,6 +138,8 @@ void FConfigMaze::onExitConsoleClick() {
 // FConfigMaze::cleanUp
 //===========================================
 void FConfigMaze::cleanUp() {
+  DBG_PRINT("FConfigMaze::cleanUp\n");
+
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   parentData.vbox->removeWidget(this);
@@ -141,4 +148,6 @@ void FConfigMaze::cleanUp() {
 //===========================================
 // FConfigMaze::~FConfigMaze
 //===========================================
-FConfigMaze::~FConfigMaze() {}
+FConfigMaze::~FConfigMaze() {
+  DBG_PRINT("FConfigMaze::~FConfigMaze\n");
+}

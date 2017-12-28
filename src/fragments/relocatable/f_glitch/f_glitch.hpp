@@ -20,6 +20,8 @@ class FGlitch : public QLabel, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FGlitch() override;
+
   public slots:
     void tick();
 

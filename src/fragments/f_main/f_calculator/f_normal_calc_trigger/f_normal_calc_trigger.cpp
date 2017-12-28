@@ -8,18 +8,24 @@
 #include "event_system.hpp"
 #include "update_loop.hpp"
 #include "effects.hpp"
+#include "utils.hpp"
 
 
 //===========================================
 // FNormalCalcTrigger::FNormalCalcTrigger
 //===========================================
 FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {}
+  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FNormalCalcTrigger::FNormalCalcTrigger\n");    
+}
 
 //===========================================
 // FNormalCalcTrigger::rebuild
 //===========================================
 void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FNormalCalcTrigger::rebuild\n");
+
   auto& parentData = parentFragData<FCalculatorData>();
   auto& parent = parentFrag<FCalculator>();
 
@@ -41,6 +47,8 @@ void FNormalCalcTrigger::rebuild(const FragmentSpec& spec_) {
 // FNormalCalcTrigger::cleanUp
 //===========================================
 void FNormalCalcTrigger::cleanUp() {
+  DBG_PRINT("FNormalCalcTrigger::cleanUp\n");
+
   auto& parentData = parentFragData<FCalculatorData>();
   auto& parent = parentFrag<FCalculator>();
 
@@ -92,7 +100,7 @@ void FNormalCalcTrigger::onButtonClick(int id) {
         transitionColour(*data.updateLoop, *data.window, m_targetWindowColour, QPalette::Window,
           0.5, [&]() {
 
-          data.eventSystem->fire(RequestStateChangeEvent(ST_SHUFFLED_KEYS));
+          data.eventSystem->fire(pEvent_t(new RequestStateChangeEvent(ST_SHUFFLED_KEYS)));
         });
 
         transitionColour(*data.updateLoop, *data.wgtDigitDisplay, m_targetDisplayColour,
@@ -103,4 +111,11 @@ void FNormalCalcTrigger::onButtonClick(int id) {
   else {
     parentFrag<FCalculator>().onButtonClick(id);
   }
+}
+
+//===========================================
+// FNormalCalcTrigger::~FNormalCalcTrigger
+//===========================================
+FNormalCalcTrigger::~FNormalCalcTrigger() {
+  DBG_PRINT("FNormalCalcTrigger::~FNormalCalcTrigger\n");
 }

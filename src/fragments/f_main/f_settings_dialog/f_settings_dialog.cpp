@@ -1,18 +1,24 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
+#include "utils.hpp"
 
 
 //===========================================
 // FSettingsDialog::FSettingsDialog
 //===========================================
 FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FSettingsDialog", parent_, parentData_, m_data) {}
+  : Fragment("FSettingsDialog", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FSettingsDialog::FSettingsDialog\n");
+}
 
 //===========================================
 // FSettingsDialog::rebuild
 //===========================================
 void FSettingsDialog::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FSettingsDialog::rebuild\n");
+
   auto& parentData = parentFragData<FMainData>();
 
   m_data.eventSystem = &parentData.eventSystem;
@@ -38,6 +44,8 @@ void FSettingsDialog::rebuild(const FragmentSpec& spec_) {
 // FSettingsDialog::cleanUp
 //===========================================
 void FSettingsDialog::cleanUp() {
+  DBG_PRINT("FSettingsDialog::cleanUp\n");
+
   auto& parentData = parentFragData<FMainData>();
 
   parentData.mnuFile->removeAction(m_data.actSettings.get());
@@ -48,4 +56,11 @@ void FSettingsDialog::cleanUp() {
 //===========================================
 void FSettingsDialog::showSettingsDialog() {
   exec();
+}
+
+//===========================================
+// FSettingsDialog::~FSettingsDialog
+//===========================================
+FSettingsDialog::~FSettingsDialog() {
+  DBG_PRINT("FSettingsDialog::~FSettingsDialog\n");
 }

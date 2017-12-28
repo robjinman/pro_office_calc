@@ -2,6 +2,7 @@
 #define __PROCALC_EVENT_HPP__
 
 
+#include <memory>
 #include <string>
 
 
@@ -16,6 +17,8 @@ struct Event {
 
   virtual ~Event() {}
 };
+
+typedef std::unique_ptr<Event> pEvent_t;
 
 
 #endif

@@ -1,7 +1,7 @@
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d.hpp"
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d_spec.hpp"
-#include "effects.hpp"
+#include "utils.hpp"
 
 
 //===========================================
@@ -9,16 +9,21 @@
 //===========================================
 FMaze3d::FMaze3d(Fragment& parent_, FragmentData& parentData_)
   : QWidget(nullptr),
-    Fragment("FMaze3d", parent_, parentData_, m_data) {}
+    Fragment("FMaze3d", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FMaze3d::FMaze3d\n");
+}
 
 //===========================================
 // FMaze3d::rebuild
 //===========================================
 void FMaze3d::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FMaze3d::rebuild\n");
+
   auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
 
-  setParent(&parent);
+  parentData.vbox->addWidget(this);
   setGeometry(parent.geometry());
 
   auto& spec = dynamic_cast<const FMaze3dSpec&>(spec_);
@@ -34,7 +39,16 @@ void FMaze3d::rebuild(const FragmentSpec& spec_) {
 // FMaze3d::cleanUp
 //===========================================
 void FMaze3d::cleanUp() {
+  DBG_PRINT("FMaze3d::cleanUp\n");
+
   auto& parentData = parentFragData<FSettingsDialogData>();
 
-  setParent(nullptr);
+  parentData.vbox->removeWidget(this);
+}
+
+//===========================================
+// FMaze3d::~FMaze3d
+//===========================================
+FMaze3d::~FMaze3d() {
+  DBG_PRINT("FMaze3d::~FMaze3d\n");
 }

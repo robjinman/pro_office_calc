@@ -1,9 +1,10 @@
-#include "event_system.hpp"
-#include "update_loop.hpp"
-#include "effects.hpp"
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_main.hpp"
+#include "event_system.hpp"
+#include "update_loop.hpp"
+#include "utils.hpp"
+#include "effects.hpp"
 
 
 //===========================================
@@ -11,12 +12,17 @@
 //===========================================
 FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
   : QWidget(nullptr),
-    Fragment("FCalculator", parent_, parentData_, m_data) {}
+    Fragment("FCalculator", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FCalculator::FCalculator\n");
+}
 
 //===========================================
 // FCalculator::rebuild
 //===========================================
 void FCalculator::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FCalculator::rebuild\n");
+
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
 
@@ -56,6 +62,8 @@ void FCalculator::rebuild(const FragmentSpec& spec_) {
 // FCalculator::cleanUp
 //===========================================
 void FCalculator::cleanUp() {
+  DBG_PRINT("FCalculator::cleanUp\n");
+
   auto& parent = parentFrag<FMain>();
 
   parent.setCentralWidget(m_origParentState.centralWidget);
@@ -96,4 +104,11 @@ void FCalculator::onButtonClick(int id) {
   }
 
   m_data.wgtDigitDisplay->setText(m_data.calculator.display().c_str());
+}
+
+//===========================================
+// FCalculator::~FCalculator
+//===========================================
+FCalculator::~FCalculator() {
+  DBG_PRINT("FCalculator::~FCalculator\n");
 }

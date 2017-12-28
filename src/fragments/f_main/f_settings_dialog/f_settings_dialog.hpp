@@ -28,6 +28,8 @@ class FSettingsDialog : public QDialog, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FSettingsDialog() override;
+
   private slots:
     void showSettingsDialog();
 

@@ -44,12 +44,17 @@ static QChar idToChar(int id) {
 //===========================================
 FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
   : QWidget(nullptr),
-    Fragment("FShuffledCalc", parent_, parentData_, m_data) {}
+    Fragment("FShuffledCalc", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FShuffledCalc::FShuffledCalc\n");
+}
 
 //===========================================
 // FShuffledCalc::rebuild
 //===========================================
 void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FShuffledCalc::rebuild\n");
+
   auto& parent = parentFrag<FMain>();
   auto& parentData = parentFragData<FMainData>();
 
@@ -133,6 +138,8 @@ void FShuffledCalc::rebuild(const FragmentSpec& spec_) {
 // FShuffledCalc::cleanUp
 //===========================================
 void FShuffledCalc::cleanUp() {
+  DBG_PRINT("FShuffledCalc::cleanUp\n");
+
   auto& parent = parentFrag<FMain>();
 
   parent.setCentralWidget(m_origParentState.centralWidget);
@@ -220,8 +227,16 @@ void FShuffledCalc::onButtonClick(int id) {
         return i < n;
       },
       [&]() {
-        parentFragData<FMainData>().eventSystem.fire(RequestStateChangeEvent(ST_LOGIN_SCREEN));
+        parentFragData<FMainData>()
+          .eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_LOGIN_SCREEN)));
       });
     });
   }
+}
+
+//===========================================
+// FShuffledCalc::~FShuffledCalc
+//===========================================
+FShuffledCalc::~FShuffledCalc() {
+  DBG_PRINT("FShuffledCalc::~FShuffledCalc\n");
 }

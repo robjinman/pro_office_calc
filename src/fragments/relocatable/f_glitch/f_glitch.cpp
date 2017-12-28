@@ -1,6 +1,7 @@
 #include "fragments/relocatable/f_glitch/f_glitch.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 #include "effects.hpp"
+#include "utils.hpp"
 
 
 //===========================================
@@ -8,12 +9,17 @@
 //===========================================
 FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_)
   : QLabel(nullptr),
-    Fragment("FGlitch", parent_, parentData_, m_data) {}
+    Fragment("FGlitch", parent_, parentData_, m_data) {
+
+  DBG_PRINT("FGlitch::FGlitch\n");
+}
 
 //===========================================
 // FGlitch::rebuild
 //===========================================
 void FGlitch::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FGlitch::rebuild\n");
+
   auto& spec = dynamic_cast<const FGlitchSpec&>(spec_);
   auto& parent = parentFrag<QWidget>();
 
@@ -69,5 +75,14 @@ void FGlitch::tick() {
 // FGlitch::cleanUp
 //===========================================
 void FGlitch::cleanUp() {
+  DBG_PRINT("FGlitch::cleanUp\n");
+
   setParent(nullptr);
+}
+
+//===========================================
+// FGlitch::~FGlitch
+//===========================================
+FGlitch::~FGlitch() {
+  DBG_PRINT("FGlitch::~FGlitch\n");
 }

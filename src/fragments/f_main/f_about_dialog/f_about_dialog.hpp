@@ -24,6 +24,8 @@ class FAboutDialog : public QObject, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FAboutDialog() override;
+
   private slots:
     void showAbout();
 

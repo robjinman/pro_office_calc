@@ -16,12 +16,17 @@ using std::unique_ptr;
 FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
   : QMainWindow(nullptr),
     Fragment("FMain", m_data),
-    m_data(eventSystem, updateLoop) {}
+    m_data(eventSystem, updateLoop) {
+
+  DBG_PRINT("FMain::FMain\n");
+}
 
 //===========================================
 // FMain::rebuild
 //===========================================
 void FMain::rebuild(const FragmentSpec& spec_) {
+  DBG_PRINT("FMain::rebuild\n");
+
   auto& spec = dynamic_cast<const FMainSpec&>(spec_);
 
   setFixedSize(spec.width, spec.height);
@@ -54,7 +59,7 @@ void FMain::closeEvent(QCloseEvent*) {
 // FMain::cleanUp
 //===========================================
 void FMain::cleanUp() {
-
+  DBG_PRINT("FMain::cleanUp\n");
 }
 
 //===========================================

@@ -17,6 +17,8 @@ class FNormalCalcTrigger : public QObject, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FNormalCalcTrigger() override;
+
   private slots:
     void onButtonClick(int id);
 

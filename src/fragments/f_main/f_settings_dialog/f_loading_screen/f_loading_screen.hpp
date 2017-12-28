@@ -22,6 +22,8 @@ class FLoadingScreen : public QLabel, public Fragment {
     virtual void rebuild(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
+    virtual ~FLoadingScreen() override;
+
   private:
     FLoadingScreenData m_data;
 
