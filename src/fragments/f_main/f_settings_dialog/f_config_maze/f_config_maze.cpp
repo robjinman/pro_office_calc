@@ -73,8 +73,20 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
   string pwd = generatePassword();
   parentData.eventSystem->fire(pEvent_t(new PasswordGeneratedEvent(pwd)));
 
+  string initialContent =
+    "┌───────────────────────────────────────┐\n"
+    "│ Admin Console v1.1.16                 │\n"
+    "├───────────────────────────────────────┤\n"
+    "│ Date and time    1993/03/14 16:11:23  │\n"
+    "│ Logged in as     rob                  │\n"
+    "│ Logged in since  1993/03/14 15:22:49  │\n"
+    "│                                       │\n"
+    "│ ↑↓ cycle history                      │\n"
+    "└───────────────────────────────────────┘\n"
+    "> ";
+
   m_data.consolePage.widget.reset(new QWidget);
-  m_data.consolePage.wgtConsole.reset(new ConsoleWidget({
+  m_data.consolePage.wgtConsole.reset(new ConsoleWidget(initialContent, {
     "logouut",
     string("chpwd ") + pwd
   }));

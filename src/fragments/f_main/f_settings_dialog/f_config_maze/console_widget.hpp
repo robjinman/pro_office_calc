@@ -18,7 +18,8 @@ class ConsoleWidget : public QPlainTextEdit {
     typedef std::vector<std::string> ArgList;
     typedef std::function<std::string(const ArgList&)> CommandFn;
 
-    ConsoleWidget(std::initializer_list<std::string> initialHistory = {});
+    ConsoleWidget(const std::string& initialContent,
+      std::initializer_list<std::string> initialHistory = {});
 
     void addCommand(const std::string& name, const CommandFn& fn);
 

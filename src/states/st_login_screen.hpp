@@ -34,7 +34,6 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.width = 400;
   mainSpec->settingsDialogSpec.height = 300;
   mainSpec->settingsDialogSpec.configMazeSpec.setEnabled(true);
-  //mainSpec->settingsDialogSpec.configMazeSpec.areYouSureSpec.setEnabled(true);
 
   return mainSpec;
 }

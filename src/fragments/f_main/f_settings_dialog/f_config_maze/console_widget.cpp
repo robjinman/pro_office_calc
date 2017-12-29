@@ -1,6 +1,5 @@
 #include <sstream>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
-#include "utils.hpp"
 
 
 using std::string;
@@ -11,7 +10,8 @@ using std::istream_iterator;
 //===========================================
 // ConsoleWidget::ConsoleWidget
 //===========================================
-ConsoleWidget::ConsoleWidget(std::initializer_list<string> initialHistory)
+ConsoleWidget::ConsoleWidget(const string& initialContent,
+  std::initializer_list<string> initialHistory)
   : QPlainTextEdit(nullptr),
     m_commandHistory(initialHistory) {
 
@@ -23,17 +23,7 @@ ConsoleWidget::ConsoleWidget(std::initializer_list<string> initialHistory)
   QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
   document()->setDefaultFont(font);
 
-  insertPlainText(
-    "┌───────────────────────────────────────┐\n"
-    "│ Admin Console v1.1.16                 │\n"
-    "├───────────────────────────────────────┤\n"
-    "│ Date and time    1993/03/14 16:11:23  │\n"
-    "│ Logged in as     rob                  │\n"
-    "│ Logged in since  1993/03/14 15:22:49  │\n"
-    "│                                       │\n"
-    "│ ↑↓ cycle history                      │\n"
-    "└───────────────────────────────────────┘\n"
-    "> ");
+  insertPlainText(initialContent.c_str());
 
   m_commandPos = textCursor().position();
 }
