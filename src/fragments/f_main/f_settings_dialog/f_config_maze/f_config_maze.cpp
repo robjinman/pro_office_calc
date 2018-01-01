@@ -79,10 +79,10 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
   m_data.pages[9].reset(new ConfigPage(symbols[9], { 5, 8, 10, 14 }));
   m_data.pages[10].reset(new ConfigPage(symbols[10], { 6, 9, 11 }));
   m_data.pages[11].reset(new ConfigPage(symbols[11], { 7, 10, 12, 15 }));
-  m_data.pages[12].reset(new ConfigPage(symbols[12], { 11, -1 }));
+  m_data.pages[12].reset(new ConfigPage(symbols[12], { 11, 100 }));
   m_data.pages[13].reset(new ConfigPage(symbols[13], { 8, 14 }));
   m_data.pages[14].reset(new ConfigPage(symbols[14], { 9, 13 }));
-  m_data.pages[15].reset(new ConfigPage(symbols[15], { 11, -1 }));
+  m_data.pages[15].reset(new ConfigPage(symbols[15], { 11, 100 }));
 
   m_data.wgtMap.reset(new QLabel);
   m_data.wgtMap->setPixmap(QPixmap("data/config_maze.png"));
@@ -182,7 +182,7 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
 void FConfigMaze::onPageNextClick(int pageIdx) {
   DBG_PRINT("Showing page " << pageIdx << "\n");
 
-  if (pageIdx != -1) {
+  if (pageIdx != 100) {
     m_data.pages[pageIdx]->reset();
     m_data.stackedLayout->setCurrentIndex(m_layoutIdxOfFirstConfigPage + pageIdx);
   }
