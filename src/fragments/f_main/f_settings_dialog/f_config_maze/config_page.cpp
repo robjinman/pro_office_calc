@@ -1,5 +1,10 @@
 #include <algorithm>
+#include <random>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/config_page.hpp"
+
+
+static std::random_device rd;
+static std::mt19937 randEngine(rd());
 
 
 //===========================================
@@ -9,7 +14,7 @@ ConfigPage::ConfigPage(QChar symbol, std::initializer_list<int> neighbours)
   : QWidget(nullptr),
     m_neighbours(neighbours) {
 
-  std::random_shuffle(m_neighbours.begin(), m_neighbours.end());
+  std::shuffle(m_neighbours.begin(), m_neighbours.end(), randEngine);
 
   grid.reset(new QGridLayout);
   setLayout(grid.get());

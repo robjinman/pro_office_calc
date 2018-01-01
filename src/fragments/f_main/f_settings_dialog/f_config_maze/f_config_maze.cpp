@@ -14,6 +14,7 @@ using std::string;
 
 
 static std::random_device rd;
+static std::mt19937 randEngine(rd());
 
 
 //===========================================
@@ -24,11 +25,11 @@ static string generatePassword() {
   std::uniform_int_distribution<int> randIdx(0, syms.length() - 1);
   std::uniform_int_distribution<int> randLen(8, 14);
 
-  int len = randLen(rd);
+  int len = randLen(randEngine);
   string pwd;
 
   for (int i = 0; i < len; ++i) {
-    pwd.push_back(syms[randIdx(rd)]);
+    pwd.push_back(syms[randIdx(randEngine)]);
   }
 
   return pwd;
@@ -64,7 +65,7 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
   m_layoutIdxOfFirstConfigPage = 3;
 
   ucs4string_t symbols_ = utf8ToUcs4("☀☯⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖"); // TODO
-  random_shuffle(symbols_.begin(), symbols_.end());
+  std::shuffle(symbols_.begin(), symbols_.end(), randEngine);
   QString symbols(ucs4ToUtf8(symbols_).c_str());
 
   m_data.pages[0].reset(new ConfigPage(symbols[0], { 1, 2, 3 }));
