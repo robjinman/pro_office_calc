@@ -62,10 +62,11 @@ void FLoginScreen::onLoginAttempt() {
 
     DBG_PRINT("Login success!\n");
 
-    m_data.eventSystem->fire(pEvent_t(new RequestStateChangeEvent(ST_RAYCAST)));
+    m_data.eventSystem->fire(pEvent_t(new RequestStateChangeEvent(ST_ITS_RAINING_TETROMINOS)));
   }
   else {
     DBG_PRINT("Access denied\n");
+    // TODO
   }
 }
 
