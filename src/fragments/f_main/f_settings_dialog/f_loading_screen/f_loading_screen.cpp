@@ -29,13 +29,6 @@ void FLoadingScreen::reload(const FragmentSpec& spec_) {
   parentData.vbox->setSpacing(0);
   parentData.vbox->setContentsMargins(0, 0, 0, 0);
   parentData.vbox->addWidget(this);
-
-  auto& spec = dynamic_cast<const FLoadingScreenSpec&>(spec_);
-
-  QPixmap tmp(spec.backgroundImage);
-  m_data.background.reset(new QPixmap(tmp.scaledToHeight(parent.size().height())));
-
-  setPixmap(*m_data.background);
 }
 
 //===========================================

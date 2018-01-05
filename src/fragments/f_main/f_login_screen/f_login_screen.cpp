@@ -39,9 +39,6 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
 
   auto& spec = dynamic_cast<const FLoginScreenSpec&>(spec_);
 
-  QPixmap tmp(spec.backgroundImage);
-  m_data.background.reset(new QPixmap(tmp.scaledToHeight(parent.size().height())));
-
   m_data.wgtUser.reset(new QLineEdit(this));
   m_data.wgtUser->setGeometry(205, 170, 100, 20);
 
@@ -49,8 +46,6 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
   m_data.wgtPassword->setGeometry(205, 195, 100, 20);
 
   connect(m_data.wgtPassword.get(), SIGNAL(returnPressed()), this, SLOT(onLoginAttempt()));
-
-  setPixmap(*m_data.background);
 }
 
 //===========================================

@@ -46,9 +46,9 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.width = 400;
   mainSpec->settingsDialogSpec.height = 300;
+  mainSpec->settingsDialogSpec.backgroundImage = "data/loading.png";
   mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loadingScreenSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.loadingScreenSpec.backgroundImage = "data/loading.png";
 
   return mainSpec;
 }

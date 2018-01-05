@@ -15,7 +15,6 @@ class EventSystem;
 
 struct FLoginScreenData : public FragmentData {
   EventSystem* eventSystem;
-  std::unique_ptr<QPixmap> background;
   std::unique_ptr<QLineEdit> wgtUser;
   std::unique_ptr<QLineEdit> wgtPassword;
   std::string password;

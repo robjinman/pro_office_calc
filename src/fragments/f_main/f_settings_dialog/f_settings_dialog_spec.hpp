@@ -27,6 +27,7 @@ struct FSettingsDialogSpec : public FragmentSpec {
   QString titleText = "Settings";
   int width = 400;
   int height = 300;
+  QString backgroundImage;
 };
 
 

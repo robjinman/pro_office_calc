@@ -13,6 +13,7 @@
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
 #include "fragments/f_main/f_preferences_dialog/f_preferences_dialog_spec.hpp"
+#include "fragments/f_main/f_tetrominos/f_tetrominos_spec.hpp"
 
 
 struct FMainSpec : public FragmentSpec {
@@ -26,6 +27,7 @@ struct FMainSpec : public FragmentSpec {
         &countdownToStartSpec,
         &settingsDialogSpec,
         &preferencesDialogSpec,
+        &tetrominosSpec
       }) {}
 
   FGlitchSpec glitchSpec;
@@ -36,11 +38,13 @@ struct FMainSpec : public FragmentSpec {
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
   FPreferencesDialogSpec preferencesDialogSpec;
+  FTetrominosSpec tetrominosSpec;
 
   QString windowTitle = "Pro Office Calculator";
   int width = 400;
   int height = 300;
   QColor bgColour = QColor(240, 240, 240);
+  QString backgroundImage;
   QString fileLabel = "File";
   QString quitLabel = "Quit";
 };

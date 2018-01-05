@@ -4,14 +4,11 @@
 
 #include <memory>
 #include <QLabel>
-#include <QPixmap>
 #include <QMargins>
 #include "fragment.hpp"
 
 
-struct FLoadingScreenData : public FragmentData {
-  std::unique_ptr<QPixmap> background;
-};
+struct FLoadingScreenData : public FragmentData {};
 
 class FLoadingScreen : public QLabel, public Fragment {
   Q_OBJECT

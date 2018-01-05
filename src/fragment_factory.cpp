@@ -14,6 +14,7 @@
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
+#include "fragments/f_main/f_tetrominos/f_tetrominos.hpp"
 
 
 using std::string;
@@ -60,6 +61,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FConfigMaze") {
     return new FConfigMaze(parent, parentData);
+  }
+  else if (name == "FTetrominos") {
+    return new FTetrominos(parent, parentData);
   }
 
   EXCEPTION("Cannot construct fragment with unrecognised name '" << name << "'\n");

@@ -44,6 +44,13 @@ void FMain::reload(const FragmentSpec& spec_) {
 
   setColour(*this, spec.bgColour, QPalette::Window);
   setWindowTitle(spec.windowTitle);
+
+  if (spec.backgroundImage.length() > 0) {
+    setStyleSheet(QString("") +
+      "QMainWindow {"
+      "  background-image: url(\"" + spec.backgroundImage + "\");"
+      "}");
+  }
 }
 
 //===========================================

@@ -36,6 +36,13 @@ void FSettingsDialog::reload(const FragmentSpec& spec_) {
 
   setWindowTitle(spec.titleText);
   setFixedSize(spec.width, spec.height);
+
+  if (spec.backgroundImage.length() > 0) {
+    setStyleSheet(QString("background-image:url(\"") + spec.backgroundImage + "\");");
+  }
+  else {
+    setStyleSheet("");
+  }
 }
 
 //===========================================
