@@ -66,6 +66,7 @@ struct Slice {
   double projSliceTop_wd;
   double viewportBottom_wd;
   double viewportTop_wd;
+  bool visible = true;
 };
 
 struct JoinX : public XWrapper {
@@ -330,7 +331,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
     if (X->kind == XWrapperKind::WALL) {
       WallX& wallX = dynamic_cast<WallX&>(*X);
 
-      CZone& z = *wallX.hardEdge->zone;
+      const CZone& z = *wallX.hardEdge->zone;
 
       double floorHeight = z.floorHeight;
       double targetHeight = z.ceilingHeight - z.floorHeight;
@@ -386,6 +387,11 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       joinX.nearZone = zone;
       joinX.farZone = nextZone;
 
+      const CRegion& region =
+        dynamic_cast<const CRegion&>(renderSystem.getComponent(zone->entityId()));
+      const CRegion& nextRegion =
+        dynamic_cast<const CRegion&>(renderSystem.getComponent(nextZone->entityId()));
+
       const Point& pt = joinX.X->point_rel;
 
       double floorDiff = nextZone->floorHeight - zone->floorHeight;
@@ -400,8 +406,12 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       if (floorDiff < 0) {
         bottomWallB = bottomWallA;
       }
-      if (ceilingDiff < 0) {
+      if (!nextRegion.hasCeiling || ceilingDiff < 0) {
         topWallA = topWallB;
+
+        if (!region.hasCeiling) {
+          joinX.slice1.visible = false;
+        }
       }
 
       LineSegment bottomWall(Point(pt.x, bottomWallA), Point(pt.x, bottomWallB));
@@ -481,7 +491,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
         projRay0 = LineSegment(Point(0, 0), vw0 * 9999.9);
       }
 
-      if (proj_tw0 < subview1) {
+      if (region.hasCeiling && proj_tw0 < subview1) {
         subview1 = proj_tw0;
         projRay1 = LineSegment(Point(0, 0), vw1 * 9999.9);
       }
@@ -1080,16 +1090,18 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           joinX.nearZone->floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd,
           vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
-        ScreenSlice slice1 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice1,
-          joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
+        if (joinX.slice1.visible) {
+          ScreenSlice slice1 = drawSlice(m_target, rg, player, cam.F, *joinX.X, joinX.slice1,
+            joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
 
-        if (nearRegion.hasCeiling) {
-          drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
-            joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
-            m_atanMap);
-        }
-        else {
-          drawSkySlice(m_target, rg, player, slice1, screenX_px);
+          if (nearRegion.hasCeiling) {
+            drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
+              joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
+              m_atanMap);
+          }
+          else {
+            drawSkySlice(m_target, rg, player, slice1, screenX_px);
+          }
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {

@@ -150,6 +150,10 @@ bool GeometryFactory::constructWalls(const parser::Object& obj,
     }
   }
 
+  if (edges.size() == 0) {
+    return false;
+  }
+
   snapEndpoint(m_endpoints, edges.front()->lseg.A);
   snapEndpoint(m_endpoints, edges.back()->lseg.B);
 
