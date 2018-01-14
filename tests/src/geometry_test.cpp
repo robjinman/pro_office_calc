@@ -11,6 +11,10 @@ class GeometryTest : public testing::Test {
 };
 
 
+TEST_F(GeometryTest, sqrt) {
+  ASSERT_DOUBLE_EQ(0.0, sqrt(0.0));
+}
+
 TEST_F(GeometryTest, matrixReferenceFrameChange) {
   LineSegment lseg(Point(123, 771), Point(342, -232));
   double len = lseg.length();

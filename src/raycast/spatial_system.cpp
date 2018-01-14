@@ -74,10 +74,8 @@ static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
 //===========================================
 // canStepAcross
 //===========================================
-static bool canStepAcross(const CVRect& body, double height, const CZone& currentZone,
-  const CSoftEdge& se) {
-
-  CZone* nextZone = getNextZone(currentZone, se);
+static bool canStepAcross(const CVRect& body, double height, const CSoftEdge& se) {
+  CZone* nextZone = getNextZone(*body.zone, se);
 
   bool canStep = nextZone->floorHeight - height <= PLAYER_STEP_HEIGHT;
   bool hasHeadroom = height + body.size.y < nextZone->ceilingHeight;
@@ -94,24 +92,24 @@ static bool intersectHardEdge(const CZone& zone, const Circle& circle, const CVR
   bool b = false;
 
   forEachConstZone(zone, [&](const CZone& r) {
-    if (!b) {
-      for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-        const CEdge& edge = **it;
+    if (b) {
+      return;
+    }
 
-        if (edge.kind == CSpatialKind::SOFT_EDGE) {
-          const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+      const CEdge& edge = **it;
 
-          //assert(&zone == se.zoneA || &zone == se.zoneB);
-          if (&zone != se.zoneA && &zone != se.zoneB) {
-            continue;
-          }
-
-          if (canStepAcross(body, height, zone, se)) {
-            continue;
-          }
+      if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+        if (edge.kind != CSpatialKind::SOFT_EDGE) {
+          std::cout << "1\n";
+          b = true;
+          break;
         }
 
-        if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+
+        if (!canStepAcross(body, height, se)) {
+          std::cout << "2\n";
           b = true;
           break;
         }
@@ -152,25 +150,18 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
             continue;
           }
 
-          if (edge.kind == CSpatialKind::SOFT_EDGE) {
-            const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+          if (edge.kind != CSpatialKind::SOFT_EDGE ||
+            !canStepAcross(body, height, dynamic_cast<const CSoftEdge&>(edge))) {
 
-            if (&zone != se.zoneA && &zone != se.zoneB) {
-              continue;
-            }
-
-            if (canStepAcross(body, height, zone, se)) {
-              continue;
-            }
+            // Erase component in direction of wall
+            Matrix m(-atan(edge.lseg.line().m), Vec2f());
+            dv_ = m * dv;
+            dv_.y = 0;
+            dv_ = m.inverse() * dv_;
           }
 
-          // Erase component in direction of wall
-          Matrix m(-atan(edge.lseg.line().m), Vec2f());
-          dv_ = m * dv;
-          dv_.y = 0;
-          dv_ = m.inverse() * dv_;
-
-          if (intersectHardEdge(zone, Circle{camPos + dv_, radius}, body, height)) {
+          if (intersectHardEdge(*zone.parent, Circle{camPos + dv_, radius}, body, height)) {
+            DBG_PRINT_VAR(dv_);
             dv_ = Vec2f(0, 0);
           }
           else {
@@ -250,10 +241,11 @@ void SpatialSystem::hRotateCamera(double da) {
 // SpatialSystem::moveEntity
 //===========================================
 void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor) {
-  // Currently, only VRects can be moved
   auto it = m_components.find(id);
   if (it != m_components.end()) {
     CSpatial& c = *it->second;
+
+    // Currently, only VRects can be moved
     if (c.kind == CSpatialKind::V_RECT) {
       CVRect& body = dynamic_cast<CVRect&>(c);
       CZone& currentZone = *body.zone;
