@@ -65,10 +65,8 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
 
     return false;
   }
-  if (a < 0 || b < 0) {
-    return false;
-  }
-  if (a > wall.length() || b > wall.length()) {
+
+  if (!isBetween(wall.line().at(A.x).y, wall.A.y, wall.B.y)) {
     return false;
   }
 

@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="0.25"
-     inkscape:cx="504.52689"
-     inkscape:cy="585.28971"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="475.06516"
+     inkscape:cy="679.16454"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g4142"
+     inkscape:current-layer="g4707"
      showguides="false">
     <inkscape:grid
        type="xygrid"
@@ -391,7 +391,7 @@
            id="g4707">
           <path
              style="opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             d="m 460.56442,548.8036 193.19426,0.16943 -2.7067,-296.72778 14.84375,0.78125 3.60389,296.11964 203.57765,0.17311 0.64816,-397.97289 -211.36041,0.20812 0.65448,20.48721 -14.225,0 0.26005,-20.26995 -350.45823,0.40709 0.68748,397.36464 77.82483,-0.68748"
+             d="m 460.56442,548.8036 193.19426,0.34621 -2.7067,-296.90456 14.66697,-0.0143 3.78067,296.91514 203.57765,0.17311 0.64816,-397.97289 -210.91847,0.11973 0.21254,20.5756 -14.225,0 -0.18189,-20.35834 -350.10468,-0.83035 0.15715,398.33692 77.82483,-0.15715"
              id="rect3350-6-7"
              inkscape:connector-curvature="0"
              sodipodi:nodetypes="cccccccccccccc" />
@@ -478,17 +478,17 @@
                  sodipodi:role="line">texture=inside_window</tspan></text>
           </g>
           <g
-             transform="matrix(1.3124425,0,0,1,-195.66659,-48.207212)"
-             id="g189667-9-7">
+             transform="matrix(1.3124425,0,0,1,-196.07586,-48.227797)"
+             id="g189667-9-4">
             <path
                inkscape:connector-curvature="0"
-               id="path189108-0-1"
-               d="m 694.75477,597.26598 75.2336,0"
+               id="path189108-0-15"
+               d="m 694.48158,597.26603 74.21743,0"
                style="opacity:1;fill:none;fill-opacity:1;stroke:#b900ff;stroke-width:0.87289065;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
             <text
                transform="scale(0.93390137,1.0707769)"
                sodipodi:linespacing="125%"
-               id="text189650-7-3"
+               id="text189650-7-2"
                y="549.49127"
                x="758.21472"
                style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70.03768921px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -496,43 +496,43 @@
                  style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94549131px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono'"
                  y="549.49127"
                  x="758.21472"
-                 id="tspan189652-60-3"
+                 id="tspan189652-60-4"
                  sodipodi:role="line">type=wall_decal</tspan></text>
             <text
                transform="scale(0.93390137,1.0707769)"
                sodipodi:linespacing="125%"
-               id="text189654-0-7"
+               id="text189654-0-3"
                y="551.50171"
                x="758.36957"
                style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94549131px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                xml:space="preserve"><tspan
                  y="551.50171"
                  x="758.36957"
-                 id="tspan189656-7-6"
+                 id="tspan189656-7-5"
                  sodipodi:role="line">aspect_ratio=1.0</tspan></text>
             <text
                transform="scale(0.93390137,1.0707769)"
                sodipodi:linespacing="125%"
-               id="text189658-3-3"
+               id="text189658-3-7"
                y="553.67694"
                x="758.36963"
                style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94549131px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                xml:space="preserve"><tspan
                  y="553.67694"
                  x="758.36963"
-                 id="tspan189660-2-9"
+                 id="tspan189660-2-5"
                  sodipodi:role="line">y=30</tspan></text>
             <text
                transform="scale(0.93390137,1.0707769)"
                sodipodi:linespacing="125%"
-               id="text189662-7-6"
+               id="text189662-7-62"
                y="555.94666"
                x="758.36957"
                style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94549131px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                xml:space="preserve"><tspan
                  y="555.94666"
                  x="758.36957"
-                 id="tspan189664-0-9"
+                 id="tspan189664-0-7"
                  sodipodi:role="line">texture=inside_window</tspan></text>
           </g>
         </g>

@@ -203,6 +203,7 @@ bool isBetween(double x, double a, double b, double delta = 0.000001);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 double distanceFromLine(const Line& l, const Point& p);
+Point projectionOntoLine(const Line& l, const Point& p);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
 Vec2f normalise(const Vec2f& v);
 double normaliseAngle(double a);

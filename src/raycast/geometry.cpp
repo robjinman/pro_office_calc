@@ -234,6 +234,21 @@ double distanceFromLine(const Line& l, const Point& p) {
 }
 
 //===========================================
+// projectionOntoLine
+//===========================================
+Point projectionOntoLine(const Line& l, const Point& p) {
+  if (std::isinf(l.m)) {
+    return Point(l.x, p.y);
+  }
+  else {
+    double x = (p.x + l.m * (l.c - p.y)) / (1.0 - l.m * l.m);
+    double y = l.m * x + l.c;
+
+    return Point(x, y);
+  }
+}
+
+//===========================================
 // normalise
 //===========================================
 Vec2f normalise(const Vec2f& v) {
