@@ -772,7 +772,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     }
 
     srcRects.push_back(QRect(srcX, srcY, srcW, srcH));
-    trgRects.push_back(QRect(trgX, trgY, trgW, trgH));
+    trgRects.push_back(QRect(trgX, trgY, trgW, ceil(trgH)));
   }
 }
 
