@@ -159,7 +159,8 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
           Vec2f v = pos_ - X;
           assert(length(v) <= radius);
 
-          Vec2f v_ = normalise(v) * (radius - length(v) + 0.00001);
+          double smallFloat = 0.0001;
+          Vec2f v_ = normalise(v) * (radius - length(v) + smallFloat);
 
           if (!pathBlocked(zone, pos + dv, height, body.size, v_) &&
             length(v_) < length(smallestDelta)) {

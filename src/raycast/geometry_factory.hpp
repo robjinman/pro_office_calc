@@ -3,6 +3,7 @@
 
 
 #include <map>
+#include <vector>
 #include "raycast/game_object_factory.hpp"
 #include "raycast/geometry.hpp"
 
@@ -32,7 +33,7 @@ class GeometryFactory : public GameObjectFactory {
     AudioService& m_audioService;
     TimeService& m_timeService;
 
-    std::map<Point, bool> m_endpoints;
+    std::map<Point, std::vector<Point*>> m_endpoints;
 
     bool constructWallDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
