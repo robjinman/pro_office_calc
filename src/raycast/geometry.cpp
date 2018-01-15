@@ -241,7 +241,7 @@ Point projectionOntoLine(const Line& l, const Point& p) {
     return Point(l.x, p.y);
   }
   else {
-    double x = (p.x + l.m * (l.c - p.y)) / (1.0 - l.m * l.m);
+    double x = (p.x + l.m * (p.y - l.c)) / (1.0 + l.m * l.m);
     double y = l.m * x + l.c;
 
     return Point(x, y);

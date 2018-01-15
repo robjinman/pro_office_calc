@@ -84,50 +84,18 @@ static bool canStepAcross(const CVRect& body, double height, const CSoftEdge& se
 }
 
 //===========================================
-// intersectHardEdge
-//===========================================
-static bool intersectHardEdge(const CZone& zone, const Circle& circle, const CVRect& body,
-  double height) {
-
-  bool b = false;
-
-  forEachConstZone(zone, [&](const CZone& r) {
-    if (b) {
-      return;
-    }
-
-    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-      const CEdge& edge = **it;
-
-      if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        if (edge.kind != CSpatialKind::SOFT_EDGE) {
-          std::cout << "1\n";
-          b = true;
-          break;
-        }
-
-        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
-
-        if (!canStepAcross(body, height, se)) {
-          std::cout << "2\n";
-          b = true;
-          break;
-        }
-      }
-    }
-  });
-
-  return b;
-}
-
-//===========================================
 // getDelta
 //
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
 static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body, double height,
-  double radius, const Vec2f& dv) {
+  double radius, const Vec2f& dv, int depth = 0) {
+
+  if (depth > 9) {
+    DBG_PRINT("Warning: Deep recursion in getDelta()\n");
+    return Vec2f(0, 0);
+  }
 
   Circle circle{camPos + dv, radius};
   LineSegment ray(camPos, camPos + dv);
@@ -136,42 +104,39 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
 
   assert(zone.parent != nullptr);
 
-  bool abortLoop = false;
+  bool collision = false;
+  Vec2f smallestDelta = Vec2f(9999, 9999);
+
   forEachConstZone(*zone.parent, [&](const CZone& r) {
-    if (abortLoop == false) {
-      for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-        const CEdge& edge = **it;
+    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+      const CEdge& edge = **it;
 
-        // If moving by dv will intersect something
-        if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-          Point p = lineIntersect(ray.line(), edge.lseg.line());
-          // If we're moving away from the wall
-          if (distance(camPos + dv_ * 0.00001, p) > distance(camPos, p)) {
-            continue;
+      // If moving by dv will intersect something
+      if (lineSegmentCircleIntersect(circle, edge.lseg)) {
+        if (edge.kind != CSpatialKind::SOFT_EDGE ||
+          !canStepAcross(body, height, dynamic_cast<const CSoftEdge&>(edge))) {
+
+          Point pos = camPos + dv;
+          Point X = projectionOntoLine(edge.lseg.line(), pos);
+
+          Vec2f v = pos - X;
+          assert(length(v) <= radius);
+
+          Vec2f v_ = normalise(v) * (radius - length(v) + 0.1);
+
+          if (length(v_) < length(smallestDelta)) {
+            smallestDelta = v_;
           }
 
-          if (edge.kind != CSpatialKind::SOFT_EDGE ||
-            !canStepAcross(body, height, dynamic_cast<const CSoftEdge&>(edge))) {
-
-            // Erase component in direction of wall
-            Matrix m(-atan(edge.lseg.line().m), Vec2f());
-            dv_ = m * dv;
-            dv_.y = 0;
-            dv_ = m.inverse() * dv_;
-          }
-
-          if (intersectHardEdge(*zone.parent, Circle{camPos + dv_, radius}, body, height)) {
-            DBG_PRINT_VAR(dv_);
-            dv_ = Vec2f(0, 0);
-          }
-          else {
-            abortLoop = true;
-            break;
-          }
+          collision = true;
         }
       }
     }
   });
+
+  if (collision) {
+    dv_ = getDelta(zone, camPos, body, height, radius, dv + smallestDelta, depth + 1);
+  }
 
   return dv_;
 }
