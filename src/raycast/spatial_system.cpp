@@ -122,7 +122,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
           Vec2f v = pos - X;
           assert(length(v) <= radius);
 
-          Vec2f v_ = normalise(v) * (radius - length(v) + 0.1);
+          Vec2f v_ = normalise(v) * (radius - length(v) + 0.00001);
 
           if (length(v_) < length(smallestDelta)) {
             smallestDelta = v_;
