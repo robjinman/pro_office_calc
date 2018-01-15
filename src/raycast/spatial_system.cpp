@@ -72,15 +72,51 @@ static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
 }
 
 //===========================================
-// canStepAcross
+// canStepAcrossEdge
 //===========================================
-static bool canStepAcross(const CVRect& body, double height, const CSoftEdge& se) {
-  CZone* nextZone = getNextZone(*body.zone, se);
+static bool canStepAcrossEdge(const CZone& zone, double height, const Size& bodySize,
+  const CEdge& edge) {
+
+  if (edge.kind != CSpatialKind::SOFT_EDGE) {
+    return false;
+  }
+
+  const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+  CZone* nextZone = getNextZone(zone, se);
 
   bool canStep = nextZone->floorHeight - height <= PLAYER_STEP_HEIGHT;
-  bool hasHeadroom = height + body.size.y < nextZone->ceilingHeight;
+  bool hasHeadroom = height + bodySize.y < nextZone->ceilingHeight;
 
   return canStep && hasHeadroom;
+}
+
+//===========================================
+// pathBlocked
+//
+// TODO: write description
+//===========================================
+static bool pathBlocked(const CZone& zone, const Point& pos, double height, const Size& bodySize,
+  const Vec2f v) {
+
+  LineSegment lseg(pos, pos + v);
+
+  bool b = false;
+
+  forEachConstZone(*zone.parent, [&](const CZone& r) {
+    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+      const CEdge& edge = **it;
+
+      Point p;
+      if (lineSegmentIntersect(lseg, edge.lseg, p)) {
+        if (!canStepAcrossEdge(zone, height, bodySize, edge)) {
+          b = true;
+          return;
+        }
+      }
+    }
+  });
+
+  return b;
 }
 
 //===========================================
@@ -89,16 +125,19 @@ static bool canStepAcross(const CVRect& body, double height, const CSoftEdge& se
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body, double height,
-  double radius, const Vec2f& dv, int depth = 0) {
+static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& dv,
+  int depth = 0) {
 
   if (depth > 9) {
     DBG_PRINT("Warning: Deep recursion in getDelta()\n");
     return Vec2f(0, 0);
   }
 
-  Circle circle{camPos + dv, radius};
-  LineSegment ray(camPos, camPos + dv);
+  const Point& pos = body.pos;
+  const CZone& zone = *body.zone;
+
+  Circle circle{pos + dv, radius};
+  LineSegment ray(pos, pos + dv);
 
   Vec2f dv_ = dv;
 
@@ -113,18 +152,18 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
 
       // If moving by dv will intersect something
       if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        if (edge.kind != CSpatialKind::SOFT_EDGE ||
-          !canStepAcross(body, height, dynamic_cast<const CSoftEdge&>(edge))) {
+        if (!canStepAcrossEdge(*body.zone, height, body.size, edge)) {
+          Point pos_ = pos + dv;
+          Point X = projectionOntoLine(edge.lseg.line(), pos_);
 
-          Point pos = camPos + dv;
-          Point X = projectionOntoLine(edge.lseg.line(), pos);
-
-          Vec2f v = pos - X;
+          Vec2f v = pos_ - X;
           assert(length(v) <= radius);
 
           Vec2f v_ = normalise(v) * (radius - length(v) + 0.00001);
 
-          if (length(v_) < length(smallestDelta)) {
+          if (!pathBlocked(zone, pos + dv, height, body.size, v_) &&
+            length(v_) < length(smallestDelta)) {
+
             smallestDelta = v_;
           }
 
@@ -135,7 +174,7 @@ static Vec2f getDelta(const CZone& zone, const Point& camPos, const CVRect& body
   });
 
   if (collision) {
-    dv_ = getDelta(zone, camPos, body, height, radius, dv + smallestDelta, depth + 1);
+    dv_ = getDelta(body, height, radius, dv + smallestDelta, depth + 1);
   }
 
   return dv_;
@@ -218,9 +257,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
       // TODO
       double radius = 10.0; //body.size.x * 0.5;
 
-      dv = getDelta(currentZone, body.pos, body, currentZone.floorHeight + heightAboveFloor, radius,
-        dv);
-
+      dv = getDelta(body, currentZone.floorHeight + heightAboveFloor, radius, dv);
       Circle circle{body.pos + dv, radius};
 
       assert(currentZone.parent != nullptr);

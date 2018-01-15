@@ -129,7 +129,7 @@ void RaycastWidget::initialise() {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  loadMap("data/maps/house3.svg");
+  loadMap("data/maps/big_map.svg");
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
