@@ -94,6 +94,7 @@ struct CZone : public CSpatial {
 
   double floorHeight = 0;
   double ceilingHeight = 100;
+  bool hasCeiling = true;
   std::list<pCZone_t> children;
   std::list<CEdge*> edges;
   std::list<pCVRect_t> vRects;

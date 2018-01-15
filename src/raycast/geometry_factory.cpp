@@ -426,9 +426,11 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
       string s = getValue(obj.dict, "has_ceiling");
       if (s == "true") {
         region->hasCeiling = true;
+        zone->hasCeiling = true;
       }
       else if (s == "false") {
         region->hasCeiling = false;
+        zone->hasCeiling = false;
       }
       else {
         EXCEPTION("has_ceiling must be either 'true' or 'false'");

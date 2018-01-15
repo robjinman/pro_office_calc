@@ -97,7 +97,7 @@ class SpatialSystem : public System {
 
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
-    void crossZones(SceneGraph& sg, entityId_t entityId, entityId_t oldZone, entityId_t newZone);
+    void crossZones(entityId_t entityId, entityId_t oldZone, entityId_t newZone);
     std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
 
     inline CZone& getCurrentZone() const {

@@ -27,6 +27,7 @@ using std::pair;
 using std::make_pair;
 using std::find_if;
 using std::for_each;
+using std::vector;
 
 
 static const double GRID_CELL_SIZE = 25.0;
@@ -85,7 +86,7 @@ static bool canStepAcrossEdge(const CZone& zone, double height, const Size& body
   CZone* nextZone = getNextZone(zone, se);
 
   bool canStep = nextZone->floorHeight - height <= PLAYER_STEP_HEIGHT;
-  bool hasHeadroom = height + bodySize.y < nextZone->ceilingHeight;
+  bool hasHeadroom = !nextZone->hasCeiling || (height + bodySize.y < nextZone->ceilingHeight);
 
   return canStep && hasHeadroom;
 }
@@ -125,9 +126,7 @@ static bool pathBlocked(const CZone& zone, const Point& pos, double height, cons
 // Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& dv,
-  int depth = 0) {
-
+static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& dv, int depth = 0) {
   if (depth > 9) {
     DBG_PRINT("Warning: Deep recursion in getDelta()\n");
     return Vec2f(0, 0);
@@ -253,65 +252,40 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
     // Currently, only VRects can be moved
     if (c.kind == CSpatialKind::V_RECT) {
       CVRect& body = dynamic_cast<CVRect&>(c);
-      CZone& currentZone = *body.zone;
 
       // TODO
       double radius = 10.0; //body.size.x * 0.5;
 
-      dv = getDelta(body, currentZone.floorHeight + heightAboveFloor, radius, dv);
-      Circle circle{body.pos + dv, radius};
+      dv = getDelta(body, body.zone->floorHeight + heightAboveFloor, radius, dv);
 
-      assert(currentZone.parent != nullptr);
+      assert(body.zone->parent != nullptr);
 
-      bool abortLoop = false;
-      forEachConstZone(*currentZone.parent, [&](const CZone& zone) {
-        if (abortLoop) {
-          return;
-        }
+      // join id -> soft edge
+      map<entityId_t, const CSoftEdge*> edgesCrossed;
 
-        int nIntersections = 0;
-        double nearestX = 999999.9;
-        CZone* nextZone = nullptr;
-        Point p;
+      LineSegment lseg(body.pos, body.pos + dv);
 
-        for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
+      forEachConstZone(*body.zone->parent, [&](const CZone& r) {
+        for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
           const CEdge& edge = **it;
 
-          if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-            assert(edge.kind == CSpatialKind::SOFT_EDGE);
-
+          Point p;
+          if (lineSegmentIntersect(lseg, edge.lseg, p)) {
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
 
-            LineSegment ray(body.pos, body.pos + dv);
-            Point p_;
-            bool crossesLine = lineSegmentIntersect(ray, edge.lseg, p_);
-
-            if (crossesLine) {
-              ++nIntersections;
-
-              double dist = distance(body.pos, p_);
-              if (dist < nearestX) {
-                nextZone = getNextZone(currentZone, se);
-                p = p_;
-
-                nearestX = dist;
-              }
-            }
+            edgesCrossed[se.joinId] = &se;
           }
         }
-
-        if (nIntersections > 0) {
-          body.zone = nextZone;
-          body.pos = p;
-          dv = dv * 0.00001;
-          abortLoop = true;
-
-          crossZones(sg, id, currentZone.entityId(), nextZone->entityId());
-
-          m_entityManager.broadcastEvent(EChangedZone(id, currentZone.entityId(),
-            nextZone->entityId()));
-        }
       });
+
+      for (auto jt = edgesCrossed.begin(); jt != edgesCrossed.end(); ++jt) {
+        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(*jt->second);
+
+        CZone* nextZone = getNextZone(*body.zone, se);
+
+        crossZones(id, body.zone->entityId(), nextZone->entityId());
+        body.zone = nextZone;
+      }
 
       body.pos = body.pos + dv;
     }
@@ -461,7 +435,7 @@ static void entitiesInRadius_r(const CZone& zone, const Circle& circle,
 // similar
 //===========================================
 static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 2.0;
+  double delta = 4.0;
   return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
     || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
 }
@@ -926,10 +900,10 @@ static bool removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSp
 
 //===========================================
 // SpatialSystem::crossZones
+//
+// Doesn't set the zone on the entity
 //===========================================
-void SpatialSystem::crossZones(SceneGraph& sg, entityId_t entityId, entityId_t oldZoneId,
-  entityId_t newZoneId) {
-
+void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entityId_t newZoneId) {
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CSpatial& c = *it->second;
@@ -938,6 +912,8 @@ void SpatialSystem::crossZones(SceneGraph& sg, entityId_t entityId, entityId_t o
 
     if (removeFromZone(sg, oldZone, c, true)) {
       addChildToComponent(sg, newZone, pCSpatial_t(&c));
+
+      m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId));
     }
   }
 }

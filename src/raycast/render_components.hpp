@@ -164,7 +164,7 @@ struct CRegion : public CRender {
   CRegion(entityId_t entityId, entityId_t parentId)
     : CRender(CRenderKind::REGION, entityId, parentId) {}
 
-  bool hasCeiling = true;
+  bool hasCeiling = true; // TODO: Remove
   std::string floorTexture;
   std::string ceilingTexture;
   std::list<pCRegion_t> children;
