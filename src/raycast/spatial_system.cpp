@@ -159,13 +159,11 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
         double smallFloat = 0.0001;
         Vec2f adjustment = normalise(toEdge) * (radius - length(toEdge) + smallFloat);
 
-        // This should prevent corner cutting
-        if (!pathBlocked(zone, nextPos, height, body.size, adjustment)) {
-          Vec2f v = getDelta(body, height, radius, oldV + adjustment, depth + 1);
+        Vec2f v = getDelta(body, height, radius, oldV + adjustment, depth + 1);
 
-          if (length(v - oldV) < length(newV - oldV)) {
-            newV = v;
-          }
+        // This should prevent corner cutting
+        if (!pathBlocked(zone, pos, height, body.size, v) && length(v - oldV) < length(newV - oldV)) {
+          newV = v;
         }
       }
     }
@@ -254,31 +252,36 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 
       assert(body.zone->parent != nullptr);
 
-      // join id -> soft edge
-      map<entityId_t, const CSoftEdge*> edgesCrossed;
-
+      map<double, const CSoftEdge*> edgesCrossed;
       LineSegment lseg(body.pos, body.pos + dv);
 
       forEachConstZone(*body.zone->parent, [&](const CZone& r) {
         for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
           const CEdge& edge = **it;
 
-          Point p;
-          if (lineSegmentIntersect(lseg, edge.lseg, p)) {
+          Point X;
+          if (lineSegmentIntersect(lseg, edge.lseg, X)) {
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
 
-            edgesCrossed[se.joinId] = &se;
+            double dist = distance(body.pos, X);
+
+            edgesCrossed[dist] = &se;
           }
         }
       });
 
+      map<entityId_t, bool> crossed;
       for (auto jt = edgesCrossed.begin(); jt != edgesCrossed.end(); ++jt) {
         const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(*jt->second);
 
-        CZone* nextZone = getNextZone(*body.zone, se);
+        if (!crossed[se.joinId]) {
+          CZone* nextZone = getNextZone(*body.zone, se);
 
-        crossZones(id, body.zone->entityId(), nextZone->entityId());
-        body.zone = nextZone;
+          crossZones(id, body.zone->entityId(), nextZone->entityId());
+          body.zone = nextZone;
+
+          crossed[se.joinId] = true;
+        }
       }
 
       body.pos = body.pos + dv;
