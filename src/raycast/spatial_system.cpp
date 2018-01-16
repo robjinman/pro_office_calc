@@ -75,9 +75,7 @@ static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
 //===========================================
 // canStepAcrossEdge
 //===========================================
-static bool canStepAcrossEdge(const CZone& zone, double height, const Size& bodySize,
-  const CEdge& edge) {
-
+static bool canStepAcrossEdge(const CZone& zone, double height, const Size& bodySize, const CEdge& edge) {
   if (edge.kind != CSpatialKind::SOFT_EDGE) {
     return false;
   }
@@ -94,7 +92,7 @@ static bool canStepAcrossEdge(const CZone& zone, double height, const Size& body
 //===========================================
 // pathBlocked
 //
-// TODO: write description
+// Returns true if a body moving through vector v is blocked by an edge it cannot cross.
 //===========================================
 static bool pathBlocked(const CZone& zone, const Point& pos, double height, const Size& bodySize,
   const Vec2f v) {
@@ -123,61 +121,57 @@ static bool pathBlocked(const CZone& zone, const Point& pos, double height, cons
 //===========================================
 // getDelta
 //
-// Takes the vector the player wants to move in (dv) and returns a modified vector that doesn't
+// Takes the vector the player wants to move in (oldV) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& dv, int depth = 0) {
+static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& oldV, int depth = 0) {
   if (depth > 9) {
-    DBG_PRINT("Warning: Deep recursion in getDelta()\n");
     return Vec2f(0, 0);
   }
 
   const Point& pos = body.pos;
   const CZone& zone = *body.zone;
 
-  Circle circle{pos + dv, radius};
-  LineSegment ray(pos, pos + dv);
-
-  Vec2f dv_ = dv;
-
   assert(zone.parent != nullptr);
 
   bool collision = false;
-  Vec2f smallestDelta = Vec2f(9999, 9999);
+  Vec2f newV(0, 0); // Value closest to oldV
+  Circle circle{pos + oldV, radius};
 
   forEachConstZone(*zone.parent, [&](const CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       const CEdge& edge = **it;
 
-      // If moving by dv will intersect something
-      if (lineSegmentCircleIntersect(circle, edge.lseg)) {
-        if (!canStepAcrossEdge(*body.zone, height, body.size, edge)) {
-          Point pos_ = pos + dv;
-          Point X = projectionOntoLine(edge.lseg.line(), pos_);
+      // If moving by oldV will intersect something, we need to change it
+      if (lineSegmentCircleIntersect(circle, edge.lseg) &&
+        !canStepAcrossEdge(*body.zone, height, body.size, edge)) {
 
-          Vec2f v = pos_ - X;
-          assert(length(v) <= radius);
+        collision = true;
 
-          double smallFloat = 0.0001;
-          Vec2f v_ = normalise(v) * (radius - length(v) + smallFloat);
+        // The body's position if it were moved by oldV
+        Point nextPos = pos + oldV;
 
-          if (!pathBlocked(zone, pos + dv, height, body.size, v_) &&
-            length(v_) < length(smallestDelta)) {
+        Point X = projectionOntoLine(edge.lseg.line(), nextPos);
+        Vec2f toEdge = nextPos - X;
 
-            smallestDelta = v_;
+        assert(length(toEdge) <= radius);
+
+        double smallFloat = 0.0001;
+        Vec2f adjustment = normalise(toEdge) * (radius - length(toEdge) + smallFloat);
+
+        // This should prevent corner cutting
+        if (!pathBlocked(zone, nextPos, height, body.size, adjustment)) {
+          Vec2f v = getDelta(body, height, radius, oldV + adjustment, depth + 1);
+
+          if (length(v - oldV) < length(newV - oldV)) {
+            newV = v;
           }
-
-          collision = true;
         }
       }
     }
   });
 
-  if (collision) {
-    dv_ = getDelta(body, height, radius, dv + smallestDelta, depth + 1);
-  }
-
-  return dv_;
+  return collision ? newV : oldV;
 }
 
 //===========================================
