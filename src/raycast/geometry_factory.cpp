@@ -25,57 +25,18 @@ const double SNAP_DISTANCE = 4.0;
 
 
 //===========================================
-// snapEndpoints
+// snapEndpoint
 //===========================================
-static void snapEndpoints(map<Point, vector<Point*>>& endpoints) {
+static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
   for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
-    const Point& avr = it->first;
-    const vector<Point*>& group = it->second;
-
-    for (auto jt = group.begin(); jt != group.end(); ++jt) {
-      Point& pt = **jt;
-      pt = avr;
-    }
-  }
-};
-
-//===========================================
-// computeAverage
-//===========================================
-static Point computeAverage(const vector<Point*>& points) {
-  Point sum;
-  double n = points.size();
-
-  for (auto it = points.begin(); it != points.end(); ++it) {
-    Point& pt = **it;
-    sum = sum + pt;
-  }
-
-  return sum / n;
-}
-
-//===========================================
-// addEndpoint
-//===========================================
-static void addEndpoint(map<Point, vector<Point*>>& endpoints, Point* pt) {
-  for (auto it = endpoints.begin(); it != endpoints.end(); ++it) {
-    Point avr = it->first;
-    vector<Point*> group = it->second;
-
-    if (distance(*pt, avr) <= SNAP_DISTANCE) {
-      group.push_back(pt);
-      Point newAvr = computeAverage(group);
-
-      endpoints.erase(it);
-
-      vector<Point*>& g = endpoints[newAvr];
-      g.insert(g.begin(), group.begin(), group.end());
-
+    if (distance(pt, it->first) <= SNAP_DISTANCE) {
+      pt = it->first;
+      it->second = true;
       return;
     }
   }
 
-  endpoints[*pt] = { pt };
+  endpoints[pt] = false;
 };
 
 //===========================================
@@ -174,8 +135,8 @@ bool GeometryFactory::constructWalls(const parser::Object& obj,
 
     edges.push_back(edge);
 
-    addEndpoint(m_endpoints, &edge->lseg.A);
-    addEndpoint(m_endpoints, &edge->lseg.B);
+    snapEndpoint(m_endpoints, edge->lseg.A);
+    snapEndpoint(m_endpoints, edge->lseg.B);
 
     spatialSystem.addComponent(pComponent_t(edge));
 
@@ -372,8 +333,8 @@ bool GeometryFactory::constructBoundaries(const parser::Object& obj,
     edge->lseg.B = obj.path.points[i];
     edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
 
-    addEndpoint(m_endpoints, &edge->lseg.A);
-    addEndpoint(m_endpoints, &edge->lseg.B);
+    snapEndpoint(m_endpoints, edge->lseg.A);
+    snapEndpoint(m_endpoints, edge->lseg.B);
 
     edges.push_back(edge);
 
@@ -491,11 +452,15 @@ bool GeometryFactory::constructRootRegion(const parser::Object& obj) {
   Matrix m;
 
   if (constructRegion_r(-1, obj, -1, m)) {
-    if (!sg.player) {
-      EXCEPTION("SpatialSystem must contain the player");
+    for (auto it = m_endpoints.begin(); it != m_endpoints.end(); ++it) {
+      if (it->second == false) {
+        EXCEPTION("There are unconnected endpoints");
+      }
     }
 
-    snapEndpoints(m_endpoints);
+    if (!sg.player) {
+      EXCEPTION("SpatialSystem must contain the player");
+    };
 
     spatialSystem.connectZones();
     renderSystem.connectRegions();
