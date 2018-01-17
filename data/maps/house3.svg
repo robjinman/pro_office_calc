@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="0.25"
-     inkscape:cx="1447.4106"
-     inkscape:cy="770.08598"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="827.87526"
+     inkscape:cy="999.70732"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4960"
+     inkscape:current-layer="g190982"
      showguides="false">
     <inkscape:grid
        type="xygrid"
@@ -351,23 +351,23 @@
            transform="scale(0.93027115,1.0749554)"
            sodipodi:linespacing="125%"
            id="text4508-0-1"
-           y="518.96338"
+           y="518.75989"
            x="648.92944"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.57683039px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="518.96338"
+             y="518.75989"
              x="648.92944"
              id="tspan4510-6-4"
-             sodipodi:role="line">floor_texture=crate</tspan></text>
+             sodipodi:role="line">floor_texture=dark_wood</tspan></text>
         <text
            transform="scale(0.93027115,1.0749554)"
            sodipodi:linespacing="125%"
            id="text4512-3-9"
-           y="519.89813"
+           y="520.18884"
            x="649.00409"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.57683039px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="519.89813"
+             y="520.18884"
              x="649.00409"
              id="tspan4514-20-2"
              sodipodi:role="line">has_ceiling=true</tspan></text>
@@ -375,14 +375,26 @@
            transform="scale(0.93027115,1.0749554)"
            sodipodi:linespacing="125%"
            id="text4516-6-0"
-           y="520.68323"
+           y="520.97394"
            x="649.00409"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.57683039px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="520.68323"
+             y="520.97394"
              x="649.00409"
              id="tspan4518-1-6"
              sodipodi:role="line">name=doorway</tspan></text>
+        <text
+           transform="scale(0.93027115,1.0749554)"
+           sodipodi:linespacing="125%"
+           id="text4508-0-1-8"
+           y="519.38116"
+           x="648.89008"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.57683039px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="519.38116"
+             x="648.89008"
+             id="tspan4510-6-4-7"
+             sodipodi:role="line">ceiling_texture=light_bricks</tspan></text>
       </g>
       <g
          id="g4714"
@@ -418,7 +430,7 @@
                sodipodi:role="line"
                id="tspan4275-6"
                x="749.86023"
-               y="602.25848">texture=light_bricks</tspan></text>
+               y="602.25848">texture=white_paint</tspan></text>
           <g
              transform="matrix(1.3124425,0,0,1,-374.17014,-48.450184)"
              id="g189667-9">
@@ -580,16 +592,16 @@
              y="335.57123"
              x="542.797"
              id="tspan4510-6-48"
-             sodipodi:role="line">floor_texture=crate</tspan></text>
+             sodipodi:role="line">floor_texture=dark_wood</tspan></text>
         <text
            transform="scale(0.96712079,1.033997)"
            sodipodi:linespacing="125%"
            id="text4512-3-7"
-           y="346.46332"
+           y="354.20029"
            x="543.66803"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.72191858px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="346.46332"
+             y="354.20029"
              x="543.66803"
              id="tspan4514-20-1"
              sodipodi:role="line">has_ceiling=true</tspan></text>
@@ -597,11 +609,11 @@
            transform="scale(0.96712079,1.033997)"
            sodipodi:linespacing="125%"
            id="text4516-6-7"
-           y="355.61279"
+           y="363.34976"
            x="543.66803"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.72191858px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"><tspan
-             y="355.61279"
+             y="363.34976"
              x="543.66803"
              id="tspan4518-1-2"
              sodipodi:role="line">name=room</tspan></text>
@@ -624,7 +636,7 @@
                sodipodi:role="line"
                id="tspan5673"
                x="532.62659"
-               y="430.73196">top_texture=light_bricks</tspan></text>
+               y="430.73196">top_texture=white_paint</tspan></text>
           <text
              sodipodi:linespacing="125%"
              id="text5671-0"
@@ -648,7 +660,7 @@
                sodipodi:role="line"
                id="tspan5673-0"
                x="532.68201"
-               y="432.18671">bottom_texture=grey_stone</tspan></text>
+               y="432.18671">bottom_texture=dark_wood</tspan></text>
         </g>
         <g
            id="g190982">
@@ -682,78 +694,218 @@
                  sodipodi:role="line"
                  id="tspan190921"
                  x="795.20709"
-                 y="308.23987">bottom_texture=grey_stone</tspan></text>
+                 y="308.23987">bottom_texture=bed</tspan></text>
           </g>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.25293827px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="825.30524"
-             y="196.64072"
+             x="819.70093"
+             y="237.26219"
              id="text4213-3-0-78-89-5"
              transform="scale(0.97782881,1.0226739)"><tspan
                id="tspan4215-5-6-4-2-4"
-               x="825.30524"
-               y="196.64072">type=region</tspan></text>
+               x="819.70093"
+               y="237.26219">type=region</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.25293827px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="825.60388"
-             y="202.813"
+             x="819.99957"
+             y="243.43448"
              id="text4217-6-2-5-6-4"
              transform="scale(0.97782881,1.0226739)"><tspan
                id="tspan4219-2-6-03-6-6"
-               x="825.60388"
-               y="202.813">floor_height=80</tspan></text>
+               x="819.99957"
+               y="243.43448">floor_height=80</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.25293827px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="826.40027"
-             y="209.284"
+             x="820.79596"
+             y="249.90547"
              id="text4221-9-1-6-49-5"
              transform="scale(0.97782881,1.0226739)"><tspan
                id="tspan4223-1-8-1-5-6"
-               x="826.40027"
-               y="209.284">ceiling_height=200</tspan></text>
+               x="820.79596"
+               y="249.90547">ceiling_height=200</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.22493696px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="877.02191"
-             y="204.54007"
+             x="871.07928"
+             y="242.84926"
              id="text4508-0-0-5"
              sodipodi:linespacing="125%"
              transform="scale(0.92216792,1.0844012)"><tspan
                sodipodi:role="line"
                id="tspan4510-6-48-1"
-               x="877.02191"
-               y="204.54007">floor_texture=grey_stone</tspan></text>
+               x="871.07928"
+               y="242.84926">floor_texture=bed</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.22493696px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="877.5694"
-             y="211.38609"
+             x="871.62677"
+             y="256.21597"
              id="text4512-3-7-4"
              sodipodi:linespacing="125%"
              transform="scale(0.92216792,1.0844012)"><tspan
                sodipodi:role="line"
                id="tspan4514-20-1-9"
-               x="877.5694"
-               y="211.38609">has_ceiling=true</tspan></text>
+               x="871.62677"
+               y="256.21597">has_ceiling=true</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.22493696px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="877.5694"
-             y="217.13683"
+             x="871.62677"
+             y="261.96671"
              id="text4516-6-7-5"
              sodipodi:linespacing="125%"
              transform="scale(0.92216792,1.0844012)"><tspan
                sodipodi:role="line"
                id="tspan4518-1-2-2"
-               x="877.5694"
-               y="217.13683">name=desk</tspan></text>
+               x="871.62677"
+               y="261.96671">name=bed</tspan></text>
+          <text
+             xml:space="preserve"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.22493696px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             x="870.45062"
+             y="249.3143"
+             id="text4508-0-0-5-6"
+             sodipodi:linespacing="125%"
+             transform="scale(0.92216792,1.0844012)"><tspan
+               sodipodi:role="line"
+               id="tspan4510-6-48-1-1"
+               x="870.45062"
+               y="249.3143">ceiling_texture=white_paint</tspan></text>
+          <g
+             id="g5171">
+            <text
+               transform="scale(0.98033163,1.020063)"
+               id="text4213-3-0-78-89-5-9"
+               y="165.40448"
+               x="828.39215"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.70635176px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"
+               sodipodi:linespacing="125%"><tspan
+                 y="165.40448"
+                 x="828.39215"
+                 id="tspan4215-5-6-4-2-4-2">type=region</tspan></text>
+            <text
+               transform="scale(0.98033163,1.020063)"
+               id="text4217-6-2-5-6-4-0"
+               y="167.88091"
+               x="828.51202"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.70635176px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"
+               sodipodi:linespacing="125%"><tspan
+                 y="167.88091"
+                 x="828.51202"
+                 id="tspan4219-2-6-03-6-6-2">floor_height=90</tspan></text>
+            <text
+               transform="scale(0.98033163,1.020063)"
+               id="text4221-9-1-6-49-5-3"
+               y="170.47717"
+               x="828.83154"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.70635176px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"
+               sodipodi:linespacing="125%"><tspan
+                 y="170.47717"
+                 x="828.83154"
+                 id="tspan4223-1-8-1-5-6-7">ceiling_height=200</tspan></text>
+            <text
+               transform="scale(0.92452828,1.0816327)"
+               sodipodi:linespacing="125%"
+               id="text4508-0-0-5-5"
+               y="163.64951"
+               x="879.15601"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.69511724px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="163.64951"
+                 x="879.15601"
+                 id="tspan4510-6-48-1-9"
+                 sodipodi:role="line">floor_texture=white_pillow</tspan></text>
+            <text
+               transform="scale(0.92452828,1.0816327)"
+               sodipodi:linespacing="125%"
+               id="text4512-3-7-4-2"
+               y="169.01245"
+               x="879.37567"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.69511724px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="169.01245"
+                 x="879.37567"
+                 id="tspan4514-20-1-9-2"
+                 sodipodi:role="line">has_ceiling=true</tspan></text>
+            <text
+               transform="scale(0.92452828,1.0816327)"
+               sodipodi:linespacing="125%"
+               id="text4516-6-7-5-8"
+               y="171.31975"
+               x="879.37567"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.69511724px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="171.31975"
+                 x="879.37567"
+                 id="tspan4518-1-2-2-9"
+                 sodipodi:role="line">name=pillow</tspan></text>
+            <text
+               transform="scale(0.92452828,1.0816327)"
+               sodipodi:linespacing="125%"
+               id="text4508-0-0-5-6-7"
+               y="166.24339"
+               x="878.90381"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.69511724px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="166.24339"
+                 x="878.90381"
+                 id="tspan4510-6-48-1-1-3"
+                 sodipodi:role="line">ceiling_texture=white_paint</tspan></text>
+            <g
+               id="g5164">
+              <rect
+                 style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:4, 0.99999999;stroke-dashoffset:0;stroke-opacity:1"
+                 id="rect5136"
+                 width="73.892654"
+                 height="35.001789"
+                 x="792.37866"
+                 y="157.97964" />
+              <text
+                 sodipodi:linespacing="125%"
+                 xml:space="preserve"
+                 style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.70635176px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 x="828.17035"
+                 y="185.77356"
+                 id="text4213-3-0-78-89-5-9-6"
+                 transform="scale(0.98033161,1.020063)"><tspan
+                   id="tspan4215-5-6-4-2-4-2-1"
+                   x="828.17035"
+                   y="185.77356">type=joining_edge</tspan></text>
+              <text
+                 sodipodi:linespacing="125%"
+                 xml:space="preserve"
+                 style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.70635176px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 x="828.42535"
+                 y="187.61168"
+                 id="text4213-3-0-78-89-5-9-2"
+                 transform="scale(0.98033161,1.020063)"><tspan
+                   id="tspan4215-5-6-4-2-4-2-9"
+                   x="828.42535"
+                   y="187.61168">bottom_texture=white_pillow</tspan></text>
+            </g>
+          </g>
         </g>
+        <text
+           transform="scale(0.96712079,1.033997)"
+           sodipodi:linespacing="125%"
+           id="text4508-0-0-6"
+           y="344.33981"
+           x="541.37109"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.72191858px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="344.33981"
+             x="541.37109"
+             id="tspan4510-6-48-2"
+             sodipodi:role="line">ceiling_texture=white_paint</tspan></text>
       </g>
       <g
          id="g4108">
@@ -801,7 +953,7 @@
              y="150.49599"
              x="263.43408"
              id="tspan4510-6"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=light_wood</tspan></text>
         <text
            transform="scale(0.99662871,1.0033827)"
            sodipodi:linespacing="125%"
@@ -829,10 +981,11 @@
         <g
            id="g191235">
           <path
-             style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.00000012;stroke-miterlimit:4;stroke-dasharray:4.0000001, 1.00000002;stroke-dashoffset:0;stroke-opacity:1"
-             d="m 406.74453,638.08345 -180.83453,0 0,-522.62225 723.33813,0 0,522.62225 -361.66906,0"
+             style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.00000012;stroke-miterlimit:4;stroke-dasharray:4.00000005, 1;stroke-dashoffset:0;stroke-opacity:1"
+             d="m 497.54362,725.08343 -271.63362,0 0,-609.62223 723.33813,0 0,609.62223 -271.735,0"
              id="rect5041"
-             inkscape:connector-curvature="0" />
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccccc" />
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.78897429px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -1051,12 +1204,13 @@
                sodipodi:role="line"
                id="tspan5673-4-2-1-9"
                x="533.06146"
-               y="474.4968">bottom_texture=grey_stone</tspan></text>
+               y="474.4968">bottom_texture=dark_wood</tspan></text>
         </g>
         <g
-           id="g191250">
+           id="g191250"
+           transform="translate(90.409241,87.01398)">
           <path
-             style="opacity:1;fill:none;fill-opacity:1;stroke:#b200ff;stroke-width:1.00000012;stroke-miterlimit:4;stroke-dasharray:4.0000001, 1.00000002000000010;stroke-dashoffset:0;stroke-opacity:1"
+             style="opacity:1;fill:none;fill-opacity:1;stroke:#b200ff;stroke-width:1.00000012;stroke-miterlimit:4;stroke-dasharray:4.0000001, 1.00000002;stroke-dashoffset:0;stroke-opacity:1"
              d="m 587.57907,638.08345 -180.83454,0"
              id="path191227"
              inkscape:connector-curvature="0" />
@@ -1117,7 +1271,8 @@
              sodipodi:role="line">texture=hedge</tspan></text>
       </g>
       <g
-         id="g3694">
+         id="g3694"
+         transform="translate(90.659835,87.062523)">
         <text
            transform="scale(0.87566725,1.1419863)"
            id="text4213-3-0-78-8-4-5-1-1"
@@ -1162,7 +1317,7 @@
              y="590.90619"
              x="616.92291"
              id="tspan4510-6-4-1-0-3-6"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=light_wood</tspan></text>
         <text
            transform="scale(0.82582173,1.2109151)"
            sodipodi:linespacing="125%"
@@ -1207,11 +1362,11 @@
                y="733.73547"
                x="474.51532"
                id="tspan191265-0-0"
-               sodipodi:role="line">bottom_texture=grey_stone</tspan></text>
+               sodipodi:role="line">bottom_texture=dark_bricks</tspan></text>
         </g>
       </g>
       <g
-         transform="translate(-1.0351562e-6,-49.750003)"
+         transform="translate(90.659835,37.31252)"
          id="g3694-3">
         <text
            transform="scale(0.87566725,1.1419863)"
@@ -1257,7 +1412,7 @@
              y="590.90619"
              x="616.92291"
              id="tspan4510-6-4-1-0-3-6-9"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=light_wood</tspan></text>
         <text
            transform="scale(0.82582173,1.2109151)"
            sodipodi:linespacing="125%"
@@ -1302,7 +1457,7 @@
                y="733.73547"
                x="474.51532"
                id="tspan191265-0-0-0"
-               sodipodi:role="line">bottom_texture=grey_stone</tspan></text>
+               sodipodi:role="line">bottom_texture=dark_bricks</tspan></text>
         </g>
       </g>
     </g>

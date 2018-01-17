@@ -54,6 +54,9 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   rg.textures["hedge"] = Texture{QImage("data/hedge.png"), Size(100, 100)};
   rg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
   rg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
+  rg.textures["dark_wood"] = Texture{QImage("data/dark_wood.png"), Size(100, 100)};
+  rg.textures["light_wood"] = Texture{QImage("data/light_wood.png"), Size(100, 100)};
+  rg.textures["white_paint"] = Texture{QImage("data/white_paint.png"), Size(100, 100)};
   rg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
   rg.textures["grass"] = Texture{QImage("data/grass.png"), Size(100, 100)};
   rg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
@@ -61,6 +64,8 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   rg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
   rg.textures["outside_window"] = Texture{QImage("data/outside_window.png"), Size()};
   rg.textures["inside_window"] = Texture{QImage("data/inside_window.png"), Size()};
+  rg.textures["white_pillow"] = Texture{QImage("data/white_pillow.png"), Size(100, 100)};
+  rg.textures["bed"] = Texture{QImage("data/bed.png"), Size(100, 100)};
   rg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
   rg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
   rg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
