@@ -75,7 +75,9 @@ static CZone* getNextZone(const CZone& current, const CSoftEdge& se) {
 //===========================================
 // canStepAcrossEdge
 //===========================================
-static bool canStepAcrossEdge(const CZone& zone, double height, const Size& bodySize, const CEdge& edge) {
+static bool canStepAcrossEdge(const CZone& zone, double height, const Size& bodySize,
+  const CEdge& edge) {
+
   if (edge.kind != CSpatialKind::SOFT_EDGE) {
     return false;
   }
@@ -124,7 +126,9 @@ static bool pathBlocked(const CZone& zone, const Point& pos, double height, cons
 // Takes the vector the player wants to move in (oldV) and returns a modified vector that doesn't
 // allow the player within radius units of a wall.
 //===========================================
-static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& oldV, int depth = 0) {
+static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& oldV,
+  int depth = 0) {
+
   if (depth > 9) {
     return Vec2f(0, 0);
   }
@@ -162,7 +166,9 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
         Vec2f v = getDelta(body, height, radius, oldV + adjustment, depth + 1);
 
         // This should prevent corner cutting
-        if (!pathBlocked(zone, pos, height, body.size, v) && length(v - oldV) < length(newV - oldV)) {
+        if (!pathBlocked(zone, pos, height, body.size, v)
+          && length(v - oldV) < length(newV - oldV)) {
+
           newV = v;
         }
       }
