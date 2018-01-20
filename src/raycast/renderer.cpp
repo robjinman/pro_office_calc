@@ -308,6 +308,54 @@ static LineSegment projectionPlane(const Camera& cam, const RenderGraph& rg) {
 }
 
 //===========================================
+// computeSlice
+//===========================================
+static Slice computeSlice(const LineSegment& rotProjPlane, const LineSegment& wall, double subview0,
+  double subview1, const LineSegment& projRay0, const LineSegment& projRay1, Point& projX0,
+  Point& projX1) {
+
+  Slice slice;
+
+  LineSegment wallRay0(Point(0, 0), wall.A);
+  LineSegment wallRay1(Point(0, 0), wall.B);
+
+  Line l = LineSegment(Point(wall.A.x, 0), Point(wall.A.x, 1)).line();
+  double wall_s0 = lineIntersect(projRay0.line(), l).y;
+  double wall_s1 = lineIntersect(projRay1.line(), l).y;
+
+  auto wallAClip = clipNumber(wall.A.y, Range(wall_s0, wall_s1), slice.sliceBottom_wd);
+  auto wallBClip = clipNumber(wall.B.y, Range(wall_s0, wall_s1), slice.sliceTop_wd);
+
+  projX0 = lineIntersect(wallRay0.line(), rotProjPlane.line());
+  projX0 = clipToLineSegment(projX0, rotProjPlane);
+  double projW0 = rotProjPlane.signedDistance(projX0.x);
+
+  projX1 = lineIntersect(wallRay1.line(), rotProjPlane.line());
+  projX1 = clipToLineSegment(projX1, rotProjPlane);
+  double projW1 = rotProjPlane.signedDistance(projX1.x);
+
+  if (wallAClip == CLIPPED_TO_BOTTOM) {
+    projW0 = subview0;
+  }
+  if (wallAClip == CLIPPED_TO_TOP) {
+    projW0 = subview1;
+  }
+  if (wallBClip == CLIPPED_TO_BOTTOM) {
+    projW1 = subview0;
+  }
+  if (wallBClip == CLIPPED_TO_TOP) {
+    projW1 = subview1;
+  }
+
+  slice.projSliceBottom_wd = projW0;
+  slice.projSliceTop_wd = projW1;
+  slice.viewportBottom_wd = subview0;
+  slice.viewportTop_wd = subview1;
+
+  return slice;
+}
+
+//===========================================
 // castRay
 //===========================================
 static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
@@ -346,38 +394,9 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + targetHeight));
 
-      LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));
-      LineSegment wallRay1(Point(0, 0), Point(pt.x, wall.B.y));
-
-      Point p = lineIntersect(wallRay0.line(), rotProjPlane.line());
-      double proj_w0 = rotProjPlane.signedDistance(p.x);
-      p = lineIntersect(wallRay1.line(), rotProjPlane.line());
-      double proj_w1 = rotProjPlane.signedDistance(p.x);
-
-      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
-      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
-
-      auto wallAClip = clipNumber(wall.A.y, Range(wall_s0, wall_s1), wallX.slice.sliceBottom_wd);
-      auto wallBClip = clipNumber(wall.B.y, Range(wall_s0, wall_s1), wallX.slice.sliceTop_wd);
-
-      if (wallAClip == CLIPPED_TO_BOTTOM) {
-        proj_w0 = subview0;
-      }
-      if (wallAClip == CLIPPED_TO_TOP) {
-        proj_w0 = subview1;
-      }
-      if (wallBClip == CLIPPED_TO_BOTTOM) {
-        proj_w1 = subview0;
-      }
-      if (wallBClip == CLIPPED_TO_TOP) {
-        proj_w1 = subview1;
-      }
-
-      wallX.slice.projSliceBottom_wd = proj_w0;
-      wallX.slice.projSliceTop_wd = proj_w1;
-
-      wallX.slice.viewportBottom_wd = subview0;
-      wallX.slice.viewportTop_wd = subview1;
+      Point projX0, projX1;
+      wallX.slice = computeSlice(rotProjPlane, wall, subview0, subview1, projRay0, projRay1,
+        projX0, projX1);
 
       break;
     }
@@ -397,7 +416,6 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       const CRegion& nextRegion =
         dynamic_cast<const CRegion&>(renderSystem.getComponent(nextZone->entityId()));
 
-      const Point& pt = joinX.X->point_rel;
 
       double floorDiff = nextZone->floorHeight - zone->floorHeight;
       double ceilingDiff = zone->ceilingHeight - nextZone->ceilingHeight;
@@ -408,6 +426,8 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       double topWallA = bottomWallB + nextZoneSpan;
       double topWallB = topWallA + ceilingDiff;
 
+      bool slice1Visible = true;
+
       if (floorDiff < 0) {
         bottomWallB = bottomWallA;
       }
@@ -415,90 +435,30 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
         topWallA = topWallB;
 
         if (!region.hasCeiling) {
-          joinX.slice1.visible = false;
+          slice1Visible = false;
         }
       }
+
+      const Point& pt = joinX.X->point_rel;
 
       LineSegment bottomWall(Point(pt.x, bottomWallA), Point(pt.x, bottomWallB));
       LineSegment topWall(Point(pt.x, topWallA), Point(pt.x, topWallB));
 
-      LineSegment bottomWallRay0(Point(0, 0), bottomWall.A);
-      LineSegment bottomWallRay1(Point(0, 0), bottomWall.B);
+      Point bProjX0, bProjX1, tProjX0, tProjX1;
+      joinX.slice0 = computeSlice(rotProjPlane, bottomWall, subview0, subview1, projRay0, projRay1,
+        bProjX0, bProjX1);
+      joinX.slice1 = computeSlice(rotProjPlane, topWall, subview0, subview1, projRay0, projRay1,
+        tProjX0, tProjX1);
+      joinX.slice1.visible = slice1Visible;
 
-      LineSegment topWallRay0(Point(0, 0), topWall.A);
-      LineSegment topWallRay1(Point(0, 0), topWall.B);
-
-      LineSegment wall(Point(pt.x, bottomWallA), Point(pt.x, topWallB));
-      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
-      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
-
-      auto bWallAClip = clipNumber(bottomWall.A.y, Range(wall_s0, wall_s1),
-        joinX.slice0.sliceBottom_wd);
-      auto bWallBClip = clipNumber(bottomWall.B.y, Range(wall_s0, wall_s1),
-        joinX.slice0.sliceTop_wd);
-
-      auto tWallAClip = clipNumber(topWall.A.y, Range(wall_s0, wall_s1),
-        joinX.slice1.sliceBottom_wd);
-      auto tWallBClip = clipNumber(topWall.B.y, Range(wall_s0, wall_s1), joinX.slice1.sliceTop_wd);
-
-      Point p = lineIntersect(bottomWallRay0.line(), rotProjPlane.line());
-      double proj_bw0 = rotProjPlane.signedDistance(p.x);
-      p = lineIntersect(bottomWallRay1.line(), rotProjPlane.line());
-      Point vw0 = p = clipToLineSegment(p, rotProjPlane);
-      double proj_bw1 = rotProjPlane.signedDistance(p.x);
-      p = lineIntersect(topWallRay0.line(), rotProjPlane.line());
-      Point vw1 = p = clipToLineSegment(p, rotProjPlane);
-      double proj_tw0 = rotProjPlane.signedDistance(p.x);
-      p = lineIntersect(topWallRay1.line(), rotProjPlane.line());
-      double proj_tw1 = rotProjPlane.signedDistance(p.x);
-
-      if (bWallAClip == CLIPPED_TO_BOTTOM) {
-        proj_bw0 = subview0;
-      }
-      if (bWallAClip == CLIPPED_TO_TOP) {
-        proj_bw0 = subview1;
-      }
-      if (bWallBClip == CLIPPED_TO_BOTTOM) {
-        proj_bw1 = subview0;
-        vw0 = rotProjPlane.A;
-      }
-      if (bWallBClip == CLIPPED_TO_TOP) {
-        proj_bw1 = subview1;
-        vw0 = rotProjPlane.B;
-      }
-      if (tWallAClip == CLIPPED_TO_BOTTOM) {
-        proj_tw0 = subview0;
-        vw1 = rotProjPlane.A;
-      }
-      if (tWallAClip == CLIPPED_TO_TOP) {
-        proj_tw0 = subview1;
-        vw1 = rotProjPlane.B;
-      }
-      if (tWallBClip == CLIPPED_TO_BOTTOM) {
-        proj_tw1 = subview0;
-      }
-      if (tWallBClip == CLIPPED_TO_TOP) {
-        proj_tw1 = subview1;
+      if (joinX.slice0.projSliceTop_wd > subview0) {
+        subview0 = joinX.slice0.projSliceTop_wd;
+        projRay0 = LineSegment(Point(0, 0), bProjX1 * 9999.9);
       }
 
-      joinX.slice0.projSliceBottom_wd = proj_bw0;
-      joinX.slice0.projSliceTop_wd = proj_bw1;
-      joinX.slice1.projSliceBottom_wd = proj_tw0;
-      joinX.slice1.projSliceTop_wd = proj_tw1;
-
-      joinX.slice0.viewportBottom_wd = subview0;
-      joinX.slice0.viewportTop_wd = subview1;
-      joinX.slice1.viewportBottom_wd = subview0;
-      joinX.slice1.viewportTop_wd = subview1;
-
-      if (proj_bw1 > subview0) {
-        subview0 = proj_bw1;
-        projRay0 = LineSegment(Point(0, 0), vw0 * 9999.9);
-      }
-
-      if (region.hasCeiling && proj_tw0 < subview1) {
-        subview1 = proj_tw0;
-        projRay1 = LineSegment(Point(0, 0), vw1 * 9999.9);
+      if (region.hasCeiling && joinX.slice1.projSliceBottom_wd < subview1) {
+        subview1 = joinX.slice1.projSliceBottom_wd;
+        projRay1 = LineSegment(Point(0, 0), tProjX0 * 9999.9);
       }
 
       zone = nextZone;
@@ -509,28 +469,12 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       double floorHeight = spriteX.vRect->zone->floorHeight;
       const Point& pt = spriteX.X->point_rel;
 
-      LineSegment wall(Point(pt.x, floorHeight - cam.height),
+      LineSegment sprite(Point(pt.x, floorHeight - cam.height),
         Point(pt.x, floorHeight - cam.height + spriteX.vRect->size.y));
 
-      LineSegment wallRay0(Point(0, 0), Point(pt.x, wall.A.y));
-      LineSegment wallRay1(Point(0, 0), Point(pt.x, wall.B.y));
-
-      Point p = lineIntersect(wallRay0.line(), rotProjPlane.line());
-      double proj_w0 = rotProjPlane.signedDistance(p.x);
-      p = lineIntersect(wallRay1.line(), rotProjPlane.line());
-      double proj_w1 = rotProjPlane.signedDistance(p.x);
-
-      spriteX.slice.viewportBottom_wd = subview0;
-      spriteX.slice.viewportTop_wd = subview1;
-
-      spriteX.slice.projSliceBottom_wd = clipNumber(proj_w0, Range(subview0, subview1));
-      spriteX.slice.projSliceTop_wd = clipNumber(proj_w1, Range(subview0, subview1));
-
-      double wall_s0 = lineIntersect(projRay0.line(), wall.line()).y;
-      double wall_s1 = lineIntersect(projRay1.line(), wall.line()).y;
-
-      spriteX.slice.sliceBottom_wd = clipNumber(wall.A.y, Range(wall_s0, wall_s1));
-      spriteX.slice.sliceTop_wd = clipNumber(wall.B.y, Range(wall_s0, wall_s1));
+      Point projX0, projX1;
+      spriteX.slice = computeSlice(rotProjPlane, sprite, subview0, subview1, projRay0, projRay1,
+        projX0, projX1);
     }
 
     if (subview1 <= subview0) {
