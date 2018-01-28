@@ -51,6 +51,10 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
   rg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
   rg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
+  rg.textures["slimy_bricks"] = Texture{QImage("data/slimy_bricks.png"), Size(100, 100)};
+  rg.textures["bricks_and_metal"] = Texture{QImage("data/bricks_and_metal.png"), Size(100, 100)};
+  rg.textures["metal_floor"] = Texture{QImage("data/metal_floor.png"), Size(100, 100)};
+  rg.textures["metal_ceiling"] = Texture{QImage("data/metal_ceiling.png"), Size(100, 100)};
   rg.textures["hedge"] = Texture{QImage("data/hedge.png"), Size(100, 100)};
   rg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
   rg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
@@ -60,6 +64,7 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   rg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
   rg.textures["grass"] = Texture{QImage("data/grass.png"), Size(100, 100)};
   rg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
+  rg.textures["singularity"] = Texture{QImage("data/singularity.png"), Size()};
   rg.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
   rg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
   rg.textures["outside_window"] = Texture{QImage("data/outside_window.png"), Size()};
@@ -134,7 +139,7 @@ void RaycastWidget::initialise() {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  loadMap("data/maps/house3.svg");
+  loadMap("data/maps/maze.svg");
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

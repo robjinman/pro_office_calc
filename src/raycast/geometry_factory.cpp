@@ -9,6 +9,7 @@
 #include "raycast/entity_manager.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/time_service.hpp"
+#include "utils.hpp"
 
 
 using std::stringstream;
@@ -64,10 +65,19 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
   if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
     || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
 
+    DBG_PRINT_VAR(wall);
+    DBG_PRINT_VAR(A);
+    DBG_PRINT_VAR(B);
+
     return false;
   }
 
   if (!isBetween(wall.line().at(A.x).y, wall.A.y, wall.B.y)) {
+    DBG_PRINT_VAR(wall);
+    DBG_PRINT_VAR(wall.line().at(A.x));
+    DBG_PRINT_VAR(wall.A.y);
+    DBG_PRINT_VAR(wall.B.y);
+
     return false;
   }
 
