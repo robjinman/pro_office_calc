@@ -130,7 +130,7 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
 //===========================================
 // RaycastWidget::initialise
 //===========================================
-void RaycastWidget::initialise() {
+void RaycastWidget::initialise(const string& mapFile) {
   m_rootFactory.reset(new RootFactory(m_entityManager, m_audioService, m_timeService));
 
   setMouseTracking(true);
@@ -164,8 +164,7 @@ void RaycastWidget::initialise() {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  // TODO
-  loadMap("data/maps/maze.svg");
+  loadMap(mapFile);
 
   m_timer.reset(new QTimer(this));
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

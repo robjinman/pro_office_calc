@@ -26,7 +26,7 @@ class RaycastWidget : public QWidget {
   public:
     RaycastWidget(QWidget* parent, EventSystem& eventSystem);
 
-    void initialise();
+    void initialise(const std::string& mapFile);
 
   protected:
     void paintEvent(QPaintEvent* event) override;

@@ -38,7 +38,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   m_data.wgtRaycast.reset(new RaycastWidget(this, *parentData.eventSystem));
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
-  m_data.wgtRaycast->initialise();
+  m_data.wgtRaycast->initialise("data/maps/maze.svg");
 }
 
 //===========================================
