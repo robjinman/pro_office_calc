@@ -41,64 +41,89 @@ RaycastWidget::RaycastWidget(QWidget* parent, EventSystem& eventSystem)
     m_audioService(m_entityManager) {}
 
 //===========================================
+// loadTextures
+//===========================================
+static void loadTextures(RenderGraph& rg, const parser::Object& obj) {
+  for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
+    rg.textures[it->first] = Texture{QImage(it->second.c_str()), Size(100, 100)};
+  }
+}
+
+//===========================================
+// loadMusicAssets
+//===========================================
+static void loadMusicAssets(AudioService& audioService, const parser::Object& obj) {
+  for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
+    audioService.addMusicTrack(it->first, it->second);
+  }
+}
+
+//===========================================
+// loadSoundAssets
+//===========================================
+static void loadSoundAssets(AudioService& audioService, const parser::Object& obj) {
+  for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
+    audioService.addSound(it->first, it->second);
+  }
+}
+
+//===========================================
+// configureAudioService
+//===========================================
+static void configureAudioService(AudioService& audioService, const parser::Object& obj) {
+  parser::Object* pObj = firstObjectOfType(obj.children, "music_assets");
+  if (pObj != nullptr) {
+    loadMusicAssets(audioService, *pObj);
+  }
+
+  pObj = firstObjectOfType(obj.children, "sound_assets");
+  if (pObj != nullptr) {
+    loadSoundAssets(audioService, *pObj);
+  }
+
+  string musicTrack = getValue(obj.dict, "music_track", "loop1");
+
+  string strMusicVolume = getValue(obj.dict, "music_volume", "1.0");
+  double musicVolume = std::stod(strMusicVolume);
+
+  audioService.setMusicVolume(musicVolume);
+  audioService.playMusic(musicTrack);
+}
+
+//===========================================
+// configure
+//===========================================
+static void configure(RenderGraph& rg, AudioService& audioService, const parser::Object& config) {
+  parser::Object* pObj = firstObjectOfType(config.children, "texture_assets");
+  if (pObj != nullptr) {
+    loadTextures(rg, *pObj);
+  }
+
+  pObj = firstObjectOfType(config.children, "audio_config");
+  if (pObj != nullptr) {
+    configureAudioService(audioService, *pObj);
+  }
+}
+
+//===========================================
 // RaycastWidget::loadMap
 //===========================================
 void RaycastWidget::loadMap(const string& mapFilePath) {
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem&>(ComponentKind::C_RENDER);
   RenderGraph& rg = renderSystem.rg;
 
-  // TODO: Read from map file
-  rg.textures["default"] = Texture{QImage("data/default.png"), Size(100, 100)};
-  rg.textures["light_bricks"] = Texture{QImage("data/light_bricks.png"), Size(100, 100)};
-  rg.textures["dark_bricks"] = Texture{QImage("data/dark_bricks.png"), Size(100, 100)};
-  rg.textures["slimy_bricks"] = Texture{QImage("data/slimy_bricks.png"), Size(100, 100)};
-  rg.textures["bricks_and_metal"] = Texture{QImage("data/bricks_and_metal.png"), Size(100, 100)};
-  rg.textures["metal_floor"] = Texture{QImage("data/metal_floor.png"), Size(100, 100)};
-  rg.textures["metal_ceiling"] = Texture{QImage("data/metal_ceiling.png"), Size(100, 100)};
-  rg.textures["hedge"] = Texture{QImage("data/hedge.png"), Size(100, 100)};
-  rg.textures["door"] = Texture{QImage("data/door.png"), Size(100, 100)};
-  rg.textures["cracked_mud"] = Texture{QImage("data/cracked_mud.png"), Size(100, 100)};
-  rg.textures["dark_wood"] = Texture{QImage("data/dark_wood.png"), Size(100, 100)};
-  rg.textures["light_wood"] = Texture{QImage("data/light_wood.png"), Size(100, 100)};
-  rg.textures["white_paint"] = Texture{QImage("data/white_paint.png"), Size(100, 100)};
-  rg.textures["dirt"] = Texture{QImage("data/dirt.png"), Size(100, 100)};
-  rg.textures["grass"] = Texture{QImage("data/grass.png"), Size(100, 100)};
-  rg.textures["crate"] = Texture{QImage("data/crate.png"), Size(30, 30)};
-  rg.textures["singularity"] = Texture{QImage("data/singularity.png"), Size()};
-  rg.textures["grey_stone"] = Texture{QImage("data/grey_stone.png"), Size(100, 100)};
-  rg.textures["stone_slabs"] = Texture{QImage("data/stone_slabs.png"), Size(100, 100)};
-  rg.textures["outside_window"] = Texture{QImage("data/outside_window.png"), Size()};
-  rg.textures["inside_window"] = Texture{QImage("data/inside_window.png"), Size()};
-  rg.textures["white_pillow"] = Texture{QImage("data/white_pillow.png"), Size(100, 100)};
-  rg.textures["bed"] = Texture{QImage("data/bed.png"), Size(100, 100)};
-  rg.textures["ammo"] = Texture{QImage("data/ammo.png"), Size(100, 100)};
-  rg.textures["bad_guy"] = Texture{QImage("data/bad_guy.png"), Size(100, 100)};
-  rg.textures["sky"] = Texture{QImage("data/sky.png"), Size()};
-  rg.textures["beer"] = Texture{QImage("data/beer.png"), Size()};
-  rg.textures["gun"] = Texture{QImage("data/gun.png"), Size(100, 100)};
-  rg.textures["crosshair"] = Texture{QImage("data/crosshair.png"), Size(32, 32)};
-  rg.textures["switch"] = Texture{QImage("data/switch.png"), Size()};
-
-  m_audioService.addSound("pistol_shoot", "data/pistol_shoot.wav");
-  m_audioService.addSound("shotgun_shoot", "data/shotgun_shoot.wav");
-  m_audioService.addSound("monster_hurt", "data/monster_hurt.wav");
-  m_audioService.addSound("monster_death", "data/monster_death.wav");
-  m_audioService.addSound("ammo_collect", "data/ammo_collect.wav");
-  m_audioService.addSound("click", "data/click.wav");
-
-  m_audioService.addMusicTrack("loop1", "data/loop1.mp3");
-  m_audioService.addMusicTrack("loop2", "data/loop2.mp3");
-  m_audioService.addMusicTrack("loop3", "data/loop3.mp3");
-  m_audioService.addMusicTrack("birds", "data/birds.mp3");
-
-  m_audioService.setMusicVolume(1.0); // TODO
-  m_audioService.playMusic("birds");
-
   list<parser::pObject_t> objects;
   parser::parse(mapFilePath, objects);
 
-  assert(objects.size() == 1);
-  m_rootFactory->constructObject("region", -1, *objects.front(), -1, Matrix());
+  // A config object and the root region
+  assert(objects.size() == 2);
+
+  parser::Object& config = *firstObjectOfType(objects, "config");
+  parser::Object& rootRegion = *firstObjectOfType(objects, "region");
+
+  configure(rg, m_audioService, config);
+
+  m_rootFactory->constructObject("region", -1, rootRegion, -1, Matrix());
   m_rootFactory->constructObject("player_inventory", -1, parser::Object(), -1, Matrix());
 }
 
@@ -139,6 +164,7 @@ void RaycastWidget::initialise() {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
+  // TODO
   loadMap("data/maps/maze.svg");
 
   m_timer.reset(new QTimer(this));

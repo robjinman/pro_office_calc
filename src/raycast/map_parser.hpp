@@ -26,11 +26,13 @@ typedef std::unique_ptr<Object> pObject_t;
 struct Object {
   Matrix transform;
   Path path;
+  std::string type;
   std::map<std::string, std::string> dict;
   std::list<pObject_t> children;
 };
 
 void parse(const std::string& file, std::list<pObject_t>& objects);
+Object* firstObjectOfType(const std::list<pObject_t>& objects, const std::string& type);
 
 struct PathStreamToken {
   enum { SET_RELATIVE, SET_ABSOLUTE, CLOSE_PATH, POINT } kind;

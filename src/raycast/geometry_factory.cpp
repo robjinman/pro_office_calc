@@ -158,7 +158,7 @@ bool GeometryFactory::constructWalls(const parser::Object& obj,
     renderSystem.addComponent(pComponent_t(wall));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
-      m_rootFactory.constructObject(getValue((*it)->dict, "type"), -1, **it, entityId, m);
+      m_rootFactory.constructObject((*it)->type, -1, **it, entityId, m);
     }
   }
 
@@ -419,9 +419,8 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       const parser::Object& child = **it;
-      string type = getValue(child.dict, "type");
 
-      m_rootFactory.constructObject(type, -1, child, entityId, transform);
+      m_rootFactory.constructObject(child.type, -1, child, entityId, transform);
     }
   }
   catch (Exception& ex) {
@@ -447,7 +446,7 @@ bool GeometryFactory::constructRootRegion(const parser::Object& obj) {
   RenderGraph& rg = renderSystem.rg;
   SceneGraph& sg = spatialSystem.sg;
 
-  if (getValue(obj.dict, "type") != "region") {
+  if (obj.type != "region") {
     EXCEPTION("Expected object of type 'region'");
   }
 

@@ -223,9 +223,8 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
 
   for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
     parser::Object& child = **it;
-    string type = child.dict.at("type");
 
-    if (type == "patrol_path") {
+    if (child.type == "patrol_path") {
       behaviour->patrolPath = child.path.points;
     }
   }

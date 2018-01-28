@@ -282,6 +282,12 @@ Object* constructObject_r(const XMLElement& node) {
   Object* obj = new Object;
 
   extractKvPairs(node, obj->dict);
+  if (obj->dict.count("type") == 0) {
+    EXCEPTION("Object has no type key");
+  }
+  obj->type = obj->dict.at("type");
+  obj->dict.erase("type");
+
   extractGeometry(node, obj->path, obj->transform);
 
   const XMLElement* e = node.FirstChildElement();
@@ -321,6 +327,19 @@ void parse(const string& file, list<pObject_t>& objects) {
 
     e = e->NextSiblingElement();
   }
+}
+
+//===========================================
+// firstObjectOfType
+//===========================================
+Object* firstObjectOfType(const list<pObject_t>& objects, const string& type) {
+  for (auto& pObj : objects) {
+    if (pObj->type == type) {
+      return pObj.get();
+    }
+  }
+
+  return nullptr;
 }
 
 
