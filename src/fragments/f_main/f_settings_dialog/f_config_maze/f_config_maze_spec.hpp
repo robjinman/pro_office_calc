@@ -8,6 +8,8 @@
 struct FConfigMazeSpec : public FragmentSpec {
   FConfigMazeSpec()
     : FragmentSpec("FConfigMaze", {}) {}
+
+  std::string symbols = "1234567890.+-/*=C";
 };
 
 

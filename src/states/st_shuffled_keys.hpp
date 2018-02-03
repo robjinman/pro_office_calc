@@ -28,7 +28,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->shuffledCalcSpec.setEnabled(true);
   mainSpec->shuffledCalcSpec.targetValue = targetValue.toStdString();
   mainSpec->shuffledCalcSpec.displayColour = QColor(200, 200, 180);
-  mainSpec->shuffledCalcSpec.symbols = "☀☯⚙⚐⚶☂⚥☘♛♬⚒⚕⚽☠⚓♞⚖";
+  mainSpec->shuffledCalcSpec.symbols = "☉☿♀⊕♂♃♄⛢♅♆⚳⚴⚵⚶⚘⚕♇";
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
   mainSpec->aboutDialogSpec.setEnabled(true);
