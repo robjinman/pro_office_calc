@@ -15,7 +15,7 @@ struct FPreferencesDialogSpec : public FragmentSpec {
 
   FGlitchSpec glitchSpec;
 
-  QString titleText = "Preferences";
+  QString titleText = "Troubleshooter";
   int width = 640;
   int height = 480;
 };

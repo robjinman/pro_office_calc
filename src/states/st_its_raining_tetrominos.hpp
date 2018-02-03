@@ -28,10 +28,10 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1994 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
-  mainSpec->settingsDialogSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.width = 400;
-  mainSpec->settingsDialogSpec.height = 300;
   mainSpec->tetrominosSpec.setEnabled(true);
+  mainSpec->preferencesDialogSpec.setEnabled(true);
+  mainSpec->preferencesDialogSpec.width = 400;
+  mainSpec->preferencesDialogSpec.height = 300;
 
   return mainSpec;
 }
