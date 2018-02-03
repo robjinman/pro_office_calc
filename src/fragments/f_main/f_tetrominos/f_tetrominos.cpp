@@ -78,6 +78,8 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
     double dy = randSpeed(randEngine);
 
     for (int j = 0; j < rows; ++j) {
+      if (rand() % 3 != 0) continue;
+
       auto kind = static_cast<Tetromino::kind_t>(rand() % 7);
       double da = randAngle(randEngine);
 
@@ -199,7 +201,6 @@ void FTetrominos::drawTetrominos(QImage& buffer) {
 // FTetrominos::moveTetrominos
 //===========================================
 void FTetrominos::moveTetrominos() {
-  int i = 0;
   for (auto it = m_tetrominos.begin(); it != m_tetrominos.end(); ++it) {
     Tetromino& t = *it;
 
@@ -211,8 +212,6 @@ void FTetrominos::moveTetrominos() {
     if (t.y > parent.size().height() + BLOCK_SIZE) {
       t.y = -BLOCK_SIZE;
     }
-
-    ++i;
   }
 }
 

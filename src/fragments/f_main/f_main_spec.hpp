@@ -11,7 +11,7 @@
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
-#include "fragments/f_main/f_preferences_dialog/f_preferences_dialog_spec.hpp"
+#include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog_spec.hpp"
 #include "fragments/f_main/f_tetrominos/f_tetrominos_spec.hpp"
 
 
@@ -24,7 +24,7 @@ struct FMainSpec : public FragmentSpec {
         &loginScreenSpec,
         &countdownToStartSpec,
         &settingsDialogSpec,
-        &preferencesDialogSpec,
+        &troubleshooterDialogSpec,
         &tetrominosSpec
       }) {}
 
@@ -34,7 +34,7 @@ struct FMainSpec : public FragmentSpec {
   FLoginScreenSpec loginScreenSpec;
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
-  FPreferencesDialogSpec preferencesDialogSpec;
+  FTroubleshooterDialogSpec troubleshooterDialogSpec;
   FTetrominosSpec tetrominosSpec;
 
   QString windowTitle = "Pro Office Calculator";
