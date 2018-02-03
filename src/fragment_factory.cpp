@@ -3,7 +3,6 @@
 #include "utils.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch.hpp"
 #include "fragments/f_main/f_main.hpp"
-#include "fragments/f_main/f_about_dialog/f_about_dialog.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
@@ -28,9 +27,6 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
 
   if (name == "FGlitch") {
     return new FGlitch(parent, parentData);
-  }
-  else if (name == "FAboutDialog") {
-    return new FAboutDialog(parent, parentData);
   }
   else if (name == "FCalculator") {
     return new FCalculator(parent, parentData);

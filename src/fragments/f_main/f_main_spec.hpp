@@ -8,7 +8,6 @@
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 #include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc_spec.hpp"
-#include "fragments/f_main/f_about_dialog/f_about_dialog_spec.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
@@ -23,7 +22,6 @@ struct FMainSpec : public FragmentSpec {
         &calculatorSpec,
         &shuffledCalcSpec,
         &loginScreenSpec,
-        &aboutDialogSpec,
         &countdownToStartSpec,
         &settingsDialogSpec,
         &preferencesDialogSpec,
@@ -34,7 +32,6 @@ struct FMainSpec : public FragmentSpec {
   FCalculatorSpec calculatorSpec;
   FShuffledCalcSpec shuffledCalcSpec;
   FLoginScreenSpec loginScreenSpec;
-  FAboutDialogSpec aboutDialogSpec;
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
   FPreferencesDialogSpec preferencesDialogSpec;
@@ -47,6 +44,10 @@ struct FMainSpec : public FragmentSpec {
   QString backgroundImage;
   QString fileLabel = "File";
   QString quitLabel = "Quit";
+  QString helpLabel = "Help";
+  QString aboutLabel = "About";
+  QString aboutDialogTitle = "About";
+  QString aboutDialogText;
 };
 
 

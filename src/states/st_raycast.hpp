@@ -14,11 +14,10 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->bgColour = QColor(160, 160, 160);
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
-  mainSpec->aboutDialogSpec.setEnabled(true);
-  mainSpec->aboutDialogSpec.helpLabel = "H͠e͘l͢p";
-  mainSpec->aboutDialogSpec.aboutLabel = "A͡b҉ou͞t̵";
-  mainSpec->aboutDialogSpec.aboutDialogTitle = "A͞b̶out";
-  mainSpec->aboutDialogSpec.aboutDialogText =
+  mainSpec->helpLabel = "H͠e͘l͢p";
+  mainSpec->aboutLabel = "A͡b҉ou͞t̵";
+  mainSpec->aboutDialogTitle = "A͞b̶out";
+  mainSpec->aboutDialogText =
     "<div>"
     "  <img src='data/apex.png'>"
     "  <p align='center'><big>P̸ro͡ ͏Office͟ ̀Ca͘l̶cu҉l̴at͘or̛</big>"

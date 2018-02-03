@@ -29,8 +29,8 @@ void FPreferencesDialog::reload(const FragmentSpec& spec_) {
   m_data.vbox.reset(new QVBoxLayout);
   setLayout(m_data.vbox.get());
 
-  m_data.actPreferences.reset(new QAction("Preferences", this));
-  parentData.mnuFile->addAction(m_data.actPreferences.get());
+  m_data.actPreferences.reset(new QAction("Troubleshooter", this));
+  parentData.mnuHelp->addAction(m_data.actPreferences.get());
 
   connect(m_data.actPreferences.get(), SIGNAL(triggered()), this, SLOT(showPreferencesDialog()));
 
@@ -48,7 +48,7 @@ void FPreferencesDialog::cleanUp() {
 
   auto& parentData = parentFragData<FMainData>();
 
-  parentData.mnuFile->removeAction(m_data.actPreferences.get());
+  parentData.mnuHelp->removeAction(m_data.actPreferences.get());
 }
 
 //===========================================

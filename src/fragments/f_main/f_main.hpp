@@ -25,6 +25,8 @@ struct FMainData : public FragmentData {
   UpdateLoop& updateLoop;
   std::unique_ptr<QMenu> mnuFile;
   std::unique_ptr<QAction> actQuit;
+  std::unique_ptr<QMenu> mnuHelp;
+  std::unique_ptr<QAction> actAbout;
   std::function<void()> fnOnQuit = []() {};
 };
 
@@ -43,8 +45,13 @@ class FMain : public QMainWindow, public Fragment {
   protected:
     virtual void closeEvent(QCloseEvent*);
 
+  private slots:
+    void showAbout();
+
   private:
     FMainData m_data;
+    QString m_aboutDialogTitle;
+    QString m_aboutDialogText;
 };
 
 

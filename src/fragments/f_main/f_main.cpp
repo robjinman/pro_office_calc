@@ -1,4 +1,5 @@
 #include <QMenuBar>
+#include <QMessageBox>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 #include "utils.hpp"
@@ -26,6 +27,11 @@ FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
   m_data.actQuit.reset(new QAction("Quit", this));
   m_data.mnuFile->addAction(m_data.actQuit.get());
 
+  m_data.mnuHelp.reset(menuBar()->addMenu("Help"));
+  m_data.actAbout.reset(new QAction("About", this));
+  m_data.mnuHelp->addAction(m_data.actAbout.get());
+
+  connect(m_data.actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));
   connect(m_data.actQuit.get(), SIGNAL(triggered()), this, SLOT(close()));
 }
 
@@ -51,6 +57,23 @@ void FMain::reload(const FragmentSpec& spec_) {
       "  background-image: url(\"" + spec.backgroundImage + "\");"
       "}");
   }
+
+  m_aboutDialogTitle = spec.aboutDialogTitle;
+  m_aboutDialogText = spec.aboutDialogText;
+
+  m_data.mnuHelp->setTitle(spec.helpLabel);
+  m_data.actAbout->setText(spec.aboutLabel);
+}
+
+//===========================================
+// FMain::showAbout
+//===========================================
+void FMain::showAbout() {
+  QMessageBox msgBox(this);
+  msgBox.setTextFormat(Qt::RichText);
+  msgBox.setWindowTitle(m_aboutDialogTitle);
+  msgBox.setText(m_aboutDialogText);
+  msgBox.exec();
 }
 
 //===========================================
