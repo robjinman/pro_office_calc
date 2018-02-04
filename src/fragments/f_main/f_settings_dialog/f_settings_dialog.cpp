@@ -7,15 +7,13 @@
 //===========================================
 // FSettingsDialog::FSettingsDialog
 //===========================================
-FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FSettingsDialog", parent_, parentData_, m_data) {
+FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
+  : Fragment("FSettingsDialog", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FSettingsDialog::FSettingsDialog\n");
 
   auto& parentData = parentFragData<FMainData>();
-
-  m_data.eventSystem = &parentData.eventSystem;
-  m_data.updateLoop = &parentData.updateLoop;
 
   m_data.vbox.reset(new QVBoxLayout);
   setLayout(m_data.vbox.get());

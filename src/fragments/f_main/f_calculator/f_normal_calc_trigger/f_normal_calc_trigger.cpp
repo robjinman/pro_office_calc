@@ -14,8 +14,9 @@
 //===========================================
 // FNormalCalcTrigger::FNormalCalcTrigger
 //===========================================
-FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data) {
+FNormalCalcTrigger::FNormalCalcTrigger(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
+  : Fragment("FNormalCalcTrigger", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FNormalCalcTrigger::FNormalCalcTrigger\n");
 }
@@ -70,7 +71,7 @@ void FNormalCalcTrigger::onButtonClick(int id) {
       QColor origCol = data.window->palette().color(QPalette::Window);
       int i = 0;
 
-      data.updateLoop->add([=,&data]() mutable {
+      commonData.updateLoop.add([=,&data]() mutable {
         auto& buttons = data.wgtButtonGrid->buttons;
         ++i;
 
@@ -81,10 +82,10 @@ void FNormalCalcTrigger::onButtonClick(int id) {
           ++j;
         }
 
-        return i < data.updateLoop->fps() * 1.5;
+        return i < commonData.updateLoop.fps() * 1.5;
       });
 
-      data.updateLoop->add([=,&data]() mutable {
+      commonData.updateLoop.add([=,&data]() mutable {
         ++i;
         if (i % 2) {
           setColour(*data.window, origCol, QPalette::Window);
@@ -93,15 +94,15 @@ void FNormalCalcTrigger::onButtonClick(int id) {
           setColour(*data.window, Qt::white, QPalette::Window);
         }
 
-        return i < data.updateLoop->fps();
+        return i < commonData.updateLoop.fps();
       }, [&]() {
-        transitionColour(*data.updateLoop, *data.window, m_targetWindowColour, QPalette::Window,
-          0.5, [&]() {
+        transitionColour(commonData.updateLoop, *data.window, m_targetWindowColour,
+          QPalette::Window, 0.5, [&]() {
 
-          data.eventSystem->fire(pEvent_t(new RequestStateChangeEvent(ST_SHUFFLED_KEYS)));
+          commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_SHUFFLED_KEYS)));
         });
 
-        transitionColour(*data.updateLoop, *data.wgtDigitDisplay, m_targetDisplayColour,
+        transitionColour(commonData.updateLoop, *data.wgtDigitDisplay, m_targetDisplayColour,
           QPalette::Base, 0.5);
       });
     }

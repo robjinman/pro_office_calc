@@ -12,7 +12,8 @@ class FNormalCalcTrigger : public QObject, public Fragment {
   Q_OBJECT
 
   public:
-    FNormalCalcTrigger(Fragment& parent, FragmentData& parentData);
+    FNormalCalcTrigger(Fragment& parent, FragmentData& parentData,
+      const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

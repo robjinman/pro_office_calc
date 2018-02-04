@@ -11,8 +11,9 @@
 //===========================================
 // FTroubleshooterDialog::FTroubleshooterDialog
 //===========================================
-FTroubleshooterDialog::FTroubleshooterDialog(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FTroubleshooterDialog", parent_, parentData_, m_data) {
+FTroubleshooterDialog::FTroubleshooterDialog(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
+  : Fragment("FTroubleshooterDialog", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FTroubleshooterDialog::FTroubleshooterDialog\n");
 }
@@ -24,9 +25,6 @@ void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FTroubleshooterDialog::reload\n");
 
   auto& parentData = parentFragData<FMainData>();
-
-  m_data.eventSystem = &parentData.eventSystem;
-  m_data.updateLoop = &parentData.updateLoop;
 
   m_data.vbox.reset(new QVBoxLayout);
   setLayout(m_data.vbox.get());
@@ -166,7 +164,7 @@ void FTroubleshooterDialog::onTick() {
     tab.wgtRunTroubleshooter->setDisabled(false);
     m_data.wgtTabs->addTab(m_data.tab3.page.get(), "a̵̧̡̖̬͔̿͊̂͐̕͘p̶̹̈ę̵̟̳̲̲̬͂͌͗x̴̡̡͙̥̓̏͑̉d̷͈̝͊͗̀̉ě̴̘̘̠̹̰̤̹̈́v̷̥͕̬̮̣̙̍̏̆̃̿̈́͜ȩ̵̂͊́͐l̴̞̤̈́͐̚͘͜ò̶͍͎̖̪̾̐͘͠p̸̨̛͇̞̑̓͂m̶̧̮͎̤͖͗e̶̜̒͊͋̉̈́͛̚ṇ̷͍̼̝̼͒t̶̳͈́̈́̔͝͠p̶̦̦̭̞̙̰̾̂͜ỏ̷̪̩̟͎̀̐͘r̷̡̥̘̺̻͚̺̾̏t̶̪͆͗̾͌͋͝à̸̺͙̻̎l̴̨̧͍̺̉̂́͘ͅ");
 
-    m_data.eventSystem->fire(pEvent_t(new Event("increaseTetrominoRain")));
+    commonData.eventSystem.fire(pEvent_t(new Event("increaseTetrominoRain")));
   }
   else {
     tab.wgtProgressBar->setValue(tab.wgtProgressBar->value() + 1);

@@ -7,9 +7,9 @@
 //===========================================
 // FGlitch::FGlitch
 //===========================================
-FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_)
+FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_, const CommonFragData& commonData)
   : QLabel(nullptr),
-    Fragment("FGlitch", parent_, parentData_, m_data) {
+    Fragment("FGlitch", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FGlitch::FGlitch\n");
 

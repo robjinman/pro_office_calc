@@ -15,7 +15,6 @@
 class EventSystem;
 
 struct FTetrominosData : public FragmentData {
-  EventSystem* eventSystem;
   std::unique_ptr<QTimer> timer;
 };
 
@@ -23,7 +22,7 @@ class FTetrominos : public QLabel, public Fragment {
   Q_OBJECT
 
   public:
-    FTetrominos(Fragment& parent, FragmentData& parentData);
+    FTetrominos(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

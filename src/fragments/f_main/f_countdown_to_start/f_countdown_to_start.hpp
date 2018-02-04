@@ -10,7 +10,7 @@ struct FCountdownToStartData : public FragmentData {};
 
 class FCountdownToStart : public Fragment {
   public:
-    FCountdownToStart(Fragment& parent, FragmentData& parentData);
+    FCountdownToStart(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

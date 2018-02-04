@@ -7,9 +7,11 @@
 
 class Fragment;
 class FragmentData;
+class CommonFragData;
 
 
-Fragment* constructFragment(const std::string& name, Fragment& parent, FragmentData& parentData);
+Fragment* constructFragment(const std::string& name, Fragment& parent, FragmentData& parentData,
+  const CommonFragData& commonData);
 
 
 #endif

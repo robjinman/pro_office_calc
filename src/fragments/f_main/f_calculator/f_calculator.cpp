@@ -10,9 +10,10 @@
 //===========================================
 // FCalculator::FCalculator
 //===========================================
-FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_)
+FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QWidget(nullptr),
-    Fragment("FCalculator", parent_, parentData_, m_data) {
+    Fragment("FCalculator", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FCalculator::FCalculator\n");
 }
@@ -24,15 +25,11 @@ void FCalculator::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FCalculator::reload\n");
 
   auto& parent = parentFrag<FMain>();
-  auto& parentData = parentFragData<FMainData>();
 
   m_data.window = &parent;
 
   m_origParentState.centralWidget = parent.centralWidget();
   parent.setCentralWidget(this);
-
-  m_data.eventSystem = &parentData.eventSystem;
-  m_data.updateLoop = &parentData.updateLoop;
 
   QFont f = font();
   f.setPointSize(16);

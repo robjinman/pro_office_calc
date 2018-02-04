@@ -38,9 +38,10 @@ static string generatePassword() {
 //===========================================
 // FConfigMaze::FConfigMaze
 //===========================================
-FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_)
+FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QWidget(nullptr),
-    Fragment("FConfigMaze", parent_, parentData_, m_data) {
+    Fragment("FConfigMaze", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FConfigMaze::FConfigMaze\n");
 
@@ -99,10 +100,8 @@ void FConfigMaze::constructAreYouSurePage() {
 // FConfigMaze::constructConsolePage
 //===========================================
 void FConfigMaze::constructConsolePage() {
-  auto& parentData = parentFragData<FSettingsDialogData>();
-
   string pwd = generatePassword();
-  parentData.eventSystem->fire(pEvent_t(new PasswordGeneratedEvent(pwd)));
+  commonData.eventSystem.fire(pEvent_t(new PasswordGeneratedEvent(pwd)));
 
   string initialContent =
     "┌───────────────────────────────────────┐\n"

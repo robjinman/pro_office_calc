@@ -12,6 +12,15 @@ struct FragmentData {
 };
 
 
+class EventSystem;
+class UpdateLoop;
+
+struct CommonFragData {
+  EventSystem& eventSystem;
+  UpdateLoop& updateLoop;
+};
+
+
 class FragmentSpec;
 class Fragment;
 
@@ -21,10 +30,10 @@ class Fragment {
   public:
     // Use constructor to initialise the fragment and attach to / modify the parent
 
-    Fragment(const std::string& name, FragmentData& ownData);
+    Fragment(const std::string& name, FragmentData& ownData, const CommonFragData& commonData);
 
-    Fragment(const std::string& name, Fragment& parent,
-      FragmentData& parentData, FragmentData& ownData);
+    Fragment(const std::string& name, Fragment& parent, FragmentData& parentData,
+      FragmentData& ownData, const CommonFragData& commonData);
 
     // Rebuild fragment tree by adding/removing children and calling their respective
     // lifecycle functions
@@ -51,6 +60,9 @@ class Fragment {
     const std::string& name() const;
 
     virtual ~Fragment() = 0;
+
+  protected:
+    CommonFragData commonData;
 
   private:
     std::string m_name;

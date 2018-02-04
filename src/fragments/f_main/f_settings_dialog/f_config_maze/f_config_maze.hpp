@@ -44,7 +44,7 @@ class FConfigMaze : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
-    FConfigMaze(Fragment& parent, FragmentData& parentData);
+    FConfigMaze(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

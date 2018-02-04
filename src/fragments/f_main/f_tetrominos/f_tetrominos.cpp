@@ -50,9 +50,10 @@ static void makeTetromino(const array<array<int, 4>, 4>& matrix, array<QPolygon,
 //===========================================
 // FTetrominos::FTetrominos
 //===========================================
-FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
+FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QLabel(nullptr),
-    Fragment("FTetrominos", parent_, parentData_, m_data) {
+    Fragment("FTetrominos", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FTetrominos::FTetrominos\n");
 

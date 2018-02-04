@@ -42,9 +42,10 @@ static QChar idToChar(int id) {
 //===========================================
 // FShuffledCalc::FShuffledCalc
 //===========================================
-FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_)
+FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QWidget(nullptr),
-    Fragment("FShuffledCalc", parent_, parentData_, m_data) {
+    Fragment("FShuffledCalc", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FShuffledCalc::FShuffledCalc\n");
 }
@@ -56,10 +57,6 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FShuffledCalc::reload\n");
 
   auto& parent = parentFrag<FMain>();
-  auto& parentData = parentFragData<FMainData>();
-
-  m_eventSystem = &parentData.eventSystem;
-  m_updateLoop = &parentData.updateLoop;
 
   QWidget::setParent(&parent);
   parent.setCentralWidget(this);
@@ -196,9 +193,9 @@ void FShuffledCalc::onButtonClick(int id) {
   if (m_calculator.display() == m_targetValue) {
     auto& buttons = m_wgtButtonGrid->buttons;
     int i = 0;
-    int n = m_updateLoop->fps() / 2;
+    int n = commonData.updateLoop.fps() / 2;
 
-    m_updateLoop->add([&, i, n]() mutable {
+    commonData.updateLoop.add([&, i, n]() mutable {
       for (auto it = buttons.begin(); it != buttons.end(); ++it) {
         QSize sz = (*it)->size();
         (*it)->resize(sz * 0.8);
@@ -213,9 +210,9 @@ void FShuffledCalc::onButtonClick(int id) {
     }, [&]() {
       m_wgtDigitDisplay->setText("");
       int i = 0;
-      int n = m_updateLoop->fps() / 2;
+      int n = commonData.updateLoop.fps() / 2;
 
-      m_updateLoop->add([&, i, n]() mutable {
+      commonData.updateLoop.add([&, i, n]() mutable {
         int x = m_wgtDigitDisplay->geometry().x();
         int y = m_wgtDigitDisplay->geometry().y();
         m_wgtDigitDisplay->move(x, y + 30);
@@ -224,8 +221,7 @@ void FShuffledCalc::onButtonClick(int id) {
         return i < n;
       },
       [&]() {
-        parentFragData<FMainData>()
-          .eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_LOGIN_SCREEN)));
+        commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_LOGIN_SCREEN)));
       });
     });
   }

@@ -15,9 +15,10 @@ FragmentData::~FragmentData() {}
 //===========================================
 // Fragment::Fragment
 //===========================================
-Fragment::Fragment(const string& name, Fragment& parent,
-  FragmentData& parentData, FragmentData& ownData)
-  : m_name(name),
+Fragment::Fragment(const string& name, Fragment& parent, FragmentData& parentData,
+  FragmentData& ownData, const CommonFragData& commonData)
+  : commonData(commonData),
+    m_name(name),
     m_parent(&parent),
     m_parentData(&parentData),
     m_ownData(ownData) {}
@@ -25,8 +26,9 @@ Fragment::Fragment(const string& name, Fragment& parent,
 //===========================================
 // Fragment::Fragment
 //===========================================
-Fragment::Fragment(const string& name, FragmentData& ownData)
-  : m_name(name),
+Fragment::Fragment(const string& name, FragmentData& ownData, const CommonFragData& commonData)
+  : commonData(commonData),
+    m_name(name),
     m_parent(nullptr),
     m_parentData(nullptr),
     m_ownData(ownData) {}
@@ -71,7 +73,7 @@ void Fragment::rebuild(const FragmentSpec& spec) {
 
     if (chSpec.isEnabled()) {
       if (m_children.find(chName) == m_children.end()) {
-        Fragment* frag = constructFragment(chName, *this, m_ownData);
+        Fragment* frag = constructFragment(chName, *this, m_ownData, commonData);
         m_children.insert(std::make_pair(chName, pFragment_t(frag)));
       }
     }

@@ -10,8 +10,9 @@
 //===========================================
 // FCountdownToStart::FCountdownToStart
 //===========================================
-FCountdownToStart::FCountdownToStart(Fragment& parent_, FragmentData& parentData_)
-  : Fragment("FCountdownToStart", parent_, parentData_, m_data) {
+FCountdownToStart::FCountdownToStart(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
+  : Fragment("FCountdownToStart", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FCountdownToStart::FCountdownToStart\n");
 }
@@ -46,8 +47,7 @@ void FCountdownToStart::cleanUp() {
 //===========================================
 void FCountdownToStart::onQuit() {
   if (m_stateId <= ST_NORMAL_CALCULATOR_9) {
-    parentFragData<FMainData>()
-      .eventSystem.fire(pEvent_t(new RequestStateChangeEvent(m_stateId + 1)));
+    commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(m_stateId + 1)));
   }
 }
 

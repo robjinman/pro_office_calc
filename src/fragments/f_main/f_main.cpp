@@ -14,10 +14,9 @@ using std::unique_ptr;
 //===========================================
 // FMain::FMain
 //===========================================
-FMain::FMain(EventSystem& eventSystem, UpdateLoop& updateLoop)
+FMain::FMain(const CommonFragData& commonData)
   : QMainWindow(nullptr),
-    Fragment("FMain", m_data),
-    m_data(eventSystem, updateLoop) {
+    Fragment("FMain", m_data, commonData) {
 
   DBG_PRINT("FMain::FMain\n");
 

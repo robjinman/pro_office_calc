@@ -11,18 +11,7 @@
 #include "fragment.hpp"
 
 
-class UpdateLoop;
-class EventSystem;
-
-
 struct FMainData : public FragmentData {
-  FMainData(EventSystem& eventSystem, UpdateLoop& updateLoop)
-    : FragmentData(),
-      eventSystem(eventSystem),
-      updateLoop(updateLoop) {}
-
-  EventSystem& eventSystem;
-  UpdateLoop& updateLoop;
   std::unique_ptr<QMenu> mnuFile;
   std::unique_ptr<QAction> actQuit;
   std::unique_ptr<QMenu> mnuHelp;
@@ -35,7 +24,7 @@ class FMain : public QMainWindow, public Fragment {
   Q_OBJECT
 
   public:
-    FMain(EventSystem& eventSystem, UpdateLoop& updateLoop);
+    FMain(const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

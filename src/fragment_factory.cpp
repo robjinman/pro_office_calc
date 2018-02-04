@@ -22,44 +22,46 @@ using std::string;
 //===========================================
 // constructFragment
 //===========================================
-Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& parentData) {
+Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& parentData,
+  const CommonFragData& commonData) {
+
   DBG_PRINT("constructFragment(), name=" << name << "\n");
 
   if (name == "FGlitch") {
-    return new FGlitch(parent, parentData);
+    return new FGlitch(parent, parentData, commonData);
   }
   else if (name == "FCalculator") {
-    return new FCalculator(parent, parentData);
+    return new FCalculator(parent, parentData, commonData);
   }
   else if (name == "FNormalCalcTrigger") {
-    return new FNormalCalcTrigger(parent, parentData);
+    return new FNormalCalcTrigger(parent, parentData, commonData);
   }
   else if (name == "FShuffledCalc") {
-    return new FShuffledCalc(parent, parentData);
+    return new FShuffledCalc(parent, parentData, commonData);
   }
   else if (name == "FCountdownToStart") {
-    return new FCountdownToStart(parent, parentData);
+    return new FCountdownToStart(parent, parentData, commonData);
   }
   else if (name == "FSettingsDialog") {
-    return new FSettingsDialog(parent, parentData);
+    return new FSettingsDialog(parent, parentData, commonData);
   }
   else if (name == "FLoadingScreen") {
-    return new FLoadingScreen(parent, parentData);
+    return new FLoadingScreen(parent, parentData, commonData);
   }
   else if (name == "FLoginScreen") {
-    return new FLoginScreen(parent, parentData);
+    return new FLoginScreen(parent, parentData, commonData);
   }
   else if (name == "FMaze3d") {
-    return new FMaze3d(parent, parentData);
+    return new FMaze3d(parent, parentData, commonData);
   }
   else if (name == "FTroubleshooterDialog") {
-    return new FTroubleshooterDialog(parent, parentData);
+    return new FTroubleshooterDialog(parent, parentData, commonData);
   }
   else if (name == "FConfigMaze") {
-    return new FConfigMaze(parent, parentData);
+    return new FConfigMaze(parent, parentData, commonData);
   }
   else if (name == "FTetrominos") {
-    return new FTetrominos(parent, parentData);
+    return new FTetrominos(parent, parentData, commonData);
   }
 
   EXCEPTION("Cannot construct fragment with unrecognised name '" << name << "'\n");

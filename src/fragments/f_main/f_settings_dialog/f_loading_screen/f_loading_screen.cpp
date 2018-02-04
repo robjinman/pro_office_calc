@@ -7,9 +7,10 @@
 //===========================================
 // FLoadingScreen::FLoadingScreen
 //===========================================
-FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_)
+FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QLabel(nullptr),
-    Fragment("FLoadingScreen", parent_, parentData_, m_data) {
+    Fragment("FLoadingScreen", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FLoadingScreen::FLoadingScreen\n");
 }
@@ -20,7 +21,6 @@ FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_)
 void FLoadingScreen::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FLoadingScreen::reload\n");
 
-  auto& parent = parentFrag<FSettingsDialog>();
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   m_origParentState.spacing = parentData.vbox->spacing();

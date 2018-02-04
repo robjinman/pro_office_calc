@@ -7,9 +7,10 @@
 //===========================================
 // FMaze3d::FMaze3d
 //===========================================
-FMaze3d::FMaze3d(Fragment& parent_, FragmentData& parentData_)
+FMaze3d::FMaze3d(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QWidget(nullptr),
-    Fragment("FMaze3d", parent_, parentData_, m_data) {
+    Fragment("FMaze3d", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FMaze3d::FMaze3d\n");
 }
@@ -35,7 +36,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   parentData.vbox->setContentsMargins(0, 0, 0, 0);
   parentData.vbox->addWidget(this);
 
-  m_data.wgtRaycast.reset(new RaycastWidget(this, *parentData.eventSystem));
+  m_data.wgtRaycast.reset(new RaycastWidget(this, commonData.eventSystem));
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
   m_data.wgtRaycast->initialise("data/maps/maze.svg");

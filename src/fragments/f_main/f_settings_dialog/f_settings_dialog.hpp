@@ -9,12 +9,7 @@
 #include "fragment.hpp"
 
 
-class EventSystem;
-class UpdateLoop;
-
 struct FSettingsDialogData : public FragmentData {
-  EventSystem* eventSystem;
-  UpdateLoop* updateLoop;
   std::unique_ptr<QAction> actSettings;
   std::unique_ptr<QVBoxLayout> vbox;
 };
@@ -23,7 +18,7 @@ class FSettingsDialog : public QDialog, public Fragment {
   Q_OBJECT
 
   public:
-    FSettingsDialog(Fragment& parent, FragmentData& parentData);
+    FSettingsDialog(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

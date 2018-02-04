@@ -14,7 +14,6 @@
 class EventSystem;
 
 struct FLoginScreenData : public FragmentData {
-  EventSystem* eventSystem;
   std::unique_ptr<QLineEdit> wgtUser;
   std::unique_ptr<QLineEdit> wgtPassword;
   std::string password;
@@ -32,7 +31,7 @@ class FLoginScreen : public QLabel, public Fragment {
   Q_OBJECT
 
   public:
-    FLoginScreen(Fragment& parent, FragmentData& parentData);
+    FLoginScreen(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

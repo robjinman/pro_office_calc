@@ -19,7 +19,7 @@ class FMaze3d : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
-    FMaze3d(Fragment& parent, FragmentData& parentData);
+    FMaze3d(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

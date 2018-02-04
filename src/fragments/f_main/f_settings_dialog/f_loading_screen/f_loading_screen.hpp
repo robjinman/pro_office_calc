@@ -14,7 +14,7 @@ class FLoadingScreen : public QLabel, public Fragment {
   Q_OBJECT
 
   public:
-    FLoadingScreen(Fragment& parent, FragmentData& parentData);
+    FLoadingScreen(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

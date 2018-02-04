@@ -12,16 +12,12 @@
 
 
 class QMainWindow;
-class EventSystem;
-class UpdateLoop;
 
 struct FCalculatorData : public FragmentData {
   Calculator calculator;
   std::unique_ptr<QVBoxLayout> vbox;
   std::unique_ptr<QLineEdit> wgtDigitDisplay;
   std::unique_ptr<ButtonGrid> wgtButtonGrid;
-  EventSystem* eventSystem;
-  UpdateLoop* updateLoop;
   QMainWindow* window;
 };
 
@@ -29,7 +25,7 @@ class FCalculator : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
-    FCalculator(Fragment& parent, FragmentData& parentData);
+    FCalculator(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;

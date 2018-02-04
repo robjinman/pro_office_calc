@@ -10,14 +10,12 @@
 //===========================================
 // FLoginScreen::FLoginScreen
 //===========================================
-FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_)
+FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_,
+  const CommonFragData& commonData)
   : QLabel(nullptr),
-    Fragment("FLoginScreen", parent_, parentData_, m_data) {
+    Fragment("FLoginScreen", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FLoginScreen::FLoginScreen\n");
-
-  auto& parentData = dynamic_cast<FMainData&>(parentData_);
-  m_data.eventSystem = &parentData.eventSystem;
 }
 
 //===========================================
@@ -28,7 +26,7 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
 
   auto& parent = parentFrag<FMain>();
 
-  m_data.eventSystem->listen("PasswordGeneratedEvent", [this](const Event& event_) {
+  commonData.eventSystem.listen("PasswordGeneratedEvent", [this](const Event& event_) {
     auto& event = dynamic_cast<const PasswordGeneratedEvent&>(event_);
     DBG_PRINT_VAR(event.password);
     m_data.password = event.password;
@@ -36,8 +34,6 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
 
   m_origParentState.centralWidget = parent.centralWidget();
   parent.setCentralWidget(this);
-
-  auto& spec = dynamic_cast<const FLoginScreenSpec&>(spec_);
 
   m_data.wgtUser.reset(new QLineEdit(this));
   m_data.wgtUser->setGeometry(205, 170, 100, 20);
@@ -57,7 +53,7 @@ void FLoginScreen::onLoginAttempt() {
 
     DBG_PRINT("Login success!\n");
 
-    m_data.eventSystem->fire(pEvent_t(new RequestStateChangeEvent(ST_ITS_RAINING_TETROMINOS)));
+    commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_ITS_RAINING_TETROMINOS)));
   }
   else {
     DBG_PRINT("Access denied\n");
@@ -74,7 +70,7 @@ void FLoginScreen::cleanUp() {
   auto& parent = parentFrag<FMain>();
 
   parent.setCentralWidget(m_origParentState.centralWidget);
-  m_data.eventSystem->forget(m_pwdGenEventId);
+  commonData.eventSystem.forget(m_pwdGenEventId);
 }
 
 //===========================================
@@ -83,5 +79,5 @@ void FLoginScreen::cleanUp() {
 FLoginScreen::~FLoginScreen() {
   DBG_PRINT("FLoginScreen::~FLoginScreen\n");
 
-  m_data.eventSystem->forget(m_pwdGenEventId);
+  commonData.eventSystem.forget(m_pwdGenEventId);
 }

@@ -18,8 +18,6 @@
 
 
 class QMainWindow;
-class EventSystem;
-class UpdateLoop;
 
 struct FShuffledCalcData : public FragmentData {};
 
@@ -27,7 +25,7 @@ class FShuffledCalc : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
-    FShuffledCalc(Fragment& parent, FragmentData& parentData);
+    FShuffledCalc(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
@@ -50,8 +48,6 @@ class FShuffledCalc : public QWidget, public Fragment {
     std::unique_ptr<QVBoxLayout> m_vbox;
     std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
     std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
-    EventSystem* m_eventSystem;
-    UpdateLoop* m_updateLoop;
 
     std::string m_targetValue;
 
