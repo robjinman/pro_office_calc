@@ -2,8 +2,8 @@
 #include <array>
 #include <random>
 #include <QPainter>
-#include "fragments/f_main/f_tetrominos/f_tetrominos.hpp"
-#include "fragments/f_main/f_tetrominos/f_tetrominos_spec.hpp"
+#include "fragments/relocatable/f_tetrominos/f_tetrominos.hpp"
+#include "fragments/relocatable/f_tetrominos/f_tetrominos_spec.hpp"
 #include "utils.hpp"
 
 

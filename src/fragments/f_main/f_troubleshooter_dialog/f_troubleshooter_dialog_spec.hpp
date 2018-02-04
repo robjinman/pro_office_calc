@@ -4,7 +4,7 @@
 
 #include <QString>
 #include "fragment_spec.hpp"
-#include "fragments/f_main/f_tetrominos/f_tetrominos_spec.hpp"
+#include "fragments/relocatable/f_tetrominos/f_tetrominos_spec.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 
 

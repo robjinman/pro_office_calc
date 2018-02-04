@@ -2,6 +2,7 @@
 #include "exception.hpp"
 #include "utils.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch.hpp"
+#include "fragments/relocatable/f_tetrominos/f_tetrominos.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen.hpp"
@@ -13,7 +14,6 @@
 #include "fragments/f_main/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
-#include "fragments/f_main/f_tetrominos/f_tetrominos.hpp"
 
 
 using std::string;
