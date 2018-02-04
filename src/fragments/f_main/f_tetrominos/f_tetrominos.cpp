@@ -12,6 +12,10 @@ using std::vector;
 
 
 const int BLOCK_SIZE = 5;
+const double FRAME_RATE = 15.0;
+const double AVERAGE_ANGULAR_SPEED = 100.0; // Degrees per second
+const double AVERAGE_SPEED = 35.0; // Pixels per second
+const double SPEED_STD_DEVIATION = 7; // Average deviation from the average
 
 
 static std::random_device rd;
@@ -63,6 +67,17 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
 
   connect(m_data.timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
+  constructTetrominos();
+
+  show();
+}
+
+//===========================================
+// FTetrominos::constructTetrominos
+//===========================================
+void FTetrominos::constructTetrominos() {
+  auto& parent = parentFrag<QWidget>();
+
   double winW = parent.size().width();
   double winH = parent.size().height();
 
@@ -71,14 +86,17 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
   int rows = winH / tetroSz;
   int cols = winW / tetroSz;
 
-  std::normal_distribution<double> randSpeed(7, 1.4);
-  std::normal_distribution<double> randAngle(0, 10);
+  std::normal_distribution<double> randSpeed(AVERAGE_SPEED / FRAME_RATE,
+    SPEED_STD_DEVIATION / FRAME_RATE);
+  std::normal_distribution<double> randAngle(0, AVERAGE_ANGULAR_SPEED / FRAME_RATE);
 
   for (int i = 0; i < cols; ++i) {
     double dy = randSpeed(randEngine);
 
     for (int j = 0; j < rows; ++j) {
-      if (rand() % 3 != 0) continue;
+      if (rand() % 4 != 0) {
+        continue;
+      }
 
       auto kind = static_cast<Tetromino::kind_t>(rand() % 7);
       double da = randAngle(randEngine);
@@ -154,8 +172,6 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
       m_tetrominos.push_back(t);
     }
   }
-
-  show();
 }
 
 //===========================================
@@ -171,7 +187,7 @@ void FTetrominos::reload(const FragmentSpec& spec_) {
 
   m_buffer.reset(new QImage(parent.size(), QImage::Format_ARGB32));
 
-  m_data.timer->start(100);
+  m_data.timer->start(1000.0 / FRAME_RATE);
 }
 
 //===========================================
@@ -180,6 +196,8 @@ void FTetrominos::reload(const FragmentSpec& spec_) {
 void FTetrominos::drawTetrominos(QImage& buffer) {
   QPainter painter;
   painter.begin(&buffer);
+
+  buffer.fill(Qt::GlobalColor::transparent);
 
   for (auto it = m_tetrominos.begin(); it != m_tetrominos.end(); ++it) {
     const Tetromino& t = *it;
@@ -219,16 +237,11 @@ void FTetrominos::moveTetrominos() {
 // FTetrominos::tick
 //===========================================
 void FTetrominos::tick() {
-  auto& parent = parentFrag<QWidget>();
-
-  setVisible(false);
-  parent.render(m_buffer.get());
-
   moveTetrominos();
   drawTetrominos(*m_buffer);
 
   setPixmap(QPixmap::fromImage(*m_buffer));
-  setVisible(true);
+
   raise();
 }
 
