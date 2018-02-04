@@ -39,7 +39,7 @@ void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
   setupTab2();
   setupTab3();
 
-  m_data.wgtTabs->addTab(m_data.tab1.page.get(), "Auto");
+  m_data.wgtTabs->addTab(m_data.tab1.page.get(), "Fix automatically");
 
   connect(m_data.actPreferences.get(), SIGNAL(triggered()), this, SLOT(showTroubleshooterDialog()));
 
@@ -136,7 +136,7 @@ void FTroubleshooterDialog::onNoClick() {
 
   m_data.tab1.wgtGroupbox->setVisible(false);
 
-  m_data.wgtTabs->insertTab(1, m_data.tab2.page.get(), "Manual");
+  m_data.wgtTabs->insertTab(1, m_data.tab2.page.get(), "Common problems");
   m_data.wgtTabs->setCurrentIndex(1);
   m_data.tab2.wgtTextBrowser->setSource(QUrl("troubleshooter1.html"));
 }
@@ -162,7 +162,7 @@ void FTroubleshooterDialog::onTick() {
     tab.wgtProgressBar->setVisible(false);
     tab.wgtGroupbox->setVisible(true);
     tab.wgtRunTroubleshooter->setDisabled(false);
-    m_data.wgtTabs->addTab(m_data.tab3.page.get(), "a̵̧̡̖̬͔̿͊̂͐̕͘p̶̹̈ę̵̟̳̲̲̬͂͌͗x̴̡̡͙̥̓̏͑̉d̷͈̝͊͗̀̉ě̴̘̘̠̹̰̤̹̈́v̷̥͕̬̮̣̙̍̏̆̃̿̈́͜ȩ̵̂͊́͐l̴̞̤̈́͐̚͘͜ò̶͍͎̖̪̾̐͘͠p̸̨̛͇̞̑̓͂m̶̧̮͎̤͖͗e̶̜̒͊͋̉̈́͛̚ṇ̷͍̼̝̼͒t̶̳͈́̈́̔͝͠p̶̦̦̭̞̙̰̾̂͜ỏ̷̪̩̟͎̀̐͘r̷̡̥̘̺̻͚̺̾̏t̶̪͆͗̾͌͋͝à̸̺͙̻̎l̴̨̧͍̺̉̂́͘ͅ");
+    m_data.wgtTabs->addTab(m_data.tab3.page.get(), "");
 
     commonData.eventSystem.fire(pEvent_t(new Event("increaseTetrominoRain")));
   }
@@ -185,7 +185,7 @@ void FTroubleshooterDialog::onRunTroubleshooter() {
   tab.wgtRunTroubleshooter->setDisabled(true);
 
   tab.wgtProgressBar->setValue(0);
-  tab.timer->start(100);
+  tab.timer->start(300);
 }
 
 //===========================================
