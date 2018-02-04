@@ -13,6 +13,7 @@
 #include <QGroupBox>
 #include <QTextBrowser>
 #include <QTabWidget>
+#include <QTimer>
 #include "fragment.hpp"
 
 
@@ -40,6 +41,7 @@ struct FTroubleshooterDialogData : public FragmentData {
     std::unique_ptr<QLabel> wgtProblemResolved;
     std::unique_ptr<QPushButton> wgtYes;
     std::unique_ptr<QPushButton> wgtNo;
+    std::unique_ptr<QTimer> timer;
   } tab1;
 
   struct {
@@ -67,6 +69,10 @@ class FTroubleshooterDialog : public QDialog, public Fragment {
 
   private slots:
     void showTroubleshooterDialog();
+    void onRunTroubleshooter();
+    void onTick();
+    void onNoClick();
+    void onYesClick();
 
   private:
     FTroubleshooterDialogData m_data;

@@ -1,8 +1,10 @@
+#include <cassert>
 #include <QMessageBox>
 #include <QMenuBar>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog_spec.hpp"
+#include "event_system.hpp"
 #include "utils.hpp"
 
 
@@ -40,8 +42,6 @@ void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
   setupTab3();
 
   m_data.wgtTabs->addTab(m_data.tab1.page.get(), "Auto");
-  m_data.wgtTabs->addTab(m_data.tab2.page.get(), "Manual");
-  m_data.wgtTabs->addTab(m_data.tab3.page.get(), "Blah");
 
   connect(m_data.actPreferences.get(), SIGNAL(triggered()), this, SLOT(showTroubleshooterDialog()));
 
@@ -78,26 +78,116 @@ void FTroubleshooterDialog::setupTab1() {
   tab.resultsVbox->addWidget(tab.wgtProblemResolved.get());
   tab.resultsVbox->addLayout(tab.btnsHbox.get());
 
+  tab.timer.reset(new QTimer);
+
   tab.wgtGroupbox->setLayout(tab.resultsVbox.get());
+  tab.wgtGroupbox->setVisible(false);
+
+  auto sp = tab.wgtGroupbox->sizePolicy();
+  sp.setRetainSizeWhenHidden(true);
+  tab.wgtGroupbox->setSizePolicy(sp);
+
+  tab.wgtProgressBar->setVisible(false);
+  tab.wgtProgressBar->setRange(0, 10);
 
   tab.vbox->addWidget(tab.wgtCaption.get());
   tab.vbox->addWidget(tab.wgtRunTroubleshooter.get());
   tab.vbox->addWidget(tab.wgtProgressBar.get());
   tab.vbox->addWidget(tab.wgtGroupbox.get(), 1);
+
+  connect(tab.wgtRunTroubleshooter.get(), SIGNAL(clicked()), this, SLOT(onRunTroubleshooter()));
+  connect(tab.timer.get(), SIGNAL(timeout()), this, SLOT(onTick()));
+  connect(tab.wgtNo.get(), SIGNAL(clicked()), this, SLOT(onNoClick()));
+  connect(tab.wgtYes.get(), SIGNAL(clicked()), this, SLOT(onYesClick()));
 }
 
 //===========================================
 // FTroubleshooterDialog::setupTab2
 //===========================================
 void FTroubleshooterDialog::setupTab2() {
+  auto& tab = m_data.tab2;
 
+  tab.page.reset(new QWidget);
+  tab.vbox.reset(new QVBoxLayout);
+  tab.wgtTextBrowser.reset(new QTextBrowser);
+
+  tab.vbox->addWidget(tab.wgtTextBrowser.get());
+
+  tab.wgtTextBrowser->setSearchPaths(QStringList() << "data/its_raining_tetrominos");
+  tab.wgtTextBrowser->setSource(QUrl("troubleshooter1.html"));
+
+  tab.page->setLayout(tab.vbox.get());
 }
 
 //===========================================
 // FTroubleshooterDialog::setupTab3
 //===========================================
 void FTroubleshooterDialog::setupTab3() {
+  auto& tab = m_data.tab3;
 
+  tab.page.reset(new QWidget);
+  tab.vbox.reset(new QVBoxLayout);
+  tab.page->setLayout(tab.vbox.get());
+}
+
+//===========================================
+// FTroubleshooterDialog::onNoClick
+//===========================================
+void FTroubleshooterDialog::onNoClick() {
+  assert(m_data.wgtTabs->count() == 2);
+
+  m_data.tab1.wgtGroupbox->setVisible(false);
+
+  m_data.wgtTabs->insertTab(1, m_data.tab2.page.get(), "Manual");
+  m_data.wgtTabs->setCurrentIndex(1);
+  m_data.tab2.wgtTextBrowser->setSource(QUrl("troubleshooter1.html"));
+}
+
+//===========================================
+// FTroubleshooterDialog::onYesClick
+//===========================================
+void FTroubleshooterDialog::onYesClick() {
+  auto& tab = m_data.tab1;
+
+  tab.wgtGroupbox->setVisible(false);
+}
+
+//===========================================
+// FTroubleshooterDialog::onTick
+//===========================================
+void FTroubleshooterDialog::onTick() {
+  auto& tab = m_data.tab1;
+
+  if (tab.wgtProgressBar->value() == 10) {
+    tab.timer->stop();
+
+    tab.wgtProgressBar->setVisible(false);
+    tab.wgtGroupbox->setVisible(true);
+    tab.wgtRunTroubleshooter->setDisabled(false);
+    m_data.wgtTabs->addTab(m_data.tab3.page.get(), "a̵̧̡̖̬͔̿͊̂͐̕͘p̶̹̈ę̵̟̳̲̲̬͂͌͗x̴̡̡͙̥̓̏͑̉d̷͈̝͊͗̀̉ě̴̘̘̠̹̰̤̹̈́v̷̥͕̬̮̣̙̍̏̆̃̿̈́͜ȩ̵̂͊́͐l̴̞̤̈́͐̚͘͜ò̶͍͎̖̪̾̐͘͠p̸̨̛͇̞̑̓͂m̶̧̮͎̤͖͗e̶̜̒͊͋̉̈́͛̚ṇ̷͍̼̝̼͒t̶̳͈́̈́̔͝͠p̶̦̦̭̞̙̰̾̂͜ỏ̷̪̩̟͎̀̐͘r̷̡̥̘̺̻͚̺̾̏t̶̪͆͗̾͌͋͝à̸̺͙̻̎l̴̨̧͍̺̉̂́͘ͅ");
+
+    m_data.eventSystem->fire(pEvent_t(new Event("increaseTetrominoRain")));
+  }
+  else {
+    tab.wgtProgressBar->setValue(tab.wgtProgressBar->value() + 1);
+  }
+}
+
+//===========================================
+// FTroubleshooterDialog::onRunTroubleshooter
+//===========================================
+void FTroubleshooterDialog::onRunTroubleshooter() {
+  auto& tab = m_data.tab1;
+
+  m_data.wgtTabs->removeTab(2);
+  m_data.wgtTabs->removeTab(1);
+
+  tab.wgtProgressBar->setVisible(true);
+  tab.wgtGroupbox->setVisible(false);
+  tab.wgtRunTroubleshooter->setDisabled(true);
+
+  tab.wgtProgressBar->setValue(0);
+  tab.timer->start(100);
 }
 
 //===========================================

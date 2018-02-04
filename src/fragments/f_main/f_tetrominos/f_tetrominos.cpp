@@ -56,7 +56,7 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
 
   DBG_PRINT("FTetrominos::FTetrominos\n");
 
-  auto& parent = parentFrag<QWidget>();
+  auto& parent = dynamic_cast<QWidget&>(parent_);
 
   setParent(&parent);
 
@@ -68,6 +68,8 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_)
   connect(m_data.timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
   constructTetrominos();
+
+
 
   show();
 }
