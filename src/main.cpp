@@ -99,6 +99,7 @@ int main(int argc, char** argv) {
     mainFragment.rebuild(*mainSpec);
     mainFragment.show();
 
+    int requestStateChangeEventId = 0;
     eventSystem.listen("RequestStateChangeEvent", [&](const Event& e) {
       stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
 
@@ -106,7 +107,7 @@ int main(int argc, char** argv) {
 
       mainSpec.reset(makeFMainSpec(stateId));
       mainFragment.rebuild(*mainSpec);
-    });
+    }, requestStateChangeEventId);
 
     int code = app.exec();
     persistStateId(appConfig, stateId);

@@ -59,8 +59,9 @@ class FTetrominos : public QLabel, public Fragment {
     FTetrominosData m_data;
     std::list<Tetromino> m_tetrominos;
     std::unique_ptr<QImage> m_buffer;
+    int m_incTetroRainId;
 
-    void constructTetrominos();
+    void constructTetrominos(double speedMultiplier, double percentageFill);
     void moveTetrominos();
     void drawTetrominos(QImage& buffer);
 };

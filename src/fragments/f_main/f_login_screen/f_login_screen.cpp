@@ -30,7 +30,7 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
     auto& event = dynamic_cast<const PasswordGeneratedEvent&>(event_);
     DBG_PRINT_VAR(event.password);
     m_data.password = event.password;
-  });
+  }, m_pwdGenEventId);
 
   m_origParentState.centralWidget = parent.centralWidget();
   parent.setCentralWidget(this);

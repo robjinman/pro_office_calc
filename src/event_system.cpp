@@ -39,7 +39,7 @@ bool EventSystem::event(QEvent* e) {
 //===========================================
 // EventSystem::listen
 //===========================================
-int EventSystem::listen(const string& name, handlerFunc_t fn) {
+void EventSystem::listen(const string& name, handlerFunc_t fn, int& id) {
   static int nextId = 0;
 
   if (m_processingEvent) {
@@ -49,7 +49,7 @@ int EventSystem::listen(const string& name, handlerFunc_t fn) {
     m_handlers[name][nextId] = fn;
   }
 
-  return nextId++;
+  id = nextId++;
 }
 
 //===========================================

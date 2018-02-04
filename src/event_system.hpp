@@ -16,7 +16,7 @@ class EventSystem : public QObject {
   Q_OBJECT
 
   public:
-    int listen(const std::string& name, handlerFunc_t fn);
+    void listen(const std::string& name, handlerFunc_t fn, int& id);
     void forget(int id);
     void fire(pEvent_t event);
 

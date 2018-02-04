@@ -5,6 +5,7 @@
 #include "fragments/relocatable/f_tetrominos/f_tetrominos.hpp"
 #include "fragments/relocatable/f_tetrominos/f_tetrominos_spec.hpp"
 #include "utils.hpp"
+#include "event_system.hpp"
 
 
 using std::array;
@@ -68,9 +69,11 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_,
 
   connect(m_data.timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-  constructTetrominos();
+  constructTetrominos(1.0, 25.0);
 
-
+  commonData.eventSystem.listen("increaseTetrominoRain", [this](const Event&) {
+    constructTetrominos(2.0, 50.0);
+  }, m_incTetroRainId);
 
   show();
 }
@@ -78,8 +81,10 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FTetrominos::constructTetrominos
 //===========================================
-void FTetrominos::constructTetrominos() {
+void FTetrominos::constructTetrominos(double speedMultiplier, double percentageFill) {
   auto& parent = parentFrag<QWidget>();
+
+  m_tetrominos.clear();
 
   double winW = parent.size().width();
   double winH = parent.size().height();
@@ -93,11 +98,13 @@ void FTetrominos::constructTetrominos() {
     SPEED_STD_DEVIATION / FRAME_RATE);
   std::normal_distribution<double> randAngle(0, AVERAGE_ANGULAR_SPEED / FRAME_RATE);
 
+  std::uniform_real_distribution<double> randFloat(0, 100);
+
   for (int i = 0; i < cols; ++i) {
-    double dy = randSpeed(randEngine);
+    double dy = randSpeed(randEngine) * speedMultiplier;
 
     for (int j = 0; j < rows; ++j) {
-      if (rand() % 4 != 0) {
+      if (randFloat(randEngine) > percentageFill) {
         continue;
       }
 
@@ -255,6 +262,7 @@ void FTetrominos::cleanUp() {
   DBG_PRINT("FTetrominos::cleanUp\n");
 
   setParent(nullptr);
+  commonData.eventSystem.forget(m_incTetroRainId);
 }
 
 //===========================================
@@ -262,4 +270,6 @@ void FTetrominos::cleanUp() {
 //===========================================
 FTetrominos::~FTetrominos() {
   DBG_PRINT("FTetrominos::~FTetrominos\n");
+
+  commonData.eventSystem.forget(m_incTetroRainId);
 }
