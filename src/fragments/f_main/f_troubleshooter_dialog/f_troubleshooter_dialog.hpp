@@ -15,6 +15,7 @@
 #include <QTabWidget>
 #include <QTimer>
 #include "fragment.hpp"
+#include "raycast/raycast_widget.hpp"
 
 
 struct FTroubleshooterDialogData : public FragmentData {
@@ -47,6 +48,7 @@ struct FTroubleshooterDialogData : public FragmentData {
   struct {
     std::unique_ptr<QWidget> page;
     std::unique_ptr<QVBoxLayout> vbox;
+    std::unique_ptr<RaycastWidget> wgtRaycast;
   } tab3;
 };
 

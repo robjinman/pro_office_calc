@@ -299,6 +299,8 @@ void RaycastWidget::tick() {
   }
 
   if (m_cursorCaptured) {
+    setFocus();
+
     Point centre(width() / 2, height() / 2);
 
     // Y-axis is top to bottom
