@@ -94,6 +94,7 @@ struct WallX : public XWrapper {
   const CHardEdge* hardEdge = nullptr;
   const CWall* wall = nullptr;
   Slice slice;
+  const CZone* nearZone;
 
   virtual ~WallX() override {}
 };
@@ -384,6 +385,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 
     if (X->kind == XWrapperKind::WALL) {
       WallX& wallX = dynamic_cast<WallX&>(*X);
+      wallX.nearZone = zone;
 
       const CZone& z = *wallX.hardEdge->zone;
 
@@ -1011,12 +1013,15 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         CZone& zone = *wallX.hardEdge->zone;
         CRegion& region = *wallX.wall->region;
 
-        drawFloorSlice(m_target, spatialSystem, rg, cam, &region, zone.floorHeight,
+        const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
+          .getComponent(wallX.nearZone->entityId()));
+
+        drawFloorSlice(m_target, spatialSystem, rg, cam, &nearRegion, zone.floorHeight,
           wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
-          drawCeilingSlice(m_target, rg, player, &region, zone.ceilingHeight, wallX.X->point_wld,
-            slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+          drawCeilingSlice(m_target, rg, player, &nearRegion, zone.ceilingHeight,
+            wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
           drawSkySlice(m_target, rg, player, slice, screenX_px);

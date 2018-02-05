@@ -6,8 +6,8 @@
 
 
 struct RenderDefaults {
-  std::string floorTexture = "cracked_mud";
-  std::string ceilingTexture = "grey_stone";
+  std::string floorTexture = "default";
+  std::string ceilingTexture = "default";
 };
 
 struct RenderGraph {
