@@ -815,8 +815,8 @@ void drawSprite(QImage& target, const CSprite& sprite, const SpatialSystem& spat
 // drawWallDecal
 //===========================================
 static void drawWallDecal(QImage& target, const SpatialSystem& spatialSystem, const RenderGraph& rg,
-  const CWallDecal& decal, const WallX& X, int screenX_px, const Size& viewport_px,
-  double camHeight, double vWorldUnit_px) {
+  const CWallDecal& decal, const Intersection& X, const Slice& slice, const CZone& zone,
+  int screenX_px, const Size& viewport_px, double camHeight, double vWorldUnit_px) {
 
   const CVRect& vRect = getVRect(spatialSystem, decal);
 
@@ -827,23 +827,22 @@ static void drawWallDecal(QImage& target, const SpatialSystem& spatialSystem, co
   int texW_px = decal.texRect.width() * decalTex.image.width();
   int texH_px = decal.texRect.height() * decalTex.image.height();
 
-  double projSliceH_wd = X.slice.projSliceTop_wd - X.slice.projSliceBottom_wd;
-  double sliceH_wd = X.slice.sliceTop_wd - X.slice.sliceBottom_wd;
+  double projSliceH_wd = slice.projSliceTop_wd - slice.projSliceBottom_wd;
+  double sliceH_wd = slice.sliceTop_wd - slice.sliceBottom_wd;
   double sliceToProjScale = projSliceH_wd / sliceH_wd;
 
   // World space
-  double sliceBottom_wd = X.slice.sliceBottom_wd + camHeight;
+  double sliceBottom_wd = slice.sliceBottom_wd + camHeight;
 
   // World space (not camera space)
   auto fnSliceToProjY = [&](double y) {
-    return X.slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
+    return slice.projSliceBottom_wd + (y - sliceBottom_wd) * sliceToProjScale;
   };
 
   auto fnProjToScreenY = [&](double y) {
     return viewport_px.y - (y * vWorldUnit_px);
   };
 
-  const CZone& zone = *X.hardEdge->zone;
   double floorH = zone.floorHeight;
 
   double y0 = floorH + vRect.pos.y;
@@ -852,13 +851,13 @@ static void drawWallDecal(QImage& target, const SpatialSystem& spatialSystem, co
   int y0_px = fnProjToScreenY(fnSliceToProjY(y0));
   int y1_px = fnProjToScreenY(fnSliceToProjY(y1));
 
-  double x = X.X->distanceAlongTarget - vRect.pos.x;
+  double x = X.distanceAlongTarget - vRect.pos.x;
   int i = texX_px + texW_px * x / vRect.size.x;
 
   QRect srcRect(i, texY_px, 1, texH_px);
   QRect trgRect(screenX_px, y1_px, 1, y0_px - y1_px);
 
-  drawImage(target, trgRect, decalTex.image, srcRect, X.X->distanceFromOrigin);
+  drawImage(target, trgRect, decalTex.image, srcRect, X.distanceFromOrigin);
 }
 
 //===========================================
@@ -939,7 +938,7 @@ Renderer::Renderer(EntityManager& entityManager, QImage& target)
 //===========================================
 // Renderer::getWallDecal
 //===========================================
-static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CWall& wall, double x) {
+static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CBoundary& wall, double x) {
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
     CWallDecal* decal = it->get();
     const CVRect& vRect = getVRect(spatialSystem, *decal);
@@ -1001,17 +1000,17 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
       if (X.kind == XWrapperKind::WALL) {
         const WallX& wallX = dynamic_cast<const WallX&>(X);
 
+        CZone& zone = *wallX.hardEdge->zone;
+        CRegion& region = *wallX.wall->region;
+
         ScreenSlice slice = drawSlice(m_target, rg, cam, *wallX.X, wallX.slice, wallX.wall->texture,
           screenX_px, viewport_px);
 
         CWallDecal* decal = getWallDecal(spatialSystem, *wallX.wall, wallX.X->distanceAlongTarget);
         if (decal != nullptr) {
-          drawWallDecal(m_target, spatialSystem, rg, *decal, wallX, screenX_px, viewport_px,
-            cam.height, vWorldUnit_px);
+          drawWallDecal(m_target, spatialSystem, rg, *decal, *wallX.X, wallX.slice, zone,
+            screenX_px, viewport_px, cam.height, vWorldUnit_px);
         }
-
-        CZone& zone = *wallX.hardEdge->zone;
-        CRegion& region = *wallX.wall->region;
 
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(wallX.nearZone->entityId()));
@@ -1051,6 +1050,12 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           else {
             drawSkySlice(m_target, rg, player, slice1, screenX_px);
           }
+        }
+
+        CWallDecal* decal = getWallDecal(spatialSystem, *joinX.join, joinX.X->distanceAlongTarget);
+        if (decal != nullptr) {
+          drawWallDecal(m_target, spatialSystem, rg, *decal, *joinX.X, joinX.slice0,
+            *joinX.nearZone, screenX_px, viewport_px, cam.height, vWorldUnit_px);
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {

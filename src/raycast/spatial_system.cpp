@@ -405,11 +405,11 @@ static void entitiesInRadius_r(const CZone& zone, const Circle& circle,
       entities.insert((*it)->entityId());
       entities.insert(zone.entityId());
 
-      if ((*it)->kind == CSpatialKind::HARD_EDGE) {
-        const CHardEdge& he = dynamic_cast<const CHardEdge&>(**it);
+      if ((*it)->kind == CSpatialKind::HARD_EDGE || (*it)->kind == CSpatialKind::SOFT_EDGE) {
+        const CEdge& edge = dynamic_cast<const CEdge&>(**it);
 
-        for (auto jt = he.vRects.begin(); jt != he.vRects.end(); ++jt) {
-          if (overlapsCircle(circle, he.lseg, **jt)) {
+        for (auto jt = edge.vRects.begin(); jt != edge.vRects.end(); ++jt) {
+          if (overlapsCircle(circle, edge.lseg, **jt)) {
             entities.insert((*jt)->entityId());
           }
         }
@@ -770,6 +770,21 @@ static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
 }
 
 //===========================================
+// addToSoftEdge
+//===========================================
+static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
+  switch (child->kind) {
+    case CSpatialKind::V_RECT: {
+      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      edge.vRects.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to SoftEdge");
+  }
+}
+
+//===========================================
 // addChildToComponent
 //===========================================
 static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t child) {
@@ -779,6 +794,9 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
       break;
     case CSpatialKind::HARD_EDGE:
       addToHardEdge(dynamic_cast<CHardEdge&>(parent), std::move(child));
+      break;
+    case CSpatialKind::SOFT_EDGE:
+      addToSoftEdge(dynamic_cast<CSoftEdge&>(parent), std::move(child));
       break;
     default:
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "

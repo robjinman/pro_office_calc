@@ -166,6 +166,21 @@ static void addToWall(CWall& boundary, pCRender_t child) {
 }
 
 //===========================================
+// addToJoin
+//===========================================
+static void addToJoin(CJoin& boundary, pCRender_t child) {
+  switch (child->kind) {
+    case CRenderKind::WALL_DECAL: {
+      pCWallDecal_t ptr(dynamic_cast<CWallDecal*>(child.release()));
+      boundary.decals.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to Join");
+  }
+}
+
+//===========================================
 // addChildToComponent
 //===========================================
 static void addChildToComponent(RenderGraph& rg, CRender& parent, pCRender_t child) {
@@ -175,6 +190,9 @@ static void addChildToComponent(RenderGraph& rg, CRender& parent, pCRender_t chi
       break;
     case CRenderKind::WALL:
       addToWall(dynamic_cast<CWall&>(parent), std::move(child));
+      break;
+    case CRenderKind::JOIN:
+      addToJoin(dynamic_cast<CJoin&>(parent), std::move(child));
       break;
     default:
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "

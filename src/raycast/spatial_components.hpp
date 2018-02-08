@@ -61,13 +61,8 @@ struct CEdge : public CSpatial {
   CEdge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
     : CSpatial(kind, entityId, parentId) {}
 
-  CEdge(const CEdge& cpy, entityId_t entityId, entityId_t parentId)
-    : CSpatial(cpy.kind, entityId, parentId) {
-
-    lseg = cpy.lseg;
-  }
-
   LineSegment lseg;
+  std::list<pCVRect_t> vRects;
 
   virtual ~CEdge() override {}
 };
@@ -112,7 +107,6 @@ struct CHardEdge : public CEdge {
     : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
 
   CZone* zone = nullptr;
-  std::list<pCVRect_t> vRects;
 
   double height() const {
     return zone->ceilingHeight - zone->floorHeight;
@@ -125,14 +119,6 @@ struct CSoftEdge : public CEdge {
   CSoftEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
     : CEdge(CSpatialKind::SOFT_EDGE, entityId, parentId),
       joinId(joinId) {}
-
-  CSoftEdge(const CSoftEdge& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : CEdge(cpy, entityId, parentId),
-      joinId(joinId) {
-
-    zoneA = cpy.zoneA;
-    zoneB = cpy.zoneB;
-  }
 
   entityId_t joinId = 0;
 

@@ -109,8 +109,8 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
 //===========================================
 // GeometryFactory::constructWalls
 //===========================================
-bool GeometryFactory::constructWalls(const parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+bool GeometryFactory::constructWalls(const parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -315,11 +315,13 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
 //===========================================
 // GeometryFactory::constructBoundaries
 //===========================================
-bool GeometryFactory::constructBoundaries(const parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+bool GeometryFactory::constructBoundaries(const parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  Matrix m = parentTransform * obj.transform;
 
   list<CSoftEdge*> edges;
 
@@ -355,6 +357,10 @@ bool GeometryFactory::constructBoundaries(const parser::Object& obj,
     boundary->bottomTexture = getValue(obj.dict, "bottom_texture", "default");
 
     renderSystem.addComponent(pComponent_t(boundary));
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      m_rootFactory.constructObject((*it)->type, -1, **it, entityId, m);
+    }
   }
 
   return true;

@@ -134,12 +134,23 @@ class CSprite : public CRender {
 
 typedef std::unique_ptr<CSprite> pCSprite_t;
 
+struct CWallDecal : public CRender {
+  CWallDecal(entityId_t entityId, entityId_t parentId)
+    : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
+
+  std::string texture;
+  QRectF texRect = QRectF(0, 0, 1, 1);
+
+  virtual ~CWallDecal() override {}
+};
+
+typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
+
 struct CBoundary : public CRender {
   CBoundary(CRenderKind kind, entityId_t entityId, entityId_t parentId)
     : CRender(kind, entityId, parentId) {}
 
-  CBoundary(const CBoundary& cpy, entityId_t entityId, entityId_t parentId)
-    : CRender(cpy.kind, entityId, parentId) {}
+  std::list<pCWallDecal_t> decals;
 
   virtual ~CBoundary() override {}
 };
@@ -178,25 +189,12 @@ struct CRegion : public CRender {
 void forEachConstCRegion(const CRegion& region, std::function<void(const CRegion&)> fn);
 void forEachCRegion(CRegion& region, std::function<void(CRegion&)> fn);
 
-struct CWallDecal : public CRender {
-  CWallDecal(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
-
-  std::string texture;
-  QRectF texRect = QRectF(0, 0, 1, 1);
-
-  virtual ~CWallDecal() override {}
-};
-
-typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
-
 struct CWall : public CBoundary {
   CWall(entityId_t entityId, entityId_t parentId)
     : CBoundary(CRenderKind::WALL, entityId, parentId) {}
 
   std::string texture;
   CRegion* region;
-  std::list<pCWallDecal_t> decals;
 
   virtual ~CWall() override {}
 };
@@ -205,16 +203,6 @@ struct CJoin : public CBoundary {
   CJoin(entityId_t entityId, entityId_t parentId, entityId_t joinId)
     : CBoundary(CRenderKind::JOIN, entityId, parentId),
       joinId(joinId) {}
-
-  CJoin(const CJoin& cpy, entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : CBoundary(cpy, entityId, parentId),
-      joinId(joinId) {
-
-    topTexture = cpy.topTexture;
-    bottomTexture = cpy.bottomTexture;
-    regionA = cpy.regionA;
-    regionB = cpy.regionB;
-  }
 
   void mergeIn(const CJoin& other) {
     if (other.topTexture != "default") {

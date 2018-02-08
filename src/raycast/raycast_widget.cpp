@@ -1,4 +1,5 @@
 #include <list>
+#include <regex>
 #include <QMessageBox>
 #include <QMenuBar>
 #include <QPainter>
@@ -45,7 +46,29 @@ RaycastWidget::RaycastWidget(QWidget* parent, EventSystem& eventSystem)
 //===========================================
 static void loadTextures(RenderGraph& rg, const parser::Object& obj) {
   for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
-    rg.textures[it->first] = Texture{QImage(it->second.c_str()), Size(100, 100)};
+    string name = it->first;
+    string details = it->second;
+
+    Size sz(100, 100);
+
+    std::regex rx("([a-zA-Z0-9_\\.\\/]+)(?:,(\\d+),(\\d+))?");
+    std::smatch m;
+
+    std::regex_match(details, m, rx);
+    if (m.size() == 0) {
+      EXCEPTION("Error parsing texture description for texture with name '" << name << "'");
+    }
+
+    string path = m.str(1);
+
+    if (!m.str(2).empty()) {
+      sz.x = std::stod(m.str(2));
+    }
+    if (!m.str(3).empty()) {
+      sz.y = std::stod(m.str(3));
+    }
+
+    rg.textures[name] = Texture{QImage(path.c_str()), sz};
   }
 }
 
@@ -81,13 +104,15 @@ static void configureAudioService(AudioService& audioService, const parser::Obje
     loadSoundAssets(audioService, *pObj);
   }
 
-  string musicTrack = getValue(obj.dict, "music_track", "loop1");
+  string musicTrack = getValue(obj.dict, "music_track", "");
 
   string strMusicVolume = getValue(obj.dict, "music_volume", "1.0");
   double musicVolume = std::stod(strMusicVolume);
 
-  audioService.setMusicVolume(musicVolume);
-  audioService.playMusic(musicTrack);
+  if (musicTrack.length() > 0) {
+    audioService.playMusic(musicTrack);
+    audioService.setMusicVolume(musicVolume);
+  }
 }
 
 //===========================================
