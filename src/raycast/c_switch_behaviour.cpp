@@ -40,18 +40,22 @@ void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
         GameEvent e("switchActivateEntity");
         m_entityManager.broadcastEvent(e, set<entityId_t>{m_target});
 
-        CWallDecal* decal = getDecal();
-        if (decal != nullptr) {
-          decal->texRect = QRectF(0.5, 0, 0.5, 1);
-        }
+        QRectF texRect;
 
         switch (m_state) {
           case ST_OFF:
             m_state = ST_ON;
+            texRect = QRectF(0.5, 0, 0.5, 1);
             break;
           case ST_ON:
             m_state = ST_OFF;
+            texRect = QRectF(0, 0, 0.5, 1);
             break;
+        }
+
+        CWallDecal* decal = getDecal();
+        if (decal != nullptr) {
+          decal->texRect = texRect;
         }
       }
     }
