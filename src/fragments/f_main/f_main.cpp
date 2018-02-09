@@ -56,6 +56,9 @@ void FMain::reload(const FragmentSpec& spec_) {
       "  background-image: url(\"" + spec.backgroundImage + "\");"
       "}");
   }
+  else {
+    setStyleSheet("");
+  }
 
   m_aboutDialogTitle = spec.aboutDialogTitle;
   m_aboutDialogText = spec.aboutDialogText;

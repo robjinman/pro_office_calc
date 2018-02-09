@@ -12,17 +12,15 @@ using std::set;
 // CSwitchBehaviour::CSwitchBehaviour
 //===========================================
 CSwitchBehaviour::CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager,
-  entityId_t target, bool toggleable, double toggleDelay)
+  entityId_t target, SwitchState initialState, bool toggleable, double toggleDelay)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
     m_target(target),
+    m_state(initialState),
     m_toggleable(toggleable),
     m_timer(toggleDelay) {
 
-  CWallDecal* decal = getDecal();
-  if (decal != nullptr) {
-    decal->texRect = QRectF(0, 0, 0.5, 1);
-  }
+  setDecal();
 }
 
 //===========================================
@@ -31,29 +29,43 @@ CSwitchBehaviour::CSwitchBehaviour(entityId_t entityId, EntityManager& entityMan
 void CSwitchBehaviour::update() {}
 
 //===========================================
+// CSwitchBehaviour::setDecal
+//===========================================
+void CSwitchBehaviour::setDecal() {
+  QRectF texRect;
+
+  switch (m_state) {
+    case SwitchState::OFF:
+      texRect = QRectF(0, 0, 0.5, 1);
+      break;
+    case SwitchState::ON:
+      texRect = QRectF(0.5, 0, 0.5, 1);
+      break;
+  }
+
+  CWallDecal* decal = getDecal();
+  if (decal != nullptr) {
+    decal->texRect = texRect;
+  }
+}
+
+//===========================================
 // CSwitchBehaviour::handleEvent
 //===========================================
 void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
   if (e_.name == "playerActivateEntity") {
     if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {
-        QRectF texRect;
-
         switch (m_state) {
           case SwitchState::OFF:
             m_state = SwitchState::ON;
-            texRect = QRectF(0.5, 0, 0.5, 1);
             break;
           case SwitchState::ON:
             m_state = SwitchState::OFF;
-            texRect = QRectF(0, 0, 0.5, 1);
             break;
         }
 
-        CWallDecal* decal = getDecal();
-        if (decal != nullptr) {
-          decal->texRect = texRect;
-        }
+        setDecal();
 
         ESwitchActivate eActivate(m_state);
         m_entityManager.broadcastEvent(eActivate);

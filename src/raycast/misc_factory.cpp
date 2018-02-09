@@ -126,8 +126,13 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
     bool toggleable = getValue(obj.dict, "toggleable", "false") == "true";
     double toggleDelay = std::stod(getValue(obj.dict, "toggle_delay", "0.0"));
 
+    SwitchState initialState = SwitchState::OFF;
+    if (getValue(obj.dict, "initial_state", "") == "on") {
+      initialState = SwitchState::ON;
+    }
+
     CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target,
-      toggleable, toggleDelay);
+      initialState, toggleable, toggleDelay);
 
     behaviourSystem.addComponent(pComponent_t(behaviour));
 

@@ -24,7 +24,7 @@ struct ESwitchActivate : public GameEvent {
 class CSwitchBehaviour : public CBehaviour {
   public:
     CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, entityId_t target,
-      bool toggleable, double toggleDelay);
+      SwitchState initialState, bool toggleable, double toggleDelay);
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& e) override;
@@ -32,14 +32,15 @@ class CSwitchBehaviour : public CBehaviour {
     virtual ~CSwitchBehaviour() override {}
 
   private:
+    CWallDecal* getDecal() const;
+    void setDecal();
+
     EntityManager& m_entityManager;
     entityId_t m_target;
-    SwitchState m_state = SwitchState::OFF;
+    SwitchState m_state;
     bool m_toggleable;
     double m_toggleDelay;
     Debouncer m_timer;
-
-    CWallDecal* getDecal() const;
 };
 
 
