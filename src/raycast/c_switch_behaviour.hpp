@@ -9,6 +9,18 @@
 class EntityManager;
 class CWallDecal;
 
+
+enum class SwitchState { ON, OFF };
+
+
+struct ESwitchActivate : public GameEvent {
+  ESwitchActivate(SwitchState state)
+    : GameEvent("switchActivate"),
+      state(state) {}
+
+  SwitchState state;
+};
+
 class CSwitchBehaviour : public CBehaviour {
   public:
     CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, entityId_t target,
@@ -20,14 +32,9 @@ class CSwitchBehaviour : public CBehaviour {
     virtual ~CSwitchBehaviour() override {}
 
   private:
-    enum state_t {
-      ST_ON,
-      ST_OFF
-    };
-
     EntityManager& m_entityManager;
     entityId_t m_target;
-    state_t m_state = ST_OFF;
+    SwitchState m_state = SwitchState::OFF;
     bool m_toggleable;
     double m_toggleDelay;
     Debouncer m_timer;

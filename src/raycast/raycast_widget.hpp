@@ -28,6 +28,10 @@ class RaycastWidget : public QWidget {
 
     void initialise(const std::string& mapFile);
 
+    EntityManager& entityManager() {
+      return m_entityManager;
+    }
+
   protected:
     void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;

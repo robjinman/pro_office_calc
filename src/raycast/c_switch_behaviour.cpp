@@ -35,20 +35,17 @@ void CSwitchBehaviour::update() {}
 //===========================================
 void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
   if (e_.name == "playerActivateEntity") {
-    if (m_toggleable || m_state == ST_OFF) {
+    if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {
-        GameEvent e("switchActivateEntity");
-        m_entityManager.broadcastEvent(e, set<entityId_t>{m_target});
-
         QRectF texRect;
 
         switch (m_state) {
-          case ST_OFF:
-            m_state = ST_ON;
+          case SwitchState::OFF:
+            m_state = SwitchState::ON;
             texRect = QRectF(0.5, 0, 0.5, 1);
             break;
-          case ST_ON:
-            m_state = ST_OFF;
+          case SwitchState::ON:
+            m_state = SwitchState::OFF;
             texRect = QRectF(0, 0, 0.5, 1);
             break;
         }
@@ -57,6 +54,12 @@ void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
         if (decal != nullptr) {
           decal->texRect = texRect;
         }
+
+        ESwitchActivate eActivate(m_state);
+        m_entityManager.broadcastEvent(eActivate);
+
+        GameEvent eActivateEntity("switchActivateEntity");
+        m_entityManager.broadcastEvent(eActivateEntity, set<entityId_t>{m_target});
       }
     }
   }

@@ -8,7 +8,7 @@ static void sendEventToComponent(CEventHandler& c, const GameEvent& e) {
   for (auto it = c.handlers.begin(); it != c.handlers.end(); ++it) {
     EventHandler handler = *it;
 
-    if (handler.name == e.name) {
+    if (handler.name == e.name || handler.name == "*") {
       handler.handler(e);
     }
   }

@@ -221,7 +221,7 @@ void FShuffledCalc::onButtonClick(int id) {
         return i < n;
       },
       [&]() {
-        commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_LOGIN_SCREEN)));
+        commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_ARE_YOU_SURE)));
       });
     });
   }

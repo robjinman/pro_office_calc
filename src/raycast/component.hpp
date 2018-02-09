@@ -15,7 +15,6 @@ struct GameEvent {
     : name(name) {}
 
   std::string name;
-  //std::set<entityId_t> entitiesInRange;
 
   virtual ~GameEvent() {}
 };

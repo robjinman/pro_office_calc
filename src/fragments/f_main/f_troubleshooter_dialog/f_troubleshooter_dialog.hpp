@@ -16,6 +16,7 @@
 #include <QTimer>
 #include "fragment.hpp"
 #include "raycast/raycast_widget.hpp"
+#include "fragments/f_main/f_troubleshooter_dialog/game_logic.hpp"
 
 
 struct FTroubleshooterDialogData : public FragmentData {
@@ -49,6 +50,7 @@ struct FTroubleshooterDialogData : public FragmentData {
     std::unique_ptr<QWidget> page;
     std::unique_ptr<QVBoxLayout> vbox;
     std::unique_ptr<RaycastWidget> wgtRaycast;
+    std::unique_ptr<its_raining_tetrominos::GameLogic> gameLogic;
   } tab3;
 };
 

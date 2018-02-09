@@ -1,5 +1,5 @@
-#ifndef __PROCALC_STATES_ST_LOGIN_SCREEN_HPP__
-#define __PROCALC_STATES_ST_LOGIN_SCREEN_HPP__
+#ifndef __PROCALC_STATES_ST_ARE_YOU_SURE_HPP__
+#define __PROCALC_STATES_ST_ARE_YOU_SURE_HPP__
 
 
 #include <cstdlib>
@@ -8,7 +8,7 @@
 #include "fragments/f_main/f_main_spec.hpp"
 
 
-namespace st_login_screen {
+namespace st_are_you_sure {
 
 
 FMainSpec* makeFMainSpec(int stateId) {
