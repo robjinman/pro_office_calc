@@ -145,6 +145,7 @@ TEST_F(MapParserTest, transformFromTriangle_leftFacing) {
 TEST_F(MapParserTest, constructObject_r_keyValuePairs) {
   string xml =
     "<g>"
+      "<text><tspan>type=typename</tspan></text>"
       "<text><tspan>key1=value1</tspan></text>"
       "<text><tspan>key2=value2</tspan></text>"
       "<text><tspan>key3=value3</tspan></text>"
@@ -155,6 +156,8 @@ TEST_F(MapParserTest, constructObject_r_keyValuePairs) {
 
   XMLElement* node = doc.FirstChildElement("g");
   Object* obj = constructObject_r(*node);
+
+  ASSERT_EQ(obj->type, "typename");
 
   auto it = obj->dict.find("key1");
   ASSERT_TRUE(it != obj->dict.end());
@@ -172,9 +175,11 @@ TEST_F(MapParserTest, constructObject_r_keyValuePairs) {
 TEST_F(MapParserTest, constructObject_r_nestedObjects) {
   string xml =
     "<g>"
+      "<text><tspan>type=type1</tspan></text>"
       "<text><tspan>key1=value1</tspan></text>"
       "<text><tspan>key2=value2</tspan></text>"
       "<g>"
+        "<text><tspan>type=type2</tspan></text>"
         "<text><tspan>key3=value3</tspan></text>"
         "<text><tspan>key4=value4</tspan></text>"
       "</g>"
@@ -185,6 +190,8 @@ TEST_F(MapParserTest, constructObject_r_nestedObjects) {
 
   XMLElement* node = doc.FirstChildElement("g");
   Object* obj = constructObject_r(*node);
+
+  ASSERT_EQ(obj->type, "type1");
 
   auto it = obj->dict.find("key1");
   ASSERT_TRUE(it != obj->dict.end());
@@ -197,6 +204,8 @@ TEST_F(MapParserTest, constructObject_r_nestedObjects) {
   ASSERT_EQ(1, obj->children.size());
 
   pObject_t& obj2 = *obj->children.begin();
+
+  ASSERT_EQ(obj2->type, "type2");
 
   it = obj2->dict.find("key3");
   ASSERT_TRUE(it != obj2->dict.end());
@@ -216,7 +225,7 @@ TEST_F(MapParserTest, constructObject_r_testFile1) {
   auto it = objects.begin();
   const Object& obj = **it;
 
-  ASSERT_EQ("region", obj.dict.at("type"));
+  ASSERT_EQ("region", obj.type);
   ASSERT_EQ("0", obj.dict.at("floor_height"));
   ASSERT_EQ("140", obj.dict.at("ceiling_height"));
   ASSERT_EQ("cracked_mud", obj.dict.at("floor_texture"));
@@ -226,7 +235,7 @@ TEST_F(MapParserTest, constructObject_r_testFile1) {
 
   const Object& subObj = **obj.children.begin();
 
-  ASSERT_EQ("wall", subObj.dict.at("type"));
+  ASSERT_EQ("wall", subObj.type);
   ASSERT_EQ("light_bricks", subObj.dict.at("texture"));
   ASSERT_EQ(4, subObj.path.points.size());
 
