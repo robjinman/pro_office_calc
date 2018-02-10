@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
+#include "fragments/f_main/f_desktop/f_desktop_spec.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog_spec.hpp"
 
 
@@ -22,6 +23,7 @@ struct FMainSpec : public FragmentSpec {
         &calculatorSpec,
         &shuffledCalcSpec,
         &loginScreenSpec,
+        &desktopSpec,
         &countdownToStartSpec,
         &settingsDialogSpec,
         &troubleshooterDialogSpec,
@@ -32,6 +34,7 @@ struct FMainSpec : public FragmentSpec {
   FCalculatorSpec calculatorSpec;
   FShuffledCalcSpec shuffledCalcSpec;
   FLoginScreenSpec loginScreenSpec;
+  FDesktopSpec desktopSpec;
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
   FTroubleshooterDialogSpec troubleshooterDialogSpec;

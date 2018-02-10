@@ -10,7 +10,14 @@ namespace st_office_assistant {
 
 FMainSpec* makeFMainSpec(int stateId) {
   FMainSpec* mainSpec = new FMainSpec;
-  mainSpec->calculatorSpec.setEnabled(true);
+  mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
+  mainSpec->glitchSpec.setEnabled(true);
+  mainSpec->fileLabel = "Fi͝l̨e";
+  mainSpec->quitLabel = "Qui͢t";
+  mainSpec->backgroundImage = "data/bliss.png";
+  mainSpec->helpLabel = "H͠e͘l͢p";
+  mainSpec->aboutLabel = "A͡b҉ou͞t̵";
+  mainSpec->aboutDialogTitle = "A͞b̶out";
   mainSpec->aboutDialogText = "";
   mainSpec->aboutDialogText =
     "<div>"
@@ -19,6 +26,7 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
+  mainSpec->desktopSpec.setEnabled(true);
 
   return mainSpec;
 }

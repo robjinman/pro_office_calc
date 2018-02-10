@@ -6,6 +6,7 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen.hpp"
+#include "fragments/f_main/f_desktop/f_desktop.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_settings_dialog/f_loading_screen/f_loading_screen.hpp"
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d.hpp"
@@ -50,6 +51,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FLoginScreen") {
     return new FLoginScreen(parent, parentData, commonData);
+  }
+  else if (name == "FDesktop") {
+    return new FDesktop(parent, parentData, commonData);
   }
   else if (name == "FMaze3d") {
     return new FMaze3d(parent, parentData, commonData);
