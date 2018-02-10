@@ -11,7 +11,7 @@ namespace st_office_assistant {
 FMainSpec* makeFMainSpec(int stateId) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
-  //mainSpec->glitchSpec.setEnabled(true);
+  mainSpec->glitchSpec.setEnabled(true);
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
   mainSpec->backgroundImage = "data/bliss.png";
@@ -30,6 +30,10 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->desktopSpec.icons = {
     {"data/procalc.png", "Pro Office Calculator", "procalcLaunch"}
   };
+  mainSpec->setupDialogSpec.setEnabled(true);
+  mainSpec->setupDialogSpec.titleText = "Pro Office Calculator Setup";
+  mainSpec->setupDialogSpec.width = 400;
+  mainSpec->setupDialogSpec.height = 300;
 
   return mainSpec;
 }

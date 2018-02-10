@@ -14,6 +14,7 @@
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
 #include "fragments/f_main/f_desktop/f_desktop_spec.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog_spec.hpp"
+#include "fragments/f_main/f_setup_dialog/f_setup_dialog_spec.hpp"
 
 
 struct FMainSpec : public FragmentSpec {
@@ -27,6 +28,7 @@ struct FMainSpec : public FragmentSpec {
         &countdownToStartSpec,
         &settingsDialogSpec,
         &troubleshooterDialogSpec,
+        &setupDialogSpec,
         &tetrominosSpec
       }) {}
 
@@ -37,6 +39,7 @@ struct FMainSpec : public FragmentSpec {
   FDesktopSpec desktopSpec;
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
+  FSetupDialogSpec setupDialogSpec;
   FTroubleshooterDialogSpec troubleshooterDialogSpec;
   FTetrominosSpec tetrominosSpec;
 
