@@ -24,16 +24,20 @@ FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_,
 void FLoginScreen::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FLoginScreen::reload\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
+
+  m_origParentState.spacing = parentData.box->spacing();
+  m_origParentState.margins = parentData.box->contentsMargins();
+
+  parentData.box->setSpacing(0);
+  parentData.box->setContentsMargins(0, 0, 0, 0);
+  parentData.box->addWidget(this);
 
   commonData.eventSystem.listen("PasswordGeneratedEvent", [this](const Event& event_) {
     auto& event = dynamic_cast<const PasswordGeneratedEvent&>(event_);
     DBG_PRINT_VAR(event.password);
     m_data.password = event.password;
   }, m_pwdGenEventId);
-
-  m_origParentState.centralWidget = parent.centralWidget();
-  parent.setCentralWidget(this);
 
   m_data.wgtUser.reset(new QLineEdit(this));
   m_data.wgtUser->setGeometry(205, 170, 100, 20);
@@ -67,9 +71,12 @@ void FLoginScreen::onLoginAttempt() {
 void FLoginScreen::cleanUp() {
   DBG_PRINT("FLoginScreen::cleanUp\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  parent.setCentralWidget(m_origParentState.centralWidget);
+  parentData.box->setSpacing(m_origParentState.spacing);
+  parentData.box->setContentsMargins(m_origParentState.margins);
+  parentData.box->removeWidget(this);
+
   commonData.eventSystem.forget(m_pwdGenEventId);
 }
 

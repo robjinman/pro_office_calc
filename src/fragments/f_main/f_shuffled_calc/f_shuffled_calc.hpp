@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include <QImage>
 #include <QTimer>
+#include <QMargins>
 #include <QLabel>
 #include "fragment.hpp"
 #include "button_grid.hpp"
@@ -40,10 +41,6 @@ class FShuffledCalc : public QWidget, public Fragment {
 
     FShuffledCalcData m_data;
 
-    struct {
-      QWidget* centralWidget;
-    } m_origParentState;
-
     Calculator m_calculator;
     std::unique_ptr<QVBoxLayout> m_vbox;
     std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
@@ -57,6 +54,11 @@ class FShuffledCalc : public QWidget, public Fragment {
     std::unique_ptr<QImage> m_glitchBuffer;
     std::unique_ptr<QTimer> m_glitchTimer;
     std::mt19937 m_randEngine;
+
+    struct {
+      int spacing;
+      QMargins margins;
+    } m_origParentState;
 };
 
 

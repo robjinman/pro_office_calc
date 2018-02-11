@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QImage>
 #include <QLineEdit>
+#include <QMargins>
 #include "fragment.hpp"
 #include "event.hpp"
 
@@ -45,7 +46,8 @@ class FLoginScreen : public QLabel, public Fragment {
     FLoginScreenData m_data;
 
     struct {
-      QWidget* centralWidget;
+      int spacing;
+      QMargins margins;
     } m_origParentState;
 
     int m_pwdGenEventId;

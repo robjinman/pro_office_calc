@@ -148,9 +148,9 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
   std::shuffle(symbols_.begin(), symbols_.end(), randEngine);
   QString symbols(ucs4ToUtf8(symbols_).c_str());
 
-  m_data.pages[0].reset(new ConfigPage(symbols[0], { 1, 2, 3 }));
-  m_data.pages[1].reset(new ConfigPage(symbols[1], { 0, 2, 3 }));
-  m_data.pages[2].reset(new ConfigPage(symbols[2], { 0, 1, 3 }));
+  m_data.pages[0].reset(new ConfigPage(symbols[0], { 1, 2 }));
+  m_data.pages[1].reset(new ConfigPage(symbols[1], { 0, 3 }));
+  m_data.pages[2].reset(new ConfigPage(symbols[2], { 0, 3 }));
   m_data.pages[3].reset(new ConfigPage(symbols[3], { 1, 2, 4, 5 }));
   m_data.pages[4].reset(new ConfigPage(symbols[4], { 3, 6 }));
   m_data.pages[5].reset(new ConfigPage(symbols[5], { 3, 6, 9 }));
@@ -168,15 +168,14 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
   m_data.wgtMap.reset(new QLabel);
   m_data.wgtMap->setPixmap(QPixmap("data/config_maze.png"));
 
-  m_data.pages[0]->grid->addWidget(m_data.wgtMap.get(), 0, 1);
+  m_data.pages[1]->grid->addWidget(m_data.wgtMap.get(), 0, 1);
 
   for (int i = 0; i <= 15; ++i) {
     connect(m_data.pages[i].get(), SIGNAL(nextClicked(int)), this, SLOT(onPageNextClick(int)));
     m_data.stackedLayout->addWidget(m_data.pages[i].get());
   }
 
-
-  m_data.stackedLayout->setCurrentIndex(m_layoutIdxOfFirstConfigPage);
+  m_data.stackedLayout->setCurrentIndex(m_layoutIdxOfFirstConfigPage + 1);
 }
 
 //===========================================

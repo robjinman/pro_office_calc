@@ -32,10 +32,14 @@ void FDesktop::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FDesktop::reload\n");
 
   auto& spec = dynamic_cast<const FDesktopSpec&>(spec_);
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  m_origParentState.centralWidget = parent.centralWidget();
-  parent.setCentralWidget(this);
+  m_origParentState.spacing = parentData.box->spacing();
+  m_origParentState.margins = parentData.box->contentsMargins();
+
+  parentData.box->setSpacing(0);
+  parentData.box->setContentsMargins(0, 0, 0, 0);
+  parentData.box->addWidget(this);
 
   m_data.grid.reset(new QGridLayout);
   setLayout(m_data.grid.get());
@@ -86,9 +90,11 @@ void FDesktop::onIconActivate(const string& name) {
 void FDesktop::cleanUp() {
   DBG_PRINT("FDesktop::cleanUp\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  parent.setCentralWidget(m_origParentState.centralWidget);
+  parentData.box->setSpacing(m_origParentState.spacing);
+  parentData.box->setContentsMargins(m_origParentState.margins);
+  parentData.box->removeWidget(this);
 }
 
 //===========================================

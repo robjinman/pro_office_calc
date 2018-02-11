@@ -6,6 +6,7 @@
 #include <memory>
 #include <QWidget>
 #include <QGridLayout>
+#include <QMargins>
 #include "fragment.hpp"
 #include "fragments/f_main/f_desktop/desktop_icon.hpp"
 
@@ -33,7 +34,8 @@ class FDesktop : public QWidget, public Fragment {
     FDesktopData m_data;
 
     struct {
-      QWidget* centralWidget;
+      int spacing;
+      QMargins margins;
     } m_origParentState;
 };
 

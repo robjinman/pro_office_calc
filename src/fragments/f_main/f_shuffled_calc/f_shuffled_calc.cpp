@@ -56,10 +56,14 @@ FShuffledCalc::FShuffledCalc(Fragment& parent_, FragmentData& parentData_,
 void FShuffledCalc::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FShuffledCalc::reload\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  QWidget::setParent(&parent);
-  parent.setCentralWidget(this);
+  m_origParentState.spacing = parentData.box->spacing();
+  m_origParentState.margins = parentData.box->contentsMargins();
+
+  parentData.box->setSpacing(0);
+  parentData.box->setContentsMargins(0, 0, 0, 0);
+  parentData.box->addWidget(this);
 
   QFont f = font();
   f.setPointSize(16);
@@ -76,8 +80,6 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   m_vbox->addWidget(m_wgtDigitDisplay.get());
   m_vbox->addWidget(m_wgtButtonGrid.get());
   setLayout(m_vbox.get());
-
-  m_origParentState.centralWidget = parent.centralWidget();
 
   connect(m_wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(onButtonClick(int)));
 
@@ -134,9 +136,11 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
 void FShuffledCalc::cleanUp() {
   DBG_PRINT("FShuffledCalc::cleanUp\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  parent.setCentralWidget(m_origParentState.centralWidget);
+  parentData.box->setSpacing(m_origParentState.spacing);
+  parentData.box->setContentsMargins(m_origParentState.margins);
+  parentData.box->removeWidget(this);
 }
 
 //===========================================
