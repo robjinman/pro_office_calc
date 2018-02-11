@@ -58,7 +58,7 @@ void FSettingsDialog::cleanUp() {
 // FSettingsDialog::showSettingsDialog
 //===========================================
 void FSettingsDialog::showSettingsDialog() {
-  exec();
+  show();
 }
 
 //===========================================

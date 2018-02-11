@@ -15,7 +15,7 @@ FSetupDialog::FSetupDialog(Fragment& parent_, FragmentData& parentData_,
   DBG_PRINT("FSetupDialog::FSetupDialog\n");
 
   commonData.eventSystem.listen("procalcLaunch", [this](const Event&) {
-    exec();
+    show();
   }, m_eventIdx);
 }
 

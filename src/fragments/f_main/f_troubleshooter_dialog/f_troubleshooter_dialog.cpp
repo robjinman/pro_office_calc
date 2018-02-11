@@ -212,7 +212,7 @@ void FTroubleshooterDialog::cleanUp() {
 // FTroubleshooterDialog::showTroubleshooterDialog
 //===========================================
 void FTroubleshooterDialog::showTroubleshooterDialog() {
-  exec();
+  show();
 }
 
 //===========================================
