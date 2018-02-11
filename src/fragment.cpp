@@ -2,6 +2,7 @@
 #include "fragment.hpp"
 #include "fragment_spec.hpp"
 #include "fragment_factory.hpp"
+#include "utils.hpp"
 
 
 using std::string;
@@ -73,7 +74,7 @@ void Fragment::rebuild(const FragmentSpec& spec) {
 
     if (chSpec.isEnabled()) {
       if (m_children.find(chName) == m_children.end()) {
-        Fragment* frag = constructFragment(chName, *this, m_ownData, commonData);
+        Fragment* frag = constructFragment(chSpec.type(), *this, m_ownData, commonData);
         m_children.insert(std::make_pair(chName, pFragment_t(frag)));
       }
     }

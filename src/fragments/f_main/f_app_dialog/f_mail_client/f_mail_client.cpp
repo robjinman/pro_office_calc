@@ -1,6 +1,6 @@
 #include "fragments/f_main/f_main.hpp"
-#include "fragments/f_main/f_mail_client/f_mail_client.hpp"
-#include "fragments/f_main/f_mail_client/f_mail_client_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
+#include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
 
@@ -10,13 +10,10 @@
 //===========================================
 FMailClient::FMailClient(Fragment& parent_, FragmentData& parentData_,
   const CommonFragData& commonData)
-  : Fragment("FMailClient", parent_, parentData_, m_data, commonData) {
+  : QWidget(nullptr),
+    Fragment("FMailClient", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FMailClient::FMailClient\n");
-
-  commonData.eventSystem.listen("mailClientLaunch", [this](const Event&) {
-    show();
-  }, m_eventIdx);
 }
 
 //===========================================
@@ -25,10 +22,21 @@ FMailClient::FMailClient(Fragment& parent_, FragmentData& parentData_,
 void FMailClient::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FMailClient::reload\n");
 
-  auto& spec = dynamic_cast<const FMailClientSpec&>(spec_);
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  setWindowTitle(spec.titleText);
-  setFixedSize(spec.width, spec.height);
+  m_origParentState.spacing = parentData.box->spacing();
+  m_origParentState.margins = parentData.box->contentsMargins();
+
+  parentData.box->setSpacing(0);
+  parentData.box->setContentsMargins(0, 0, 0, 0);
+  parentData.box->addWidget(this);
+
+  m_data.wgtLabel.reset(new QLabel("Mail Client"));
+
+  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox->addWidget(m_data.wgtLabel.get());
+
+  setLayout(m_data.vbox.get());
 }
 
 //===========================================
@@ -37,7 +45,11 @@ void FMailClient::reload(const FragmentSpec& spec_) {
 void FMailClient::cleanUp() {
   DBG_PRINT("FMailClient::cleanUp\n");
 
-  commonData.eventSystem.forget(m_eventIdx);
+  auto& parentData = parentFragData<WidgetFragData>();
+
+  parentData.box->setSpacing(m_origParentState.spacing);
+  parentData.box->setContentsMargins(m_origParentState.margins);
+  parentData.box->removeWidget(this);
 }
 
 //===========================================

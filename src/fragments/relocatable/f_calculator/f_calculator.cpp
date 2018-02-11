@@ -1,6 +1,6 @@
-#include "fragments/f_main/f_calculator/f_calculator.hpp"
-#include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
-#include "fragments/f_main/f_main.hpp"
+#include "fragments/relocatable/f_calculator/f_calculator.hpp"
+#include "fragments/relocatable/f_calculator/f_calculator_spec.hpp"
+#include "fragments/relocatable/widget_frag_data.hpp"
 #include "event_system.hpp"
 #include "update_loop.hpp"
 #include "utils.hpp"
@@ -24,12 +24,14 @@ FCalculator::FCalculator(Fragment& parent_, FragmentData& parentData_,
 void FCalculator::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FCalculator::reload\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  m_data.window = &parent;
+  m_origParentState.spacing = parentData.box->spacing();
+  m_origParentState.margins = parentData.box->contentsMargins();
 
-  m_origParentState.centralWidget = parent.centralWidget();
-  parent.setCentralWidget(this);
+  parentData.box->setSpacing(0);
+  parentData.box->setContentsMargins(0, 0, 0, 0);
+  parentData.box->addWidget(this);
 
   QFont f = font();
   f.setPointSize(16);
@@ -59,9 +61,11 @@ void FCalculator::reload(const FragmentSpec& spec_) {
 void FCalculator::cleanUp() {
   DBG_PRINT("FCalculator::cleanUp\n");
 
-  auto& parent = parentFrag<FMain>();
+  auto& parentData = parentFragData<WidgetFragData>();
 
-  parent.setCentralWidget(m_origParentState.centralWidget);
+  parentData.box->setSpacing(m_origParentState.spacing);
+  parentData.box->setContentsMargins(m_origParentState.margins);
+  parentData.box->removeWidget(this);
 }
 
 //===========================================

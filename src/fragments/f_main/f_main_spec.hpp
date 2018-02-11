@@ -7,15 +7,14 @@
 #include "fragment_spec.hpp"
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 #include "fragments/relocatable/f_tetrominos/f_tetrominos_spec.hpp"
-#include "fragments/f_main/f_calculator/f_calculator_spec.hpp"
+#include "fragments/relocatable/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc_spec.hpp"
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start_spec.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog_spec.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
 #include "fragments/f_main/f_desktop/f_desktop_spec.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog_spec.hpp"
-#include "fragments/f_main/f_setup_dialog/f_setup_dialog_spec.hpp"
-#include "fragments/f_main/f_mail_client/f_mail_client_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_app_dialog_spec.hpp"
 
 
 struct FMainSpec : public FragmentSpec {
@@ -29,10 +28,18 @@ struct FMainSpec : public FragmentSpec {
         &countdownToStartSpec,
         &settingsDialogSpec,
         &troubleshooterDialogSpec,
-        &setupDialogSpec,
-        &mailClientSpec,
+        &appDialogSpec0,
+        &appDialogSpec1,
+        &appDialogSpec2,
+        &appDialogSpec3,
+        &appDialogSpec4,
         &tetrominosSpec
-      }) {}
+      }),
+      appDialogSpec0(0),
+      appDialogSpec1(1),
+      appDialogSpec2(2),
+      appDialogSpec3(3),
+      appDialogSpec4(4) {}
 
   FGlitchSpec glitchSpec;
   FCalculatorSpec calculatorSpec;
@@ -41,8 +48,11 @@ struct FMainSpec : public FragmentSpec {
   FDesktopSpec desktopSpec;
   FCountdownToStartSpec countdownToStartSpec;
   FSettingsDialogSpec settingsDialogSpec;
-  FSetupDialogSpec setupDialogSpec;
-  FMailClientSpec mailClientSpec;
+  FAppDialogSpec appDialogSpec0;
+  FAppDialogSpec appDialogSpec1;
+  FAppDialogSpec appDialogSpec2;
+  FAppDialogSpec appDialogSpec3;
+  FAppDialogSpec appDialogSpec4;
   FTroubleshooterDialogSpec troubleshooterDialogSpec;
   FTetrominosSpec tetrominosSpec;
 

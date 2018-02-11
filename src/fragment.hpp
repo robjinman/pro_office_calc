@@ -59,7 +59,7 @@ class Fragment {
 
     const std::string& name() const;
 
-    virtual ~Fragment() = 0;
+    virtual ~Fragment();
 
   protected:
     CommonFragData commonData;

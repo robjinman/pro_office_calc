@@ -12,10 +12,10 @@
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d.hpp"
 #include "fragments/f_main/f_settings_dialog/f_config_maze/f_config_maze.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog.hpp"
-#include "fragments/f_main/f_setup_dialog/f_setup_dialog.hpp"
-#include "fragments/f_main/f_mail_client/f_mail_client.hpp"
-#include "fragments/f_main/f_calculator/f_calculator.hpp"
-#include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
+#include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
+#include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
+#include "fragments/relocatable/f_calculator/f_calculator.hpp"
+#include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
 
 
@@ -63,8 +63,8 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   else if (name == "FTroubleshooterDialog") {
     return new FTroubleshooterDialog(parent, parentData, commonData);
   }
-  else if (name == "FSetupDialog") {
-    return new FSetupDialog(parent, parentData, commonData);
+  else if (name == "FAppDialog") {
+    return new FAppDialog(parent, parentData, commonData);
   }
   else if (name == "FMailClient") {
     return new FMailClient(parent, parentData, commonData);

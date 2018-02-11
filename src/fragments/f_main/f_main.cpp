@@ -22,6 +22,11 @@ FMain::FMain(const CommonFragData& commonData)
 
   setWindowTitle("Pro Office Calculator");
 
+  m_data.wgtCentral = new QWidget;
+  setCentralWidget(m_data.wgtCentral);
+
+  m_data.wgtCentral->setLayout(m_data.box);
+
   m_data.mnuFile.reset(menuBar()->addMenu("File"));
   m_data.actQuit.reset(new QAction("Quit", this));
   m_data.mnuFile->addAction(m_data.actQuit.get());

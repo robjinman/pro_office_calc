@@ -3,15 +3,20 @@
 
 
 #include <memory>
-#include <QDialog>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QMargins>
 #include "fragment.hpp"
+#include "fragments/relocatable/widget_frag_data.hpp"
 
 
 struct FMailClientData : public FragmentData {
-
+  std::unique_ptr<QVBoxLayout> vbox;
+  std::unique_ptr<QLabel> wgtLabel;
 };
 
-class FMailClient : public QDialog, public Fragment {
+class FMailClient : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
@@ -25,7 +30,10 @@ class FMailClient : public QDialog, public Fragment {
   private:
     FMailClientData m_data;
 
-    int m_eventIdx;
+    struct {
+      int spacing;
+      QMargins margins;
+    } m_origParentState;
 };
 
 

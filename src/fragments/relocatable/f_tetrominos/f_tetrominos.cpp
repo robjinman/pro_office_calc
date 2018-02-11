@@ -270,6 +270,4 @@ void FTetrominos::cleanUp() {
 //===========================================
 FTetrominos::~FTetrominos() {
   DBG_PRINT("FTetrominos::~FTetrominos\n");
-
-  commonData.eventSystem.forget(m_incTetroRainId);
 }

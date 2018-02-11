@@ -32,10 +32,18 @@ FMainSpec* makeFMainSpec(int stateId) {
     {"data/youve_got_mail/mail.png", "Mail Client", "mailClientLaunch"},
     {"data/youve_got_mail/tetrisweeper.png", "Tetr̵̪͉͛i̷̛͚͉̤s̴̨̰͍̔̈́͌̌͐ŵ̵̡̜̭̮̎̈́̐͝eeper", "tetrisweeperLaunch"}
   };
-  mainSpec->mailClientSpec.setEnabled(true);
-  mainSpec->mailClientSpec.titleText = "Mail Client";
-  mainSpec->mailClientSpec.width = 400;
-  mainSpec->mailClientSpec.height = 300;
+  mainSpec->appDialogSpec0.setEnabled(true);
+  mainSpec->appDialogSpec0.titleText = "Pro Office Calculator";
+  mainSpec->appDialogSpec0.width = 400;
+  mainSpec->appDialogSpec0.height = 300;
+  mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
+  mainSpec->appDialogSpec0.calculatorSpec.setEnabled(true);
+  mainSpec->appDialogSpec1.setEnabled(true);
+  mainSpec->appDialogSpec1.titleText = "Mail Client";
+  mainSpec->appDialogSpec1.width = 400;
+  mainSpec->appDialogSpec1.height = 300;
+  mainSpec->appDialogSpec1.showOnEvent = "mailClientLaunch";
+  mainSpec->appDialogSpec1.mailClientSpec.setEnabled(true);
 
   return mainSpec;
 }

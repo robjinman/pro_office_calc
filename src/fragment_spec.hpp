@@ -9,11 +9,13 @@
 
 class FragmentSpec {
   public:
-    FragmentSpec(const std::string& name, std::vector<const FragmentSpec*> specs);
+    FragmentSpec(const std::string& type, std::vector<const FragmentSpec*> specs);
+    FragmentSpec(const std::string& type, int id, std::vector<const FragmentSpec*> specs);
 
     const std::map<std::string, const FragmentSpec*>& specs() const;
     const FragmentSpec& spec(const std::string& name) const;
-    const std::string& name() const;
+    std::string name() const;
+    const std::string& type() const;
     void setEnabled(bool b);
     bool isEnabled() const;
 
@@ -23,7 +25,8 @@ class FragmentSpec {
     void populateChildrenMap() const;
 
     bool m_enabled;
-    std::string m_name;
+    std::string m_type;
+    int m_id;
     mutable std::vector<const FragmentSpec*> m_tmpChildren;
     mutable std::map<std::string, const FragmentSpec*> m_children;
 };

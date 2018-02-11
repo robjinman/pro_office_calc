@@ -78,6 +78,4 @@ void FLoginScreen::cleanUp() {
 //===========================================
 FLoginScreen::~FLoginScreen() {
   DBG_PRINT("FLoginScreen::~FLoginScreen\n");
-
-  commonData.eventSystem.forget(m_pwdGenEventId);
 }

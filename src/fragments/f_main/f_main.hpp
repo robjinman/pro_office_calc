@@ -7,11 +7,17 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QAction>
+#include <QVBoxLayout>
 #include "update_loop.hpp"
 #include "fragment.hpp"
+#include "fragments/relocatable/widget_frag_data.hpp"
 
 
-struct FMainData : public FragmentData {
+struct FMainData : public WidgetFragData {
+  FMainData()
+    : WidgetFragData(new QVBoxLayout) {}
+
+  QWidget* wgtCentral;
   std::unique_ptr<QMenu> mnuFile;
   std::unique_ptr<QAction> actQuit;
   std::unique_ptr<QMenu> mnuHelp;

@@ -30,10 +30,11 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->desktopSpec.icons = {
     {"data/procalc.png", "Pro Office Calculator", "procalcLaunch"}
   };
-  mainSpec->setupDialogSpec.setEnabled(true);
-  mainSpec->setupDialogSpec.titleText = "Pro Office Calculator Setup";
-  mainSpec->setupDialogSpec.width = 400;
-  mainSpec->setupDialogSpec.height = 300;
+  mainSpec->appDialogSpec0.setEnabled(true);
+  mainSpec->appDialogSpec0.titleText = "Pro Office Calculator Setup";
+  mainSpec->appDialogSpec0.width = 400;
+  mainSpec->appDialogSpec0.height = 300;
+  mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
 
   return mainSpec;
 }

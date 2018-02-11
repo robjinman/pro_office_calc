@@ -1,12 +1,23 @@
 #include "fragment_spec.hpp"
+#include "utils.hpp"
 
 
 //===========================================
 // FragmentSpec::FragmentSpec
 //===========================================
-FragmentSpec::FragmentSpec(const std::string& name, std::vector<const FragmentSpec*> specs)
+FragmentSpec::FragmentSpec(const std::string& type, std::vector<const FragmentSpec*> specs)
   : m_enabled(false),
-    m_name(name),
+    m_type(type),
+    m_id(0),
+    m_tmpChildren(specs) {}
+
+//===========================================
+// FragmentSpec::FragmentSpec
+//===========================================
+FragmentSpec::FragmentSpec(const std::string& type, int id, std::vector<const FragmentSpec*> specs)
+  : m_enabled(false),
+    m_type(type),
+    m_id(id),
     m_tmpChildren(specs) {}
 
 //===========================================
@@ -52,10 +63,19 @@ const FragmentSpec& FragmentSpec::spec(const std::string& name) const {
 }
 
 //===========================================
-// FragmentSpec::name
+// FragmentSpec::type
 //===========================================
-const std::string& FragmentSpec::name() const {
-  return m_name;
+const std::string& FragmentSpec::type() const {
+  return m_type;
+}
+
+//===========================================
+// FragmentSpec::name
+//
+// Type name with id appended
+//===========================================
+std::string FragmentSpec::name() const {
+  return m_type + std::to_string(m_id);
 }
 
 //===========================================

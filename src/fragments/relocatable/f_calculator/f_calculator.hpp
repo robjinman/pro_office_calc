@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QLineEdit>
+#include <QMargins>
 #include "fragment.hpp"
 #include "button_grid.hpp"
 #include "calculator.hpp"
@@ -18,7 +19,6 @@ struct FCalculatorData : public FragmentData {
   std::unique_ptr<QVBoxLayout> vbox;
   std::unique_ptr<QLineEdit> wgtDigitDisplay;
   std::unique_ptr<ButtonGrid> wgtButtonGrid;
-  QMainWindow* window;
 };
 
 class FCalculator : public QWidget, public Fragment {
@@ -39,7 +39,8 @@ class FCalculator : public QWidget, public Fragment {
     FCalculatorData m_data;
 
     struct {
-      QWidget* centralWidget;
+      int spacing;
+      QMargins margins;
     } m_origParentState;
 };
 

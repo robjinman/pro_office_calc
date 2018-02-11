@@ -4,7 +4,7 @@
 
 #include <QColor>
 #include "fragment_spec.hpp"
-#include "fragments/f_main/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger_spec.hpp"
+#include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger_spec.hpp"
 
 
 struct FCalculatorSpec : public FragmentSpec {
