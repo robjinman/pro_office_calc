@@ -28,6 +28,10 @@ struct Vec2 {
   bool operator!=(const Vec2<T>& rhs) const {
     return !(*this == rhs);
   }
+
+  Vec2 operator-() const {
+    return Vec2<T>(-x, -y);
+  }
 };
 
 typedef Vec2<int> Vec2i;
@@ -77,6 +81,14 @@ inline double distance(const Point& A, const Point& B) {
 
 inline double length(const Vec2f& v) {
   return sqrt(v.x * v.x + v.y * v.y);
+}
+
+inline double dotProduct(const Vec2f& A, const Vec2f& B) {
+  return A.x * B.x + A.y * B.y;
+}
+
+inline double angle(const Vec2f& A, const Vec2f& B) {
+    return acos(dotProduct(A, B) / (length(A) * length(B)));
 }
 
 struct Matrix {

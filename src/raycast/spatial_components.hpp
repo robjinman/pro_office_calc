@@ -120,7 +120,10 @@ struct CSoftEdge : public CEdge {
     : CEdge(CSpatialKind::SOFT_EDGE, entityId, parentId),
       joinId(joinId) {}
 
-  entityId_t joinId = 0;
+  entityId_t joinId = -1;
+  entityId_t twinId = -1;
+
+  Matrix toTwin;
 
   CZone* zoneA = nullptr;
   CZone* zoneB = nullptr;

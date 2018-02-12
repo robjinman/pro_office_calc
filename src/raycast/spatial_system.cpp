@@ -475,6 +475,36 @@ void connectSubzones(CZone& zone) {
                     se->zoneA = other->zoneA = &r;
                     se->zoneB = other->zoneB = &r_;
                     se->lseg = other->lseg;
+                    se->twinId = other->entityId();
+                    //other->twinId = se->entityId();
+
+                    break;
+                  }
+
+                  // If they're already joined by id (i.e. portals)
+                  if (se->joinId != -1 && se->joinId == other->joinId) {
+                    se->zoneA = other->zoneA = &r;
+                    se->zoneB = other->zoneB = &r_;
+                    se->twinId = other->entityId();
+                    //other->twinId = se->entityId();
+
+                    std::cout << "Already joined\n";
+
+                    double a1 = atan(se->lseg.line().m);
+                    double a2 = atan(other->lseg.line().m);
+                    double a = a2 - a1;
+
+                    Matrix toOrigin(0, -se->lseg.A);
+                    Matrix rotate(a, Vec2f(0, 0));
+                    Matrix translate(0, other->lseg.A);
+                    //Matrix m = toOrigin * rotate * translate;
+                    Matrix m = translate * rotate * toOrigin;
+
+                    se->toTwin = m;
+                    //other->toTwin = m.inverse();
+
+                    DBG_PRINT_VAR(se->lseg);
+                    DBG_PRINT_VAR(transform(se->lseg, se->toTwin));
 
                     break;
                   }
@@ -501,11 +531,11 @@ void SpatialSystem::connectZones() {
 }
 
 //===========================================
-// findIntersections_r
+// SpatialSystem::findIntersections_r
 //===========================================
-void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
+void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
   const CZone& zone, list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
-  set<entityId_t>& visitedJoins) {
+  set<entityId_t>& visitedJoins) const {
 
   Matrix invMatrix = matrix.inverse();
 
@@ -532,6 +562,7 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
       X->entityId = vRect.entityId();
       X->point_rel = pt;
       X->point_wld = invMatrix * pt;
+      X->viewPoint = invMatrix * point;
       X->distanceFromOrigin = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
     }
@@ -547,6 +578,7 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
       X->entityId = edge.entityId();
       X->point_rel = pt;
       X->point_wld = invMatrix * pt;
+      X->viewPoint = invMatrix * point;
       X->distanceFromOrigin = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
 
@@ -557,6 +589,12 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
         CSoftEdge& softEdge = dynamic_cast<CSoftEdge&>(edge);
         const CZone& next = softEdge.zoneA == &zone ? *softEdge.zoneB : *softEdge.zoneA;
 
+        Matrix mat = matrix;
+
+        if (softEdge.twinId != -1) {
+          mat = (softEdge.toTwin * invMatrix).inverse();
+        }
+
         auto pX = pIntersection_t(X);
         if (visitedJoins.find(softEdge.joinId) == visitedJoins.end()) {
           intersections.push_back(std::move(pX));
@@ -564,8 +602,7 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
         }
 
         if (visitedZones.find(&next) == visitedZones.end()) {
-          findIntersections_r(point, dir, matrix, next, intersections, visitedZones,
-            visitedJoins);
+          findIntersections_r(point, dir, mat, next, intersections, visitedZones, visitedJoins);
         }
       }
       else {

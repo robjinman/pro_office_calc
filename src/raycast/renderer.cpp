@@ -531,17 +531,16 @@ static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& pl
 //===========================================
 // drawCeilingSlice
 //===========================================
-static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Player& player,
-  const CRegion* region, double ceilingHeight, const Point& collisionPoint,
+static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Camera& cam,
+  const Point& viewPoint, const CRegion* region, double ceilingHeight, const Point& collisionPoint,
   const ScreenSlice& slice, int screenX_px, double projX_wd, double vWorldUnit_px,
   const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   double screenH_px = rg.viewport.y * vWorldUnit_px;
-  const Camera& cam = player.camera();
   const Texture& ceilingTex = rg.textures.at(region->ceilingTexture);
 
   double hAngle = atan(projX_wd / cam.F);
-  LineSegment ray(cam.pos, collisionPoint);
+  LineSegment ray(viewPoint, collisionPoint);
 
   Size texSz_px(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
   Size texSz_wd_rp(1.0 / ceilingTex.size_wd.x, 1.0 / ceilingTex.size_wd.y);
@@ -592,7 +591,7 @@ static const CFloorDecal* getFloorDecal(const SpatialSystem& spatialSystem, cons
 // drawFloorSlice
 //===========================================
 static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const Camera& cam, const CRegion* region, double floorHeight,
+  const RenderGraph& rg, const Camera& cam, const Point& viewPoint, const CRegion* region, double floorHeight,
   const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
   double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
@@ -600,7 +599,7 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
   const Texture& floorTex = rg.textures.at(region->floorTexture);
 
   double hAngle = atan(projX_wd / cam.F);
-  LineSegment ray(cam.pos, collisionPoint);
+  LineSegment ray(viewPoint, collisionPoint);
 
   Size texSz_px(floorTex.image.rect().width(), floorTex.image.rect().height());
   Size texSz_wd_rp(1.0 / floorTex.size_wd.x, 1.0 / floorTex.size_wd.y);
@@ -976,11 +975,11 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
   const int W = viewport_px.x;
   CastResult prev;
-
+/*
 #pragma omp parallel for \
   num_threads(4) \
   private(prev)
-
+*/
   for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
@@ -1015,11 +1014,11 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(wallX.nearZone->entityId()));
 
-        drawFloorSlice(m_target, spatialSystem, rg, cam, &nearRegion, zone.floorHeight,
+        drawFloorSlice(m_target, spatialSystem, rg, cam, wallX.X->viewPoint, &nearRegion, zone.floorHeight,
           wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
-          drawCeilingSlice(m_target, rg, player, &nearRegion, zone.ceilingHeight,
+          drawCeilingSlice(m_target, rg, cam, wallX.X->viewPoint, &nearRegion, zone.ceilingHeight,
             wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
@@ -1035,7 +1034,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
 
-        drawFloorSlice(m_target, spatialSystem, rg, cam, &nearRegion, joinX.nearZone->floorHeight,
+        drawFloorSlice(m_target, spatialSystem, rg, cam, joinX.X->viewPoint, &nearRegion, joinX.nearZone->floorHeight,
           joinX.X->point_wld, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (joinX.slice1.visible) {
@@ -1043,7 +1042,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
             joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
 
           if (nearRegion.hasCeiling) {
-            drawCeilingSlice(m_target, rg, player, &nearRegion, joinX.nearZone->ceilingHeight,
+            drawCeilingSlice(m_target, rg, cam, joinX.X->viewPoint, &nearRegion, joinX.nearZone->ceilingHeight,
               joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
               m_atanMap);
           }

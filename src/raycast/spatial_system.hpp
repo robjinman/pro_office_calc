@@ -24,6 +24,7 @@ struct Intersection {
   entityId_t entityId;
   Point point_rel;
   Point point_wld;
+  Point viewPoint;
   double distanceFromOrigin;
   double distanceAlongTarget;
 };
@@ -100,6 +101,10 @@ class SpatialSystem : public System {
     void crossZones(entityId_t entityId, entityId_t oldZone, entityId_t newZone);
     std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
 
+    void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
+      const CZone& zone, std::list<pIntersection_t>& intersections,
+      std::set<const CZone*>& visitedZones, std::set<entityId_t>& visitedJoins) const;
+
     inline CZone& getCurrentZone() const {
       return dynamic_cast<CZone&>(*m_components.at(sg.player->currentRegion));
     }
@@ -107,10 +112,6 @@ class SpatialSystem : public System {
     void buoyancy();
     void gravity();
 };
-
-void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  const CZone& zone, std::list<pIntersection_t>& intersections,
-  std::set<const CZone*>& visitedZones, std::set<entityId_t>& visitedJoins);
 
 void connectSubzones(CZone& zone);
 

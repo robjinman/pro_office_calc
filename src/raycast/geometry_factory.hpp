@@ -45,6 +45,8 @@ class GeometryFactory : public GameObjectFactory {
       const Matrix& parentTransform);
     bool constructBoundaries(const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+    bool constructPortal(const parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
     bool constructRegion_r(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructRootRegion(const parser::Object& obj);

@@ -313,6 +313,42 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
 }
 
 //===========================================
+// GeometryFactory::constructPortal
+//===========================================
+bool GeometryFactory::constructPortal(const parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  if (obj.path.points.size() != 2) {
+    EXCEPTION("Portal must contain 1 line segment");
+  }
+
+  entityId_t entityId = Component::getNextId();
+  entityId_t joinId = Component::getIdFromString(getValue(obj.dict, "pair_name"));
+
+  CSoftEdge* edge = new CSoftEdge(entityId, parentId, joinId);
+
+  edge->lseg.A = obj.path.points[0];
+  edge->lseg.B = obj.path.points[1];
+  edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
+
+  snapEndpoint(m_endpoints, edge->lseg.A);
+  snapEndpoint(m_endpoints, edge->lseg.B);
+
+  spatialSystem.addComponent(pComponent_t(edge));
+
+  CJoin* boundary = new CJoin(entityId, parentId, Component::getNextId());
+  boundary->topTexture = getValue(obj.dict, "top_texture", "default");
+  boundary->bottomTexture = getValue(obj.dict, "bottom_texture", "default");
+
+  renderSystem.addComponent(pComponent_t(boundary));
+
+  return true;
+}
+
+//===========================================
 // GeometryFactory::constructBoundaries
 //===========================================
 bool GeometryFactory::constructBoundaries(const parser::Object& obj, entityId_t parentId,
@@ -519,6 +555,7 @@ const set<string>& GeometryFactory::types() const {
     "player",
     "region",
     "joining_edge",
+    "portal",
     "wall",
     "wall_decal",
     "floor_decal"
@@ -541,6 +578,9 @@ bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "joining_edge") {
     return constructBoundaries(obj, parentId, parentTransform);
+  }
+  else if (type == "portal") {
+    return constructPortal(obj, parentId, parentTransform);
   }
   else if (type == "wall") {
     return constructWalls(obj, parentId, parentTransform);
