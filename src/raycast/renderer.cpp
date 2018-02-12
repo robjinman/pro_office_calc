@@ -591,9 +591,9 @@ static const CFloorDecal* getFloorDecal(const SpatialSystem& spatialSystem, cons
 // drawFloorSlice
 //===========================================
 static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const Camera& cam, const Point& viewPoint, const CRegion* region, double floorHeight,
-  const Point& collisionPoint, const ScreenSlice& slice, int screenX_px, double projX_wd,
-  double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
+  const RenderGraph& rg, const Camera& cam, const Point& viewPoint, const CRegion* region,
+  double floorHeight, const Point& collisionPoint, const ScreenSlice& slice, int screenX_px,
+  double projX_wd, double vWorldUnit_px, const tanMap_t& tanMap_rp, const atanMap_t& atanMap) {
 
   double screenH_px = rg.viewport.y * vWorldUnit_px;
   const Texture& floorTex = rg.textures.at(region->floorTexture);
@@ -937,7 +937,9 @@ Renderer::Renderer(EntityManager& entityManager, QImage& target)
 //===========================================
 // Renderer::getWallDecal
 //===========================================
-static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CBoundary& wall, double x) {
+static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CBoundary& wall,
+  double x) {
+
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
     CWallDecal* decal = it->get();
     const CVRect& vRect = getVRect(spatialSystem, *decal);
@@ -975,11 +977,11 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
   const int W = viewport_px.x;
   CastResult prev;
-/*
+
 #pragma omp parallel for \
   num_threads(4) \
   private(prev)
-*/
+
   for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
 
@@ -1014,8 +1016,9 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(wallX.nearZone->entityId()));
 
-        drawFloorSlice(m_target, spatialSystem, rg, cam, wallX.X->viewPoint, &nearRegion, zone.floorHeight,
-          wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        drawFloorSlice(m_target, spatialSystem, rg, cam, wallX.X->viewPoint, &nearRegion,
+          zone.floorHeight, wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px,
+          m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
           drawCeilingSlice(m_target, rg, cam, wallX.X->viewPoint, &nearRegion, zone.ceilingHeight,
@@ -1034,17 +1037,18 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         const CRegion& nearRegion = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
 
-        drawFloorSlice(m_target, spatialSystem, rg, cam, joinX.X->viewPoint, &nearRegion, joinX.nearZone->floorHeight,
-          joinX.X->point_wld, slice0, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+        drawFloorSlice(m_target, spatialSystem, rg, cam, joinX.X->viewPoint, &nearRegion,
+          joinX.nearZone->floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd,
+          vWorldUnit_px, m_tanMap_rp, m_atanMap);
 
         if (joinX.slice1.visible) {
           ScreenSlice slice1 = drawSlice(m_target, rg, cam, *joinX.X, joinX.slice1,
             joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
 
           if (nearRegion.hasCeiling) {
-            drawCeilingSlice(m_target, rg, cam, joinX.X->viewPoint, &nearRegion, joinX.nearZone->ceilingHeight,
-              joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
-              m_atanMap);
+            drawCeilingSlice(m_target, rg, cam, joinX.X->viewPoint, &nearRegion,
+              joinX.nearZone->ceilingHeight, joinX.X->point_wld, slice1, screenX_px, projX_wd,
+              vWorldUnit_px, m_tanMap_rp, m_atanMap);
           }
           else {
             drawSkySlice(m_target, rg, player, slice1, screenX_px);

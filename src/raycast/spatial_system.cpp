@@ -476,7 +476,6 @@ void connectSubzones(CZone& zone) {
                     se->zoneB = other->zoneB = &r_;
                     se->lseg = other->lseg;
                     se->twinId = other->entityId();
-                    //other->twinId = se->entityId();
 
                     break;
                   }
@@ -486,9 +485,6 @@ void connectSubzones(CZone& zone) {
                     se->zoneA = other->zoneA = &r;
                     se->zoneB = other->zoneB = &r_;
                     se->twinId = other->entityId();
-                    //other->twinId = se->entityId();
-
-                    std::cout << "Already joined\n";
 
                     double a1 = atan(se->lseg.line().m);
                     double a2 = atan(other->lseg.line().m);
@@ -497,14 +493,9 @@ void connectSubzones(CZone& zone) {
                     Matrix toOrigin(0, -se->lseg.A);
                     Matrix rotate(a, Vec2f(0, 0));
                     Matrix translate(0, other->lseg.A);
-                    //Matrix m = toOrigin * rotate * translate;
                     Matrix m = translate * rotate * toOrigin;
 
                     se->toTwin = m;
-                    //other->toTwin = m.inverse();
-
-                    DBG_PRINT_VAR(se->lseg);
-                    DBG_PRINT_VAR(transform(se->lseg, se->toTwin));
 
                     break;
                   }
