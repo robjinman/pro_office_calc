@@ -11,6 +11,7 @@
 #include "raycast/component.hpp"
 #include "raycast/spatial_components.hpp"
 #include "exception.hpp"
+#include "utils.hpp"
 
 
 struct Texture {

@@ -106,7 +106,7 @@ class SpatialSystem : public System {
       std::set<const CZone*>& visitedZones, std::set<entityId_t>& visitedJoins) const;
 
     inline CZone& getCurrentZone() const {
-      return dynamic_cast<CZone&>(*m_components.at(sg.player->currentRegion));
+      return *sg.player->body.zone;
     }
 
     void buoyancy();

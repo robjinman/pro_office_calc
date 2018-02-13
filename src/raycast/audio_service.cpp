@@ -66,7 +66,7 @@ void AudioService::playSoundAtPos(const string& name, const Point& pos) {
     const SpatialSystem& spatialSystem = m_entityManager
       .system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-    double d = distance(spatialSystem.sg.player->camera().pos, pos);
+    double d = distance(spatialSystem.sg.player->body.pos, pos);
     double v = 1.0 - clipNumber(d, Range(0, 2000)) / 2000;
 
     sound.sound.setVolume(m_masterVolume * sound.volume * v);

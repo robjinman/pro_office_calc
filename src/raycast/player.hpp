@@ -25,12 +25,15 @@ class Player {
     double vVelocity = 0;
     double activationRadius = 100.0;
     double collectionRadius = 50.0;
-    entityId_t currentRegion = -1;
 
     entityId_t crosshair = -1;
     entityId_t sprite = -1;
     entityId_t red = -1;
     CVRect& body;
+
+    entityId_t region() const {
+      return body.zone->entityId();
+    }
 
     bool aboveGround(const CZone& zone) const;
     bool belowGround(const CZone& zone) const;
@@ -46,7 +49,7 @@ class Player {
     void changeHeight(const CZone& zone, double deltaH);
 
     const Point& pos() const;
-    void setPosition(entityId_t zoneId, const Point& pos);
+    void setPosition(const Point& pos);
 
     void hRotate(double da);
     void vRotate(double da);

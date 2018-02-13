@@ -4,16 +4,17 @@
 
 #include "utils.hpp"
 #include "raycast/geometry.hpp"
+#include "raycast/spatial_components.hpp"
 
 
 struct Camera {
-  Camera(double vpW, double hFov, double vFov)
-    : hFov(hFov),
+  Camera(double vpW, double hFov, double vFov, CVRect& body)
+    : body(body),
+      hFov(hFov),
       vFov(vFov),
       F(vpW / (2.0 * tan(0.5 * hFov))) {}
 
-  Vec2f pos;
-  double angle;
+  CVRect& body;
   double height;
 
   double vAngle = 0.001;
@@ -23,13 +24,13 @@ struct Camera {
   const double F;
 
   void setTransform(const Matrix& m) {
-    pos.x = m.tx();
-    pos.y = m.ty();
-    angle = m.a();
+    body.pos.x = m.tx();
+    body.pos.y = m.ty();
+    body.angle = m.a();
   }
 
   Matrix matrix() const {
-    return Matrix(angle, Vec2f(pos.x, pos.y));
+    return Matrix(body.angle, Vec2f(body.pos.x, body.pos.y));
   }
 };
 

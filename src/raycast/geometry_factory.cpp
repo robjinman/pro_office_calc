@@ -228,23 +228,21 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
 
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
-  Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50));
-  camera->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
-  camera->height = tallness + zone.floorHeight;
-
   entityId_t bodyId = Component::getNextId();
 
   CVRect* body = new CVRect(bodyId, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
-  body->setTransform(camera->matrix());
+  body->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
   body->zone = &zone;
   spatialSystem.addComponent(pCSpatial_t(body));
+
+  Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), *body);
+  camera->height = tallness + zone.floorHeight;
 
   CDamage* damage = new CDamage(bodyId, 10, 10);
   damageSystem.addComponent(pCDamage_t(damage));
 
   Player* player = new Player(m_entityManager, m_audioService, tallness, unique_ptr<Camera>(camera),
     *body);
-  player->currentRegion = parentId;
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 

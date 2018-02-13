@@ -8,7 +8,6 @@
 #include <memory>
 #include <QImage>
 #include "raycast/geometry.hpp"
-#include "raycast/camera.hpp"
 #include "raycast/component.hpp"
 
 

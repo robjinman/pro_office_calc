@@ -54,7 +54,7 @@ void CDoorBehaviour::update() {
     case ST_CLOSING:
       zone.ceilingHeight -= dy;
 
-      if (player.currentRegion == entityId()) {
+      if (player.region() == entityId()) {
         if (zone.ceilingHeight - dy <= player.headHeight()) {
           m_state = ST_OPENING;
         }

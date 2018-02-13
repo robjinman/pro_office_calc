@@ -199,6 +199,355 @@ static void playerBounce(SpatialSystem& spatialSystem, TimeService& timeService,
 }
 
 //===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const CEdge& edge) {
+  return lineSegmentCircleIntersect(circle, edge.lseg); // TODO
+}
+
+//===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const CVRect& vRect) {
+  return distance(circle.pos, vRect.pos) <= circle.radius;
+}
+
+//===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const LineSegment& wall, const CVRect& vRect) {
+  Vec2f v = normalise(wall.B - wall.A);
+  return distance(circle.pos, wall.A + v * vRect.pos.x) <= circle.radius;
+}
+
+//===========================================
+// overlapsCircle
+//===========================================
+static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
+  // TODO
+
+  return false;
+}
+
+//===========================================
+// entitiesInRadius
+//===========================================
+static void entitiesInRadius_r(const CZone& zone, const Circle& circle, set<entityId_t>& entities) {
+  for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+      entities.insert(zone.entityId());
+
+      if ((*it)->kind == CSpatialKind::HARD_EDGE || (*it)->kind == CSpatialKind::SOFT_EDGE) {
+        const CEdge& edge = dynamic_cast<const CEdge&>(**it);
+
+        for (auto jt = edge.vRects.begin(); jt != edge.vRects.end(); ++jt) {
+          if (overlapsCircle(circle, edge.lseg, **jt)) {
+            entities.insert((*jt)->entityId());
+          }
+        }
+      }
+    }
+  }
+
+  for (auto it = zone.vRects.begin(); it != zone.vRects.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+    }
+  }
+
+  for (auto it = zone.hRects.begin(); it != zone.hRects.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+    }
+  }
+
+  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
+    entitiesInRadius_r(**it, circle, entities);
+  }
+}
+
+//===========================================
+// similar
+//===========================================
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  double delta = 4.0;
+  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
+    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+}
+
+//===========================================
+// areTwins
+//===========================================
+static bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) {
+  return similar(se1.lseg, se2.lseg);
+}
+
+//===========================================
+// addToZone
+//===========================================
+static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
+  switch (child->kind) {
+    case CSpatialKind::ZONE: {
+      pCZone_t ptr(dynamic_cast<CZone*>(child.release()));
+      ptr->parent = &zone;
+      zone.children.push_back(std::move(ptr));
+      break;
+    }
+    case CSpatialKind::SOFT_EDGE:
+    case CSpatialKind::HARD_EDGE: {
+      pCEdge_t ptr(dynamic_cast<CEdge*>(child.release()));
+      zone.edges.push_back(ptr.get());
+      sg.edges.push_back(std::move(ptr));
+      break;
+    }
+    case CSpatialKind::H_RECT: {
+      pCHRect_t ptr(dynamic_cast<CHRect*>(child.release()));
+      zone.hRects.push_back(std::move(ptr));
+      break;
+    }
+    case CSpatialKind::V_RECT: {
+      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      zone.vRects.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to zone");
+  }
+}
+
+//===========================================
+// addToHardEdge
+//===========================================
+static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
+  switch (child->kind) {
+    case CSpatialKind::V_RECT: {
+      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      edge.vRects.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to HardEdge");
+  }
+}
+
+//===========================================
+// addToSoftEdge
+//===========================================
+static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
+  switch (child->kind) {
+    case CSpatialKind::V_RECT: {
+      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      edge.vRects.push_back(std::move(ptr));
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to SoftEdge");
+  }
+}
+
+//===========================================
+// addChildToComponent
+//===========================================
+static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t child) {
+  switch (parent.kind) {
+    case CSpatialKind::ZONE:
+      addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
+      break;
+    case CSpatialKind::HARD_EDGE:
+      addToHardEdge(dynamic_cast<CHardEdge&>(parent), std::move(child));
+      break;
+    case CSpatialKind::SOFT_EDGE:
+      addToSoftEdge(dynamic_cast<CSoftEdge&>(parent), std::move(child));
+      break;
+    default:
+      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
+// removeFromZone
+//===========================================
+static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, bool keepAlive) {
+  bool found = false;
+
+  switch (child.kind) {
+    case CSpatialKind::ZONE: {
+      auto it = find_if(zone.children.begin(), zone.children.end(), [&](const pCZone_t& e) {
+        return e.get() == dynamic_cast<const CZone*>(&child);
+      });
+      if (it != zone.children.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        erase(zone.children, it);
+        found = true;
+      }
+      break;
+    }
+    case CSpatialKind::SOFT_EDGE:
+    case CSpatialKind::HARD_EDGE: {
+      auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const CEdge* e) {
+        return e == dynamic_cast<const CEdge*>(&child);
+      });
+      erase(zone.edges, it);
+      auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
+        return e.get() == dynamic_cast<const CEdge*>(&child);
+      });
+      if (jt != sg.edges.end()) {
+        if (keepAlive) {
+          jt->release();
+        }
+        erase(sg.edges, jt);
+        found = true;
+      }
+      break;
+    }
+    case CSpatialKind::H_RECT: {
+      auto it = find_if(zone.hRects.begin(), zone.hRects.end(), [&](const pCHRect_t& e) {
+        return e.get() == dynamic_cast<const CHRect*>(&child);
+      });
+      if (it != zone.hRects.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        erase(zone.hRects, it);
+        found = true;
+      }
+      break;
+    }
+    case CSpatialKind::V_RECT: {
+      auto it = find_if(zone.vRects.begin(), zone.vRects.end(), [&](const pCVRect_t& e) {
+        return e.get() == dynamic_cast<const CVRect*>(&child);
+      });
+      if (it != zone.vRects.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        erase(zone.vRects, it);
+        found = true;
+      }
+      break;
+    }
+    default:
+      EXCEPTION("Cannot add component of kind " << child.kind << " to zone");
+  }
+
+  return found;
+}
+
+//===========================================
+// removeFromHardEdge
+//===========================================
+static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keepAlive) {
+  bool found = false;
+
+  switch (child.kind) {
+    case CSpatialKind::V_RECT: {
+      auto it = find_if(edge.vRects.begin(), edge.vRects.end(), [&](const pCVRect_t& e) {
+        return e.get() == dynamic_cast<const CVRect*>(&child);
+      });
+      if (it != edge.vRects.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        erase(edge.vRects, it);
+        found = true;
+      }
+      break;
+    }
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from HardEdge");
+  }
+
+  return found;
+}
+
+//===========================================
+// removeChildFromComponent
+//===========================================
+static bool removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSpatial& child,
+  bool keepAlive = false) {
+
+  switch (parent.kind) {
+    case CSpatialKind::ZONE:
+      return removeFromZone(sg, dynamic_cast<CZone&>(parent), child, keepAlive);
+    case CSpatialKind::HARD_EDGE:
+      return removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child, keepAlive);
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
+// connectSubzones
+//===========================================
+void connectSubzones(CZone& zone) {
+  forEachZone(zone, [&](CZone& r) {
+    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
+      if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
+        CSoftEdge* se = dynamic_cast<CSoftEdge*>(*it);
+        assert(se != nullptr);
+
+        bool hasTwin = false;
+        forEachZone(zone, [&](CZone& r_) {
+          if (!hasTwin) {
+            if (&r_ != &r) {
+              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+                if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
+                  CSoftEdge* other = dynamic_cast<CSoftEdge*>(*lt);
+
+                  if (areTwins(*se, *other)) {
+                    hasTwin = true;
+
+                    se->joinId = other->joinId;
+                    se->zoneA = &r;
+                    se->zoneB = &r_;
+                    se->lseg = other->lseg;
+                    se->twinId = other->entityId();
+
+                    break;
+                  }
+
+                  // If they're already joined by id (i.e. portals)
+                  if (se->joinId != -1 && se->joinId == other->joinId) {
+                    hasTwin = true;
+
+                    se->zoneA = &r;
+                    se->zoneB = &r_;
+                    se->twinId = other->entityId();
+
+                    double a1 = atan(se->lseg.line().m);
+                    double a2 = atan(other->lseg.line().m);
+                    double a = a2 - a1;
+
+                    Matrix toOrigin(0, -se->lseg.A);
+                    Matrix rotate(a, Vec2f(0, 0));
+                    Matrix translate(0, other->lseg.A);
+                    Matrix m = translate * rotate * toOrigin;
+
+                    se->toTwin = m;
+
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        if (!hasTwin) {
+          se->zoneA = &r;
+          se->zoneB = r.parent;
+        }
+      }
+    }
+  });
+}
+
+//===========================================
 // SpatialSystem::SpatialSystem
 //===========================================
 SpatialSystem::SpatialSystem(EntityManager& entityManager, TimeService& timeService,
@@ -240,6 +589,26 @@ void SpatialSystem::hRotateCamera(double da) {
 }
 
 //===========================================
+// SpatialSystem::crossZones
+//
+// Doesn't set the zone on the entity
+//===========================================
+void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entityId_t newZoneId) {
+  auto it = m_components.find(entityId);
+  if (it != m_components.end()) {
+    CSpatial& c = *it->second;
+    CZone& oldZone = dynamic_cast<CZone&>(getComponent(oldZoneId));
+    CZone& newZone = dynamic_cast<CZone&>(getComponent(newZoneId));
+
+    if (removeFromZone(sg, oldZone, c, true)) {
+      addChildToComponent(sg, newZone, pCSpatial_t(&c));
+
+      m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId));
+    }
+  }
+}
+
+//===========================================
 // SpatialSystem::moveEntity
 //===========================================
 void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor) {
@@ -276,6 +645,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
         }
       });
 
+      Matrix m;
       map<entityId_t, bool> crossed;
       for (auto jt = edgesCrossed.begin(); jt != edgesCrossed.end(); ++jt) {
         const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(*jt->second);
@@ -286,11 +656,15 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
           crossZones(id, body.zone->entityId(), nextZone->entityId());
           body.zone = nextZone;
 
+          m = m * se.toTwin;
+
           crossed[se.joinId] = true;
         }
       }
 
       body.pos = body.pos + dv;
+      body.pos = m * body.pos;
+      body.angle += m.a();
     }
   }
 }
@@ -300,13 +674,12 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 //===========================================
 void SpatialSystem::movePlayer(const Vec2f& v) {
   Player& player = *sg.player;
-  const Camera& cam = player.camera();
+  const CVRect& body = player.body;
 
-  Vec2f dv(cos(cam.angle) * v.x - sin(cam.angle) * v.y,
-    sin(cam.angle) * v.x + cos(cam.angle) * v.y);
+  Vec2f dv(cos(body.angle) * v.x - sin(body.angle) * v.y,
+    sin(body.angle) * v.x + cos(body.angle) * v.y);
 
   moveEntity(player.body.entityId(), dv, player.feetHeight() - player.body.zone->floorHeight);
-  player.setPosition(player.body.zone->entityId(), player.body.pos);
 
   playerBounce(*this, m_timeService, m_frameRate);
 
@@ -361,157 +734,6 @@ void SpatialSystem::buoyancy() {
     double dy = 150.0 / m_frameRate;
     sg.player->changeHeight(currentZone, dy);
   }
-}
-
-//===========================================
-// overlapsCircle
-//===========================================
-static bool overlapsCircle(const Circle& circle, const CEdge& edge) {
-  return lineSegmentCircleIntersect(circle, edge.lseg); // TODO
-}
-
-//===========================================
-// overlapsCircle
-//===========================================
-static bool overlapsCircle(const Circle& circle, const CVRect& vRect) {
-  return distance(circle.pos, vRect.pos) <= circle.radius;
-}
-
-//===========================================
-// overlapsCircle
-//===========================================
-static bool overlapsCircle(const Circle& circle, const LineSegment& wall, const CVRect& vRect) {
-  Vec2f v = normalise(wall.B - wall.A);
-  return distance(circle.pos, wall.A + v * vRect.pos.x) <= circle.radius;
-}
-
-//===========================================
-// overlapsCircle
-//===========================================
-static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
-  // TODO
-
-  return false;
-}
-
-//===========================================
-// entitiesInRadius
-//===========================================
-static void entitiesInRadius_r(const CZone& zone, const Circle& circle,
-  set<entityId_t>& entities) {
-
-  for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-      entities.insert(zone.entityId());
-
-      if ((*it)->kind == CSpatialKind::HARD_EDGE || (*it)->kind == CSpatialKind::SOFT_EDGE) {
-        const CEdge& edge = dynamic_cast<const CEdge&>(**it);
-
-        for (auto jt = edge.vRects.begin(); jt != edge.vRects.end(); ++jt) {
-          if (overlapsCircle(circle, edge.lseg, **jt)) {
-            entities.insert((*jt)->entityId());
-          }
-        }
-      }
-    }
-  }
-
-  for (auto it = zone.vRects.begin(); it != zone.vRects.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-    }
-  }
-
-  for (auto it = zone.hRects.begin(); it != zone.hRects.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-    }
-  }
-
-  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
-    entitiesInRadius_r(**it, circle, entities);
-  }
-}
-
-//===========================================
-// similar
-//===========================================
-static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 4.0;
-  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
-    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
-}
-
-//===========================================
-// areTwins
-//===========================================
-static bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) {
-  return similar(se1.lseg, se2.lseg);
-}
-
-//===========================================
-// connectSubzones
-//===========================================
-void connectSubzones(CZone& zone) {
-  forEachZone(zone, [&](CZone& r) {
-    for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
-      if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge* se = dynamic_cast<CSoftEdge*>(*it);
-        assert(se != nullptr);
-
-        bool hasTwin = false;
-        forEachZone(zone, [&](CZone& r_) {
-          if (!hasTwin) {
-            if (&r_ != &r) {
-              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
-                  CSoftEdge* other = dynamic_cast<CSoftEdge*>(*lt);
-
-                  if (areTwins(*se, *other)) {
-                    hasTwin = true;
-
-                    se->joinId = other->joinId;
-                    se->zoneA = other->zoneA = &r;
-                    se->zoneB = other->zoneB = &r_;
-                    se->lseg = other->lseg;
-                    se->twinId = other->entityId();
-
-                    break;
-                  }
-
-                  // If they're already joined by id (i.e. portals)
-                  if (se->joinId != -1 && se->joinId == other->joinId) {
-                    se->zoneA = other->zoneA = &r;
-                    se->zoneB = other->zoneB = &r_;
-                    se->twinId = other->entityId();
-
-                    double a1 = atan(se->lseg.line().m);
-                    double a2 = atan(other->lseg.line().m);
-                    double a = a2 - a1;
-
-                    Matrix toOrigin(0, -se->lseg.A);
-                    Matrix rotate(a, Vec2f(0, 0));
-                    Matrix translate(0, other->lseg.A);
-                    Matrix m = translate * rotate * toOrigin;
-
-                    se->toTwin = m;
-
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        if (!hasTwin) {
-          se->zoneA = &r;
-          se->zoneB = r.parent;
-        }
-      }
-    }
-  });
 }
 
 //===========================================
@@ -733,9 +955,12 @@ list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
 set<entityId_t> SpatialSystem::entitiesInRadius(const Point& pos, double radius) const {
   set<entityId_t> entities;
   Circle circle{pos, radius};
+  const CZone& zone = getCurrentZone();
 
-  forEachConstZone(*getCurrentZone().parent, [&](const CZone& zone) {
-    entitiesInRadius_r(zone, circle, entities);
+  assert(zone.parent != nullptr);
+
+  forEachConstZone(*zone.parent, [&](const CZone& z) {
+    entitiesInRadius_r(z, circle, entities);
   });
 
   return entities;
@@ -747,224 +972,6 @@ set<entityId_t> SpatialSystem::entitiesInRadius(const Point& pos, double radius)
 void SpatialSystem::update() {
   buoyancy();
   gravity();
-}
-
-//===========================================
-// addToZone
-//===========================================
-static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
-  switch (child->kind) {
-    case CSpatialKind::ZONE: {
-      pCZone_t ptr(dynamic_cast<CZone*>(child.release()));
-      ptr->parent = &zone;
-      zone.children.push_back(std::move(ptr));
-      break;
-    }
-    case CSpatialKind::SOFT_EDGE:
-    case CSpatialKind::HARD_EDGE: {
-      pCEdge_t ptr(dynamic_cast<CEdge*>(child.release()));
-      zone.edges.push_back(ptr.get());
-      sg.edges.push_back(std::move(ptr));
-      break;
-    }
-    case CSpatialKind::H_RECT: {
-      pCHRect_t ptr(dynamic_cast<CHRect*>(child.release()));
-      zone.hRects.push_back(std::move(ptr));
-      break;
-    }
-    case CSpatialKind::V_RECT: {
-      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
-      zone.vRects.push_back(std::move(ptr));
-      break;
-    }
-    default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to zone");
-  }
-}
-
-//===========================================
-// addToHardEdge
-//===========================================
-static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
-  switch (child->kind) {
-    case CSpatialKind::V_RECT: {
-      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
-      edge.vRects.push_back(std::move(ptr));
-      break;
-    }
-    default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to HardEdge");
-  }
-}
-
-//===========================================
-// addToSoftEdge
-//===========================================
-static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
-  switch (child->kind) {
-    case CSpatialKind::V_RECT: {
-      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
-      edge.vRects.push_back(std::move(ptr));
-      break;
-    }
-    default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to SoftEdge");
-  }
-}
-
-//===========================================
-// addChildToComponent
-//===========================================
-static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t child) {
-  switch (parent.kind) {
-    case CSpatialKind::ZONE:
-      addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
-      break;
-    case CSpatialKind::HARD_EDGE:
-      addToHardEdge(dynamic_cast<CHardEdge&>(parent), std::move(child));
-      break;
-    case CSpatialKind::SOFT_EDGE:
-      addToSoftEdge(dynamic_cast<CSoftEdge&>(parent), std::move(child));
-      break;
-    default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
-        << parent.kind);
-  };
-}
-
-//===========================================
-// removeFromZone
-//===========================================
-static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, bool keepAlive) {
-  bool found = false;
-
-  switch (child.kind) {
-    case CSpatialKind::ZONE: {
-      auto it = find_if(zone.children.begin(), zone.children.end(), [&](const pCZone_t& e) {
-        return e.get() == dynamic_cast<const CZone*>(&child);
-      });
-      if (it != zone.children.end()) {
-        if (keepAlive) {
-          it->release();
-        }
-        erase(zone.children, it);
-        found = true;
-      }
-      break;
-    }
-    case CSpatialKind::SOFT_EDGE:
-    case CSpatialKind::HARD_EDGE: {
-      auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const CEdge* e) {
-        return e == dynamic_cast<const CEdge*>(&child);
-      });
-      erase(zone.edges, it);
-      auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
-        return e.get() == dynamic_cast<const CEdge*>(&child);
-      });
-      if (jt != sg.edges.end()) {
-        if (keepAlive) {
-          jt->release();
-        }
-        erase(sg.edges, jt);
-        found = true;
-      }
-      break;
-    }
-    case CSpatialKind::H_RECT: {
-      auto it = find_if(zone.hRects.begin(), zone.hRects.end(), [&](const pCHRect_t& e) {
-        return e.get() == dynamic_cast<const CHRect*>(&child);
-      });
-      if (it != zone.hRects.end()) {
-        if (keepAlive) {
-          it->release();
-        }
-        erase(zone.hRects, it);
-        found = true;
-      }
-      break;
-    }
-    case CSpatialKind::V_RECT: {
-      auto it = find_if(zone.vRects.begin(), zone.vRects.end(), [&](const pCVRect_t& e) {
-        return e.get() == dynamic_cast<const CVRect*>(&child);
-      });
-      if (it != zone.vRects.end()) {
-        if (keepAlive) {
-          it->release();
-        }
-        erase(zone.vRects, it);
-        found = true;
-      }
-      break;
-    }
-    default:
-      EXCEPTION("Cannot add component of kind " << child.kind << " to zone");
-  }
-
-  return found;
-}
-
-//===========================================
-// removeFromHardEdge
-//===========================================
-static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keepAlive) {
-  bool found = false;
-
-  switch (child.kind) {
-    case CSpatialKind::V_RECT: {
-      auto it = find_if(edge.vRects.begin(), edge.vRects.end(), [&](const pCVRect_t& e) {
-        return e.get() == dynamic_cast<const CVRect*>(&child);
-      });
-      if (it != edge.vRects.end()) {
-        if (keepAlive) {
-          it->release();
-        }
-        erase(edge.vRects, it);
-        found = true;
-      }
-      break;
-    }
-    default:
-      EXCEPTION("Cannot remove component of kind " << child.kind << " from HardEdge");
-  }
-
-  return found;
-}
-
-//===========================================
-// removeChildFromComponent
-//===========================================
-static bool removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSpatial& child,
-  bool keepAlive = false) {
-
-  switch (parent.kind) {
-    case CSpatialKind::ZONE:
-      return removeFromZone(sg, dynamic_cast<CZone&>(parent), child, keepAlive);
-    case CSpatialKind::HARD_EDGE:
-      return removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child, keepAlive);
-    default:
-      EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
-        << parent.kind);
-  };
-}
-
-//===========================================
-// SpatialSystem::crossZones
-//
-// Doesn't set the zone on the entity
-//===========================================
-void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entityId_t newZoneId) {
-  auto it = m_components.find(entityId);
-  if (it != m_components.end()) {
-    CSpatial& c = *it->second;
-    CZone& oldZone = dynamic_cast<CZone&>(getComponent(oldZoneId));
-    CZone& newZone = dynamic_cast<CZone&>(getComponent(newZoneId));
-
-    if (removeFromZone(sg, oldZone, c, true)) {
-      addChildToComponent(sg, newZone, pCSpatial_t(&c));
-
-      m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId));
-    }
-  }
 }
 
 //===========================================

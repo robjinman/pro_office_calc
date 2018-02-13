@@ -102,22 +102,21 @@ void Player::changeHeight(const CZone& zone, double deltaH) {
 // Player::pos
 //===========================================
 const Point& Player::pos() const {
-  return m_camera->pos;
+  return body.pos;
 }
 
 //===========================================
 // Player::setPosition
 //===========================================
-void Player::setPosition(entityId_t zoneId, const Point& pos) {
-  m_camera->pos = pos;
-  currentRegion = zoneId;
+void Player::setPosition(const Point& pos) {
+  body.pos = pos;
 }
 
 //===========================================
 // Player::hRotate
 //===========================================
 void Player::hRotate(double da) {
-  m_camera->angle += da;
+  body.angle += da;
 }
 
 //===========================================
