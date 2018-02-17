@@ -16,6 +16,17 @@ ostream& operator<<(ostream& os, const LineSegment& lseg) {
   return os;
 }
 
+ostream& operator<<(ostream& os, const Line& line) {
+  if (line.isVertical()) {
+    os << "Line x = " << line.x;
+  }
+  else {
+    os << "Line y = " << line.m << "x + " << line.c;
+  }
+
+  return os;
+}
+
 ostream& operator<<(ostream& os, const Circle& circ) {
   os.precision(std::numeric_limits<double>::max_digits10);
   os << "Circle " << std::fixed << circ.pos << ", " << circ.radius;
@@ -152,12 +163,12 @@ Point lineIntersect(const Line& l0, const Line& l1) {
   p.x = (l1.c - l0.c) / (l0.m - l1.m);
   p.y = l0.m * p.x + l0.c;
 
-  if (std::isinf(l0.m)) {
+  if (l0.isVertical()) {
     p.x = l0.x;
     p.y = l1.m * p.x + l1.c;
   }
 
-  if (std::isinf(l1.m)) {
+  if (l1.isVertical()) {
     p.x = l1.x;
     p.y = l0.m * p.x + l0.c;
   }
@@ -194,7 +205,7 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 
   Line l = lseg.line();
 
-  if (std::isinf(l.m)) {
+  if (l.isVertical()) {
     Circle circ2{switchAxes(circ.pos), circ.radius};
     LineSegment lseg2(switchAxes(lseg.A), switchAxes(lseg.B));
 
@@ -225,7 +236,7 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 // distanceFromLine
 //===========================================
 double distanceFromLine(const Line& l, const Point& p) {
-  if (std::isinf(l.m)) {
+  if (l.isVertical()) {
     return fabs(p.x - l.x);
   }
   else {

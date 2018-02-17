@@ -139,6 +139,10 @@ struct Line {
     return Point(x, m * x + c);
   }
 
+  bool isVertical() const {
+    return std::isinf(m);
+  }
+
   double m;
   double c;
 
@@ -163,7 +167,7 @@ struct LineSegment {
     l.c = A.y - l.m * A.x;
 
     // Treat the line as vertical for very steep gradients
-    if (fabs(l.m) > 1000000000000000) {
+    if (fabs(l.m) > 100000000000.0) {
       l.m = std::numeric_limits<double>::infinity();
       l.x = A.x;
     }
@@ -215,7 +219,7 @@ struct Circle {
 };
 
 Point lineIntersect(const Line& l0, const Line& l1);
-bool isBetween(double x, double a, double b, double delta = 0.000001);
+bool isBetween(double x, double a, double b, double delta = 0.00001);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 double distanceFromLine(const Line& l, const Point& p);
@@ -231,6 +235,7 @@ clipResult_t clipNumber(double x, const Range& range, double& result);
 #include <ostream>
 std::ostream& operator<<(std::ostream& os, const Point& lseg);
 std::ostream& operator<<(std::ostream& os, const LineSegment& lseg);
+std::ostream& operator<<(std::ostream& os, const Line& line);
 std::ostream& operator<<(std::ostream& os, const Circle& circ);
 std::ostream& operator<<(std::ostream& os, const Matrix& mat);
 #endif

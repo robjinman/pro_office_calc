@@ -39,7 +39,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   m_data.wgtRaycast.reset(new RaycastWidget(this, commonData.eventSystem));
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
-  m_data.wgtRaycast->initialise("data/maps/house3.svg");
+  m_data.wgtRaycast->initialise("data/maps/procalc_setup.svg");
 }
 
 //===========================================

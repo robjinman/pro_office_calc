@@ -68,7 +68,12 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
     return false;
   }
 
-  if (!isBetween(wall.line().at(A.x).y, wall.A.y, wall.B.y)) {
+  double delta = SNAP_DISTANCE;
+  if (!(isBetween(A.x, wall.A.x, wall.B.x, delta)
+    && isBetween(A.y, wall.A.y, wall.B.y, delta)
+    && isBetween(B.x, wall.A.x, wall.B.x, delta)
+    && isBetween(B.y, wall.A.y, wall.B.y, delta))) {
+
     return false;
   }
 
