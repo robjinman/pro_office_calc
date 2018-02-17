@@ -519,8 +519,8 @@ void connectSubzones(CZone& zone) {
                     se->zoneB = &r_;
                     se->twinId = other->entityId();
 
-                    double a1 = atan(se->lseg.line().m);
-                    double a2 = atan(other->lseg.line().m);
+                    double a1 = se->lseg.angle();
+                    double a2 = other->lseg.angle();
                     double a = a2 - a1;
 
                     Matrix toOrigin(0, -se->lseg.A);
@@ -748,7 +748,7 @@ void SpatialSystem::connectZones() {
 //===========================================
 void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
   const CZone& zone, list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
-  set<entityId_t>& visitedJoins) const {
+  set<entityId_t>& visitedJoins, double cullNearerThan) const {
 
   Matrix invMatrix = matrix.inverse();
 
@@ -757,7 +757,8 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
     if (visitedZones.find(it->get()) == visitedZones.end()) {
-      findIntersections_r(point, dir, matrix, **it, intersections, visitedZones, visitedJoins);
+      findIntersections_r(point, dir, matrix, **it, intersections, visitedZones, visitedJoins,
+        cullNearerThan);
     }
   }
 
@@ -770,6 +771,10 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
+      if (pt.x < cullNearerThan) {
+        continue;
+      }
+
       Intersection* X = new Intersection(CSpatialKind::V_RECT);
       intersections.push_back(pIntersection_t(X));
       X->entityId = vRect.entityId();
@@ -787,6 +792,10 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
     Point pt;
     if (lineSegmentIntersect(ray, lseg, pt)) {
+      if (pt.x < cullNearerThan) {
+        continue;
+      }
+
       Intersection* X = new Intersection(edge.kind);
       X->entityId = edge.entityId();
       X->point_rel = pt;
@@ -803,19 +812,22 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
         const CZone& next = softEdge.zoneA == &zone ? *softEdge.zoneB : *softEdge.zoneA;
 
         Matrix mat = matrix;
+        double cullNearerThan_ = cullNearerThan;
 
-        if (softEdge.twinId != -1) {
+        if (softEdge.isPortal) {
           mat = (softEdge.toTwin * invMatrix).inverse();
+          cullNearerThan_ = X->distanceFromOrigin;
         }
 
-        auto pX = pIntersection_t(X);
+        pIntersection_t pX(X);
         if (visitedJoins.find(softEdge.joinId) == visitedJoins.end()) {
           intersections.push_back(std::move(pX));
           visitedJoins.insert(softEdge.joinId);
         }
 
         if (visitedZones.find(&next) == visitedZones.end()) {
-          findIntersections_r(point, dir, mat, next, intersections, visitedZones, visitedJoins);
+          findIntersections_r(point, dir, mat, next, intersections, visitedZones, visitedJoins,
+            cullNearerThan_);
         }
       }
       else {

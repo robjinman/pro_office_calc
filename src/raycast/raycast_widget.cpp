@@ -110,6 +110,8 @@ static void configureAudioService(AudioService& audioService, const parser::Obje
   double musicVolume = std::stod(strMusicVolume);
 
   if (musicTrack.length() > 0) {
+    std::cout << musicTrack << ", " << musicVolume << "\n";
+
     audioService.playMusic(musicTrack);
     audioService.setMusicVolume(musicVolume);
   }

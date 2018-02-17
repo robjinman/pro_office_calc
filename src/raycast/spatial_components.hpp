@@ -122,6 +122,7 @@ struct CSoftEdge : public CEdge {
   entityId_t joinId = -1;
   entityId_t twinId = -1;
 
+  bool isPortal = false;
   Matrix toTwin;
 
   CZone* zoneA = nullptr;

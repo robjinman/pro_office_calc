@@ -65,19 +65,10 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
   if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
     || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
 
-    DBG_PRINT_VAR(wall);
-    DBG_PRINT_VAR(A);
-    DBG_PRINT_VAR(B);
-
     return false;
   }
 
   if (!isBetween(wall.line().at(A.x).y, wall.A.y, wall.B.y)) {
-    DBG_PRINT_VAR(wall);
-    DBG_PRINT_VAR(wall.line().at(A.x));
-    DBG_PRINT_VAR(wall.A.y);
-    DBG_PRINT_VAR(wall.B.y);
-
     return false;
   }
 
@@ -331,6 +322,7 @@ bool GeometryFactory::constructPortal(const parser::Object& obj, entityId_t pare
   edge->lseg.A = obj.path.points[0];
   edge->lseg.B = obj.path.points[1];
   edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
+  edge->isPortal = true;
 
   snapEndpoint(m_endpoints, edge->lseg.A);
   snapEndpoint(m_endpoints, edge->lseg.B);

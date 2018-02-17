@@ -173,6 +173,10 @@ struct LineSegment {
 
   double length() const;
 
+  double angle() const {
+    return atan2(B.y - A.y, B.x - A.x);
+  }
+
   // Signed distance from A
   double signedDistance(double x) const {
     double lineDir = A.x < B.x ? 1.0 : -1.0;
