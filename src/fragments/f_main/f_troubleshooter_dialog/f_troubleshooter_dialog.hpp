@@ -2,7 +2,6 @@
 #define __PROCALC_FRAGMENTS_F_TROUBLESHOOTER_DIALOG_HPP__
 
 
-#include <memory>
 #include <QDialog>
 #include <QAction>
 #include <QVBoxLayout>
@@ -14,42 +13,43 @@
 #include <QTextBrowser>
 #include <QTabWidget>
 #include <QTimer>
-#include "fragment.hpp"
 #include "raycast/raycast_widget.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/game_logic.hpp"
+#include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct FTroubleshooterDialogData : public FragmentData {
-  std::unique_ptr<QAction> actPreferences;
-  std::unique_ptr<QVBoxLayout> vbox;
-  std::unique_ptr<QTabWidget> wgtTabs;
+  QtObjPtr<QAction> actPreferences;
+  QtObjPtr<QVBoxLayout> vbox;
+  QtObjPtr<QTabWidget> wgtTabs;
 
   struct {
-    std::unique_ptr<QWidget> page;
-    std::unique_ptr<QVBoxLayout> vbox;
-    std::unique_ptr<QLabel> wgtCaption;
-    std::unique_ptr<QPushButton> wgtRunTroubleshooter;
-    std::unique_ptr<QProgressBar> wgtProgressBar;
-    std::unique_ptr<QGroupBox> wgtGroupbox;
-    std::unique_ptr<QVBoxLayout> resultsVbox;
-    std::unique_ptr<QHBoxLayout> btnsHbox;
-    std::unique_ptr<QLabel> wgtNoProblemsFound;
-    std::unique_ptr<QLabel> wgtProblemResolved;
-    std::unique_ptr<QPushButton> wgtYes;
-    std::unique_ptr<QPushButton> wgtNo;
-    std::unique_ptr<QTimer> timer;
+    QtObjPtr<QWidget> page;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<QLabel> wgtCaption;
+    QtObjPtr<QPushButton> wgtRunTroubleshooter;
+    QtObjPtr<QProgressBar> wgtProgressBar;
+    QtObjPtr<QGroupBox> wgtGroupbox;
+    QtObjPtr<QVBoxLayout> resultsVbox;
+    QtObjPtr<QHBoxLayout> btnsHbox;
+    QtObjPtr<QLabel> wgtNoProblemsFound;
+    QtObjPtr<QLabel> wgtProblemResolved;
+    QtObjPtr<QPushButton> wgtYes;
+    QtObjPtr<QPushButton> wgtNo;
+    QtObjPtr<QTimer> timer;
   } tab1;
 
   struct {
-    std::unique_ptr<QWidget> page;
-    std::unique_ptr<QVBoxLayout> vbox;
-    std::unique_ptr<QTextBrowser> wgtTextBrowser;
+    QtObjPtr<QWidget> page;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<QTextBrowser> wgtTextBrowser;
   } tab2;
 
   struct {
-    std::unique_ptr<QWidget> page;
-    std::unique_ptr<QVBoxLayout> vbox;
-    std::unique_ptr<RaycastWidget> wgtRaycast;
+    QtObjPtr<QWidget> page;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<RaycastWidget> wgtRaycast;
     std::unique_ptr<its_raining_tetrominos::GameLogic> gameLogic;
   } tab3;
 };

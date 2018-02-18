@@ -10,33 +10,32 @@ static std::mt19937 randEngine(rd());
 //===========================================
 // ConfigPage::ConfigPage
 //===========================================
-ConfigPage::ConfigPage(QChar symbol, std::initializer_list<int> neighbours)
+ConfigPage::ConfigPage(QChar symbol, std::vector<int> neighbours)
   : QWidget(nullptr),
     m_neighbours(neighbours) {
 
   std::shuffle(m_neighbours.begin(), m_neighbours.end(), randEngine);
 
-  grid.reset(new QGridLayout);
+  grid = makeQtObjPtr<QGridLayout>();
   setLayout(grid.get());
 
   QFont f = font();
   f.setPointSize(16);
 
-  m_label.reset(new QLabel(symbol));
+  m_label = makeQtObjPtr<QLabel>(symbol);
   m_label->setFont(f);
   grid->addWidget(m_label.get(), 0, 0);
 
-  m_btnGroup.reset(new QButtonGroup);
+  m_btnGroup = makeQtObjPtr<QButtonGroup>();
 
   QString labels = "ABCD";
   for (unsigned int i = 0; i < m_neighbours.size(); ++i) {
-    m_radioBtns.push_back(std::unique_ptr<QRadioButton>(new QRadioButton(QString("Option ")
-      + QString(labels[i]))));
+    m_radioBtns.push_back(makeQtObjPtr<QRadioButton>(QString("Option ") + QString(labels[i])));
     m_btnGroup->addButton(m_radioBtns.back().get(), m_neighbours[i]);
     grid->addWidget(m_radioBtns.back().get(), i + 1, 1);
   }
 
-  m_wgtNext.reset(new QPushButton("Next"));
+  m_wgtNext = makeQtObjPtr<QPushButton>("Next");
 
   grid->addWidget(m_wgtNext.get(), 5, 2);
   connect(m_wgtNext.get(), SIGNAL(clicked()), this, SLOT(onNextClick()));

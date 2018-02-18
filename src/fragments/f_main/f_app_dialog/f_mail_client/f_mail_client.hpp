@@ -2,18 +2,18 @@
 #define __PROCALC_FRAGMENTS_F_MAIL_CLIENT_HPP__
 
 
-#include <memory>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QMargins>
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 #include "fragments/relocatable/widget_frag_data.hpp"
 
 
 struct FMailClientData : public FragmentData {
-  std::unique_ptr<QVBoxLayout> vbox;
-  std::unique_ptr<QLabel> wgtLabel;
+  QtObjPtr<QVBoxLayout> vbox;
+  QtObjPtr<QLabel> wgtLabel;
 };
 
 class FMailClient : public QWidget, public Fragment {

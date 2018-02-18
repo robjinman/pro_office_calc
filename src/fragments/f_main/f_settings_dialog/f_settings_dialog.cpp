@@ -15,10 +15,10 @@ FSettingsDialog::FSettingsDialog(Fragment& parent_, FragmentData& parentData_,
 
   auto& parentData = parentFragData<FMainData>();
 
-  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   setLayout(m_data.vbox.get());
 
-  m_data.actSettings.reset(new QAction("Settings", this));
+  m_data.actSettings = makeQtObjPtr<QAction>("Settings", this);
   parentData.mnuFile->addAction(m_data.actSettings.get());
 
   connect(m_data.actSettings.get(), SIGNAL(triggered()), this, SLOT(showSettingsDialog()));

@@ -19,9 +19,9 @@ DesktopIcon::DesktopIcon(const std::string& name, const string& image, const str
 
   QPixmap* pix = new QPixmap(image.c_str());
 
-  m_wgtButton.reset(new QPushButton(*pix, ""));
-  m_wgtText.reset(new QLabel(text.c_str()));
-  m_vbox.reset(new QVBoxLayout);
+  m_wgtButton = makeQtObjPtr<QPushButton>(*pix, "");
+  m_wgtText = makeQtObjPtr<QLabel>(text.c_str());
+  m_vbox = makeQtObjPtr<QVBoxLayout>();
 
   setLayout(m_vbox.get());
 

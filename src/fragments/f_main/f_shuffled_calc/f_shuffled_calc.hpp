@@ -3,7 +3,6 @@
 
 
 #include <string>
-#include <memory>
 #include <map>
 #include <random>
 #include <QWidget>
@@ -16,6 +15,7 @@
 #include "fragment.hpp"
 #include "button_grid.hpp"
 #include "calculator.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 class QMainWindow;
@@ -42,18 +42,12 @@ class FShuffledCalc : public QWidget, public Fragment {
     FShuffledCalcData m_data;
 
     Calculator m_calculator;
-    std::unique_ptr<QVBoxLayout> m_vbox;
-    std::unique_ptr<QLineEdit> m_wgtDigitDisplay;
-    std::unique_ptr<ButtonGrid> m_wgtButtonGrid;
+    QtObjPtr<QVBoxLayout> m_vbox;
+    QtObjPtr<QLineEdit> m_wgtDigitDisplay;
+    QtObjPtr<ButtonGrid> m_wgtButtonGrid;
 
     std::string m_targetValue;
-
     std::map<QChar, QChar> m_symbols;
-
-    std::unique_ptr<QLabel> m_glitchOverlay;
-    std::unique_ptr<QImage> m_glitchBuffer;
-    std::unique_ptr<QTimer> m_glitchTimer;
-    std::mt19937 m_randEngine;
 
     struct {
       int spacing;

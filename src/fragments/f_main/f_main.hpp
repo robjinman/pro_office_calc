@@ -2,7 +2,6 @@
 #define __PROCALC_FRAGMENTS_F_MAIN_HPP__
 
 
-#include <memory>
 #include <functional>
 #include <QMainWindow>
 #include <QMenu>
@@ -11,6 +10,7 @@
 #include "update_loop.hpp"
 #include "fragment.hpp"
 #include "fragments/relocatable/widget_frag_data.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct FMainData : public WidgetFragData {
@@ -18,10 +18,10 @@ struct FMainData : public WidgetFragData {
     : WidgetFragData(new QVBoxLayout) {}
 
   QWidget* wgtCentral;
-  std::unique_ptr<QMenu> mnuFile;
-  std::unique_ptr<QAction> actQuit;
-  std::unique_ptr<QMenu> mnuHelp;
-  std::unique_ptr<QAction> actAbout;
+  QtObjPtr<QMenu> mnuFile;
+  QtObjPtr<QAction> actQuit;
+  QtObjPtr<QMenu> mnuHelp;
+  QtObjPtr<QAction> actAbout;
   std::function<void()> fnOnQuit = []() {};
 };
 

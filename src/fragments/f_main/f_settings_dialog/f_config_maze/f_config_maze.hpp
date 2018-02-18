@@ -2,7 +2,6 @@
 #define __PROCALC_FRAGMENTS_F_CONFIG_MAZE_HPP__
 
 
-#include <memory>
 #include <array>
 #include <QGridLayout>
 #include <QPushButton>
@@ -12,32 +11,33 @@
 #include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
 #include "fragments/f_main/f_settings_dialog/f_config_maze/config_page.hpp"
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct FConfigMazeData : public FragmentData {
-  std::unique_ptr<QStackedLayout> stackedLayout;
+  QtObjPtr<QStackedLayout> stackedLayout;
 
   struct {
-    std::unique_ptr<QWidget> widget;
-    std::unique_ptr<QVBoxLayout> vbox;
-    std::unique_ptr<ConsoleWidget> wgtConsole;
-    std::unique_ptr<QPushButton> wgtBack;
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<ConsoleWidget> wgtConsole;
+    QtObjPtr<QPushButton> wgtBack;
   } consolePage;
 
   struct {
-    std::unique_ptr<QWidget> widget;
-    std::unique_ptr<QVBoxLayout> vbox;
-    std::unique_ptr<QPushButton> wgtToConsole;
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<QPushButton> wgtToConsole;
   } consoleLaunchPage;
 
   struct {
-    std::unique_ptr<QWidget> widget;
-    std::unique_ptr<QVBoxLayout> vbox;
-    std::unique_ptr<AreYouSureWidget> wgtAreYouSure;
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<AreYouSureWidget> wgtAreYouSure;
   } consoleAreYouSurePage;
 
-  std::array<std::unique_ptr<ConfigPage>, 16> pages;
-  std::unique_ptr<QLabel> wgtMap;
+  std::array<QtObjPtr<ConfigPage>, 16> pages;
+  QtObjPtr<QLabel> wgtMap;
 };
 
 class FConfigMaze : public QWidget, public Fragment {

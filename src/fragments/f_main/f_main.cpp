@@ -8,7 +8,6 @@
 
 
 using std::string;
-using std::unique_ptr;
 
 
 //===========================================
@@ -27,12 +26,12 @@ FMain::FMain(const CommonFragData& commonData)
 
   m_data.wgtCentral->setLayout(m_data.box);
 
-  m_data.mnuFile.reset(menuBar()->addMenu("File"));
-  m_data.actQuit.reset(new QAction("Quit", this));
+  m_data.mnuFile = makeQtObjPtrFromRawPtr(menuBar()->addMenu("File"));
+  m_data.actQuit = makeQtObjPtr<QAction>("Quit", this);
   m_data.mnuFile->addAction(m_data.actQuit.get());
 
-  m_data.mnuHelp.reset(menuBar()->addMenu("Help"));
-  m_data.actAbout.reset(new QAction("About", this));
+  m_data.mnuHelp = makeQtObjPtrFromRawPtr(menuBar()->addMenu("Help"));
+  m_data.actAbout = makeQtObjPtr<QAction>("About", this);
   m_data.mnuHelp->addAction(m_data.actAbout.get());
 
   connect(m_data.actAbout.get(), SIGNAL(triggered()), this, SLOT(showAbout()));

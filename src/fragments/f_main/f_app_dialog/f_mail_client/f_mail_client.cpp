@@ -31,9 +31,9 @@ void FMailClient::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
-  m_data.wgtLabel.reset(new QLabel("Mail Client"));
+  m_data.wgtLabel = makeQtObjPtr<QLabel>("Mail Client");
 
-  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.vbox->addWidget(m_data.wgtLabel.get());
 
   setLayout(m_data.vbox.get());

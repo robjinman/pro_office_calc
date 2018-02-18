@@ -69,14 +69,14 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   f.setPointSize(16);
   setFont(f);
 
-  m_wgtDigitDisplay.reset(new QLineEdit(this));
+  m_wgtDigitDisplay = makeQtObjPtr<QLineEdit>(this);
   m_wgtDigitDisplay->setMaximumHeight(40);
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_wgtDigitDisplay->setReadOnly(true);
 
-  m_wgtButtonGrid.reset(new ButtonGrid(this));
+  m_wgtButtonGrid = makeQtObjPtr<ButtonGrid>(this);
 
-  m_vbox.reset(new QVBoxLayout);
+  m_vbox = makeQtObjPtr<QVBoxLayout>();
   m_vbox->addWidget(m_wgtDigitDisplay.get());
   m_vbox->addWidget(m_wgtButtonGrid.get());
   setLayout(m_vbox.get());

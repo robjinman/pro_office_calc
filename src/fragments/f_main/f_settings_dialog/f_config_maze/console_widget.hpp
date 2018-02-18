@@ -4,7 +4,6 @@
 
 #include <string>
 #include <map>
-#include <initializer_list>
 #include <vector>
 #include <functional>
 #include <deque>
@@ -18,8 +17,7 @@ class ConsoleWidget : public QPlainTextEdit {
     typedef std::vector<std::string> ArgList;
     typedef std::function<std::string(const ArgList&)> CommandFn;
 
-    ConsoleWidget(const std::string& initialContent,
-      std::initializer_list<std::string> initialHistory = {});
+    ConsoleWidget(const std::string& initialContent, std::vector<std::string> initialHistory = {});
 
     void addCommand(const std::string& name, const CommandFn& fn);
 

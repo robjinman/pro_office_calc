@@ -2,16 +2,16 @@
 #define __PROCALC_FRAGMENTS_F_SETTINGS_DIALOG_HPP__
 
 
-#include <memory>
 #include <QDialog>
 #include <QAction>
 #include <QVBoxLayout>
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct FSettingsDialogData : public FragmentData {
-  std::unique_ptr<QAction> actSettings;
-  std::unique_ptr<QVBoxLayout> vbox;
+  QtObjPtr<QAction> actSettings;
+  QtObjPtr<QVBoxLayout> vbox;
 };
 
 class FSettingsDialog : public QDialog, public Fragment {

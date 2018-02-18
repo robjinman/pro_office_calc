@@ -6,17 +6,15 @@
 #include "utils.hpp"
 
 
-using std::unique_ptr;
 using std::string;
 
 
 //===========================================
 // makeButton
 //===========================================
-static QPushButton* makeButton(QWidget* parent, const QString& text) {
-  QPushButton* btn = new QPushButton(text, parent);
+static QtObjPtr<QPushButton> makeButton(QWidget* parent, const QString& text) {
+  auto btn = makeQtObjPtr<QPushButton>(text, parent);
 
-  //btn->setMaximumWidth(100);
   btn->setMaximumHeight(60);
 
   return btn;
@@ -33,25 +31,25 @@ ButtonGrid::ButtonGrid(QWidget* parent)
 
   setLayout(grid);
 
-  unique_ptr<QPushButton> btn0(makeButton(this, "0"));
-  unique_ptr<QPushButton> btn1(makeButton(this, "1"));
-  unique_ptr<QPushButton> btn2(makeButton(this, "2"));
-  unique_ptr<QPushButton> btn3(makeButton(this, "3"));
-  unique_ptr<QPushButton> btn4(makeButton(this, "4"));
-  unique_ptr<QPushButton> btn5(makeButton(this, "5"));
-  unique_ptr<QPushButton> btn6(makeButton(this, "6"));
-  unique_ptr<QPushButton> btn7(makeButton(this, "7"));
-  unique_ptr<QPushButton> btn8(makeButton(this, "8"));
-  unique_ptr<QPushButton> btn9(makeButton(this, "9"));
-  unique_ptr<QPushButton> btnPlus(makeButton(this, "+"));
-  unique_ptr<QPushButton> btnMinus(makeButton(this, "-"));
-  unique_ptr<QPushButton> btnTimes(makeButton(this, "*"));
-  unique_ptr<QPushButton> btnDivide(makeButton(this, "/"));
-  unique_ptr<QPushButton> btnPoint(makeButton(this, "."));
-  unique_ptr<QPushButton> btnClear(makeButton(this, "C"));
-  unique_ptr<QPushButton> btnEquals(makeButton(this, "="));
+  auto btn0 = makeButton(this, "0");
+  auto btn1 = makeButton(this, "1");
+  auto btn2 = makeButton(this, "2");
+  auto btn3 = makeButton(this, "3");
+  auto btn4 = makeButton(this, "4");
+  auto btn5 = makeButton(this, "5");
+  auto btn6 = makeButton(this, "6");
+  auto btn7 = makeButton(this, "7");
+  auto btn8 = makeButton(this, "8");
+  auto btn9 = makeButton(this, "9");
+  auto btnPlus = makeButton(this, "+");
+  auto btnMinus = makeButton(this, "-");
+  auto btnTimes = makeButton(this, "*");
+  auto btnDivide = makeButton(this, "/");
+  auto btnPoint = makeButton(this, ".");
+  auto btnClear = makeButton(this, "C");
+  auto btnEquals = makeButton(this, "=");
 
-  buttonGroup.reset(new QButtonGroup);
+  buttonGroup = makeQtObjPtr<QButtonGroup>();
   buttonGroup->addButton(btn0.get(), BTN_ZERO);
   buttonGroup->addButton(btn1.get(), BTN_ONE);
   buttonGroup->addButton(btn2.get(), BTN_TWO);

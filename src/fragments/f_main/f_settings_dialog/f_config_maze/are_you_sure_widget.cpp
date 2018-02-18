@@ -124,28 +124,28 @@ AreYouSureWidget::AreYouSureWidget()
 
   setMouseTracking(true);
 
-  m_pages.reset(new QStackedLayout(this));
+  m_pages = makeQtObjPtr<QStackedLayout>(this);
 
   // Page1
   //
 
-  m_page1.widget.reset(new QWidget);
+  m_page1.widget = makeQtObjPtr<QWidget>();
   m_page1.widget->setMouseTracking(true);
 
-  m_page1.grid.reset(new QGridLayout);
+  m_page1.grid = makeQtObjPtr<QGridLayout>();
   m_page1.widget->setLayout(m_page1.grid.get());
 
-  m_page1.wgtWarning.reset(new QLabel());
+  m_page1.wgtWarning = makeQtObjPtr<QLabel>();
   m_page1.wgtWarning->setMouseTracking(true);
   m_page1.wgtWarning->setPixmap(QPixmap("data/warning.png"));
 
-  m_page1.wgtPrompt.reset(new QLabel());
+  m_page1.wgtPrompt = makeQtObjPtr<QLabel>();
   m_page1.wgtPrompt->setWordWrap(true);
   m_page1.wgtPrompt->setMouseTracking(true);
 
-  m_page1.wgtYes.reset(new QPushButton("Yes"));
+  m_page1.wgtYes = makeQtObjPtr<QPushButton>("Yes");
 
-  m_page1.wgtNo.reset(new QPushButton("No"));
+  m_page1.wgtNo = makeQtObjPtr<QPushButton>("No");
 
   m_page1.grid->addWidget(m_page1.wgtWarning.get(), 0, 1);
   m_page1.grid->addWidget(m_page1.wgtPrompt.get(), 1, 0, 1, 3);
@@ -160,24 +160,24 @@ AreYouSureWidget::AreYouSureWidget()
   // Page 2
   //
 
-  m_page2.widget.reset(new QWidget);
+  m_page2.widget = makeQtObjPtr<QWidget>();
   m_page2.widget->setMouseTracking(true);
 
-  m_page2.grid.reset(new QGridLayout);
+  m_page2.grid = makeQtObjPtr<QGridLayout>();
   m_page2.widget->setLayout(m_page2.grid.get());
 
-  m_page2.wgtConsole.reset(new QLabel());
+  m_page2.wgtConsole = makeQtObjPtr<QLabel>();
   m_page2.wgtConsole->setMouseTracking(true);
   m_page2.wgtConsole->setPixmap(QPixmap("data/console.png"));
 
-  m_page2.wgtPrompt.reset(new QLabel("The admin console is for advanced users only. "
-    "Enter at your own risk."));
+  m_page2.wgtPrompt = makeQtObjPtr<QLabel>("The admin console is for advanced users only. "
+    "Enter at your own risk.");
   m_page2.wgtPrompt->setWordWrap(true);
   m_page2.wgtPrompt->setMouseTracking(true);
 
-  m_page2.wgtNo.reset(new QPushButton("Back to safety"));
+  m_page2.wgtNo = makeQtObjPtr<QPushButton>("Back to safety");
 
-  m_page2.wgtYes.reset(new EvasiveButton("Proceed"));
+  m_page2.wgtYes = makeQtObjPtr<EvasiveButton>("Proceed");
   m_page2.wgtYes->setMaximumWidth(90);
 
   m_page2.grid->addWidget(m_page2.wgtConsole.get(), 0, 1);

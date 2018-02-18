@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QTimer>
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct FGlitchData : public FragmentData {};
@@ -33,7 +34,7 @@ class FGlitch : public QLabel, public Fragment {
     double m_glitchDuration;
 
     std::unique_ptr<QImage> m_glitchBuffer;
-    std::unique_ptr<QTimer> m_glitchTimer;
+    QtObjPtr<QTimer> m_glitchTimer;
     std::mt19937 m_randEngine;
 };
 

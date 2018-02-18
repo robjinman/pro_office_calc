@@ -11,6 +11,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 static std::random_device rd;
@@ -49,7 +50,7 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_,
 
   setMouseTracking(true);
 
-  m_data.stackedLayout.reset(new QStackedLayout(this));
+  m_data.stackedLayout = makeQtObjPtr<QStackedLayout>(this);
   setLayout(m_data.stackedLayout.get());
 
   constructConsoleLaunchPage();
@@ -72,9 +73,9 @@ FConfigMaze::FConfigMaze(Fragment& parent_, FragmentData& parentData_,
 // FConfigMaze::constructConsoleLaunchPage
 //===========================================
 void FConfigMaze::constructConsoleLaunchPage() {
-  m_data.consoleLaunchPage.widget.reset(new QWidget);
-  m_data.consoleLaunchPage.wgtToConsole.reset(new QPushButton("Admin console"));
-  m_data.consoleLaunchPage.vbox.reset(new QVBoxLayout);
+  m_data.consoleLaunchPage.widget = makeQtObjPtr<QWidget>();
+  m_data.consoleLaunchPage.wgtToConsole = makeQtObjPtr<QPushButton>("Admin console");
+  m_data.consoleLaunchPage.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.consoleLaunchPage.vbox->addWidget(m_data.consoleLaunchPage.wgtToConsole.get());
   m_data.consoleLaunchPage.widget->setLayout(m_data.consoleLaunchPage.vbox.get());
 
@@ -86,9 +87,9 @@ void FConfigMaze::constructConsoleLaunchPage() {
 // FConfigMaze::constructAreYouSurePage
 //===========================================
 void FConfigMaze::constructAreYouSurePage() {
-  m_data.consoleAreYouSurePage.widget.reset(new QWidget);
-  m_data.consoleAreYouSurePage.wgtAreYouSure.reset(new AreYouSureWidget);
-  m_data.consoleAreYouSurePage.vbox.reset(new QVBoxLayout);
+  m_data.consoleAreYouSurePage.widget = makeQtObjPtr<QWidget>();
+  m_data.consoleAreYouSurePage.wgtAreYouSure = makeQtObjPtr<AreYouSureWidget>();
+  m_data.consoleAreYouSurePage.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.consoleAreYouSurePage.vbox->addWidget(m_data.consoleAreYouSurePage.wgtAreYouSure.get());
   m_data.consoleAreYouSurePage.widget->setLayout(m_data.consoleAreYouSurePage.vbox.get());
 
@@ -115,20 +116,20 @@ void FConfigMaze::constructConsolePage() {
     "└───────────────────────────────────────┘\n"
     "> ";
 
-  m_data.consolePage.widget.reset(new QWidget);
-  m_data.consolePage.wgtConsole.reset(new ConsoleWidget(initialContent, {
+  m_data.consolePage.widget = makeQtObjPtr<QWidget>();
+  m_data.consolePage.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{
     "logouut",
     string("chpwd ") + pwd
-  }));
+  });
   m_data.consolePage.wgtConsole->addCommand("logout", [](const ConsoleWidget::ArgList&) {
     return "An error occurred";
   });
   m_data.consolePage.wgtConsole->addCommand("chpwd", [](const ConsoleWidget::ArgList&) {
     return "An error occurred";
   });
-  m_data.consolePage.wgtBack.reset(new QPushButton("Exit"));
+  m_data.consolePage.wgtBack = makeQtObjPtr<QPushButton>("Exit");
   m_data.consolePage.wgtBack->setMaximumWidth(50);
-  m_data.consolePage.vbox.reset(new QVBoxLayout);
+  m_data.consolePage.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.consolePage.vbox->addWidget(m_data.consolePage.wgtConsole.get());
   m_data.consolePage.vbox->addWidget(m_data.consolePage.wgtBack.get());
   m_data.consolePage.widget->setLayout(m_data.consolePage.vbox.get());
@@ -148,24 +149,24 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
   std::shuffle(symbols_.begin(), symbols_.end(), randEngine);
   QString symbols(ucs4ToUtf8(symbols_).c_str());
 
-  m_data.pages[0].reset(new ConfigPage(symbols[0], { 1, 2 }));
-  m_data.pages[1].reset(new ConfigPage(symbols[1], { 0, 3 }));
-  m_data.pages[2].reset(new ConfigPage(symbols[2], { 0, 3 }));
-  m_data.pages[3].reset(new ConfigPage(symbols[3], { 1, 2, 4, 5 }));
-  m_data.pages[4].reset(new ConfigPage(symbols[4], { 3, 6 }));
-  m_data.pages[5].reset(new ConfigPage(symbols[5], { 3, 6, 9 }));
-  m_data.pages[6].reset(new ConfigPage(symbols[6], { 4, 5, 7, 10 }));
-  m_data.pages[7].reset(new ConfigPage(symbols[7], { 6, 11 }));
-  m_data.pages[8].reset(new ConfigPage(symbols[8], { 9, 13 }));
-  m_data.pages[9].reset(new ConfigPage(symbols[9], { 5, 8, 10, 14 }));
-  m_data.pages[10].reset(new ConfigPage(symbols[10], { 6, 9, 11 }));
-  m_data.pages[11].reset(new ConfigPage(symbols[11], { 7, 10, 12, 15 }));
-  m_data.pages[12].reset(new ConfigPage(symbols[12], { 11, 100 }));
-  m_data.pages[13].reset(new ConfigPage(symbols[13], { 8, 14 }));
-  m_data.pages[14].reset(new ConfigPage(symbols[14], { 9, 13 }));
-  m_data.pages[15].reset(new ConfigPage(symbols[15], { 11, 100 }));
+  m_data.pages[0] = makeQtObjPtr<ConfigPage>(symbols[0], vector<int>{ 1, 2 });
+  m_data.pages[1] = makeQtObjPtr<ConfigPage>(symbols[1], vector<int>{ 0, 3 });
+  m_data.pages[2] = makeQtObjPtr<ConfigPage>(symbols[2], vector<int>{ 0, 3 });
+  m_data.pages[3] = makeQtObjPtr<ConfigPage>(symbols[3], vector<int>{ 1, 2, 4, 5 });
+  m_data.pages[4] = makeQtObjPtr<ConfigPage>(symbols[4], vector<int>{ 3, 6 });
+  m_data.pages[5] = makeQtObjPtr<ConfigPage>(symbols[5], vector<int>{ 3, 6, 9 });
+  m_data.pages[6] = makeQtObjPtr<ConfigPage>(symbols[6], vector<int>{ 4, 5, 7, 10 });
+  m_data.pages[7] = makeQtObjPtr<ConfigPage>(symbols[7], vector<int>{ 6, 11 });
+  m_data.pages[8] = makeQtObjPtr<ConfigPage>(symbols[8], vector<int>{ 9, 13 });
+  m_data.pages[9] = makeQtObjPtr<ConfigPage>(symbols[9], vector<int>{ 5, 8, 10, 14 });
+  m_data.pages[10] = makeQtObjPtr<ConfigPage>(symbols[10], vector<int>{ 6, 9, 11 });
+  m_data.pages[11] = makeQtObjPtr<ConfigPage>(symbols[11], vector<int>{ 7, 10, 12, 15 });
+  m_data.pages[12] = makeQtObjPtr<ConfigPage>(symbols[12], vector<int>{ 11, 100 });
+  m_data.pages[13] = makeQtObjPtr<ConfigPage>(symbols[13], vector<int>{ 8, 14 });
+  m_data.pages[14] = makeQtObjPtr<ConfigPage>(symbols[14], vector<int>{ 9, 13 });
+  m_data.pages[15] = makeQtObjPtr<ConfigPage>(symbols[15], vector<int>{ 11, 100 });
 
-  m_data.wgtMap.reset(new QLabel);
+  m_data.wgtMap = makeQtObjPtr<QLabel>();
   m_data.wgtMap->setPixmap(QPixmap("data/config_maze.png"));
 
   m_data.pages[1]->grid->addWidget(m_data.wgtMap.get(), 0, 1);

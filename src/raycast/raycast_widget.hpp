@@ -12,6 +12,7 @@
 #include "raycast/geometry.hpp"
 #include "raycast/time_service.hpp"
 #include "raycast/root_factory.hpp"
+#include "qt_obj_ptr.hpp"
 #ifdef DEBUG
 #  include <chrono>
 #endif
@@ -50,7 +51,7 @@ class RaycastWidget : public QWidget {
     TimeService m_timeService;
     AudioService m_audioService;
     std::unique_ptr<RootFactory> m_rootFactory;
-    std::unique_ptr<QTimer> m_timer;
+    QtObjPtr<QTimer> m_timer;
     QImage m_buffer;
     std::map<int, bool> m_keyStates;
     bool m_mouseBtnState;

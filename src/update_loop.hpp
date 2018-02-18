@@ -2,11 +2,11 @@
 #define __PROCALC_UPDATE_LOOP_HPP__
 
 
-#include <memory>
 #include <list>
 #include <functional>
 #include <QObject>
 #include <QTimer>
+#include "qt_obj_ptr.hpp"
 
 
 class UpdateLoop : QObject {
@@ -29,7 +29,7 @@ class UpdateLoop : QObject {
       std::function<void()> fnFinish;
     };
 
-    std::unique_ptr<QTimer> m_timer;
+    QtObjPtr<QTimer> m_timer;
     int m_interval;
     std::list<FuncPair> m_functions;
 };

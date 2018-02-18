@@ -2,7 +2,6 @@
 #define __PROCALC_FRAGMENTS_F_LOGIN_SCREEN_HPP__
 
 
-#include <memory>
 #include <QLabel>
 #include <QTimer>
 #include <QImage>
@@ -10,13 +9,14 @@
 #include <QMargins>
 #include "fragment.hpp"
 #include "event.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 class EventSystem;
 
 struct FLoginScreenData : public FragmentData {
-  std::unique_ptr<QLineEdit> wgtUser;
-  std::unique_ptr<QLineEdit> wgtPassword;
+  QtObjPtr<QLineEdit> wgtUser;
+  QtObjPtr<QLineEdit> wgtPassword;
   std::string password;
 };
 

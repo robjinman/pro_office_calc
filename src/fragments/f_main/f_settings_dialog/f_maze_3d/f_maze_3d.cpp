@@ -23,7 +23,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
 
   auto& parentData = parentFragData<FSettingsDialogData>();
 
-  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.vbox->setSpacing(0);
   m_data.vbox->setContentsMargins(0, 0, 0, 0);
 
@@ -36,7 +36,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   parentData.vbox->setContentsMargins(0, 0, 0, 0);
   parentData.vbox->addWidget(this);
 
-  m_data.wgtRaycast.reset(new RaycastWidget(this, commonData.eventSystem));
+  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(this, commonData.eventSystem);
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
   m_data.wgtRaycast->initialise("data/maps/house4.svg");

@@ -2,9 +2,9 @@
 #define __PROCALC_EVASIVE_BUTTON_HPP__
 
 
-#include <memory>
 #include <QPushButton>
 #include <QTimer>
+#include "qt_obj_ptr.hpp"
 
 
 class EvasiveButton : public QPushButton {
@@ -31,7 +31,7 @@ class EvasiveButton : public QPushButton {
 
     bool m_active;
     QPoint m_originalPos;
-    std::unique_ptr<QTimer> m_timer;
+    QtObjPtr<QTimer> m_timer;
 };
 
 

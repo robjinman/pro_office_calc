@@ -39,10 +39,10 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
     m_data.password = event.password;
   }, m_pwdGenEventId);
 
-  m_data.wgtUser.reset(new QLineEdit(this));
+  m_data.wgtUser = makeQtObjPtr<QLineEdit>(this);
   m_data.wgtUser->setGeometry(205, 170, 100, 20);
 
-  m_data.wgtPassword.reset(new QLineEdit(this));
+  m_data.wgtPassword = makeQtObjPtr<QLineEdit>(this);
   m_data.wgtPassword->setGeometry(205, 195, 100, 20);
 
   connect(m_data.wgtPassword.get(), SIGNAL(returnPressed()), this, SLOT(onLoginAttempt()));

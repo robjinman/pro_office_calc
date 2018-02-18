@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <QWidget>
+#include "qt_obj_ptr.hpp"
 
 
 enum buttonId_t {
@@ -39,8 +40,8 @@ class ButtonGrid : public QWidget {
     ButtonGrid(QWidget* parent);
     virtual ~ButtonGrid();
 
-    std::vector<std::unique_ptr<QPushButton>> buttons;
-    std::unique_ptr<QButtonGroup> buttonGroup;
+    std::vector<QtObjPtr<QPushButton>> buttons;
+    QtObjPtr<QButtonGroup> buttonGroup;
 
   private slots:
     void onBtnClick(int id);

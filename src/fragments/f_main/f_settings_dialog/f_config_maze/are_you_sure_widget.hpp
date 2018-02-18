@@ -2,7 +2,6 @@
 #define __PROCALC_FRAGMENTS_F_CONFIG_MAZE_ARE_YOU_SURE_WIDGET_HPP__
 
 
-#include <memory>
 #include <map>
 #include <QPushButton>
 #include <QLabel>
@@ -10,6 +9,7 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include "evasive_button.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 class AreYouSureWidget : public QWidget {
@@ -57,24 +57,24 @@ class AreYouSureWidget : public QWidget {
       std::string text2;
     };
 
-    std::unique_ptr<QStackedLayout> m_pages;
+    QtObjPtr<QStackedLayout> m_pages;
 
     struct {
-      std::unique_ptr<QWidget> widget;
-      std::unique_ptr<QGridLayout> grid;
-      std::unique_ptr<QPushButton> wgtYes;
-      std::unique_ptr<QPushButton> wgtNo;
-      std::unique_ptr<QLabel> wgtPrompt;
-      std::unique_ptr<QLabel> wgtWarning;
+      QtObjPtr<QWidget> widget;
+      QtObjPtr<QGridLayout> grid;
+      QtObjPtr<QPushButton> wgtYes;
+      QtObjPtr<QPushButton> wgtNo;
+      QtObjPtr<QLabel> wgtPrompt;
+      QtObjPtr<QLabel> wgtWarning;
     } m_page1;
 
     struct {
-      std::unique_ptr<QWidget> widget;
-      std::unique_ptr<QGridLayout> grid;
-      std::unique_ptr<EvasiveButton> wgtYes;
-      std::unique_ptr<QPushButton> wgtNo;
-      std::unique_ptr<QLabel> wgtPrompt;
-      std::unique_ptr<QLabel> wgtConsole;
+      QtObjPtr<QWidget> widget;
+      QtObjPtr<QGridLayout> grid;
+      QtObjPtr<EvasiveButton> wgtYes;
+      QtObjPtr<QPushButton> wgtNo;
+      QtObjPtr<QLabel> wgtPrompt;
+      QtObjPtr<QLabel> wgtConsole;
     } m_page2;
 
     TemplateMap m_templates;

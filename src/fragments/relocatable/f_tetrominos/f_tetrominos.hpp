@@ -3,19 +3,19 @@
 
 
 #include <list>
-#include <memory>
 #include <QLabel>
 #include <QTimer>
 #include <QImage>
 #include <QPolygon>
 #include "fragment.hpp"
 #include "event.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 class EventSystem;
 
 struct FTetrominosData : public FragmentData {
-  std::unique_ptr<QTimer> timer;
+  QtObjPtr<QTimer> timer;
 };
 
 class FTetrominos : public QLabel, public Fragment {

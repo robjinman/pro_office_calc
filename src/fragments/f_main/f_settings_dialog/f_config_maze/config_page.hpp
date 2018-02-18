@@ -2,27 +2,26 @@
 #define __PROCALC_FRAGMENTS_F_CONFIG_MAZE_CONFIG_PAGE_HPP__
 
 
-#include <initializer_list>
 #include <vector>
 #include <list>
-#include <memory>
 #include <QWidget>
 #include <QRadioButton>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QLabel>
+#include "qt_obj_ptr.hpp"
 
 
 class ConfigPage : public QWidget {
   Q_OBJECT
 
   public:
-    ConfigPage(QChar symbol, std::initializer_list<int> neighbours = {});
+    ConfigPage(QChar symbol, std::vector<int> neighbours = {});
 
     void reset();
 
-    std::unique_ptr<QGridLayout> grid;
+    QtObjPtr<QGridLayout> grid;
 
   signals:
     void nextClicked(int pageIdx);
@@ -32,10 +31,10 @@ class ConfigPage : public QWidget {
 
   private:
     std::vector<int> m_neighbours;
-    std::unique_ptr<QLabel> m_label;
-    std::list<std::unique_ptr<QRadioButton>> m_radioBtns;
-    std::unique_ptr<QButtonGroup> m_btnGroup;
-    std::unique_ptr<QPushButton> m_wgtNext;
+    QtObjPtr<QLabel> m_label;
+    std::list<QtObjPtr<QRadioButton>> m_radioBtns;
+    QtObjPtr<QButtonGroup> m_btnGroup;
+    QtObjPtr<QPushButton> m_wgtNext;
 };
 
 

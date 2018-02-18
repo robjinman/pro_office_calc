@@ -2,7 +2,6 @@
 #define __PROCALC_FRAGMENTS_F_CALCULATOR_HPP__
 
 
-#include <memory>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QLineEdit>
@@ -10,15 +9,16 @@
 #include "fragment.hpp"
 #include "button_grid.hpp"
 #include "calculator.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 class QMainWindow;
 
 struct FCalculatorData : public FragmentData {
   Calculator calculator;
-  std::unique_ptr<QVBoxLayout> vbox;
-  std::unique_ptr<QLineEdit> wgtDigitDisplay;
-  std::unique_ptr<ButtonGrid> wgtButtonGrid;
+  QtObjPtr<QVBoxLayout> vbox;
+  QtObjPtr<QLineEdit> wgtDigitDisplay;
+  QtObjPtr<ButtonGrid> wgtButtonGrid;
 };
 
 class FCalculator : public QWidget, public Fragment {

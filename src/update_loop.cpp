@@ -2,7 +2,6 @@
 
 
 using std::weak_ptr;
-using std::unique_ptr;
 using std::function;
 
 
@@ -12,7 +11,7 @@ using std::function;
 UpdateLoop::UpdateLoop(int interval)
   : m_interval(interval) {
 
-  m_timer.reset(new QTimer(this));
+  m_timer = makeQtObjPtr<QTimer>();
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 }
 

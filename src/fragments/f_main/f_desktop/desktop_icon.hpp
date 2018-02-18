@@ -2,12 +2,12 @@
 #define __PROCALC_FRAGMENTS_F_DESKTOP_DESKTOP_ICON_HPP__
 
 
-#include <memory>
 #include <string>
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
+#include "qt_obj_ptr.hpp"
 
 
 class DesktopIcon : public QWidget {
@@ -26,9 +26,9 @@ class DesktopIcon : public QWidget {
 
   private:
     std::string m_name;
-    std::unique_ptr<QVBoxLayout> m_vbox;
-    std::unique_ptr<QPushButton> m_wgtButton;
-    std::unique_ptr<QLabel> m_wgtText;
+    QtObjPtr<QVBoxLayout> m_vbox;
+    QtObjPtr<QPushButton> m_wgtButton;
+    QtObjPtr<QLabel> m_wgtText;
 
     long long m_lastClick = 0;
 

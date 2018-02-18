@@ -52,7 +52,7 @@ EvasiveButton::EvasiveButton(const QString& caption)
   setMouseTracking(true);
   setFocusPolicy(Qt::NoFocus);
 
-  m_timer.reset(new QTimer(this));
+  m_timer = makeQtObjPtr<QTimer>(this);
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
   reset();

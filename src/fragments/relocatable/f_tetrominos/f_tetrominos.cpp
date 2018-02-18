@@ -65,7 +65,7 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_,
   setScaledContents(true);
   setAttribute(Qt::WA_TransparentForMouseEvents);
 
-  m_data.timer.reset(new QTimer(this));
+  m_data.timer = makeQtObjPtr<QTimer>();
 
   connect(m_data.timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 

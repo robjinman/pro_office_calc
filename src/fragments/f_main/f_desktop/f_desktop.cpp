@@ -7,7 +7,6 @@
 
 
 using std::string;
-using std::unique_ptr;
 
 
 const int ICON_WIDTH = 40;
@@ -41,7 +40,7 @@ void FDesktop::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
-  m_data.grid.reset(new QGridLayout);
+  m_data.grid = makeQtObjPtr<QGridLayout>();
   setLayout(m_data.grid.get());
 
   int cols = 6;
@@ -61,13 +60,14 @@ void FDesktop::reload(const FragmentSpec& spec_) {
   int i = 0;
 
   for (auto& icon : spec.icons) {
-    DesktopIcon* wgtIcon = new DesktopIcon(icon.eventName, icon.image, icon.text);
-    connect(wgtIcon, SIGNAL(activated(const std::string&)), this,
+    auto wgtIcon = makeQtObjPtr<DesktopIcon>(icon.eventName, icon.image, icon.text);
+
+    connect(wgtIcon.get(), SIGNAL(activated(const std::string&)), this,
       SLOT(onIconActivate(const std::string&)));
 
-    m_data.grid->addWidget(wgtIcon, row, col);
+    m_data.grid->addWidget(wgtIcon.get(), row, col);
 
-    m_data.icons.push_back(unique_ptr<DesktopIcon>(wgtIcon));
+    m_data.icons.push_back(std::move(wgtIcon));
 
     row = (row + 1) % rows;
     col = i / rows;

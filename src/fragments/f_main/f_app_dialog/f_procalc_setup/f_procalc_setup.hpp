@@ -9,7 +9,7 @@
 #include <QMargins>
 #include "fragment.hpp"
 #include "fragments/relocatable/widget_frag_data.hpp"
-#include "utils.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct FProcalcSetupData : public FragmentData {

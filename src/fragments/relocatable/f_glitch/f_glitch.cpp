@@ -20,7 +20,7 @@ FGlitch::FGlitch(Fragment& parent_, FragmentData& parentData_, const CommonFragD
   setScaledContents(true);
   setAttribute(Qt::WA_TransparentForMouseEvents);
 
-  m_glitchTimer.reset(new QTimer(this));
+  m_glitchTimer = makeQtObjPtr<QTimer>();
 
   connect(m_glitchTimer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 

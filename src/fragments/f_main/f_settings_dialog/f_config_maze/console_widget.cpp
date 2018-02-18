@@ -2,6 +2,7 @@
 #include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
 
 
+using std::vector;
 using std::string;
 using std::stringstream;
 using std::istream_iterator;
@@ -10,10 +11,9 @@ using std::istream_iterator;
 //===========================================
 // ConsoleWidget::ConsoleWidget
 //===========================================
-ConsoleWidget::ConsoleWidget(const string& initialContent,
-  std::initializer_list<string> initialHistory)
+ConsoleWidget::ConsoleWidget(const string& initialContent, vector<string> initialHistory)
   : QPlainTextEdit(nullptr),
-    m_commandHistory(initialHistory) {
+    m_commandHistory(initialHistory.begin(), initialHistory.end()) {
 
   QPalette p = palette();
   p.setColor(QPalette::Base, Qt::black);

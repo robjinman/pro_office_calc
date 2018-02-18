@@ -3,17 +3,17 @@
 
 
 #include <vector>
-#include <memory>
 #include <QWidget>
 #include <QGridLayout>
 #include <QMargins>
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 #include "fragments/f_main/f_desktop/desktop_icon.hpp"
 
 
 struct FDesktopData : public FragmentData {
-  std::unique_ptr<QGridLayout> grid;
-  std::vector<std::unique_ptr<DesktopIcon>> icons;
+  QtObjPtr<QGridLayout> grid;
+  std::vector<QtObjPtr<DesktopIcon>> icons;
 };
 
 class FDesktop : public QWidget, public Fragment {

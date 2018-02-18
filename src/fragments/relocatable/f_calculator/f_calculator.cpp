@@ -37,14 +37,14 @@ void FCalculator::reload(const FragmentSpec& spec_) {
   f.setPointSize(16);
   setFont(f);
 
-  m_data.wgtDigitDisplay.reset(new QLineEdit(this));
+  m_data.wgtDigitDisplay = makeQtObjPtr<QLineEdit>(this);
   m_data.wgtDigitDisplay->setMaximumHeight(40);
   m_data.wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_data.wgtDigitDisplay->setReadOnly(true);
 
-  m_data.wgtButtonGrid.reset(new ButtonGrid(this));
+  m_data.wgtButtonGrid = makeQtObjPtr<ButtonGrid>(this);
 
-  m_data.vbox.reset(new QVBoxLayout);
+  m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.vbox->addWidget(m_data.wgtDigitDisplay.get());
   m_data.vbox->addWidget(m_data.wgtButtonGrid.get());
   setLayout(m_data.vbox.get());
