@@ -101,11 +101,6 @@ class SpatialSystem : public System {
     void crossZones(entityId_t entityId, entityId_t oldZone, entityId_t newZone);
     std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
 
-    void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-      const CZone& zone, std::list<pIntersection_t>& intersections,
-      std::set<const CZone*>& visitedZones, std::set<entityId_t>& visitedJoins,
-      double cullNearerThan = 0) const;
-
     inline CZone& getCurrentZone() const {
       return *sg.player->body.zone;
     }
@@ -115,6 +110,10 @@ class SpatialSystem : public System {
 };
 
 void connectSubzones(CZone& zone);
+
+void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix, const CZone& zone,
+  std::list<pIntersection_t>& intersections, std::set<const CZone*>& visitedZones,
+  std::set<entityId_t>& visitedJoins, double cullNearerThan = 0);
 
 
 #endif

@@ -744,11 +744,11 @@ void SpatialSystem::connectZones() {
 }
 
 //===========================================
-// SpatialSystem::findIntersections_r
+// findIntersections_r
 //===========================================
-void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  const CZone& zone, list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
-  set<entityId_t>& visitedJoins, double cullNearerThan) const {
+void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix, const CZone& zone,
+  list<pIntersection_t>& intersections, set<const CZone*>& visitedZones, set<entityId_t>& visitedJoins,
+  double cullNearerThan) {
 
   Matrix invMatrix = matrix.inverse();
 
