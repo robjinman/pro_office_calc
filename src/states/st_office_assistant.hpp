@@ -35,6 +35,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec0.width = 400;
   mainSpec->appDialogSpec0.height = 300;
   mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
+  mainSpec->appDialogSpec0.procalcSetupSpec.setEnabled(true);
 
   return mainSpec;
 }

@@ -8,6 +8,7 @@
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
 
 
 struct FAppDialogSpec : public FragmentSpec {
@@ -15,12 +16,14 @@ struct FAppDialogSpec : public FragmentSpec {
     : FragmentSpec("FAppDialog", id, {
         &glitchSpec,
         &calculatorSpec,
-        &mailClientSpec
+        &mailClientSpec,
+        &procalcSetupSpec
       }) {}
 
   FGlitchSpec glitchSpec;
   FCalculatorSpec calculatorSpec;
   FMailClientSpec mailClientSpec;
+  FProcalcSetupSpec procalcSetupSpec;
 
   QString titleText = "Application";
   int width = 640;
