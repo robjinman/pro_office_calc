@@ -31,6 +31,7 @@ using std::vector;
 
 
 static const double GRID_CELL_SIZE = 25.0;
+static const double SNAP_DISTANCE = 4.0;
 
 
 ostream& operator<<(ostream& os, CSpatialKind kind) {
@@ -271,9 +272,8 @@ static void entitiesInRadius_r(const CZone& zone, const Circle& circle, set<enti
 // similar
 //===========================================
 static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  double delta = 4.0;
-  return (distance(l1.A, l2.A) <= delta && distance(l1.B, l2.B) <= delta)
-    || (distance(l1.A, l2.B) <= delta && distance(l1.B, l2.A) <= delta);
+  return (distance(l1.A, l2.A) <= SNAP_DISTANCE && distance(l1.B, l2.B) <= SNAP_DISTANCE)
+    || (distance(l1.A, l2.B) <= SNAP_DISTANCE && distance(l1.B, l2.A) <= SNAP_DISTANCE);
 }
 
 //===========================================
@@ -361,8 +361,7 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
       addToSoftEdge(dynamic_cast<CSoftEdge&>(parent), std::move(child));
       break;
     default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
-        << parent.kind);
+      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind " << parent.kind);
   };
 }
 
@@ -527,6 +526,9 @@ void connectSubzones(CZone& zone) {
                     Matrix rotate(a, Vec2f(0, 0));
                     Matrix translate(0, other->lseg.A);
                     Matrix m = translate * rotate * toOrigin;
+
+                    other->lseg.A = m * se->lseg.A;
+                    other->lseg.B = m * se->lseg.B;
 
                     se->toTwin = m;
 

@@ -46,13 +46,10 @@ RenderSystem::RenderSystem(EntityManager& entityManager, QImage& target)
     m_renderer(entityManager, target) {}
 
 //===========================================
-// connectSubregions_r
+// connectSubregions
 //===========================================
-static void connectSubregions_r(const SpatialSystem& spatialSystem, CRegion& region) {
-  for (auto it = region.children.begin(); it != region.children.end(); ++it) {
-    CRegion& r = **it;
-    connectSubregions_r(spatialSystem, r);
-
+static void connectSubregions(const SpatialSystem& spatialSystem, CRegion& region) {
+  forEachCRegion(region, [&](CRegion& r) {
     for (auto jt = r.boundaries.begin(); jt != r.boundaries.end(); ++jt) {
       if ((*jt)->kind == CRenderKind::JOIN) {
         CJoin* je = dynamic_cast<CJoin*>(*jt);
@@ -93,7 +90,7 @@ static void connectSubregions_r(const SpatialSystem& spatialSystem, CRegion& reg
         }
       }
     }
-  };
+  });
 }
 
 //===========================================
@@ -105,7 +102,7 @@ void RenderSystem::connectRegions() {
   const SpatialSystem& spatialSystem = m_entityManager
     .system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  connectSubregions_r(spatialSystem, *rg.rootRegion);
+  connectSubregions(spatialSystem, *rg.rootRegion);
 }
 
 //===========================================

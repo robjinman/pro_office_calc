@@ -206,10 +206,10 @@ struct CJoin : public CBoundary {
       joinId(joinId) {}
 
   void mergeIn(const CJoin& other) {
-    if (other.topTexture != "default") {
+    if (topTexture == "default") {
       topTexture = other.topTexture;
     }
-    if (other.bottomTexture != "default") {
+    if (bottomTexture == "default") {
       bottomTexture = other.bottomTexture;
     }
   }
