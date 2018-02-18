@@ -405,11 +405,13 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  SceneGraph& sg = spatialSystem.sg;
   RenderGraph& rg = renderSystem.rg;
 
   CZone* parentZone = parentId == -1 ? nullptr
     : dynamic_cast<CZone*>(&spatialSystem.getComponent(parentId));
+
+  CRegion* parentRegion = parentId == -1 ? nullptr
+    : dynamic_cast<CRegion*>(&renderSystem.getComponent(parentId));
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -444,15 +446,67 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
         EXCEPTION("has_ceiling must be either 'true' or 'false'");
       }
     }
+    else {
+      if (parentZone != nullptr) {
+        region->hasCeiling = parentZone->hasCeiling;
+        zone->hasCeiling = parentZone->hasCeiling;
+      }
+    }
 
-    zone->floorHeight = contains<string>(obj.dict, "floor_height") ?
-      std::stod(getValue(obj.dict, "floor_height")) : sg.defaults.floorHeight;
+    double parentFloorHeight = parentZone ? parentZone->floorHeight : 0;
+    double parentCeilingHeight = parentZone ? parentZone->ceilingHeight : 0;
 
-    zone->ceilingHeight = contains<string>(obj.dict, "ceiling_height") ?
-      std::stod(getValue(obj.dict, "ceiling_height")) : sg.defaults.ceilingHeight;
+    if (contains<string>(obj.dict, "floor_height")) {
+      if (contains<string>(obj.dict, "floor_offset")) {
+        EXCEPTION("Region cannot specify both floor_height and floor_offset");
+      }
 
-    region->floorTexture = getValue(obj.dict, "floor_texture", rg.defaults.floorTexture);
-    region->ceilingTexture =  getValue(obj.dict, "ceiling_texture", rg.defaults.ceilingTexture);
+      zone->floorHeight = std::stod(getValue(obj.dict, "floor_height"));
+    }
+    else if (contains<string>(obj.dict, "floor_offset")) {
+      if (contains<string>(obj.dict, "floor_height")) {
+        EXCEPTION("Region cannot specify both floor_height and floor_offset");
+      }
+
+      zone->floorHeight = parentFloorHeight + std::stod(getValue(obj.dict, "floor_offset"));
+    }
+    else {
+      if (parentZone != nullptr) {
+        zone->floorHeight = parentZone->floorHeight;
+      }
+    }
+
+    if (contains<string>(obj.dict, "ceiling_height")) {
+      if (contains<string>(obj.dict, "ceiling_offset")) {
+        EXCEPTION("Region cannot specify both ceiling_height and ceiling_offset");
+      }
+
+      // Ceiling height is relative to floor height
+      zone->ceilingHeight = zone->floorHeight + std::stod(getValue(obj.dict, "ceiling_height"));
+    }
+    else if (contains<string>(obj.dict, "ceiling_offset")) {
+      if (contains<string>(obj.dict, "ceiling_height")) {
+        EXCEPTION("Region cannot specify both ceiling_height and ceiling_offset");
+      }
+
+      zone->ceilingHeight = std::stod(getValue(obj.dict, "ceiling_offset")) + parentCeilingHeight;
+    }
+    else {
+      if (parentZone != nullptr) {
+        zone->ceilingHeight = parentZone->ceilingHeight;
+      }
+    }
+
+    string defaultFloorTex = parentRegion ?
+      parentRegion->floorTexture :
+      rg.defaults.floorTexture;
+
+    string defaultCeilingTex = parentRegion ?
+      parentRegion->ceilingTexture :
+      rg.defaults.ceilingTexture;
+
+    region->floorTexture = getValue(obj.dict, "floor_texture", defaultFloorTex);
+    region->ceilingTexture =  getValue(obj.dict, "ceiling_texture", defaultCeilingTex);
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       const parser::Object& child = **it;
