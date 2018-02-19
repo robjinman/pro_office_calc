@@ -21,8 +21,8 @@ FMain::FMain(const CommonFragData& commonData)
 
   setWindowTitle("Pro Office Calculator");
 
-  m_data.wgtCentral = new QWidget;
-  setCentralWidget(m_data.wgtCentral);
+  m_data.wgtCentral = makeQtObjPtr<QWidget>();
+  setCentralWidget(m_data.wgtCentral.get());
 
   m_data.wgtCentral->setLayout(m_data.box);
 
