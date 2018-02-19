@@ -3,19 +3,31 @@
 
 
 #include <QWidget>
-#include <QVBoxLayout>
 #include <QListWidget>
 #include <QPushButton>
+#include <QStackedLayout>
 #include <QMargins>
 #include "fragment.hpp"
 #include "fragments/relocatable/widget_frag_data.hpp"
+#include "raycast/raycast_widget.hpp"
+#include "fragments/f_main/f_app_dialog/f_procalc_setup/game_logic.hpp"
 #include "qt_obj_ptr.hpp"
 
 
 struct FProcalcSetupData : public FragmentData {
-  QtObjPtr<QVBoxLayout> vbox;
-  QtObjPtr<QListWidget> wgtList;
-  QtObjPtr<QPushButton> wgtNext;
+  QtObjPtr<QStackedLayout> stackedLayout;
+
+  struct {
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<QListWidget> wgtList;
+    QtObjPtr<QPushButton> wgtNext;
+  } page1;
+
+  struct {
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<RaycastWidget> wgtRaycast;
+    std::unique_ptr<making_progress::GameLogic> gameLogic;
+  } page2;
 };
 
 class FProcalcSetup : public QWidget, public Fragment {
@@ -29,6 +41,9 @@ class FProcalcSetup : public QWidget, public Fragment {
 
     virtual ~FProcalcSetup() override;
 
+  private slots:
+    void onNextClick();
+
   private:
     FProcalcSetupData m_data;
 
@@ -36,6 +51,9 @@ class FProcalcSetup : public QWidget, public Fragment {
       int spacing;
       QMargins margins;
     } m_origParentState;
+
+    void setupPage1();
+    void setupPage2();
 };
 
 

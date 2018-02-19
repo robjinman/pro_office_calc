@@ -25,7 +25,7 @@ class RaycastWidget : public QWidget {
   Q_OBJECT
 
   public:
-    RaycastWidget(QWidget* parent, EventSystem& eventSystem);
+    RaycastWidget(EventSystem& eventSystem);
 
     void initialise(const std::string& mapFile);
 

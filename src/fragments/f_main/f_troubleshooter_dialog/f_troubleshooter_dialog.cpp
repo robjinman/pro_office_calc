@@ -128,7 +128,7 @@ void FTroubleshooterDialog::setupTab3() {
 
   tab.page = makeQtObjPtr<QWidget>();
   tab.vbox = makeQtObjPtr<QVBoxLayout>();
-  tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(this, commonData.eventSystem);
+  tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
   tab.wgtRaycast->initialise("data/its_raining_tetrominos/maze.svg");
   tab.gameLogic.reset(new GameLogic(commonData.eventSystem, tab.wgtRaycast->entityManager()));
 

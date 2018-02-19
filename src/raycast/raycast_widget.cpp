@@ -35,8 +35,8 @@ const double PLAYER_SPEED = 250.0;
 //===========================================
 // RaycastWidget::RaycastWidget
 //===========================================
-RaycastWidget::RaycastWidget(QWidget* parent, EventSystem& eventSystem)
-  : QWidget(parent),
+RaycastWidget::RaycastWidget(EventSystem& eventSystem)
+  : QWidget(nullptr),
     m_eventSystem(eventSystem),
     m_timeService(FRAME_RATE),
     m_audioService(m_entityManager) {}

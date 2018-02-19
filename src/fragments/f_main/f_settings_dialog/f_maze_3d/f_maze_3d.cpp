@@ -36,7 +36,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   parentData.vbox->setContentsMargins(0, 0, 0, 0);
   parentData.vbox->addWidget(this);
 
-  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(this, commonData.eventSystem);
+  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
   m_data.wgtRaycast->initialise("data/maps/house4.svg");
