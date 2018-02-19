@@ -2,6 +2,7 @@
 #define __PROCALC_QT_OBJ_PTR_HPP__
 
 
+#include <type_traits>
 #include <functional>
 #include <memory>
 #include <QPointer>
@@ -15,6 +16,8 @@ using QtObjPtr = std::unique_ptr<T, CustomQtObjDeleter<T>>;
 
 template <class T, typename... Args>
 auto makeQtObjPtr(Args&&... args) {
+  static_assert(std::is_base_of<QObject, T>::value, "Template arg must derive from QObject");
+
   // Instantiate the object in an exception-safe way
   auto tmp = std::make_unique<T>(std::forward<Args>(args)...);
 
@@ -32,6 +35,8 @@ auto makeQtObjPtr(Args&&... args) {
 
 template <class T>
 auto makeQtObjPtrFromRawPtr(T* rawPtr) {
+  static_assert(std::is_base_of<QObject, T>::value, "Template arg must derive from QObject");
+
   QPointer<T> qPtr(rawPtr);
 
   CustomQtObjDeleter<T> deleter = [qPtr](const T*) {

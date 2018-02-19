@@ -405,7 +405,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
     else if (X->kind == XWrapperKind::JOIN) {
       JoinX& joinX = dynamic_cast<JoinX&>(*X);
 
-      //assert(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB);
+      assert(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB);
 
       CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB
         : joinX.softEdge->zoneA;
