@@ -5,6 +5,7 @@
 #include "event.hpp"
 
 
+using std::string;
 using std::set;
 
 
@@ -12,10 +13,12 @@ using std::set;
 // CSwitchBehaviour::CSwitchBehaviour
 //===========================================
 CSwitchBehaviour::CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager,
-  entityId_t target, SwitchState initialState, bool toggleable, double toggleDelay)
+  entityId_t target, const string& message, SwitchState initialState, bool toggleable,
+  double toggleDelay)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
     m_target(target),
+    m_message(message),
     m_state(initialState),
     m_toggleable(toggleable),
     m_timer(toggleDelay) {
@@ -70,7 +73,7 @@ void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
         ESwitchActivate eActivate(m_state);
         m_entityManager.broadcastEvent(eActivate);
 
-        GameEvent eActivateEntity("switchActivateEntity");
+        ESwitchActivateEntity eActivateEntity(entityId(), m_state, m_message);
         m_entityManager.broadcastEvent(eActivateEntity, set<entityId_t>{m_target});
       }
     }

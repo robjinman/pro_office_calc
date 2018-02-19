@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <vector>
 #include "raycast/misc_factory.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/geometry.hpp"
@@ -13,6 +15,7 @@
 #include "raycast/behaviour_system.hpp"
 #include "raycast/c_enemy_behaviour.hpp"
 #include "raycast/c_door_behaviour.hpp"
+#include "raycast/c_elevator_behaviour.hpp"
 #include "raycast/c_switch_behaviour.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
@@ -26,6 +29,7 @@ using std::string;
 using std::list;
 using std::map;
 using std::set;
+using std::vector;
 
 
 //===========================================
@@ -131,7 +135,9 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
       initialState = SwitchState::ON;
     }
 
-    CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target,
+    string message = getValue(obj.dict, "message", "");
+
+    CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target, message,
       initialState, toggleable, toggleDelay);
 
     behaviourSystem.addComponent(pComponent_t(behaviour));
@@ -153,31 +159,24 @@ bool MiscFactory::constructElevator(entityId_t entityId, const parser::Object& o
   }
 
   if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
-    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(entityId));
+    BehaviourSystem& behaviourSystem =
+      m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
-    double targetH = std::stod(getValue(obj.dict, "target_floor_height"));
-    double speed = 60.0;
-    double dy = speed / m_timeService.frameRate;
+    vector<string> strLevels = splitString(getValue(obj.dict, "levels"), ',');
+    vector<double> levels(strLevels.size());
+    std::transform(strLevels.begin(), strLevels.end(), levels.begin(), [](const string& s) {
+      return std::stod(s);
+    });
 
-    EventHandlerSystem& eventHandlerSystem
-      = m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+    CElevatorBehaviour* behaviour = new CElevatorBehaviour(entityId, m_entityManager,
+      m_timeService.frameRate, levels);
 
-    CEventHandler* handler = new CEventHandler(entityId);
-    handler->handlers.push_back(EventHandler{"switchActivateEntity",
-      [=, &zone](const GameEvent& e) {
+    if (contains<string>(obj.dict, "speed")) {
+      double speed = std::stod(obj.dict.at("speed"));
+      behaviour->setSpeed(speed);
+    }
 
-      DBG_PRINT("Elevator activated\n");
-
-      if (fabs(targetH - zone.floorHeight) >= dy) {
-        m_timeService.addTween(Tween{[=, &zone](long, double, double) {
-          zone.floorHeight += dy;
-          return fabs(targetH - zone.floorHeight) >= dy;
-        }, [](long, double, double) {}});
-      }
-    }});
-
-    eventHandlerSystem.addComponent(pComponent_t(handler));
+    behaviourSystem.addComponent(pComponent_t(behaviour));
 
     return true;
   }
