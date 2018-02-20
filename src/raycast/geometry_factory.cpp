@@ -208,8 +208,6 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Obj
 bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
-  const double COLLISION_RADIUS = 10;
-
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   AnimationSystem& animationSystem =
     m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
@@ -220,29 +218,20 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
 
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
-  const Size& viewport = renderSystem.rg.viewport;
-
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
-  entityId_t bodyId = Component::getNextId();
+  Matrix m = parentTransform * obj.transform * transformFromTriangle(obj.path);
 
-  CVRect* body = new CVRect(bodyId, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
-  body->setTransform(parentTransform * obj.transform * transformFromTriangle(obj.path));
-  body->zone = &zone;
-  spatialSystem.addComponent(pCSpatial_t(body));
-
-  Camera* camera = new Camera(viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), *body);
-  camera->height = tallness + zone.floorHeight;
-
-  CDamage* damage = new CDamage(bodyId, 10, 10);
-  damageSystem.addComponent(pCDamage_t(damage));
-
-  Player* player = new Player(m_entityManager, m_audioService, tallness, unique_ptr<Camera>(camera),
-    *body);
+  Player* player = new Player(m_entityManager, m_audioService, tallness, zone, m);
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 
-  CEventHandler* takeDamage = new CEventHandler(bodyId);
+  CDamage* damage = new CDamage(player->body, 10, 10);
+  damageSystem.addComponent(pCDamage_t(damage));
+
+  const Size& viewport = renderSystem.rg.viewport;
+
+  CEventHandler* takeDamage = new CEventHandler(player->body);
   takeDamage->handlers.push_back(EventHandler{"entityDamaged", [=, &spatialSystem, &renderSystem,
     &viewport](const GameEvent& e) {
 

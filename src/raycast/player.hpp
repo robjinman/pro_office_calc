@@ -20,26 +20,26 @@ class AudioService;
 class Player {
   public:
     Player(EntityManager& entityManager, AudioService& audioService, double tallness,
-      std::unique_ptr<Camera> camera, CVRect& body);
+      CZone& zone, const Matrix& transform);
 
     double vVelocity = 0;
     double activationRadius = 100.0;
     double collectionRadius = 50.0;
+    const double FOREHEAD_SIZE = 5.0;
 
     entityId_t crosshair = -1;
     entityId_t sprite = -1;
     entityId_t red = -1;
-    CVRect& body;
+    entityId_t body;
 
-    entityId_t region() const {
-      return body.zone->entityId();
-    }
+    entityId_t region() const;
 
     bool aboveGround(const CZone& zone) const;
     bool belowGround(const CZone& zone) const;
 
     double feetHeight() const;
     double headHeight() const;
+    double eyeHeight() const;
 
     double getTallness() const;
     void changeTallness(double delta);
@@ -59,6 +59,8 @@ class Player {
     const Camera& camera() const;
 
   private:
+    CVRect& getBody() const;
+
     EntityManager& m_entityManager;
     AudioService& m_audioService;
     std::unique_ptr<Camera> m_camera;

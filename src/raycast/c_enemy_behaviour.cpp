@@ -36,7 +36,7 @@ static int indexOfClosestPoint(const Point& point, const vector<Point>& points) 
 static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, const Player& player,
   Matrix& m, Vec2f& ray, double& hAngle, double& vAngle, double& height) {
 
-  const Point& target_wld = player.body.pos;
+  const Point& target_wld = player.pos();
 
   double targetHeight = player.feetHeight() + 0.5 * player.getTallness();
   Vec2f v = target_wld - body.pos;
@@ -56,7 +56,7 @@ static bool hasLineOfSight(SpatialSystem& spatialSystem, const CVRect& body, con
 
   if (intersections.size() > 0) {
     entityId_t id = intersections.front()->entityId;
-    if (id == player.body.entityId()) {
+    if (id == player.body) {
       return true;
     }
   }
@@ -184,7 +184,7 @@ void CEnemyBehaviour::handleEvent(const GameEvent& event) {
     const Player& player = *spatialSystem.sg.player;
     const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
 
-    if (e.entityId == player.body.entityId()) {
+    if (e.entityId == player.body) {
       if (e.newZone == stPatrollingTrigger && m_state == ST_IDLE) {
         m_state = ST_PATROLLING;
       }

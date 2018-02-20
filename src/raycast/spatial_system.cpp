@@ -676,12 +676,12 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 //===========================================
 void SpatialSystem::movePlayer(const Vec2f& v) {
   Player& player = *sg.player;
-  const CVRect& body = player.body;
+  const CVRect& body = dynamic_cast<const CVRect&>(getComponent(player.body));
 
   Vec2f dv(cos(body.angle) * v.x - sin(body.angle) * v.y,
     sin(body.angle) * v.x + cos(body.angle) * v.y);
 
-  moveEntity(player.body.entityId(), dv, player.feetHeight() - player.body.zone->floorHeight);
+  moveEntity(player.body, dv, player.feetHeight() - getCurrentZone().floorHeight);
 
   playerBounce(*this, m_timeService, m_frameRate);
 
@@ -748,9 +748,9 @@ void SpatialSystem::connectZones() {
 //===========================================
 // findIntersections_r
 //===========================================
-void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix, const CZone& zone,
-  list<pIntersection_t>& intersections, set<const CZone*>& visitedZones, set<entityId_t>& visitedJoins,
-  double cullNearerThan) {
+void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
+  const CZone& zone, list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
+  set<entityId_t>& visitedJoins, double cullNearerThan) {
 
   Matrix invMatrix = matrix.inverse();
 
@@ -850,7 +850,7 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const Vec2f& ray) const {
     matrix);
 
   auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
-    return i->entityId == sg.player->body.entityId();
+    return i->entityId == sg.player->body;
   });
 
   erase(intersections, it);
@@ -955,7 +955,7 @@ list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
     ray, vAngle, matrix);
 
   auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
-    return i->entityId == sg.player->body.entityId();
+    return i->entityId == sg.player->body;
   });
 
   erase(intersections, it);

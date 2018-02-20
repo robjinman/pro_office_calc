@@ -372,7 +372,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
   double subview0 = 0;
   double subview1 = rg.viewport.y;
 
-  const CZone* zone = player.body.zone;
+  const CZone* zone = &dynamic_cast<CZone&>(spatialSystem.getComponent(player.region()));
   int last = -1;
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
     if (!renderSystem.hasComponent((*it)->entityId)) {
@@ -506,7 +506,7 @@ static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& pl
   double hPxAngle = cam.hFov / W_px;
   double vPxAngle = cam.vFov / H_px;
 
-  double hAngle = normaliseAngle(cam.body.angle - 0.5 * cam.hFov + hPxAngle * screenX_px);
+  double hAngle = normaliseAngle(cam.angle() - 0.5 * cam.hFov + hPxAngle * screenX_px);
   double s = hAngle / (2.0 * PI);
   assert(isBetween(s, 0.0, 1.0));
 
@@ -793,7 +793,7 @@ void drawSprite(QImage& target, const CSprite& sprite, const SpatialSystem& spat
   const Slice& slice = X.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
-  const QRectF& uv = sprite.getView(vRect, camera.body.pos);
+  const QRectF& uv = sprite.getView(vRect, camera.pos());
   QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());

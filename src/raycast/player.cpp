@@ -1,5 +1,6 @@
 #include "raycast/player.hpp"
-#include "raycast/spatial_components.hpp"
+#include "raycast/spatial_system.hpp"
+#include "raycast/render_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/animation_system.hpp"
@@ -7,17 +8,42 @@
 #include "raycast/damage_system.hpp"
 
 
+const double COLLISION_RADIUS = 10.0;
+
+
 //===========================================
 // Player::Player
 //===========================================
 Player::Player(EntityManager& entityManager, AudioService& audioService, double tallness,
-  std::unique_ptr<Camera> camera, CVRect& body)
-  : body(body),
-    m_entityManager(entityManager),
+  CZone& zone, const Matrix& transform)
+  : m_entityManager(entityManager),
     m_audioService(audioService),
-    m_camera(std::move(camera)),
     m_tallness(tallness),
-    m_shootTimer(0.5) {}
+    m_shootTimer(0.5) {
+
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+  body = Component::getNextId();
+
+  CVRect* b = new CVRect(body, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
+  b->setTransform(transform);
+  b->zone = &zone;
+  b->size.x = COLLISION_RADIUS * 2.0;
+  b->size.y = tallness + FOREHEAD_SIZE;
+
+  spatialSystem.addComponent(pCSpatial_t(b));
+
+  m_camera.reset(new Camera(renderSystem.rg.viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), body,
+    tallness + zone.floorHeight, spatialSystem));
+}
+
+//===========================================
+// Player::region
+//===========================================
+entityId_t Player::region() const {
+  return m_entityManager.getComponent<CVRect>(body, ComponentKind::C_SPATIAL).zone->entityId();
+}
 
 //===========================================
 // Player::aboveGround
@@ -44,6 +70,13 @@ double Player::feetHeight() const {
 // Player::headHeight
 //===========================================
 double Player::headHeight() const {
+  return m_camera->height + FOREHEAD_SIZE;
+}
+
+//===========================================
+// Player::eyeHeight
+//===========================================
+double Player::eyeHeight() const {
   return m_camera->height;
 }
 
@@ -81,17 +114,19 @@ void Player::setEyeHeight(double h) {
 //===========================================
 void Player::changeHeight(const CZone& zone, double deltaH) {
   // If applying this delta puts the player's feet through the floor
-  if (feetHeight() - zone.floorHeight + deltaH < 0) {
+  if (feetHeight() + deltaH < zone.floorHeight) {
     // Only permit positive delta
     if (deltaH <= 0) {
+      // Reset to floor height
       setFeetHeight(zone.floorHeight);
       return;
     }
   }
   // If applying this delta puts the player's head through the ceiling
-  else if (zone.ceilingHeight - headHeight() + deltaH < 0) {
+  else if (headHeight() + deltaH > zone.ceilingHeight) {
     // Only permit negative delta
     if (deltaH >= 0) {
+      vVelocity = 0;
       return;
     }
   }
@@ -102,21 +137,28 @@ void Player::changeHeight(const CZone& zone, double deltaH) {
 // Player::pos
 //===========================================
 const Point& Player::pos() const {
-  return body.pos;
+  return getBody().pos;
+}
+
+//===========================================
+// Player::getBody
+//===========================================
+CVRect& Player::getBody() const {
+  return m_entityManager.getComponent<CVRect>(body, ComponentKind::C_SPATIAL);
 }
 
 //===========================================
 // Player::setPosition
 //===========================================
 void Player::setPosition(const Point& pos) {
-  body.pos = pos;
+  getBody().pos = pos;
 }
 
 //===========================================
 // Player::hRotate
 //===========================================
 void Player::hRotate(double da) {
-  body.angle += da;
+  getBody().angle += da;
 }
 
 //===========================================
