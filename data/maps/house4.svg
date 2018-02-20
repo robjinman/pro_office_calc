@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="0.1767767"
-     inkscape:cx="2852.4402"
-     inkscape:cy="528.60018"
+     inkscape:zoom="2"
+     inkscape:cx="214.75086"
+     inkscape:cy="944.57981"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -140,7 +140,7 @@
          transform="matrix(1.0547098,-0.10930683,0.09721686,0.93805284,0,0)"><tspan
            id="tspan4223-1-8-3"
            x="1367.9392"
-           y="3240.1711">ceiling_height=100</tspan></text>
+           y="3240.1711">ceiling_height=120</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -5473,7 +5473,7 @@
            style="font-size:12.94190121px"
            y="182.85155"
            x="134.90625"
-           id="tspan5260-9">hedge=data/hedge.png</tspan></text>
+           id="tspan5260-9">hedge=data/hedge.png,120,120</tspan></text>
       <text
          id="text5258-7-8"
          y="199.8544"

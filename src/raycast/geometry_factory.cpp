@@ -267,8 +267,8 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
     viewport / 2 - sz / 2, sz);
   renderSystem.addComponent(pCRender_t(crosshair));
 
-  CImageOverlay* sprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.6, 0),
-    Size(3, 3));
+  CImageOverlay* sprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.5, 0),
+    Size(4, 4));
   sprite->texRect = QRectF(0, 0, 0.25, 1);
   renderSystem.addComponent(pCRender_t(sprite));
 
