@@ -721,7 +721,8 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     }
 
     srcRects.push_back(QRect(srcX, srcY, srcW, srcH));
-    trgRects.push_back(QRect(trgX, trgY, trgW, ceil(trgH)));
+    // TODO: The -1 and +2 are a hack to fill ugly seams. Need to find out why this is necessary
+    trgRects.push_back(QRect(trgX, trgY - 1, trgW, trgH + 2));
   }
 }
 

@@ -131,8 +131,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   int depth = 0) {
 
   if (depth > 9) {
-    DBG_PRINT("Max depth reached\n")
-    return Vec2f(0, 0);
+    return Vec2f(9999, 9999);
   }
 
   const Point& pos = body.pos;
@@ -141,7 +140,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   assert(zone.parent != nullptr);
 
   bool collision = false;
-  Vec2f newV(9999, 9999); // Value closest to oldV
+  Vec2f newV(0, 0); // Value closest to oldV
   Circle circle{pos + oldV, radius};
 
   forEachConstZone(*zone.parent, [&](const CZone& r) {
@@ -152,10 +151,6 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
       if (lineSegmentCircleIntersect(circle, edge.lseg) &&
         !canStepAcrossEdge(*body.zone, height, body.size, edge)) {
 
-        //DBG_PRINT_VAR(circle);
-        //DBG_PRINT_VAR(edge.lseg);
-        //DBG_PRINT_VAR(edge.lseg.line());
-
         collision = true;
 
         // The body's position if it were moved by oldV
@@ -164,13 +159,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
         Point X = projectionOntoLine(edge.lseg.line(), nextPos);
         Vec2f toEdge = nextPos - X;
 
-        //DBG_PRINT_VAR(toEdge);
-        //DBG_PRINT_VAR(normalise(toEdge));
-        //DBG_PRINT_VAR(length(toEdge));
-
         Vec2f adjustment = normalise(toEdge) * (radius - length(toEdge)) * 1.0001;
-
-        //DBG_PRINT_VAR(adjustment);
 
         Vec2f v = getDelta(body, height, radius, oldV + adjustment, depth + 1);
 
