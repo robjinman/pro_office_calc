@@ -32,12 +32,47 @@ struct Vec2 {
   Vec2 operator-() const {
     return Vec2<T>(-x, -y);
   }
+
+  T dot(const Vec2<T>& rhs) const {
+    return x * rhs.x + y * rhs.y;
+  }
 };
 
 typedef Vec2<int> Vec2i;
 typedef Vec2<double> Vec2f;
 typedef Vec2f Point;
 typedef Vec2f Size;
+
+template<class T>
+struct Vec3 {
+  Vec3()
+    : x(0), y(0), z(0) {}
+
+  Vec3(T x, T y, T z)
+    : x(x), y(y), z(z) {}
+
+  T x;
+  T y;
+  T z;
+
+  bool operator==(const Vec3<T>& rhs) const {
+    return x == rhs.x && y == rhs.y && z == rhs.z;
+  }
+
+  bool operator!=(const Vec3<T>& rhs) const {
+    return !(*this == rhs);
+  }
+
+  Vec3 operator-() const {
+    return Vec3<T>(-x, -y, -z);
+  }
+
+  T dot(const Vec3<T>& rhs) const {
+    return x * rhs.x + y * rhs.y + z * rhs.z;
+  }
+};
+
+typedef Vec3<double> Vec3f;
 
 struct Range {
   Range()
@@ -129,25 +164,22 @@ Point operator*(const Matrix& lhs, const Point& rhs);
 Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
 struct Line {
-  Line()
-    : m(0), c(0), x(0) {}
-
-  Line(double m, double c)
-    : m(m), c(c) {}
-
-  Point at(double x) const {
-    return Point(x, m * x + c);
+  Line(const Point& A, const Point& B) {
+    a = B.y - A.y;
+    b = A.x - B.x;
+    c = -b * A.y - a * A.x;
   }
 
-  bool isVertical() const {
-    return std::isinf(m);
+  Line(double a, double b, double c)
+    : a(a), b(b), c(c) {}
+
+  bool hasSteepGradient() const {
+    return fabs(a / b) > 999.9;
   }
 
-  double m;
+  double a;
+  double b;
   double c;
-
-  // For vertical lines (m == inf)
-  double x;
 };
 
 struct LineSegment {
@@ -161,18 +193,7 @@ struct LineSegment {
   }
 
   Line line() const {
-    Line l;
-
-    l.m = (B.y - A.y) / (B.x - A.x);
-    l.c = A.y - l.m * A.x;
-
-    // Treat the line as vertical for very steep gradients
-    if (fabs(l.m) > 100000000000.0) {
-      l.m = std::numeric_limits<double>::infinity();
-      l.x = A.x;
-    }
-
-    return l;
+    return Line(A, B);
   }
 
   double length() const;
@@ -181,27 +202,12 @@ struct LineSegment {
     return atan2(B.y - A.y, B.x - A.x);
   }
 
-  // Signed distance from A
-  double signedDistance(double x) const {
-    double lineDir = A.x < B.x ? 1.0 : -1.0;
-    double pointDir = x > A.x ? 1.0 : -1.0;
-    return distance(A, Point(x, line().at(x).y)) * lineDir * pointDir;
-  }
+  // Signed distance from A. Assumes p lies on line.
+  double signedDistance(const Point& p) const;
 
   Point A;
   Point B;
 };
-
-inline Point clipToLineSegment(const Point& p, const LineSegment& lseg) {
-  double d = lseg.signedDistance(p.x);
-  if (d < 0) {
-    return lseg.A;
-  }
-  if (d > lseg.length()) {
-    return lseg.B;
-  }
-  return p;
-}
 
 inline double clipNumber(double x, const Range& range) {
   if (x < range.a) {
@@ -224,6 +230,7 @@ bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 double distanceFromLine(const Line& l, const Point& p);
 Point projectionOntoLine(const Line& l, const Point& p);
+Point clipToLineSegment(const Point& p, const LineSegment& lseg);
 LineSegment transform(const LineSegment& lseg, const Matrix& m);
 Vec2f normalise(const Vec2f& v);
 double normaliseAngle(double a);

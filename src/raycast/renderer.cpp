@@ -329,11 +329,11 @@ static Slice computeSlice(const LineSegment& rotProjPlane, const LineSegment& wa
 
   projX0 = lineIntersect(wallRay0.line(), rotProjPlane.line());
   projX0 = clipToLineSegment(projX0, rotProjPlane);
-  double projW0 = rotProjPlane.signedDistance(projX0.x);
+  double projW0 = rotProjPlane.signedDistance(projX0);
 
   projX1 = lineIntersect(wallRay1.line(), rotProjPlane.line());
   projX1 = clipToLineSegment(projX1, rotProjPlane);
-  double projW1 = rotProjPlane.signedDistance(projX1.x);
+  double projW1 = rotProjPlane.signedDistance(projX1);
 
   if (wallAClip == CLIPPED_TO_BOTTOM) {
     projW0 = subview0;
@@ -405,7 +405,9 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
     else if (X->kind == XWrapperKind::JOIN) {
       JoinX& joinX = dynamic_cast<JoinX&>(*X);
 
-      assert(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB);
+      if(!(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB)) {
+        std::cout << zone << ", " << joinX.softEdge->zoneA << ", " << joinX.softEdge->zoneB << "\n";
+      }
 
       CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB
         : joinX.softEdge->zoneA;

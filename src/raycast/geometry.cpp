@@ -11,19 +11,18 @@ ostream& operator<<(ostream& os, const Point& pt) {
   return os;
 }
 
+ostream& operator<<(ostream& os, const Vec3f& pt) {
+  os << "(" << pt.x << ", " << pt.y << ", " << pt.z << ")";
+  return os;
+}
+
 ostream& operator<<(ostream& os, const LineSegment& lseg) {
   os << "LineSegment " << lseg.A << ", " << lseg.B;
   return os;
 }
 
 ostream& operator<<(ostream& os, const Line& line) {
-  if (line.isVertical()) {
-    os << "Line x = " << line.x;
-  }
-  else {
-    os << "Line y = " << line.m << "x + " << line.c;
-  }
-
+  os << "Line " << line.a << "x + " << line.b << "y + " << line.c << " = 0";
   return os;
 }
 
@@ -41,13 +40,6 @@ ostream& operator<<(ostream& os, const Matrix& mat) {
   return os;
 }
 #endif
-
-//===========================================
-// switchAxes
-//===========================================
-static Point switchAxes(const Point& p) {
-  return Point(p.y, p.x);
-}
 
 //===========================================
 // operator+
@@ -84,6 +76,29 @@ Point operator*(const Matrix& lhs, const Point& rhs) {
   Point p;
   p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
   p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
+  return p;
+}
+
+//===========================================
+// operator*
+//===========================================
+Vec3f operator*(const Matrix& lhs, const Vec3f& rhs) {
+  Vec3f p;
+  p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
+  p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
+  p.y = lhs[2][0] * rhs.x + lhs[2][1] * rhs.y + lhs[2][2];
+  return p;
+}
+
+//===========================================
+// operator*
+//===========================================
+Vec3f operator*(const Vec3f& lhs, const Matrix& rhs) {
+  Vec3f p;
+  p.x = lhs.x * rhs[0][0] + lhs.y * rhs[1][0] + lhs.z * rhs[2][0];
+  p.y = lhs.x * rhs[0][1] + lhs.y * rhs[1][1] + lhs.z * rhs[2][1];
+  p.z = lhs.x * rhs[0][2] + lhs.y * rhs[1][2] + lhs.z * rhs[2][2];
+
   return p;
 }
 
@@ -148,6 +163,19 @@ double LineSegment::length() const {
 }
 
 //===========================================
+// LineSegment::signedDistance
+//===========================================
+double LineSegment::signedDistance(const Point& p) const {
+  Vec2f AB = B - A;
+  Vec2f P = p - A;
+
+  double theta = acos(AB.dot(P) / (::length(P) * ::length(AB)));
+  double sign = theta > 0.5 * PI ? -1 : 1;
+
+  return distance(A, p) * sign;
+}
+
+//===========================================
 // transform
 //===========================================
 LineSegment transform(const LineSegment& lseg, const Matrix& m) {
@@ -158,22 +186,36 @@ LineSegment transform(const LineSegment& lseg, const Matrix& m) {
 // lineIntersect
 //===========================================
 Point lineIntersect(const Line& l0, const Line& l1) {
-  Point p;
+  if (l0.hasSteepGradient() || l1.hasSteepGradient()) {
+    Vec3f p;
 
-  p.x = (l1.c - l0.c) / (l0.m - l1.m);
-  p.y = l0.m * p.x + l0.c;
+    Vec3f l0params(l0.a, l0.b, l0.c);
+    Vec3f l1params(l1.a, l1.b, l1.c);
 
-  if (l0.isVertical()) {
-    p.x = l0.x;
-    p.y = l1.m * p.x + l1.c;
+    Matrix m(0.25 * PI, Vec2f(0, 0));
+    Matrix m_inv = m.inverse();
+
+    Vec3f l0params_ = l0params * m_inv;
+    Vec3f l1params_ = l1params * m_inv;
+
+    Line l0_(l0params_.x, l0params_.y, l0params_.z);
+    Line l1_(l1params_.x, l1params_.y, l1params_.z);
+
+    p.x = (l1_.b * l0_.c - l0_.b * l1_.c) / (l0_.b * l1_.a - l1_.b * l0_.a);
+    p.y = (-l0_.a * p.x - l0_.c) / l0_.b;
+    p.z = 0;
+
+    p = p * m;
+
+    return Point(p.x, p.y);
   }
+  else {
+    Point p;
+    p.x = (l1.b * l0.c - l0.b * l1.c) / (l0.b * l1.a - l1.b * l0.a);
+    p.y = (-l0.a * p.x - l0.c) / l0.b;
 
-  if (l1.isVertical()) {
-    p.x = l1.x;
-    p.y = l0.m * p.x + l0.c;
+    return p;
   }
-
-  return p;
 }
 
 //===========================================
@@ -187,12 +229,35 @@ bool isBetween(double x, double a, double b, double delta) {
 }
 
 //===========================================
+// clipToLineSegment
+//===========================================
+Point clipToLineSegment(const Point& p, const LineSegment& lseg) {
+  Point p_ = projectionOntoLine(lseg.line(), p);
+
+  double d = lseg.signedDistance(p_);
+  if (d < 0) {
+    return lseg.A;
+  }
+  if (d > lseg.length()) {
+    return lseg.B;
+  }
+  return p_;
+}
+
+//===========================================
 // lineSegmentIntersect
 //===========================================
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
   p = lineIntersect(l0.line(), l1.line());
   return (isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x))
     && (isBetween(p.y, l0.A.y, l0.B.y) && isBetween(p.y, l1.A.y, l1.B.y));
+}
+
+//===========================================
+// swapAxes
+//===========================================
+static Point swapAxes(const Point& pt) {
+  return Point(pt.y, pt.x);
 }
 
 //===========================================
@@ -205,17 +270,18 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 
   Line l = lseg.line();
 
-  if (l.isVertical()) {
-    Circle circ2{switchAxes(circ.pos), circ.radius};
-    LineSegment lseg2(switchAxes(lseg.A), switchAxes(lseg.B));
+  const Point& p = circ.pos;
+  double r = circ.radius;
 
-    return lineSegmentCircleIntersect(circ2, lseg2);
+  if (l.hasSteepGradient()) {
+    return lineSegmentCircleIntersect(Circle{swapAxes(p), r},
+      LineSegment(swapAxes(lseg.A), swapAxes(lseg.B)));
   }
 
-  double a = pow(l.m, 2) + 1.0;
-  double b = 2.0 * l.m * l.c - 2.0 * l.m * circ.pos.y - 2.0 * circ.pos.x;
-  double c = pow(circ.pos.x, 2) + pow(circ.pos.y, 2) + pow(l.c, 2) - 2.0 * circ.pos.y * l.c
-    - pow(circ.radius, 2);
+  double a = 1.0 + pow(l.a, 2) / pow(l.b, 2);
+  double b = 2.0 * (-p.x + (l.a * l.c) / pow(l.b, 2) + (p.y * l.a) / l.b);
+  double c = pow(p.x, 2) + pow(l.c, 2) / pow(l.b, 2) + 2.0 * p.y * l.c / l.b + pow(p.y, 2)
+    - pow(r, 2);
 
   double discriminant = b * b - 4.0 * a * c;
   if (discriminant < 0.0) {
@@ -223,10 +289,10 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
   }
 
   double x0 = (-b + sqrt(discriminant)) / (2.0 * a);
-  double y0 = l.m * x0 + l.c;
+  double y0 = -(l.a * x0 + l.c) / l.b;
 
   double x1 = (-b - sqrt(discriminant)) / (2.0 * a);
-  double y1 = l.m * x1 + l.c;
+  double y1 = -(l.a * x1 + l.c) / l.b;
 
   return (isBetween(x0, lseg.A.x, lseg.B.x) && isBetween(y0, lseg.A.y, lseg.B.y))
     || (isBetween(x1, lseg.A.x, lseg.B.x) && isBetween(y1, lseg.A.y, lseg.B.y));
@@ -236,27 +302,18 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 // distanceFromLine
 //===========================================
 double distanceFromLine(const Line& l, const Point& p) {
-  if (l.isVertical()) {
-    return fabs(p.x - l.x);
-  }
-  else {
-    return fabs(l.m * p.x - p.y + l.c) / sqrt(l.m * l.m + 1.0);
-  }
+  return distance(p, projectionOntoLine(l, p));
 }
 
 //===========================================
 // projectionOntoLine
 //===========================================
 Point projectionOntoLine(const Line& l, const Point& p) {
-  if (std::isinf(l.m)) {
-    return Point(l.x, p.y);
-  }
-  else {
-    double x = (p.x + l.m * (p.y - l.c)) / (1.0 + l.m * l.m);
-    double y = l.m * x + l.c;
-
-    return Point(x, y);
-  }
+  double a = -l.b;
+  double b = l.a;
+  double c = -p.y * b - p.x * a;
+  Line m(a, b, c);
+  return lineIntersect(l, m);
 }
 
 //===========================================

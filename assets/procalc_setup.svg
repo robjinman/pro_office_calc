@@ -82,15 +82,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.175"
-     inkscape:cx="1883.6567"
-     inkscape:cy="663.37086"
+     inkscape:zoom="0.35"
+     inkscape:cx="1129.1559"
+     inkscape:cy="815.10451"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1280"
-     inkscape:window-height="975"
-     inkscape:window-x="0"
+     inkscape:window-height="999"
+     inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
@@ -101,7 +101,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -109,53 +109,33 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5345)"
-       d="m 1106.4863,898.80757 0,-619.28729"
-       id="path4821"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="35.484699"
-       inkscape:export-ydpi="35.484699" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot5911"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="matrix(0.53102666,0,0,0.53102666,1173.3919,281.74526)"
-       inkscape:export-xdpi="35.484699"
-       inkscape:export-ydpi="35.484699"><flowRegion
+       transform="matrix(1.5675799,0,0,1.5675799,1136.893,-467.71749)"
+       inkscape:export-xdpi="32.456017"
+       inkscape:export-ydpi="32.456017"><flowRegion
          id="flowRegion5913"><rect
            id="rect5915"
-           width="878.7597"
-           height="281.31259"
+           width="480.63281"
+           height="353.69925"
            x="129.29953"
            y="536.17426" /></flowRegion><flowPara
          id="flowPara5917">Setting up your installation of Pro Office Calculator...</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot5919-3"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="matrix(0.66187479,0,0,0.66187479,921.722,-29.411815)"
-       inkscape:export-xdpi="35.484699"
-       inkscape:export-ydpi="35.484699"><flowRegion
+       transform="matrix(1.6406583,0,0,1.6406583,564.03307,-514.8406)"
+       inkscape:export-xdpi="32.456017"
+       inkscape:export-ydpi="32.456017"><flowRegion
          id="flowRegion5921-5"><rect
            id="rect5923-6"
            width="231.42857"
            height="184.28571"
            x="321.42856"
            y="436.64792" /></flowRegion><flowPara
-         id="flowPara5925-2">100%</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       id="flowRoot5919-3-9"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.09373856px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="translate(1140.2675,877.21189)"
-       inkscape:export-xdpi="35.484699"
-       inkscape:export-ydpi="35.484699"><flowRegion
-         id="flowRegion5921-5-1"><rect
-           id="rect5923-6-2"
-           width="153.17674"
-           height="121.97406"
-           x="-3.9745815"
-           y="-8.4247408" /></flowRegion><flowPara
-         id="flowPara5925-2-7">0%</flowPara></flowRoot>    <rect
+         id="flowPara5925-2">100%</flowPara></flowRoot>    <rect
        style="opacity:1;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect6530"
        width="500"
@@ -188,5 +168,18 @@
        inkscape:export-ydpi="23.039764"
        transform="scale(1,-1)"
        inkscape:export-filename="/home/rob/Desktop/progress_bar.png" />
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5919-3-3"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:82.03291321px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-xdpi="32.456017"
+       inkscape:export-ydpi="32.456017"
+       transform="translate(1105.7639,853.30793)"><flowRegion
+         id="flowRegion5921-5-6"><rect
+           id="rect5923-6-7"
+           width="379.69522"
+           height="302.34988"
+           x="-9.852211"
+           y="-20.883286" /></flowRegion><flowPara
+         id="flowPara5925-2-5">0%</flowPara></flowRoot>  </g>
 </svg>
