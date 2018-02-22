@@ -10,6 +10,14 @@
 #include "raycast/geometry.hpp"
 
 
+struct EEntityDestroyed : public GameEvent {
+  EEntityDestroyed(entityId_t id)
+    : GameEvent("entityDestroyed"),
+      entityId(id) {}
+
+  entityId_t entityId;
+};
+
 struct CDamage : public Component {
   CDamage(entityId_t entityId, int maxHealth, int health)
     : Component(entityId, ComponentKind::C_DAMAGE),

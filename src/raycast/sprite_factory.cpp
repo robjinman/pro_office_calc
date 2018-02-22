@@ -8,8 +8,10 @@
 #include "raycast/animation_system.hpp"
 #include "raycast/inventory_system.hpp"
 #include "raycast/damage_system.hpp"
+#include "raycast/spawn_system.hpp"
 #include "raycast/event_handler_system.hpp"
-#include "raycast/behaviour_system.hpp"
+//#include "raycast/behaviour_system.hpp"
+#include "raycast/agent_system.hpp"
 #include "raycast/c_enemy_behaviour.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
@@ -71,8 +73,10 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  BehaviourSystem& behaviourSystem =
-    m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+  //BehaviourSystem& behaviourSystem =
+  //  m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+  SpawnSystem& spawnSystem = m_entityManager.system<SpawnSystem>(ComponentKind::C_SPAWN);
+  AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
 
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
@@ -188,6 +192,19 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   animationSystem.addComponent(pComponent_t(anim));
   animationSystem.playAnimation(entityId, "idle", true);
 
+  string s = getValue(obj.dict, "spawn_point", "");
+  if (s != "") {
+    CSpawnable* spawnable = new CSpawnable(entityId, Component::getIdFromString(s),
+      "bad_guy", parser::pObject_t(obj.clone()), parentId, parentTransform);
+
+    string delay = getValue(obj.dict, "spawn_delay", "");
+    if (delay != "") {
+      spawnable->delay = std::stod(delay);
+    }
+
+    spawnSystem.addComponent(pComponent_t(spawnable));
+  }
+
   CDamage* damage = new CDamage(entityId, 2, 2);
   damageSystem.addComponent(pComponent_t(damage));
 
@@ -208,10 +225,14 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
+  CAgent* agent = new CAgent(entityId);
+  agent->hostile = true;
+  agentSystem.addComponent(pComponent_t(agent));
+/*
   CEnemyBehaviour* behaviour = new CEnemyBehaviour(entityId, m_entityManager, m_audioService,
     m_timeService);
 
-  string s = getValue(obj.dict, "st_patrolling_trigger", "");
+  s = getValue(obj.dict, "st_patrolling_trigger", "");
   if (s != "") {
     behaviour->stPatrollingTrigger = Component::getIdFromString(s);
   }
@@ -220,12 +241,12 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
     behaviour->stChasingTrigger = Component::getIdFromString(s);
   }
   behaviourSystem.addComponent(pComponent_t(behaviour));
-
+*/
   for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
     parser::Object& child = **it;
 
     if (child.type == "patrol_path") {
-      behaviour->patrolPath = child.path.points;
+      //behaviour->patrolPath = child.path.points;
     }
   }
 

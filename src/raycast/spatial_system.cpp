@@ -595,6 +595,10 @@ void SpatialSystem::hRotateCamera(double da) {
 // Doesn't set the zone on the entity
 //===========================================
 void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entityId_t newZoneId) {
+  if (oldZoneId == newZoneId) {
+    return;
+  }
+
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CSpatial& c = *it->second;
@@ -605,6 +609,26 @@ void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entity
       addChildToComponent(sg, newZone, pCSpatial_t(&c));
 
       m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId));
+    }
+  }
+}
+
+//===========================================
+// SpatialSystem::relocateEntity
+//===========================================
+void SpatialSystem::relocateEntity(entityId_t id, CZone& zone, const Point& point) {
+  auto it = m_components.find(id);
+  if (it != m_components.end()) {
+    CSpatial& c = *it->second;
+
+    // Currently, only VRects can be moved
+    if (c.kind == CSpatialKind::V_RECT) {
+      CVRect& body = dynamic_cast<CVRect&>(c);
+
+      crossZones(id, body.zone->entityId(), zone.entityId());
+
+      body.zone = &zone;
+      body.pos = point;
     }
   }
 }

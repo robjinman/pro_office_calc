@@ -29,6 +29,20 @@ struct Object {
   std::string type;
   std::map<std::string, std::string> dict;
   std::list<pObject_t> children;
+
+  Object* clone() const {
+    Object* cpy = new Object;
+    cpy->transform = transform;
+    cpy->path = path;
+    cpy->type = type;
+    cpy->dict = dict;
+
+    for (auto& c: children) {
+      cpy->children.push_back(pObject_t(c->clone()));
+    }
+
+    return cpy;
+  }
 };
 
 void parse(const std::string& file, std::list<pObject_t>& objects);

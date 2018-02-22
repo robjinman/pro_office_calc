@@ -13,6 +13,7 @@
 #include "raycast/damage_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/behaviour_system.hpp"
+#include "raycast/spawn_system.hpp"
 #include "raycast/c_enemy_behaviour.hpp"
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/c_elevator_behaviour.hpp"
@@ -93,9 +94,26 @@ bool MiscFactory::constructPlayerInventory() {
 bool MiscFactory::constructSpawnPoint(entityId_t entityId, const parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  // TODO
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
 
-  return false;
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  SpawnSystem& spawnSystem = m_entityManager.system<SpawnSystem>(ComponentKind::C_SPAWN);
+
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+
+  CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(1, 1));
+  Matrix m = transformFromTriangle(obj.path);
+  vRect->setTransform(parentTransform * obj.transform * m);
+  vRect->zone = &zone;
+
+  spatialSystem.addComponent(pComponent_t(vRect));
+
+  CSpawnPoint* spawnPoint = new CSpawnPoint(entityId);
+  spawnSystem.addComponent(pComponent_t(spawnPoint));
+
+  return true;
 }
 
 //===========================================

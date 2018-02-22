@@ -14,6 +14,8 @@
 #include "raycast/inventory_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
+#include "raycast/spawn_system.hpp"
+#include "raycast/agent_system.hpp"
 #include "raycast/map_parser.hpp"
 
 
@@ -188,6 +190,12 @@ void RaycastWidget::initialise(const string& mapFile) {
 
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
+
+  SpawnSystem* spawnSystem = new SpawnSystem(m_entityManager, *m_rootFactory);
+  m_entityManager.addSystem(ComponentKind::C_SPAWN, pSystem_t(spawnSystem));
+
+  AgentSystem* agentSystem = new AgentSystem(m_entityManager);
+  m_entityManager.addSystem(ComponentKind::C_AGENT, pSystem_t(agentSystem));
 
   loadMap(mapFile);
 

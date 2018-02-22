@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="2776.8799"
-     inkscape:cy="-1422.4764"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="2012.199"
+     inkscape:cy="-510.59405"
      inkscape:document-units="px"
-     inkscape:current-layer="g4813"
+     inkscape:current-layer="g4837"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="999"
@@ -2966,7 +2966,7 @@
          transform="scale(1.0603588,0.94307701)"><tspan
            id="tspan4219-9-2"
            x="1962.9329"
-           y="1482.5918">floor_height=150</tspan></text>
+           y="1482.5918">floor_height=15</tspan></text>
       <text
          sodipodi:linespacing="125%"
          xml:space="preserve"
@@ -3147,17 +3147,6 @@
              y="1111.2356"
              x="1890.7349"
              id="tspan4215-3-7-7-7">name=respawn_north</tspan></text>
-        <text
-           transform="scale(1.0603588,0.94307701)"
-           id="text4213-9-3-7-3-2"
-           y="1115.7094"
-           x="1890.568"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.74157095px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="1115.7094"
-             x="1890.568"
-             id="tspan4215-3-7-7-7-1">delay=5</tspan></text>
       </g>
       <g
          id="g11801-5"

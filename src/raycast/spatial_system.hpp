@@ -73,6 +73,7 @@ class SpatialSystem : public System {
     virtual void removeEntity(entityId_t id) override;
 
     void moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor = 0);
+    void relocateEntity(entityId_t id, CZone& zone, const Point& point);
 
     std::set<entityId_t> entitiesInRadius(const Point& pos, double radius) const;
 

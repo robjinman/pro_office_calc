@@ -53,7 +53,9 @@ void DamageSystem::damageEntity(entityId_t id, double damage) {
 
       if (component.health <= 0) {
         component.health = 0;
-        m_entityManager.broadcastEvent(GameEvent("entityDestroyed"), set<entityId_t>{id});
+        //m_entityManager.broadcastEvent(GameEvent("entityDestroyed"), set<entityId_t>{id});
+
+        m_entityManager.broadcastEvent(EEntityDestroyed(id));
       }
     }
   }
