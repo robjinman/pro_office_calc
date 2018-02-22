@@ -688,7 +688,7 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
   if (cell != m_playerCell) {
     m_playerCell = cell;
 
-    GameEvent e("playerMove");
+    EPlayerMove e(player);
     m_entityManager.broadcastEvent(e, entitiesInRadius(player.pos(), player.collectionRadius));
   }
 }

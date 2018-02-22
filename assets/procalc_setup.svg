@@ -83,8 +83,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="1129.1559"
-     inkscape:cy="815.10451"
+     inkscape:cx="1443.3219"
+     inkscape:cy="649.49474"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -114,8 +114,8 @@
        id="flowRoot5911"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        transform="matrix(1.5675799,0,0,1.5675799,1136.893,-467.71749)"
-       inkscape:export-xdpi="32.456017"
-       inkscape:export-ydpi="32.456017"><flowRegion
+       inkscape:export-xdpi="33.157166"
+       inkscape:export-ydpi="33.157166"><flowRegion
          id="flowRegion5913"><rect
            id="rect5915"
            width="480.63281"
@@ -126,9 +126,9 @@
        xml:space="preserve"
        id="flowRoot5919-3"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="matrix(1.6406583,0,0,1.6406583,564.03307,-514.8406)"
-       inkscape:export-xdpi="32.456017"
-       inkscape:export-ydpi="32.456017"><flowRegion
+       transform="matrix(1.162477,0,0,1.162477,775.88786,-299.95717)"
+       inkscape:export-xdpi="33.157166"
+       inkscape:export-ydpi="33.157166"><flowRegion
          id="flowRegion5921-5"><rect
            id="rect5923-6"
            width="231.42857"
@@ -171,15 +171,15 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot5919-3-3"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:82.03291321px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       inkscape:export-xdpi="32.456017"
-       inkscape:export-ydpi="32.456017"
-       transform="translate(1105.7639,853.30793)"><flowRegion
-         id="flowRegion5921-5-6"><rect
-           id="rect5923-6-7"
-           width="379.69522"
-           height="302.34988"
-           x="-9.852211"
-           y="-20.883286" /></flowRegion><flowPara
-         id="flowPara5925-2-5">0%</flowPara></flowRoot>  </g>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:58.12385178px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-xdpi="33.157166"
+       inkscape:export-ydpi="33.157166"
+       transform="translate(1159.7277,856.09635)"><flowRegion
+         id="flowRegion5921-5-5"><rect
+           id="rect5923-6-6"
+           width="269.0304"
+           height="214.22789"
+           x="-6.9807138"
+           y="-14.796707" /></flowRegion><flowPara
+         id="flowPara5925-2-2">0%</flowPara></flowRoot>  </g>
 </svg>

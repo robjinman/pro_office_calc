@@ -1,5 +1,6 @@
 #include <cassert>
 #include "raycast/inventory_system.hpp"
+#include "raycast/spatial_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "utils.hpp"
 
@@ -23,12 +24,30 @@ void InventorySystem::handleEvent(const GameEvent& event) {}
 // InventorySystem::handleEvent
 //===========================================
 void InventorySystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
+  const double MIN_HEIGHT_DIFF = 10;
+
   if (event.name == "playerMove") {
+    const EPlayerMove& e = dynamic_cast<const EPlayerMove&>(event);
+
     for (auto it = m_collectables.begin(); it != m_collectables.end(); ++it) {
       CCollectable& collectable = *it->second;
+      entityId_t id = it->first;
 
-      if (entities.count(it->first)) {
-        addToBucket(collectable);
+      if (entities.count(id)) {
+        const CSpatial& c = m_entityManager.getComponent<CSpatial>(id, ComponentKind::C_SPATIAL);
+
+        // Only deal with VRects for now
+        //
+        if (c.kind == CSpatialKind::V_RECT) {
+          const CVRect& vRect = dynamic_cast<const CVRect&>(c);
+          const CZone& itemZone = *vRect.zone;
+          const CZone& playerZone = m_entityManager.getComponent<CZone>(e.player.region(),
+            ComponentKind::C_SPATIAL);
+
+          if (fabs(playerZone.floorHeight - itemZone.floorHeight) < MIN_HEIGHT_DIFF) {
+            addToBucket(collectable);
+          }
+        }
       }
     }
   }

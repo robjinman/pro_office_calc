@@ -43,6 +43,14 @@ struct EChangedZone : public GameEvent {
   entityId_t newZone;
 };
 
+struct EPlayerMove : public GameEvent {
+  EPlayerMove(const Player& player)
+    : GameEvent("playerMove"),
+      player(player) {}
+
+  const Player& player;
+};
+
 class EntityManager;
 class TimeService;
 
