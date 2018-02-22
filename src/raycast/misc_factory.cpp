@@ -46,7 +46,7 @@ MiscFactory::MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
 // MiscFactory::types
 //===========================================
 const set<string>& MiscFactory::types() const {
-  static const set<string> types{"player_inventory", "door", "switch", "elevator"};
+  static const set<string> types{"player_inventory", "door", "switch", "elevator", "spawn_point"};
   return types;
 }
 
@@ -85,6 +85,17 @@ bool MiscFactory::constructPlayerInventory() {
   eventHandlerSystem.addComponent(pComponent_t(syncCounter));
 
   return true;
+}
+
+//===========================================
+// MiscFactory::constructSpawnPoint
+//===========================================
+bool MiscFactory::constructSpawnPoint(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  // TODO
+
+  return false;
 }
 
 //===========================================
@@ -201,6 +212,9 @@ bool MiscFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "elevator") {
     return constructElevator(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "spawn_point") {
+    return constructSpawnPoint(entityId, obj, parentId, parentTransform);
   }
 
   return false;

@@ -406,7 +406,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       JoinX& joinX = dynamic_cast<JoinX&>(*X);
 
       if(!(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB)) {
-        std::cout << zone << ", " << joinX.softEdge->zoneA << ", " << joinX.softEdge->zoneB << "\n";
+        DBG_PRINT("Warning: Possibly overlapping regions\n");
       }
 
       CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB

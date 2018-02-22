@@ -37,6 +37,8 @@ class MiscFactory : public GameObjectFactory {
       const Matrix& parentTransform);
     bool constructElevator(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+    bool constructSpawnPoint(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
 };
 
 

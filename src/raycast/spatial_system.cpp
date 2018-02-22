@@ -130,7 +130,7 @@ static bool pathBlocked(const CZone& zone, const Point& pos, double height, cons
 static Vec2f getDelta(const CVRect& body, double height, double radius, const Vec2f& oldV,
   int depth = 0) {
 
-  if (depth > 9) {
+  if (depth > 4) {
     return Vec2f(9999, 9999);
   }
 
@@ -538,6 +538,8 @@ void connectSubzones(CZone& zone) {
         });
 
         if (!hasTwin) {
+          assert(r.parent != nullptr);
+
           se->zoneA = &r;
           se->zoneB = r.parent;
         }
