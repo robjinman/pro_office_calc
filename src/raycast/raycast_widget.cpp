@@ -194,7 +194,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   SpawnSystem* spawnSystem = new SpawnSystem(m_entityManager, *m_rootFactory);
   m_entityManager.addSystem(ComponentKind::C_SPAWN, pSystem_t(spawnSystem));
 
-  AgentSystem* agentSystem = new AgentSystem(m_entityManager);
+  AgentSystem* agentSystem = new AgentSystem(m_entityManager, m_timeService, m_audioService);
   m_entityManager.addSystem(ComponentKind::C_AGENT, pSystem_t(agentSystem));
 
   loadMap(mapFile);

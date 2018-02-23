@@ -14,7 +14,6 @@
 #include "raycast/event_handler_system.hpp"
 #include "raycast/behaviour_system.hpp"
 #include "raycast/spawn_system.hpp"
-#include "raycast/c_enemy_behaviour.hpp"
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/c_elevator_behaviour.hpp"
 #include "raycast/c_switch_behaviour.hpp"

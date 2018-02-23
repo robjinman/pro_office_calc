@@ -358,7 +358,8 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
       addToSoftEdge(dynamic_cast<CSoftEdge&>(parent), std::move(child));
       break;
     default:
-      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind " << parent.kind);
+      EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
+        << parent.kind);
   };
 }
 

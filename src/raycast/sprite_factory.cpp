@@ -1,7 +1,6 @@
 #include "raycast/sprite_factory.hpp"
 #include "raycast/geometry.hpp"
 #include "raycast/map_parser.hpp"
-#include "raycast/behaviour_system.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/render_system.hpp"
@@ -10,9 +9,7 @@
 #include "raycast/damage_system.hpp"
 #include "raycast/spawn_system.hpp"
 #include "raycast/event_handler_system.hpp"
-//#include "raycast/behaviour_system.hpp"
 #include "raycast/agent_system.hpp"
-#include "raycast/c_enemy_behaviour.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
 #include "exception.hpp"
@@ -73,8 +70,6 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  //BehaviourSystem& behaviourSystem =
-  //  m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
   SpawnSystem& spawnSystem = m_entityManager.system<SpawnSystem>(ComponentKind::C_SPAWN);
   AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
 
@@ -226,27 +221,22 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
   CAgent* agent = new CAgent(entityId);
-  agent->hostile = true;
-  agentSystem.addComponent(pComponent_t(agent));
-/*
-  CEnemyBehaviour* behaviour = new CEnemyBehaviour(entityId, m_entityManager, m_audioService,
-    m_timeService);
 
   s = getValue(obj.dict, "st_patrolling_trigger", "");
   if (s != "") {
-    behaviour->stPatrollingTrigger = Component::getIdFromString(s);
+    agent->stPatrollingTrigger = Component::getIdFromString(s);
   }
   s = getValue(obj.dict, "st_chasing_trigger", "");
   if (s != "") {
-    behaviour->stChasingTrigger = Component::getIdFromString(s);
+    agent->stChasingTrigger = Component::getIdFromString(s);
   }
-  behaviourSystem.addComponent(pComponent_t(behaviour));
-*/
+  agentSystem.addComponent(pComponent_t(agent));
+
   for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
     parser::Object& child = **it;
 
     if (child.type == "patrol_path") {
-      //behaviour->patrolPath = child.path.points;
+      agent->patrolPath = child.path.points;
     }
   }
 
