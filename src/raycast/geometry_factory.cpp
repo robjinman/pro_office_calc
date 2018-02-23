@@ -235,29 +235,33 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
   takeDamage->handlers.push_back(EventHandler{"entityDamaged", [=, &spatialSystem, &renderSystem,
     &viewport](const GameEvent& e) {
 
-    DBG_PRINT("Player health: " << damage->health << "\n");
+    const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
 
-    if (player->red == -1) {
-      player->red = Component::getNextId();
+    if (event.entityId == player->body) {
+      DBG_PRINT("Player health: " << damage->health << "\n");
 
-      double maxAlpha = 80;
-      CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
-        Point(0, 0), viewport);
+      if (player->red == -1) {
+        player->red = Component::getNextId();
 
-      renderSystem.addComponent(pCRender_t(overlay));
+        double maxAlpha = 80;
+        CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
+          Point(0, 0), viewport);
 
-      double duration = 0.33;
-      int da = maxAlpha / (duration * m_timeService.frameRate);
+        renderSystem.addComponent(pCRender_t(overlay));
 
-      m_timeService.addTween(Tween{[=](long, double, double) -> bool {
-        int alpha = overlay->colour.alpha() - da;
-        overlay->colour.setAlpha(alpha);
+        double duration = 0.33;
+        int da = maxAlpha / (duration * m_timeService.frameRate);
 
-        return alpha > 0;
-      }, [&, player](long, double, double) {
-        m_entityManager.deleteEntity(player->red);
-        player->red = -1;
-      }}, "redFade");
+        m_timeService.addTween(Tween{[=](long, double, double) -> bool {
+          int alpha = overlay->colour.alpha() - da;
+          overlay->colour.setAlpha(alpha);
+
+          return alpha > 0;
+        }, [&, player](long, double, double) {
+          m_entityManager.deleteEntity(player->red);
+          player->red = -1;
+        }}, "redFade");
+      }
     }
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));
