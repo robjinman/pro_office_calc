@@ -51,15 +51,3 @@ void EventHandlerSystem::handleEvent(const GameEvent& event) {
     sendEventToComponent(*it->second, event);
   }
 }
-
-//===========================================
-// EventHandlerSystem::handleEvent
-//===========================================
-void EventHandlerSystem::handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) {
-  for (auto it = entities.begin(); it != entities.end(); ++it) {
-    auto jt = m_components.find(*it);
-    if (jt != m_components.end()) {
-      sendEventToComponent(*jt->second, event);
-    }
-  }
-}

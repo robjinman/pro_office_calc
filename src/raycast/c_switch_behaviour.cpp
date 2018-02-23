@@ -2,6 +2,7 @@
 #include "raycast/c_switch_behaviour.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/entity_manager.hpp"
+#include "raycast/spatial_system.hpp"
 #include "event.hpp"
 
 
@@ -57,24 +58,25 @@ void CSwitchBehaviour::setDecal() {
 //===========================================
 void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
   if (e_.name == "playerActivateEntity") {
-    if (m_toggleable || m_state == SwitchState::OFF) {
-      if (m_timer.ready()) {
-        switch (m_state) {
-          case SwitchState::OFF:
-            m_state = SwitchState::ON;
-            break;
-          case SwitchState::ON:
-            m_state = SwitchState::OFF;
-            break;
+    const EPlayerActivateEntity& e = dynamic_cast<const EPlayerActivateEntity&>(e_);
+
+    if (e.entities.count(entityId())) {
+      if (m_toggleable || m_state == SwitchState::OFF) {
+        if (m_timer.ready()) {
+          switch (m_state) {
+            case SwitchState::OFF:
+              m_state = SwitchState::ON;
+              break;
+            case SwitchState::ON:
+              m_state = SwitchState::OFF;
+              break;
+          }
+
+          setDecal();
+
+          ESwitchActivate eActivate(entityId(), m_state, m_message, m_target);
+          m_entityManager.broadcastEvent(eActivate);
         }
-
-        setDecal();
-
-        ESwitchActivate eActivate(m_state);
-        m_entityManager.broadcastEvent(eActivate);
-
-        ESwitchActivateEntity eActivateEntity(entityId(), m_state, m_message);
-        m_entityManager.broadcastEvent(eActivateEntity, set<entityId_t>{m_target});
       }
     }
   }

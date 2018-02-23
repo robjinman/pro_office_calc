@@ -126,11 +126,6 @@ void AnimationSystem::update() {
 void AnimationSystem::handleEvent(const GameEvent& event) {}
 
 //===========================================
-// AnimationSystem::handleEvent
-//===========================================
-void AnimationSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {}
-
-//===========================================
 // AnimationSystem::addComponent
 //===========================================
 void AnimationSystem::addComponent(pComponent_t component) {

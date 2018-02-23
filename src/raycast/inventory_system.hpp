@@ -56,11 +56,13 @@ struct CCollectable : public CInventory {
 typedef std::unique_ptr<CCollectable> pCCollectable_t;
 
 struct EBucketCountChange : public GameEvent {
-  EBucketCountChange(int prevCount, int currentCount)
+  EBucketCountChange(entityId_t entityId, int prevCount, int currentCount)
     : GameEvent("bucketCountChange"),
+      entityId(entityId),
       prevCount(prevCount),
       currentCount(currentCount) {}
 
+  entityId_t entityId;
   int prevCount;
   int currentCount;
 };
@@ -74,7 +76,6 @@ class InventorySystem : public System {
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;
-    virtual void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override;
 
     virtual void addComponent(pComponent_t component) override;
     virtual bool hasComponent(entityId_t entityId) const override;

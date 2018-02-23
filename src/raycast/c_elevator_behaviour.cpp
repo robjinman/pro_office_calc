@@ -68,21 +68,23 @@ void CElevatorBehaviour::update() {
 // CElevatorBehaviour::handleEvent
 //===========================================
 void CElevatorBehaviour::handleEvent(const GameEvent& e) {
-  if (e.name == "switchActivateEntity") {
-    DBG_PRINT("Elevator activated\n");
+  if (e.name == "switchActivate") {
+    const ESwitchActivate& event = dynamic_cast<const ESwitchActivate&>(e);
 
-    const ESwitchActivateEntity& event = dynamic_cast<const ESwitchActivateEntity&>(e);
+    if (event.entityId == entityId()) {
+      DBG_PRINT("Elevator activated\n");
 
-    std::regex rx("level(\\d+(?:\\.\\d+)?)");
-    std::smatch m;
+      std::regex rx("level(\\d+(?:\\.\\d+)?)");
+      std::smatch m;
 
-    std::regex_match(event.message, m, rx);
+      std::regex_match(event.message, m, rx);
 
-    if (m.size() < 2) {
-      EXCEPTION("Error parsing message '" << event.message << "' from switch");
+      if (m.size() < 2) {
+        EXCEPTION("Error parsing message '" << event.message << "' from switch");
+      }
+
+      m_target = std::stod(m.str(1));
+      m_state = ST_MOVING;
     }
-
-    m_target = std::stod(m.str(1));
-    m_state = ST_MOVING;
   }
 }

@@ -18,7 +18,6 @@ class EntityManager {
     void deleteEntity(entityId_t entityId);
     void purgeEntities();
     void broadcastEvent(const GameEvent& event) const;
-    void broadcastEvent(const GameEvent& event, const std::set<entityId_t>& entities) const;
     void update();
 
     template<class T>

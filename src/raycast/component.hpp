@@ -3,7 +3,6 @@
 
 
 #include <memory>
-#include <set>
 #include "raycast/component_kinds.hpp"
 
 

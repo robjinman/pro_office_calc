@@ -26,18 +26,6 @@ void BehaviourSystem::handleEvent(const GameEvent& event) {
 }
 
 //===========================================
-// BehaviourSystem::handleEvent
-//===========================================
-void BehaviourSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
-  for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    CBehaviour& c = *it->second;
-    if (entities.count(c.entityId()) == 1) {
-      c.handleEvent(event);
-    }
-  }
-}
-
-//===========================================
 // BehaviourSystem::hasComponent
 //===========================================
 bool BehaviourSystem::hasComponent(entityId_t entityId) const {

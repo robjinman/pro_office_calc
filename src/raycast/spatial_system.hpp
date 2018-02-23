@@ -45,11 +45,23 @@ struct EChangedZone : public GameEvent {
 };
 
 struct EPlayerMove : public GameEvent {
-  EPlayerMove(const Player& player)
+  EPlayerMove(const Player& player, const std::set<entityId_t>& entities)
     : GameEvent("playerMove"),
-      player(player) {}
+      player(player),
+      entities(entities) {}
 
   const Player& player;
+  std::set<entityId_t> entities;
+};
+
+struct EPlayerActivateEntity : public GameEvent {
+  EPlayerActivateEntity(const Player& player, const std::set<entityId_t>& entities)
+    : GameEvent("playerActivateEntity"),
+      player(player),
+      entities(entities) {}
+
+  const Player& player;
+  std::set<entityId_t> entities;
 };
 
 class EntityManager;
@@ -65,8 +77,6 @@ class SpatialSystem : public System {
 
     virtual void update() override;
     virtual void handleEvent(const GameEvent& event) override;
-    virtual void handleEvent(const GameEvent& event,
-      const std::set<entityId_t>& entities) override {}
 
     virtual void addComponent(pComponent_t component) override;
     virtual bool hasComponent(entityId_t entityId) const override;

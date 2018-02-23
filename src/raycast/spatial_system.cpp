@@ -565,9 +565,10 @@ SpatialSystem::SpatialSystem(EntityManager& entityManager, TimeService& timeServ
 //===========================================
 void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "playerActivate") {
-    GameEvent e("playerActivateEntity");
-    m_entityManager.broadcastEvent(e, entitiesInRadius(sg.player->pos(),
+    EPlayerActivateEntity e(*sg.player, entitiesInRadius(sg.player->pos(),
       sg.player->activationRadius));
+
+    m_entityManager.broadcastEvent(e);
   }
 }
 
@@ -715,8 +716,8 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
   if (cell != m_playerCell) {
     m_playerCell = cell;
 
-    EPlayerMove e(player);
-    m_entityManager.broadcastEvent(e, entitiesInRadius(player.pos(), player.collectionRadius));
+    EPlayerMove e(player, entitiesInRadius(player.pos(), player.collectionRadius));
+    m_entityManager.broadcastEvent(e);
   }
 }
 

@@ -18,12 +18,7 @@ void InventorySystem::update() {}
 //===========================================
 // InventorySystem::handleEvent
 //===========================================
-void InventorySystem::handleEvent(const GameEvent& event) {}
-
-//===========================================
-// InventorySystem::handleEvent
-//===========================================
-void InventorySystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
+void InventorySystem::handleEvent(const GameEvent& event) {
   const double MIN_HEIGHT_DIFF = 10;
 
   if (event.name == "playerMove") {
@@ -33,7 +28,7 @@ void InventorySystem::handleEvent(const GameEvent& event, const set<entityId_t>&
       CCollectable& collectable = *it->second;
       entityId_t id = it->first;
 
-      if (entities.count(id)) {
+      if (e.entities.count(id)) {
         const CSpatial& c = m_entityManager.getComponent<CSpatial>(id, ComponentKind::C_SPATIAL);
 
         // Only deal with VRects for now
@@ -141,7 +136,7 @@ void InventorySystem::addToBucket(const CCollectable& item) {
         bucket.count = bucket.capacity;
       }
 
-      m_entityManager.broadcastEvent(EBucketCountChange(prev, bucket.count), set<entityId_t>{id});
+      m_entityManager.broadcastEvent(EBucketCountChange(id, prev, bucket.count));
       m_entityManager.deleteEntity(item.entityId());
     }
   }
@@ -161,7 +156,7 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
       bucket.count -= value;
     }
 
-    m_entityManager.broadcastEvent(EBucketCountChange(prev, bucket.count), set<entityId_t>{id});
+    m_entityManager.broadcastEvent(EBucketCountChange(id, prev, bucket.count));
 
     return bucket.count;
   }
