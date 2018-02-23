@@ -21,7 +21,7 @@ class GameLogic {
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
-    int m_eventIdx;
+    int m_eventIdx = -1;
 };
 
 

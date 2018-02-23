@@ -16,6 +16,18 @@ struct EEntityDestroyed : public GameEvent {
       entityId(id) {}
 
   entityId_t entityId;
+
+  virtual ~EEntityDestroyed() override {}
+};
+
+struct EEntityDamaged : public GameEvent {
+  EEntityDamaged(entityId_t id)
+    : GameEvent("entityDamaged"),
+      entityId(id) {}
+
+  entityId_t entityId;
+
+  virtual ~EEntityDamaged() override {}
 };
 
 struct CDamage : public Component {

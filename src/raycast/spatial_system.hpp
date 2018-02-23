@@ -4,6 +4,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include <map>
 #include <set>
 #include <memory>
@@ -84,6 +85,9 @@ class SpatialSystem : public System {
     std::list<pIntersection_t> entitiesAlong3dRay(const CZone& zone, const Point& pos,
       double height, const Vec2f& dir, double vAngle, const Matrix& matrix) const;
     std::list<pIntersection_t> entitiesAlong3dRay(const Vec2f& dir, double camSpaceVAngle) const;
+
+    std::vector<Point> shortestPath(entityId_t entityA, entityId_t entityB, double radius) const;
+    std::vector<Point> shortestPath(const Point& A, const Point& B, double radius) const;
 
     void vRotateCamera(double da);
     void hRotateCamera(double da);

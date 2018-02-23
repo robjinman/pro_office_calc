@@ -4,6 +4,7 @@
 #include "raycast/root_factory.hpp"
 #include "raycast/damage_system.hpp"
 #include "raycast/agent_system.hpp"
+#include "raycast/time_service.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -23,33 +24,35 @@ void SpawnSystem::handleEvent(const GameEvent& event) {
     auto it = m_spawnables.find(e.entityId);
 
     if (it != m_spawnables.end()) {
-      const CSpawnable& spawnable = *it->second;
+      std::shared_ptr<CSpawnable> spawnable(it->second.release());
 
-      entityId_t entityId = Component::getNextId();
+      m_timeService.onTimeout([this, spawnable]() {
+        entityId_t entityId = Component::getNextId();
 
-      m_rootFactory.constructObject(spawnable.typeName, entityId, *spawnable.object,
-        spawnable.parentId, spawnable.parentTransform);
+        m_rootFactory.constructObject(spawnable->typeName, entityId, *spawnable->object,
+          spawnable->parentId, spawnable->parentTransform);
 
-      SpatialSystem& spatialSystem =
-        m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+        SpatialSystem& spatialSystem =
+          m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-      const CSpatial& spatial = dynamic_cast<const CSpatial&>(spatialSystem.getComponent(entityId));
+        const CSpatial& spatial = dynamic_cast<const CSpatial&>(spatialSystem.getComponent(entityId));
 
-      // Only deal with V_RECTs for now
-      if (spatial.kind == CSpatialKind::V_RECT) {
-        const CVRect& vRect = dynamic_cast<const CVRect&>(spatial);
+        // Only deal with V_RECTs for now
+        if (spatial.kind == CSpatialKind::V_RECT) {
+          const CVRect& vRect = dynamic_cast<const CVRect&>(spatial);
 
-        CVRect& spawnPointVRect = m_entityManager.getComponent<CVRect>(spawnable.spawnPoint,
-          ComponentKind::C_SPATIAL);
+          CVRect& spawnPointVRect = m_entityManager.getComponent<CVRect>(spawnable->spawnPoint,
+            ComponentKind::C_SPATIAL);
 
-        Point oldPos = vRect.pos;
-        spatialSystem.relocateEntity(entityId, *spawnPointVRect.zone, spawnPointVRect.pos);
+          Point oldPos = vRect.pos;
+          spatialSystem.relocateEntity(entityId, *spawnPointVRect.zone, spawnPointVRect.pos);
 
-        AgentSystem& agentSystem =
-          m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
+          AgentSystem& agentSystem =
+            m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
 
-        agentSystem.navigateTo(entityId, oldPos);
-      }
+          agentSystem.navigateTo(entityId, oldPos);
+        }
+      }, spawnable->delay);
     }
   }
 }

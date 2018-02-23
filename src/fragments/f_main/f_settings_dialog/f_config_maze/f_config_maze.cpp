@@ -14,8 +14,7 @@ using std::string;
 using std::vector;
 
 
-static std::random_device rd;
-static std::mt19937 randEngine(rd());
+static std::mt19937 randEngine(randomSeed());
 
 
 //===========================================

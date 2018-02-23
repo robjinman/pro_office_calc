@@ -1,3 +1,4 @@
+#include <random>
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -12,6 +13,9 @@ using std::stringstream;
 using std::istream;
 using std::ostream;
 using std::vector;
+
+
+static std::random_device rd;
 
 
 #ifdef DEBUG
@@ -32,6 +36,10 @@ ostream& operator<<(ostream& os, const QPointF& p) {
   return os;
 }
 #endif
+
+long randomSeed() {
+  return rd();
+}
 
 string readString(istream& is) {
   int nBytes = 0;

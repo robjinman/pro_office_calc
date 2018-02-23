@@ -54,6 +54,8 @@ void erase(T& container, const typename T::iterator& it) {
   }
 }
 
+long randomSeed();
+
 typedef std::hash<std::string> hashString;
 
 #ifdef DEBUG

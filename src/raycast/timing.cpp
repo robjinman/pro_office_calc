@@ -1,5 +1,6 @@
 #include <chrono>
 #include "raycast/timing.hpp"
+#include "utils.hpp"
 
 
 namespace chrono = std::chrono;
@@ -50,9 +51,7 @@ void Debouncer::reset() {
 // TRandomIntervals::TRandomIntervals
 //===========================================
 TRandomIntervals::TRandomIntervals(unsigned long min, unsigned long max) {
-  std::random_device rd;
-
-  m_randEngine.seed(rd());
+  m_randEngine.seed(randomSeed());
   m_distribution = std::uniform_real_distribution<>(min, max);
 
   calcDueTime();

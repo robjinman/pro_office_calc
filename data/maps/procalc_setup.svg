@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="2196.5063"
-     inkscape:cy="-727.13965"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="2079.0673"
+     inkscape:cy="-744.07286"
      inkscape:document-units="px"
      inkscape:current-layer="g8458"
      showgrid="false"
@@ -2966,7 +2966,7 @@
          transform="scale(1.0603588,0.94307701)"><tspan
            id="tspan4219-9-2"
            x="1962.9329"
-           y="1482.5918">floor_height=15</tspan></text>
+           y="1482.5918">floor_height=150</tspan></text>
       <text
          sodipodi:linespacing="125%"
          xml:space="preserve"

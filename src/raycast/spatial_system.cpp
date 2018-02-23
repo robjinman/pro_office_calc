@@ -721,6 +721,38 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
 }
 
 //===========================================
+// SpatialSystem::shortestPath
+//===========================================
+vector<Point> SpatialSystem::shortestPath(entityId_t entityA, entityId_t entityB, double radius) const {
+  const CSpatial& compA = dynamic_cast<const CSpatial&>(getComponent(entityA));
+  if (compA.kind != CSpatialKind::V_RECT) {
+    EXCEPTION("Component not of type V_RECT");
+  }
+
+  const CSpatial& compB = dynamic_cast<const CSpatial&>(getComponent(entityB));
+  if (compB.kind != CSpatialKind::V_RECT) {
+    EXCEPTION("Component not of type V_RECT");
+  }
+
+  const CVRect& rectA = dynamic_cast<const CVRect&>(compA);
+  const CVRect& rectB = dynamic_cast<const CVRect&>(compB);
+
+  return shortestPath(rectA.pos, rectB.pos, radius);
+}
+
+//===========================================
+// SpatialSystem::shortestPath
+//===========================================
+vector<Point> SpatialSystem::shortestPath(const Point& A, const Point& B, double radius) const {
+  // TODO: A*
+
+  vector<Point> path;
+  path.push_back(B);
+
+  return path;
+}
+
+//===========================================
 // SpatialSystem::jump
 //===========================================
 void SpatialSystem::jump() {

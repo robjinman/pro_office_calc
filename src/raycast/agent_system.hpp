@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <map>
+#include <functional>
 #include <vector>
 #include "raycast/system.hpp"
 #include "raycast/component.hpp"
@@ -15,6 +16,7 @@ class TimeService;
 class AudioService;
 class DamageSystem;
 class SpatialSystem;
+class AgentSystem;
 class CVRect;
 
 class CAgent : public Component {
@@ -31,26 +33,38 @@ class CAgent : public Component {
 
   private:
     enum state_t {
-      ST_IDLE,
-      ST_PATROLLING,
-      ST_CHASING,
-      ST_SHOOTING
+      ST_STATIONARY,
+      ST_ON_FIXED_PATH,
+      ST_CHASING_OBJECT
     };
 
-    state_t m_state = ST_IDLE;
+    state_t m_state = ST_STATIONARY;
+
     bool m_shooting = false;
-    int m_waypointIdx = -1;
     std::unique_ptr<TimePattern> m_gunfireTiming;
 
-    void doPatrollingBehaviour(SpatialSystem& spatialSystem, TimeService& timeService,
-      CVRect& body);
-    void doChasingBehaviour(SpatialSystem& spatialSystem, TimeService& timeService, CVRect& body);
-    void attemptShot(SpatialSystem& spatialSystem, DamageSystem& damageSystem,
-      TimeService& timeService, AudioService& audioService, CVRect& body);
+    entityId_t m_targetObject = -1;
+    std::vector<Point> m_path;
+    bool m_pathClosed = true;
+    int m_waypointIdx = -1;
+    std::function<void(CAgent&)> m_onFinish;
 
-    virtual void update(SpatialSystem& spatialSystem, DamageSystem& damageSystem,
-      TimeService& timeService, AudioService& audioService);
-    virtual void handleEvent(const GameEvent& e, SpatialSystem& spatialSystem);
+    void navigateTo(SpatialSystem& spatialSystem, const Point& p,
+      std::function<void(CAgent&)> onFinish);
+    void startPatrol();
+
+    bool hasLineOfSight(SpatialSystem& spatialSystem, Matrix& m, Vec2f& ray, double& hAngle,
+      double& vAngle, double& height) const;
+
+    void followPath(SpatialSystem& spatialSystem, TimeService& timeService);
+    void attemptShot(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
+      DamageSystem& damageSystem, TimeService& timeService, AudioService& audioService);
+
+    virtual void update(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
+      DamageSystem& damageSystem, TimeService& timeService, AudioService& audioService);
+
+    void onPlayerChangeZone(entityId_t newZone, SpatialSystem& spatialSystem);
+    void onDamage(SpatialSystem& spatialSystem);
 };
 
 typedef std::unique_ptr<CAgent> pCAgent_t;

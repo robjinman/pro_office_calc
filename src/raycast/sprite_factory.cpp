@@ -207,15 +207,19 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   takeDamage->handlers.push_back(EventHandler{"entityDamaged",
     [=, &animationSystem](const GameEvent& e) {
 
-    DBG_PRINT("Enemy health: " << damage->health << "\n");
-    animationSystem.playAnimation(entityId, "hurt", false);
+    const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
 
-    if (damage->health == 0) {
-      m_audioService.playSoundAtPos("monster_death", vRect->pos);
-      m_entityManager.deleteEntity(entityId);
-    }
-    else {
-      m_audioService.playSoundAtPos("monster_hurt", vRect->pos);
+    if (event.entityId == entityId) {
+      DBG_PRINT("Enemy health: " << damage->health << "\n");
+      animationSystem.playAnimation(entityId, "hurt", false);
+
+      if (damage->health == 0) {
+        m_audioService.playSoundAtPos("monster_death", vRect->pos);
+        m_entityManager.deleteEntity(entityId);
+      }
+      else {
+        m_audioService.playSoundAtPos("monster_hurt", vRect->pos);
+      }
     }
   }});
   eventHandlerSystem.addComponent(pComponent_t(takeDamage));

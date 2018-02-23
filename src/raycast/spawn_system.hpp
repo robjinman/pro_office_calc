@@ -57,12 +57,14 @@ typedef std::unique_ptr<CSpawnable> pCSpawnable_t;
 
 class EntityManager;
 class RootFactory;
+class TimeService;
 
 class SpawnSystem : public System {
   public:
-    SpawnSystem(EntityManager& entityManager, RootFactory& rootFactory)
+    SpawnSystem(EntityManager& entityManager, RootFactory& rootFactory, TimeService& timeService)
       : m_entityManager(entityManager),
-        m_rootFactory(rootFactory) {}
+        m_rootFactory(rootFactory),
+        m_timeService(timeService) {}
 
     virtual void update() override {}
     virtual void handleEvent(const GameEvent& event) override;
@@ -79,6 +81,7 @@ class SpawnSystem : public System {
   private:
     EntityManager& m_entityManager;
     RootFactory& m_rootFactory;
+    TimeService& m_timeService;
 
     std::map<entityId_t, pCSpawnPoint_t> m_spawnPoints;
     std::map<entityId_t, pCSpawnable_t> m_spawnables;
