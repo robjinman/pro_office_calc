@@ -131,7 +131,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   int depth = 0) {
 
   if (depth > 4) {
-    return Vec2f(9999, 9999);
+    return Vec2f(0, 0);
   }
 
   const Point& pos = body.pos;
@@ -140,7 +140,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   assert(zone.parent != nullptr);
 
   bool collision = false;
-  Vec2f newV(0, 0); // Value closest to oldV
+  Vec2f newV(9999, 9999); // Value closest to oldV
   Circle circle{pos + oldV, radius};
 
   forEachConstZone(*zone.parent, [&](const CZone& r) {
@@ -767,18 +767,20 @@ void SpatialSystem::jump() {
 //===========================================
 void SpatialSystem::gravity() {
   CZone& currentZone = getCurrentZone();
+  Player& player = *sg.player;
 
-  if (fabs(sg.player->vVelocity) > 0.001 || sg.player->aboveGround(currentZone)) {
+  if (fabs(player.vVelocity) > 0.001 || player.aboveGround(currentZone)) {
     double a = -600.0;
     double dt = 1.0 / m_frameRate;
     double dv = dt * a;
-    sg.player->vVelocity += dv;
-    double dy = sg.player->vVelocity * dt;
+    player.vVelocity += dv;
+    double dy = player.vVelocity * dt;
 
-    sg.player->changeHeight(currentZone, dy);
+    player.changeHeight(currentZone, dy);
+    moveEntity(player.body, Vec2f(0, 0), player.feetHeight() - currentZone.floorHeight);
 
-    if (!sg.player->aboveGround(currentZone)) {
-      sg.player->vVelocity = 0;
+    if (!player.aboveGround(currentZone)) {
+      player.vVelocity = 0;
     }
   }
 }
