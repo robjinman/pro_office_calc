@@ -1,3 +1,4 @@
+#include <cassert>
 #include <algorithm>
 #include "raycast/geometry.hpp"
 #include "utils.hpp"
@@ -185,7 +186,9 @@ LineSegment transform(const LineSegment& lseg, const Matrix& m) {
 //===========================================
 // lineIntersect
 //===========================================
-Point lineIntersect(const Line& l0, const Line& l1) {
+Point lineIntersect(const Line& l0, const Line& l1, int depth) {
+  assert(depth <= 1);
+
   if (l0.hasSteepGradient() || l1.hasSteepGradient()) {
     Vec3f p;
 
@@ -200,6 +203,10 @@ Point lineIntersect(const Line& l0, const Line& l1) {
 
     Line l0_(l0params_.x, l0params_.y, l0params_.z);
     Line l1_(l1params_.x, l1params_.y, l1params_.z);
+
+    if (l0_.hasSteepGradient() || l1_.hasSteepGradient()) {
+      return lineIntersect(l0_, l1_, depth + 1);
+    }
 
     p.x = (l1_.b * l0_.c - l0_.b * l1_.c) / (l0_.b * l1_.a - l1_.b * l0_.a);
     p.y = (-l0_.a * p.x - l0_.c) / l0_.b;

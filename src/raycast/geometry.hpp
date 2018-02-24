@@ -224,7 +224,7 @@ struct Circle {
   double radius;
 };
 
-Point lineIntersect(const Line& l0, const Line& l1);
+Point lineIntersect(const Line& l0, const Line& l1, int depth = 0);
 bool isBetween(double x, double a, double b, double delta = 0.00001);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
