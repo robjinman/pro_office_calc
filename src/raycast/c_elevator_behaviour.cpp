@@ -57,6 +57,8 @@ void CElevatorBehaviour::update() {
       if (fabs(zone.floorHeight + dy - targetY) < fabs(dy)) {
         m_state = ST_STOPPED;
         zone.floorHeight = targetY;
+
+        m_entityManager.broadcastEvent(EElevatorStopped(entityId()));
       }
 
       break;

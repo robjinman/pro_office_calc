@@ -1,3 +1,4 @@
+#include <QKeyEvent>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog_spec.hpp"
@@ -35,6 +36,13 @@ void FAppDialog::reload(const FragmentSpec& spec_) {
   commonData.eventSystem.listen(spec.showOnEvent, [this](const Event& event) {
     show();
   }, m_eventIdx);
+}
+
+//===========================================
+// FAppDialog::keyPressEvent
+//===========================================
+void FAppDialog::keyPressEvent(QKeyEvent* e) {
+  if (e->key() == Qt::Key_Escape) {}
 }
 
 //===========================================

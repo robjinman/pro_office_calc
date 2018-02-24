@@ -24,6 +24,9 @@ class FAppDialog : public QDialog, public Fragment {
 
     virtual ~FAppDialog() override;
 
+  protected:
+     void keyPressEvent(QKeyEvent* e);
+
   private:
     FAppDialogData m_data;
 

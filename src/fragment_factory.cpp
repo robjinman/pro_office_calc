@@ -17,6 +17,7 @@
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
 #include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
+#include "fragments/relocatable/f_calculator/f_partial_calc/f_partial_calc.hpp"
 #include "fragments/f_main/f_shuffled_calc/f_shuffled_calc.hpp"
 
 
@@ -39,6 +40,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FNormalCalcTrigger") {
     return new FNormalCalcTrigger(parent, parentData, commonData);
+  }
+  else if (name == "FPartialCalc") {
+    return new FPartialCalc(parent, parentData, commonData);
   }
   else if (name == "FShuffledCalc") {
     return new FShuffledCalc(parent, parentData, commonData);

@@ -6,6 +6,16 @@
 #include "raycast/behaviour_system.hpp"
 
 
+struct EElevatorStopped : public GameEvent {
+  explicit EElevatorStopped(entityId_t entityId)
+    : GameEvent("elevatorStopped"),
+      entityId(entityId) {}
+
+  entityId_t entityId;
+
+  virtual ~EElevatorStopped() override {}
+};
+
 class EntityManager;
 
 class CElevatorBehaviour : public CBehaviour {

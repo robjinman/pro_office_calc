@@ -17,7 +17,7 @@ class GameLogic {
     ~GameLogic();
 
   private:
-    void onRaycastEvent(const GameEvent& event);
+    void onElevatorStopped(const GameEvent& event);
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;

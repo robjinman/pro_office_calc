@@ -1,0 +1,31 @@
+#ifndef __PROCALC_FRAGMENTS_F_PARTIAL_CALC_HPP__
+#define __PROCALC_FRAGMENTS_F_PARTIAL_CALC_HPP__
+
+
+#include <QObject>
+#include "fragment.hpp"
+
+
+struct FPartialCalcData : public FragmentData {};
+
+class FPartialCalc : public QObject, public Fragment {
+  Q_OBJECT
+
+  public:
+    FPartialCalc(Fragment& parent, FragmentData& parentData,
+      const CommonFragData& commonData);
+
+    virtual void reload(const FragmentSpec& spec) override;
+    virtual void cleanUp() override;
+
+    virtual ~FPartialCalc() override;
+
+  private slots:
+    void onButtonClick(int id);
+
+  private:
+    FPartialCalcData m_data;
+};
+
+
+#endif
