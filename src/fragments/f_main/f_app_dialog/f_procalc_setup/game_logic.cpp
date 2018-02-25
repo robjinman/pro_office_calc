@@ -22,6 +22,7 @@ using std::string;
 namespace making_progress {
 
 
+static const int MAX_KEY_PRESSES = 16;
 static std::mt19937 randEngine(randomSeed());
 
 
@@ -66,7 +67,7 @@ void GameLogic::setFeatures(const set<buttonId_t>& features) {
 // GameLogic::generateTargetNumber
 //===========================================
 void GameLogic::generateTargetNumber() {
-  std::uniform_int_distribution<int> randInt(0, 1000000);
+  std::uniform_int_distribution<int> randInt(100000, 999999);
   m_targetNumber = randInt(randEngine) / 100.0;
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -85,12 +86,19 @@ void GameLogic::generateTargetNumber() {
 
   tex.image.fill(QColor(20, 20, 50));
   painter.drawText(8, 16, strNumber.c_str());
+
+  Texture& remainingTex = renderSystem.rg.textures.at("keypresses_remaining");
+  remainingTex.image.fill(QColor(20, 20, 50));
 }
 
 //===========================================
 // GameLogic::onButtonPress
 //===========================================
 void GameLogic::onButtonPress(const Event& event) {
+  if (m_success) {
+    return;
+  }
+
   const ButtonPressEvent& e = dynamic_cast<const ButtonPressEvent&>(event);
 
   double value = 0;
@@ -101,8 +109,31 @@ void GameLogic::onButtonPress(const Event& event) {
       entityId_t doorId = Component::getIdFromString("exit_door");
       EActivateEntity e;
 
+      m_success = true;
       m_entityManager.fireEvent(e, set<entityId_t>{doorId});
+      return;
     }
+  }
+
+  ++m_numKeysPressed;
+
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  Texture& tex = renderSystem.rg.textures.at("keypresses_remaining");
+
+  tex.image.fill(QColor(20, 20, 50));
+
+  if (m_numKeysPressed > MAX_KEY_PRESSES) {
+    generateTargetNumber();
+    m_numKeysPressed = 0;
+  }
+  else {
+    int w = tex.image.width();
+    int h = tex.image.height();
+    double delta = static_cast<double>(w) / (MAX_KEY_PRESSES + 1);
+
+    QPainter painter(&tex.image);
+    painter.setBrush(QColor(240, 10, 10));
+    painter.drawRect(0, 0, delta * m_numKeysPressed, h);
   }
 }
 

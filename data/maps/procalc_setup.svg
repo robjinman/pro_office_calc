@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="1859.7567"
-     inkscape:cy="-2182.8661"
+     inkscape:zoom="11.313708"
+     inkscape:cx="1784.25"
+     inkscape:cy="-2164.4462"
      inkscape:document-units="px"
-     inkscape:current-layer="g12743"
+     inkscape:current-layer="svg4381"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="999"
@@ -313,7 +313,7 @@
            id="tspan5260-9-4-0-6-0-5"
            x="134.23935"
            y="209.89345"
-           style="font-size:12.94190121px">progress=data/progress.png</tspan></text>
+           style="font-size:12.94190121px">progress=data/making_progress/progress.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -325,7 +325,7 @@
            id="tspan5260-9-4-0-6-0-5-1"
            x="134.34322"
            y="241.67148"
-           style="font-size:12.94190121px">progress_bar=data/progress_bar.png</tspan></text>
+           style="font-size:12.94190121px">progress_bar=data/making_progress/progress_bar.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -481,7 +481,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8"
            x="133.7688"
            y="456.36618"
-           style="font-size:12.94190121px">number=data/digits.png</tspan></text>
+           style="font-size:12.94190121px">number=data/making_progress/digits.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -493,7 +493,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8-3"
            x="135.33223"
            y="472.29633"
-           style="font-size:12.94190121px">timer=data/timer.png</tspan></text>
+           style="font-size:12.94190121px">keypresses_remaining=data/making_progress/remaining.png</tspan></text>
     </g>
   </g>
   <g
@@ -3971,7 +3971,7 @@
              sodipodi:linespacing="125%"><tspan
                y="3785.4814"
                x="1834.4191"
-               id="tspan4215-3-4-2-8-6-6-4-5-7-3-51">texture=timer</tspan></text>
+               id="tspan4215-3-4-2-8-6-6-4-5-7-3-51">texture=keypresses_remaining</tspan></text>
           <text
              transform="scale(1.0603588,0.94307701)"
              id="text4213-9-7-5-9-7-1-1-2-5-3-8-1"
@@ -3982,7 +3982,7 @@
              sodipodi:linespacing="125%"><tspan
                y="3787.2056"
                x="1834.29"
-               id="tspan4215-3-4-2-8-6-6-4-5-7-3-9-0">aspect_ratio=2.5</tspan></text>
+               id="tspan4215-3-4-2-8-6-6-4-5-7-3-9-0">aspect_ratio=8</tspan></text>
           <text
              transform="scale(1.0603588,0.94307701)"
              id="text4213-9-7-5-9-7-1-1-2-5-3-5-3"

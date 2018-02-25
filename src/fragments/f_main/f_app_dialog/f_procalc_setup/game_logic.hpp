@@ -47,6 +47,8 @@ class GameLogic : public QObject {
     int m_eventIdx = -1;
     QEvent::Type m_raiseDialogEvent;
     double m_targetNumber = 0;
+    int m_numKeysPressed = 0;
+    bool m_success = false;
 
     std::set<buttonId_t> m_features;
 };
