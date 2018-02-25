@@ -16,6 +16,7 @@ class CDoorBehaviour : public CBehaviour {
     virtual void handleEvent(const GameEvent& e) override;
 
     bool isPlayerActivated = true;
+    bool closeAutomatically = true;
 
   private:
     enum state_t {

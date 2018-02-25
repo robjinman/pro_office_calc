@@ -33,6 +33,18 @@ using std::vector;
 
 
 //===========================================
+// setBoolean
+//===========================================
+static void setBoolean(bool& b, const std::string& s) {
+  if (s == "true") {
+    b = true;
+  }
+  else if (s == "false") {
+    b = false;
+  }
+}
+
+//===========================================
 // MiscFactory::MiscFactory
 //===========================================
 MiscFactory::MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
@@ -133,12 +145,10 @@ bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, 
       m_timeService.frameRate);
 
     string s = getValue(obj.dict, "player_activated", "");
-    if (s == "true") {
-      behaviour->isPlayerActivated = true;
-    }
-    else if (s == "false") {
-      behaviour->isPlayerActivated = false;
-    }
+    setBoolean(behaviour->isPlayerActivated, s);
+
+    s = getValue(obj.dict, "player_activated", "");
+    setBoolean(behaviour->closeAutomatically, s);
 
     behaviourSystem.addComponent(pComponent_t(behaviour));
 

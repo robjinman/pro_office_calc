@@ -36,7 +36,7 @@ void CDoorBehaviour::update() {
     case ST_CLOSED:
       return;
     case ST_OPEN:
-      if (m_timer.ready()) {
+      if (closeAutomatically && m_timer.ready()) {
         m_state = ST_CLOSING;
       }
       return;

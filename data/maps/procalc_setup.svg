@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="45.254834"
-     inkscape:cx="1846.2676"
-     inkscape:cy="-2181.1739"
+     inkscape:zoom="16"
+     inkscape:cx="1859.7567"
+     inkscape:cy="-2182.8661"
      inkscape:document-units="px"
-     inkscape:current-layer="g12743-7"
+     inkscape:current-layer="g12743"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="999"
@@ -5113,6 +5113,17 @@
              y="3806.1016"
              x="1820.1331"
              id="tspan4219-9-4-0-6-82-3-0-9-6-1-4">name=exit_door</tspan></text>
+        <text
+           transform="scale(1.0603588,0.94307701)"
+           id="text4217-1-8-5-3-97-0-8-5-5-8-2-7"
+           y="3807.844"
+           x="1820.203"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.2599386px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="3807.844"
+             x="1820.203"
+             id="tspan4219-9-4-0-6-82-3-0-9-6-1-4-8">close_automatically=false</tspan></text>
       </g>
       <text
          transform="scale(1.0603588,0.94307701)"
