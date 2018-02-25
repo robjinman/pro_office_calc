@@ -32,8 +32,8 @@ FMainSpec* makeFMainSpec(int stateId) {
   };
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.titleText = "Pro Office Calculator Setup";
-  mainSpec->appDialogSpec0.width = 400;
-  mainSpec->appDialogSpec0.height = 300;
+  mainSpec->appDialogSpec0.width = 320;
+  mainSpec->appDialogSpec0.height = 240;
   mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
   mainSpec->appDialogSpec0.procalcSetupSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);

@@ -1,6 +1,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QDialog>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
@@ -177,6 +178,9 @@ void FProcalcSetup::setupPage2() {
   page.widget = makeQtObjPtr<QWidget>();
 
   QVBoxLayout* vbox = new QVBoxLayout;
+  vbox->setSpacing(0);
+  vbox->setContentsMargins(0, 0, 0, 0);
+
   page.widget->setLayout(vbox);
 
   page.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
@@ -184,7 +188,10 @@ void FProcalcSetup::setupPage2() {
 
   page.wgtRaycast->initialise("data/maps/procalc_setup.svg");
 
-  page.gameLogic.reset(new GameLogic(commonData.eventSystem, page.wgtRaycast->entityManager()));
+  QDialog& dialog = parentFrag<QDialog>();
+
+  page.gameLogic = makeQtObjPtr<GameLogic>(dialog, commonData.eventSystem,
+    page.wgtRaycast->entityManager());
 }
 
 //===========================================

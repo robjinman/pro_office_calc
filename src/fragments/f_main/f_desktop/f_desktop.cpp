@@ -40,6 +40,7 @@ void FDesktop::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
+  delete m_data.grid.release();
   m_data.grid = makeQtObjPtr<QGridLayout>();
   setLayout(m_data.grid.get());
 

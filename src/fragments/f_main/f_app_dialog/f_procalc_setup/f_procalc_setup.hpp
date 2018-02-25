@@ -28,7 +28,7 @@ struct FProcalcSetupData : public FragmentData {
   struct {
     QtObjPtr<QWidget> widget;
     QtObjPtr<RaycastWidget> wgtRaycast;
-    std::unique_ptr<making_progress::GameLogic> gameLogic;
+    QtObjPtr<making_progress::GameLogic> gameLogic;
   } page2;
 };
 

@@ -1,9 +1,12 @@
+#include <QDialog>
+#include <QApplication>
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/game_logic.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/setup_complete_event.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/c_switch_behaviour.hpp"
 #include "raycast/c_elevator_behaviour.hpp"
+#include "raycast/spatial_system.hpp"
 #include "event_system.hpp"
 #include "state_ids.hpp"
 #include "request_state_change_event.hpp"
@@ -17,16 +20,15 @@ using std::string;
 namespace making_progress {
 
 
-static const std::string ELEVATOR_NAME = "progress_lift";
-
-
 //===========================================
 // GameLogic::GameLogic
 //===========================================
-GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
-  : m_eventSystem(eventSystem),
+GameLogic::GameLogic(QDialog& dialog, EventSystem& eventSystem, EntityManager& entityManager)
+  : m_dialog(dialog),
+    m_eventSystem(eventSystem),
     m_entityManager(entityManager),
-    m_entityId(Component::getNextId()) {
+    m_entityId(Component::getNextId()),
+    m_raiseDialogEvent(static_cast<QEvent::Type>(QEvent::registerEventType())) {
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
@@ -35,8 +37,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   pCEventHandler_t forwardEvent(new CEventHandler(m_entityId));
 
-  forwardEvent->handlers.push_back(EventHandler{"elevatorStopped",
-    std::bind(&GameLogic::onElevatorStopped, this, std::placeholders::_1)});
+  forwardEvent->handlers.push_back(EventHandler{"entityChangedZone",
+    std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(std::move(forwardEvent));
 
@@ -65,16 +67,35 @@ void GameLogic::setFeatures(const set<buttonId_t>& features) {
 }
 
 //===========================================
-// GameLogic::onElevatorStopped
+// GameLogic::customEvent
 //===========================================
-void GameLogic::onElevatorStopped(const GameEvent& event) {
-  const EElevatorStopped& e = dynamic_cast<const EElevatorStopped&>(event);
+void GameLogic::customEvent(QEvent* event) {
+  if (event->type() == m_raiseDialogEvent) {
+    m_dialog.activateWindow();
+  }
+}
 
-  if (e.entityId == Component::getIdFromString(ELEVATOR_NAME)) {
-    m_eventSystem.fire(pEvent_t(new SetupCompleteEvent(m_features)));
+//===========================================
+// GameLogic::onEntityChangeZone
+//===========================================
+void GameLogic::onEntityChangeZone(const GameEvent& event) {
+  const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
+
+  entityId_t player =
+    m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL).sg.player->body;
+
+  if (e.entityId != player) {
+    return;
   }
 
-  m_entityManager.deleteEntity(m_entityId);
+  if (e.newZone == Component::getIdFromString("puzzle_room_entrance")) {
+    m_eventSystem.fire(pEvent_t(new SetupCompleteEvent(m_features)));
+
+    QApplication::postEvent(this, new QEvent(m_raiseDialogEvent));
+  }
+  else if (e.newZone == Component::getIdFromString("level_exit")) {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_YOUVE_GOT_MAIL)));
+  }
 }
 
 //===========================================
@@ -82,6 +103,7 @@ void GameLogic::onElevatorStopped(const GameEvent& event) {
 //===========================================
 GameLogic::~GameLogic() {
   m_eventSystem.forget(m_eventIdx);
+  m_entityManager.deleteEntity(m_entityId);
 }
 
 

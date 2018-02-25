@@ -104,6 +104,7 @@ int main(int argc, char** argv) {
       stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
 
       updateLoop.finishAll();
+      app.processEvents();
 
       mainSpec.reset(makeFMainSpec(stateId));
       mainFragment.rebuild(*mainSpec);
