@@ -33,6 +33,8 @@ class RaycastWidget : public QWidget {
       return m_entityManager;
     }
 
+    ~RaycastWidget() override;
+
   protected:
     void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;

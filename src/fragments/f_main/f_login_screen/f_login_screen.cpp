@@ -33,7 +33,7 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
-  commonData.eventSystem.listen("PasswordGeneratedEvent", [this](const Event& event_) {
+  commonData.eventSystem.listen("passwordGeneratedEvent", [this](const Event& event_) {
     auto& event = dynamic_cast<const PasswordGeneratedEvent&>(event_);
     DBG_PRINT_VAR(event.password);
     m_data.password = event.password;

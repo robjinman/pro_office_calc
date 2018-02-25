@@ -362,3 +362,10 @@ void RaycastWidget::tick() {
 
   update();
 }
+
+//===========================================
+// RaycastWidget::~RaycastWidget
+//===========================================
+RaycastWidget::~RaycastWidget() {
+  DBG_PRINT("RaycastWidget::~RaycastWidget\n");
+}

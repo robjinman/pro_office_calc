@@ -19,19 +19,20 @@ namespace its_raining_tetrominos {
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   : m_eventSystem(eventSystem),
-    m_entityManager(entityManager) {
+    m_entityManager(entityManager),
+    m_entityId(Component::getNextId()) {
 
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
-  pCEventHandler_t forwardEvent(new CEventHandler(Component::getNextId()));
+  pCEventHandler_t forwardEvent(new CEventHandler(m_entityId));
 
   forwardEvent->handlers.push_back(EventHandler{"*", std::bind(&GameLogic::onRaycastEvent,
-    *this, std::placeholders::_1)});
+    this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(std::move(forwardEvent));
 
-  m_eventSystem.listen("its_raining_tetrominos", [](const Event& event) {
+  m_eventSystem.listen("itsRainingTetrominos", [](const Event& event) {
     // TODO
   }, m_eventIdx);
 }
@@ -56,6 +57,7 @@ void GameLogic::onRaycastEvent(const GameEvent& event) {
 //===========================================
 GameLogic::~GameLogic() {
   m_eventSystem.forget(m_eventIdx);
+  m_entityManager.deleteEntity(m_entityId);
 }
 
 

@@ -8,6 +8,7 @@
 #include "utils.hpp"
 
 
+using std::set;
 using making_progress::GameLogic;
 
 
@@ -36,53 +37,6 @@ static void addHeaderItem(QListWidget& wgtList, const QString& text) {
 //===========================================
 static void addSpaceItem(QListWidget& wgtList) {
   addHeaderItem(wgtList, "");
-}
-
-//===========================================
-// addCheckableItem
-//===========================================
-static void addCheckableItem(QListWidget& wgtList, const QString& text) {
-  QListWidgetItem* item = new QListWidgetItem(text);
-
-  Qt::ItemFlags on = Qt::ItemIsUserCheckable;
-  Qt::ItemFlags off = Qt::ItemIsSelectable;
-
-  item->setFlags(item->flags() | on);
-  item->setFlags(item->flags() & ~off);
-
-  item->setCheckState(Qt::Unchecked);
-
-  wgtList.addItem(item);
-}
-
-//===========================================
-// populateListWidget
-//===========================================
-static void populateListWidget(QListWidget& wgtList) {
-  addHeaderItem(wgtList, "Basic features");
-  addCheckableItem(wgtList, "Number 0");
-  addCheckableItem(wgtList, "Number 4");
-  addCheckableItem(wgtList, "Number 5");
-  addCheckableItem(wgtList, "Number 7");
-  addCheckableItem(wgtList, "Addition operator");
-  addCheckableItem(wgtList, "Equals button");
-  addSpaceItem(wgtList);
-  addHeaderItem(wgtList, "Recommended extras");
-  addCheckableItem(wgtList, "Number 2");
-  addCheckableItem(wgtList, "Number 6");
-  addCheckableItem(wgtList, "Number 8");
-  addCheckableItem(wgtList, "Number 9");
-  addCheckableItem(wgtList, "Clear display");
-  addCheckableItem(wgtList, "Subtraction operator");
-  addCheckableItem(wgtList, "Multiplication operator");
-  addCheckableItem(wgtList, "Division operator");
-  addSpaceItem(wgtList);
-  addHeaderItem(wgtList, "Advanced features");
-  addCheckableItem(wgtList, "Number 1");
-  addCheckableItem(wgtList, "Decimal point");
-  addSpaceItem(wgtList);
-  addHeaderItem(wgtList, "Experimental features");
-  addCheckableItem(wgtList, "Number 3");
 }
 
 //===========================================
@@ -119,6 +73,56 @@ void FProcalcSetup::reload(const FragmentSpec& spec_) {
 
   m_data.stackedLayout->addWidget(m_data.page1.widget.get());
   m_data.stackedLayout->addWidget(m_data.page2.widget.get());
+}
+
+//===========================================
+// FProcalcSetup::addCheckableItem
+//===========================================
+void FProcalcSetup::addCheckableItem(QListWidget& wgtList, const QString& text, buttonId_t btnId) {
+  QListWidgetItem* item = new QListWidgetItem(text);
+
+  Qt::ItemFlags on = Qt::ItemIsUserCheckable;
+  Qt::ItemFlags off = Qt::ItemIsSelectable;
+
+  item->setFlags(item->flags() | on);
+  item->setFlags(item->flags() & ~off);
+
+  item->setCheckState(Qt::Unchecked);
+
+  m_featureIndices[btnId] = wgtList.count();
+  wgtList.addItem(item);
+}
+
+//===========================================
+// FProcalcSetup::populateListWidget
+//===========================================
+void FProcalcSetup::populateListWidget() {
+  QListWidget& wgtList = *m_data.page1.wgtList;
+
+  addHeaderItem(wgtList, "Essential features");
+  addCheckableItem(wgtList, "Equals button", BTN_EQUALS);
+  addSpaceItem(wgtList);
+  addHeaderItem(wgtList, "Recommended extras");
+  addCheckableItem(wgtList, "Number 0", BTN_ZERO);
+  addCheckableItem(wgtList, "Number 2", BTN_TWO);
+  addCheckableItem(wgtList, "Number 4", BTN_FOUR);
+  addCheckableItem(wgtList, "Number 5", BTN_FIVE);
+  addCheckableItem(wgtList, "Number 7", BTN_SEVEN);
+  addCheckableItem(wgtList, "Number 6", BTN_SIX);
+  addCheckableItem(wgtList, "Number 8", BTN_EIGHT);
+  addCheckableItem(wgtList, "Number 9", BTN_NINE);
+  addCheckableItem(wgtList, "Addition operator", BTN_PLUS);
+  addCheckableItem(wgtList, "Subtraction operator", BTN_MINUS);
+  addCheckableItem(wgtList, "Multiplication operator", BTN_TIMES);
+  addCheckableItem(wgtList, "Division operator", BTN_DIVIDE);
+  addCheckableItem(wgtList, "Clear button", BTN_CLEAR);
+  addSpaceItem(wgtList);
+  addHeaderItem(wgtList, "Advanced features");
+  addCheckableItem(wgtList, "Number 1", BTN_ONE);
+  addCheckableItem(wgtList, "Decimal point", BTN_POINT);
+  addSpaceItem(wgtList);
+  addHeaderItem(wgtList, "Experimental features");
+  addCheckableItem(wgtList, "Number 3", BTN_THREE);
 }
 
 //===========================================
@@ -159,7 +163,7 @@ void FProcalcSetup::setupPage1() {
   vbox->addWidget(page.wgtList.get());
   vbox->addLayout(bottomHBox);
 
-  populateListWidget(*page.wgtList);
+  populateListWidget();
 
   connect(page.wgtNext.get(), SIGNAL(clicked()), this, SLOT(onNextClick()));
 }
@@ -188,6 +192,18 @@ void FProcalcSetup::setupPage2() {
 //===========================================
 void FProcalcSetup::onNextClick() {
   m_data.stackedLayout->setCurrentIndex(1);
+
+  set<buttonId_t> features;
+  for (auto it = m_featureIndices.begin(); it != m_featureIndices.end(); ++it) {
+    buttonId_t feature = it->first;
+    QListWidgetItem& item = *m_data.page1.wgtList->item(it->second);
+
+    if (item.checkState() == Qt::Checked) {
+      features.insert(feature);
+    }
+  }
+
+  m_data.page2.gameLogic->setFeatures(features);
 }
 
 //===========================================

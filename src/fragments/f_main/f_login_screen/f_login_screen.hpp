@@ -22,7 +22,7 @@ struct FLoginScreenData : public FragmentData {
 
 struct PasswordGeneratedEvent : public Event {
   PasswordGeneratedEvent(const std::string& password)
-    : Event("PasswordGeneratedEvent"),
+    : Event("passwordGeneratedEvent"),
       password(password) {}
 
   std::string password;

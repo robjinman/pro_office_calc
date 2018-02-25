@@ -2,6 +2,8 @@
 #define __PROCALC_FRAGMENTS_F_TROUBLESHOOTER_DIALOG_GAME_LOGIC_HPP__
 
 
+#include "raycast/component.hpp"
+
 
 class EventSystem;
 class EntityManager;
@@ -21,7 +23,8 @@ class GameLogic {
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
-    int m_eventIdx;
+    entityId_t m_entityId;
+    int m_eventIdx = -1;
 };
 
 

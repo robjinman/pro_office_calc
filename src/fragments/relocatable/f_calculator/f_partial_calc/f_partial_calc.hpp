@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include "fragment.hpp"
+#include "fragments/f_main/f_app_dialog/f_procalc_setup/setup_complete_event.hpp"
 
 
 struct FPartialCalcData : public FragmentData {};
@@ -24,7 +25,11 @@ class FPartialCalc : public QObject, public Fragment {
     void onButtonClick(int id);
 
   private:
+    void toggleFeatures(const std::set<buttonId_t>& features);
+
     FPartialCalcData m_data;
+
+    int m_eventIdx = -1;
 };
 
 

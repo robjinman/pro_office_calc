@@ -25,7 +25,9 @@ enum buttonId_t {
   BTN_DIVIDE,
   BTN_POINT,
   BTN_CLEAR,
-  BTN_EQUALS
+  BTN_EQUALS,
+
+  BTN_NULL = 1000
 };
 
 

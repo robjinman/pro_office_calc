@@ -7,7 +7,7 @@
 
 struct RequestStateChangeEvent : public Event {
   RequestStateChangeEvent(int stateId)
-    : Event("RequestStateChangeEvent"),
+    : Event("requestStateChange"),
       stateId(stateId) {}
 
     int stateId;

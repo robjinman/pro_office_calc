@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="14.481547"
-     inkscape:cx="2668.4505"
-     inkscape:cy="1510.1163"
+     inkscape:zoom="0.22627417"
+     inkscape:cx="3578.0536"
+     inkscape:cy="2067.8061"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g3770"
+     inkscape:current-layer="g3696"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

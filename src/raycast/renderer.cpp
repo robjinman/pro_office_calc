@@ -525,6 +525,8 @@ static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& pl
     double s = 1.0 - normaliseAngle(vAngle - minVAngle) / vAngleRange;
     assert(isBetween(s, 0.0, 1.0));
 
+    assert(isBetween(screenX_px, 0, target.width() - 1) && isBetween(j, 0, target.height() - 1));
+
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
     pixels[screenX_px] = pixel(skyTex.image, x, s * texSz_px.y);
   }
@@ -553,6 +555,8 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Camera
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
+    assert(isBetween(screenX_px, 0, target.width() - 1) && isBetween(j, 0, target.height() - 1));
+
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
 
     double projY_wd = (screenH_px * 0.5 - j) * vWorldUnit_px_rp;
@@ -612,6 +616,8 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceBottom_px; j < slice.viewportBottom_px; ++j) {
+    assert(isBetween(screenX_px, 0, target.width() - 1) && isBetween(j, 0, target.height() - 1));
+
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
 
     double projY_wd = (j - screenH_px * 0.5) * vWorldUnit_px_rp;
@@ -780,7 +786,11 @@ static ScreenSlice drawSlice(QImage& target, const RenderGraph& rg, const Camera
   int viewportBottom_px = (rg.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
   int viewportTop_px = (rg.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
 
-  return ScreenSlice{screenSliceBottom_px, screenSliceTop_px, viewportBottom_px, viewportTop_px};
+  return ScreenSlice{
+    static_cast<int>(clipNumber(screenSliceBottom_px, Range(0, target.height() - 1))),
+    static_cast<int>(clipNumber(screenSliceTop_px, Range(0, target.height() - 1))),
+    static_cast<int>(clipNumber(viewportBottom_px, Range(0, target.height() - 1))),
+    static_cast<int>(clipNumber(viewportTop_px, Range(0, target.height() - 1)))};
 }
 
 //===========================================
@@ -1059,9 +1069,17 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         }
 
         CWallDecal* decal = getWallDecal(spatialSystem, *joinX.join, joinX.X->distanceAlongTarget);
-        if (decal != nullptr) {
-          drawWallDecal(m_target, spatialSystem, rg, *decal, *joinX.X, joinX.slice0,
-            *joinX.nearZone, screenX_px, viewport_px, cam.height, vWorldUnit_px);
+        if (decal != nullptr) {/*
+          Slice slice = joinX.slice0;
+
+          if (joinX.slice1.visible) {
+            slice.sliceTop_wd = joinX.slice1.sliceTop_wd;
+            slice.projSliceTop_wd = joinX.slice1.projSliceTop_wd;
+            slice.viewportTop_wd = joinX.slice1.viewportTop_wd;
+          }
+*/
+          drawWallDecal(m_target, spatialSystem, rg, *decal, *joinX.X, joinX.slice1, *joinX.nearZone,
+            screenX_px, viewport_px, cam.height, vWorldUnit_px);
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {

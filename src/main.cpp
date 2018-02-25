@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     mainFragment.show();
 
     int requestStateChangeEventId = 0;
-    eventSystem.listen("RequestStateChangeEvent", [&](const Event& e) {
+    eventSystem.listen("requestStateChange", [&](const Event& e) {
       stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
 
       updateLoop.finishAll();
