@@ -10,6 +10,7 @@
 
 
 class EventSystem;
+class Event;
 class EntityManager;
 class GameEvent;
 
@@ -34,12 +35,18 @@ class GameLogic : public QObject {
     void onElevatorStopped(const GameEvent& event);
     void onEntityChangeZone(const GameEvent& event);
 
+    void onButtonPress(const Event& event);
+
+    void setElevatorSpeed();
+    void generateTargetNumber();
+
     QDialog& m_dialog;
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
     entityId_t m_entityId;
     int m_eventIdx = -1;
     QEvent::Type m_raiseDialogEvent;
+    double m_targetNumber = 0;
 
     std::set<buttonId_t> m_features;
 };

@@ -34,7 +34,7 @@ typedef std::unique_ptr<Intersection> pIntersection_t;
 
 struct EChangedZone : public GameEvent {
   EChangedZone(entityId_t entityId, entityId_t oldZone, entityId_t newZone)
-    : GameEvent("entityChangedZone"),
+    : GameEvent("entity_changed_zone"),
       entityId(entityId),
       oldZone(oldZone),
       newZone(newZone) {}
@@ -45,23 +45,19 @@ struct EChangedZone : public GameEvent {
 };
 
 struct EPlayerMove : public GameEvent {
-  EPlayerMove(const Player& player, const std::set<entityId_t>& entities)
-    : GameEvent("playerMove"),
-      player(player),
-      entities(entities) {}
+  EPlayerMove(const Player& player)
+    : GameEvent("player_move"),
+      player(player) {}
 
   const Player& player;
-  std::set<entityId_t> entities;
 };
 
 struct EPlayerActivateEntity : public GameEvent {
-  EPlayerActivateEntity(const Player& player, const std::set<entityId_t>& entities)
-    : GameEvent("playerActivateEntity"),
-      player(player),
-      entities(entities) {}
+  EPlayerActivateEntity(const Player& player)
+    : GameEvent("player_activate_entity"),
+      player(player) {}
 
   const Player& player;
-  std::set<entityId_t> entities;
 };
 
 class EntityManager;
@@ -75,13 +71,14 @@ class SpatialSystem : public System {
 
     void connectZones();
 
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& event) override;
+    void update() override;
+    void handleEvent(const GameEvent& event) override;
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
 
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
     void moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor = 0);
     void relocateEntity(entityId_t id, CZone& zone, const Point& point);
@@ -105,8 +102,6 @@ class SpatialSystem : public System {
 
     // TODO: Move this
     void jump();
-
-    virtual ~SpatialSystem() override;
 
   private:
     EntityManager& m_entityManager;

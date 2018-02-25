@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568542"
-     inkscape:cx="1846.0665"
-     inkscape:cy="-2244.5012"
+     inkscape:zoom="45.254834"
+     inkscape:cx="1846.2676"
+     inkscape:cy="-2181.1739"
      inkscape:document-units="px"
-     inkscape:current-layer="g13318"
+     inkscape:current-layer="g12743-7"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="999"
@@ -5091,6 +5091,28 @@
                x="1848.9218"
                y="3796.2747">top_texture=door</tspan></text>
         </g>
+        <text
+           transform="scale(1.0603588,0.94307701)"
+           id="text4217-1-8-5-3-97-0-8-5-5-8"
+           y="3804.5295"
+           x="1819.9423"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.2599386px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="3804.5295"
+             x="1819.9423"
+             id="tspan4219-9-4-0-6-82-3-0-9-6-1">player_activated=false</tspan></text>
+        <text
+           transform="scale(1.0603588,0.94307701)"
+           id="text4217-1-8-5-3-97-0-8-5-5-8-2"
+           y="3806.1016"
+           x="1820.1331"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.2599386px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="3806.1016"
+             x="1820.1331"
+             id="tspan4219-9-4-0-6-82-3-0-9-6-1-4">name=exit_door</tspan></text>
       </g>
       <text
          transform="scale(1.0603588,0.94307701)"

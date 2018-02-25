@@ -8,7 +8,7 @@
 
 struct EElevatorStopped : public GameEvent {
   explicit EElevatorStopped(entityId_t entityId)
-    : GameEvent("elevatorStopped"),
+    : GameEvent("elevator_stopped"),
       entityId(entityId) {}
 
   entityId_t entityId;

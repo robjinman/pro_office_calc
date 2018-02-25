@@ -37,8 +37,6 @@ struct CRender : public Component {
 
   CRenderKind kind;
   entityId_t parentId;
-
-  virtual ~CRender() override {}
 };
 
 typedef std::unique_ptr<CRender> pCRender_t;
@@ -129,8 +127,6 @@ class CSprite : public CRender {
 
     std::string texture;
     std::vector<QRectF> texViews;
-
-    virtual ~CSprite() override {}
 };
 
 typedef std::unique_ptr<CSprite> pCSprite_t;
@@ -141,8 +137,6 @@ struct CWallDecal : public CRender {
 
   std::string texture;
   QRectF texRect = QRectF(0, 0, 1, 1);
-
-  virtual ~CWallDecal() override {}
 };
 
 typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
@@ -152,8 +146,6 @@ struct CBoundary : public CRender {
     : CRender(kind, entityId, parentId) {}
 
   std::list<pCWallDecal_t> decals;
-
-  virtual ~CBoundary() override {}
 };
 
 typedef std::unique_ptr<CBoundary> pCBoundary_t;
@@ -163,8 +155,6 @@ struct CFloorDecal : public CRender {
     : CRender(CRenderKind::FLOOR_DECAL, entityId, parentId) {}
 
   std::string texture;
-
-  virtual ~CFloorDecal() override {}
 };
 
 typedef std::unique_ptr<CFloorDecal> pCFloorDecal_t;
@@ -183,8 +173,6 @@ struct CRegion : public CRender {
   std::list<CBoundary*> boundaries;
   std::list<pCSprite_t> sprites;
   std::list<pCFloorDecal_t> floorDecals;
-
-  virtual ~CRegion() override {}
 };
 
 void forEachConstCRegion(const CRegion& region, std::function<void(const CRegion&)> fn);
@@ -196,8 +184,6 @@ struct CWall : public CBoundary {
 
   std::string texture;
   CRegion* region;
-
-  virtual ~CWall() override {}
 };
 
 struct CJoin : public CBoundary {
@@ -221,8 +207,6 @@ struct CJoin : public CBoundary {
 
   CRegion* regionA = nullptr;
   CRegion* regionB = nullptr;
-
-  virtual ~CJoin() override {}
 };
 
 

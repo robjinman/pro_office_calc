@@ -77,3 +77,13 @@ void EntityManager::broadcastEvent(const GameEvent& event) const {
     system.handleEvent(event);
   }
 }
+
+//===========================================
+// EntityManager::fireEvent
+//===========================================
+void EntityManager::fireEvent(const GameEvent& event, const set<entityId_t>& entities) const {
+  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+    System& system = *it->second;
+    system.handleEvent(event, entities);
+  }
+}

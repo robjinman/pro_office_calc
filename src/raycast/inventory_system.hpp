@@ -20,8 +20,6 @@ struct CInventory : public Component {
       kind(kind) {}
 
   CInventoryKind kind;
-
-  virtual ~CInventory() override {}
 };
 
 typedef std::unique_ptr<CInventory> pCInventory_t;
@@ -35,8 +33,6 @@ struct CBucket : public CInventory {
   std::string type;
   int capacity;
   int count = 0;
-
-  virtual ~CBucket() override {}
 };
 
 typedef std::unique_ptr<CBucket> pCBucket_t;
@@ -49,15 +45,13 @@ struct CCollectable : public CInventory {
 
   std::string type;
   int value;
-
-  virtual ~CCollectable() override {}
 };
 
 typedef std::unique_ptr<CCollectable> pCCollectable_t;
 
 struct EBucketCountChange : public GameEvent {
   EBucketCountChange(entityId_t entityId, int prevCount, int currentCount)
-    : GameEvent("bucketCountChange"),
+    : GameEvent("bucket_count_change"),
       entityId(entityId),
       prevCount(prevCount),
       currentCount(currentCount) {}
@@ -74,19 +68,18 @@ class InventorySystem : public System {
     InventorySystem(EntityManager& entityManager)
       : m_entityManager(entityManager) {}
 
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& event) override;
+    void update() override;
+    void handleEvent(const GameEvent& event) override {};
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override;
 
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
     void addToBucket(const CCollectable& item);
     int getBucketValue(const std::string& type) const;
     int subtractFromBucket(const std::string& type, int value);
-
-    virtual ~InventorySystem() override {}
 
   private:
     EntityManager& m_entityManager;

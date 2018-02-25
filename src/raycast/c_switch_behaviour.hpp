@@ -15,18 +15,27 @@ enum class SwitchState { ON, OFF };
 
 
 struct ESwitchActivate : public GameEvent {
-  ESwitchActivate(entityId_t switchEntityId, SwitchState state, const std::string& message,
-    entityId_t entity = -1)
-    : GameEvent("switchActivate"),
+  ESwitchActivate(entityId_t switchEntityId, SwitchState state, const std::string& message)
+    : GameEvent("switch_activate"),
       switchEntityId(switchEntityId),
       state(state),
-      message(message),
-      entityId(entity) {}
+      message(message) {}
 
   entityId_t switchEntityId;
   SwitchState state;
   std::string message;
-  entityId_t entityId = -1;
+};
+
+struct ESwitchActivateEntity : public GameEvent {
+  ESwitchActivateEntity(entityId_t switchEntityId, SwitchState state, const std::string& message)
+    : GameEvent("switch_activate_entity"),
+      switchEntityId(switchEntityId),
+      state(state),
+      message(message) {}
+
+  entityId_t switchEntityId;
+  SwitchState state;
+  std::string message;
 };
 
 class CSwitchBehaviour : public CBehaviour {

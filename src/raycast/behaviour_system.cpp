@@ -18,6 +18,18 @@ void BehaviourSystem::update() {
 //===========================================
 // BehaviourSystem::handleEvent
 //===========================================
+void BehaviourSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
+  for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+    if (entities.count(it->first)) {
+      CBehaviour& c = *it->second;
+      c.handleEvent(event);
+    }
+  }
+}
+
+//===========================================
+// BehaviourSystem::handleEvent
+//===========================================
 void BehaviourSystem::handleEvent(const GameEvent& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
     CBehaviour& c = *it->second;

@@ -6,10 +6,15 @@
 #include "fragments/relocatable/f_calculator/f_partial_calc/f_partial_calc.hpp"
 #include "fragments/relocatable/f_calculator/f_partial_calc/f_partial_calc_spec.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
+#include "fragments/f_main/f_app_dialog/f_procalc_setup/events.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
+
+
+using std::string;
+using making_progress::SetupCompleteEvent;
 
 
 //===========================================
@@ -88,6 +93,8 @@ void FPartialCalc::cleanUp() {
 void FPartialCalc::onButtonClick(int id) {
   parentFrag<FCalculator>().onButtonClick(id);
 
+  string display = parentFragData<FCalculatorData>().wgtDigitDisplay->text().toStdString();
+  commonData.eventSystem.fire(pEvent_t(new making_progress::ButtonPressEvent(display)));
 }
 
 //===========================================

@@ -1,6 +1,9 @@
 #include "raycast/event_handler_system.hpp"
 
 
+using std::set;
+
+
 //===========================================
 // sendEventToComponent
 //===========================================
@@ -49,5 +52,16 @@ void EventHandlerSystem::removeEntity(entityId_t id) {
 void EventHandlerSystem::handleEvent(const GameEvent& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
     sendEventToComponent(*it->second, event);
+  }
+}
+
+//===========================================
+// EventHandlerSystem::handleEvent
+//===========================================
+void EventHandlerSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
+  for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+    if (entities.count(it->first)) {
+      sendEventToComponent(*it->second, event);
+    }
   }
 }

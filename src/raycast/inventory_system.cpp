@@ -18,17 +18,17 @@ void InventorySystem::update() {}
 //===========================================
 // InventorySystem::handleEvent
 //===========================================
-void InventorySystem::handleEvent(const GameEvent& event) {
+void InventorySystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
   const double MIN_HEIGHT_DIFF = 10;
 
-  if (event.name == "playerMove") {
+  if (event.name == "player_move") {
     const EPlayerMove& e = dynamic_cast<const EPlayerMove&>(event);
 
     for (auto it = m_collectables.begin(); it != m_collectables.end(); ++it) {
       CCollectable& collectable = *it->second;
       entityId_t id = it->first;
 
-      if (e.entities.count(id)) {
+      if (entities.count(id)) {
         const CSpatial& c = m_entityManager.getComponent<CSpatial>(id, ComponentKind::C_SPATIAL);
 
         // Only deal with VRects for now

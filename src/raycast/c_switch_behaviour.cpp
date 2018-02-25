@@ -56,27 +56,26 @@ void CSwitchBehaviour::setDecal() {
 //===========================================
 // CSwitchBehaviour::handleEvent
 //===========================================
-void CSwitchBehaviour::handleEvent(const GameEvent& e_) {
-  if (e_.name == "playerActivateEntity") {
-    const EPlayerActivateEntity& e = dynamic_cast<const EPlayerActivateEntity&>(e_);
-
-    if (e.entities.count(entityId())) {
-      if (m_toggleable || m_state == SwitchState::OFF) {
-        if (m_timer.ready()) {
-          switch (m_state) {
-            case SwitchState::OFF:
-              m_state = SwitchState::ON;
-              break;
-            case SwitchState::ON:
-              m_state = SwitchState::OFF;
-              break;
-          }
-
-          setDecal();
-
-          ESwitchActivate eActivate(entityId(), m_state, m_message, m_target);
-          m_entityManager.broadcastEvent(eActivate);
+void CSwitchBehaviour::handleEvent(const GameEvent& e) {
+  if (e.name == "player_activate_entity") {
+    if (m_toggleable || m_state == SwitchState::OFF) {
+      if (m_timer.ready()) {
+        switch (m_state) {
+          case SwitchState::OFF:
+            m_state = SwitchState::ON;
+            break;
+          case SwitchState::ON:
+            m_state = SwitchState::OFF;
+            break;
         }
+
+        setDecal();
+
+        ESwitchActivate eActivate(entityId(), m_state, m_message);
+        m_entityManager.broadcastEvent(eActivate);
+
+        ESwitchActivateEntity eActivateEntity(entityId(), m_state, m_message);
+        m_entityManager.fireEvent(eActivateEntity, set<entityId_t>{m_target});
       }
     }
   }

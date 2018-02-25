@@ -69,14 +69,14 @@ class AnimationSystem : public System {
     void playAnimation(entityId_t entityId, const std::string& anim, bool loop);
     void stopAnimation(entityId_t entityId);
 
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& event) override;
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
+    void update() override;
+    void handleEvent(const GameEvent& event) override {}
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
 
-    virtual ~AnimationSystem() override {}
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
   private:
     EntityManager& m_entityManager;

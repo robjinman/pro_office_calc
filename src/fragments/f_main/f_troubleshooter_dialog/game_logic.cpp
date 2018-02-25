@@ -32,7 +32,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   eventHandlerSystem.addComponent(std::move(forwardEvent));
 
-  m_eventSystem.listen("itsRainingTetrominos", [](const Event& event) {
+  m_eventSystem.listen("its_raining_tetrominos", [](const Event& event) {
     // TODO
   }, m_eventIdx);
 }
@@ -41,7 +41,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 // GameLogic::onRaycastEvent
 //===========================================
 void GameLogic::onRaycastEvent(const GameEvent& event) {
-  if (event.name == "switchActivate") {
+  if (event.name == "switch_activate") {
     const auto& e = dynamic_cast<const ESwitchActivate&>(event);
 
     if (e.state == SwitchState::ON) {

@@ -12,22 +12,18 @@
 
 struct EEntityDestroyed : public GameEvent {
   EEntityDestroyed(entityId_t id)
-    : GameEvent("entityDestroyed"),
+    : GameEvent("entity_destroyed"),
       entityId(id) {}
 
   entityId_t entityId;
-
-  virtual ~EEntityDestroyed() override {}
 };
 
 struct EEntityDamaged : public GameEvent {
   EEntityDamaged(entityId_t id)
-    : GameEvent("entityDamaged"),
+    : GameEvent("entity_damaged"),
       entityId(id) {}
 
   entityId_t entityId;
-
-  virtual ~EEntityDamaged() override {}
 };
 
 struct CDamage : public Component {
@@ -57,13 +53,14 @@ class DamageSystem : public System {
     DamageSystem(EntityManager& entityManager)
       : m_entityManager(entityManager) {}
 
-    virtual void update() override {}
-    virtual void handleEvent(const GameEvent& event) override {}
+    void update() override {}
+    void handleEvent(const GameEvent& event) override {}
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
 
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
     void damageEntity(entityId_t id, double damage);
 
@@ -74,8 +71,6 @@ class DamageSystem : public System {
 
     void damageAtIntersection(const CZone& zone, const Point& pos, double height, const Vec2f& dir,
       double vAngle, const Matrix& matrix, int damage);
-
-    virtual ~DamageSystem() override {}
 
   private:
     EntityManager& m_entityManager;

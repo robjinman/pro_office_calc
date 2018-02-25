@@ -299,7 +299,7 @@ void RaycastWidget::tick() {
   }
 
   if (m_keyStates[Qt::Key_Space]) {
-    GameEvent e("playerActivate");
+    GameEvent e("player_activate");
     spatialSystem.handleEvent(e);
 
     m_keyStates[Qt::Key_Space] = false;

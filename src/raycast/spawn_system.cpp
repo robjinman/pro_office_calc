@@ -10,15 +10,10 @@
 
 
 //===========================================
-// CSpawn::CSpawn
-//===========================================
-CSpawn::~CSpawn() {}
-
-//===========================================
 // SpawnSystem::handleEvent
 //===========================================
 void SpawnSystem::handleEvent(const GameEvent& event) {
-  if (event.name == "entityDestroyed") {
+  if (event.name == "entity_destroyed") {
     const EEntityDestroyed& e = dynamic_cast<const EEntityDestroyed&>(event);
 
     auto it = m_spawnables.find(e.entityId);

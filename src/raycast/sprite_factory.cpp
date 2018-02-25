@@ -204,7 +204,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, const parser::Object& o
   damageSystem.addComponent(pComponent_t(damage));
 
   CEventHandler* takeDamage = new CEventHandler(entityId);
-  takeDamage->handlers.push_back(EventHandler{"entityDamaged",
+  takeDamage->handlers.push_back(EventHandler{"entity_damaged",
     [=, &animationSystem](const GameEvent& e) {
 
     const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);

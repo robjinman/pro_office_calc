@@ -232,7 +232,7 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
   const Size& viewport = renderSystem.rg.viewport;
 
   CEventHandler* takeDamage = new CEventHandler(player->body);
-  takeDamage->handlers.push_back(EventHandler{"entityDamaged", [=, &spatialSystem, &renderSystem,
+  takeDamage->handlers.push_back(EventHandler{"entity_damaged", [=, &spatialSystem, &renderSystem,
     &viewport](const GameEvent& e) {
 
     const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);

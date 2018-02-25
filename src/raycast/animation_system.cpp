@@ -121,11 +121,6 @@ void AnimationSystem::update() {
 }
 
 //===========================================
-// AnimationSystem::handleEvent
-//===========================================
-void AnimationSystem::handleEvent(const GameEvent& event) {}
-
-//===========================================
 // AnimationSystem::addComponent
 //===========================================
 void AnimationSystem::addComponent(pComponent_t component) {

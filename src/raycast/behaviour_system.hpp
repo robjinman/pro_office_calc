@@ -15,23 +15,20 @@ struct CBehaviour : public Component {
 
   virtual void update() = 0;
   virtual void handleEvent(const GameEvent& e) = 0;
-
-  virtual ~CBehaviour() override {}
 };
 
 typedef std::unique_ptr<CBehaviour> pCBehaviour_t;
 
 class BehaviourSystem : public System {
   public:
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& event) override;
+    void update() override;
+    void handleEvent(const GameEvent& event) override;
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override;
 
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
-
-    virtual ~BehaviourSystem() override {}
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
   private:
     std::map<entityId_t, pCBehaviour_t> m_components;

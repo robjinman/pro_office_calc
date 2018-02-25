@@ -70,7 +70,7 @@ bool MiscFactory::constructPlayerInventory() {
   renderSystem.addComponent(pComponent_t(ammoCounter));
 
   CEventHandler* syncCounter = new CEventHandler(ammoId);
-  syncCounter->handlers.push_back(EventHandler{"bucketCountChange", [=](const GameEvent& e_) {
+  syncCounter->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
 
     stringstream ss;
@@ -131,6 +131,14 @@ bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, 
 
     CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, m_entityManager,
       m_timeService.frameRate);
+
+    string s = getValue(obj.dict, "player_activated", "");
+    if (s == "true") {
+      behaviour->isPlayerActivated = true;
+    }
+    else if (s == "false") {
+      behaviour->isPlayerActivated = false;
+    }
 
     behaviourSystem.addComponent(pComponent_t(behaviour));
 

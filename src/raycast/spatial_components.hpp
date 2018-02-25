@@ -27,8 +27,6 @@ struct CSpatial : public Component {
 
   CSpatialKind kind;
   entityId_t parentId;
-
-  virtual ~CSpatial() override {}
 };
 
 typedef std::unique_ptr<CSpatial> pCSpatial_t;
@@ -50,8 +48,6 @@ struct CVRect : public CSpatial {
   Vec2f pos;
   double angle;
   Size size;
-
-  virtual ~CVRect() override {}
 };
 
 typedef std::unique_ptr<CVRect> pCVRect_t;
@@ -62,8 +58,6 @@ struct CEdge : public CSpatial {
 
   LineSegment lseg;
   std::list<pCVRect_t> vRects;
-
-  virtual ~CEdge() override {}
 };
 
 typedef std::unique_ptr<CEdge> pCEdge_t;
@@ -74,8 +68,6 @@ struct CHRect : public CSpatial {
 
   Size size;
   Matrix transform;
-
-  virtual ~CHRect() override {}
 };
 
 typedef std::unique_ptr<CHRect> pCHRect_t;
@@ -94,8 +86,6 @@ struct CZone : public CSpatial {
   std::list<pCVRect_t> vRects;
   std::list<pCHRect_t> hRects;
   CZone* parent = nullptr;
-
-  virtual ~CZone() override {}
 };
 
 void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
@@ -110,8 +100,6 @@ struct CHardEdge : public CEdge {
   double height() const {
     return zone->ceilingHeight - zone->floorHeight;
   }
-
-  virtual ~CHardEdge() override {}
 };
 
 struct CSoftEdge : public CEdge {
@@ -127,8 +115,6 @@ struct CSoftEdge : public CEdge {
 
   CZone* zoneA = nullptr;
   CZone* zoneB = nullptr;
-
-  virtual ~CSoftEdge() override {}
 };
 
 

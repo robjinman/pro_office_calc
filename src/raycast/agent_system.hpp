@@ -78,17 +78,16 @@ class AgentSystem : public System {
         m_timeService(timeService),
         m_audioService(audioService) {}
 
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& event) override;
+    void update() override;
+    void handleEvent(const GameEvent& event) override;
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
 
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
     void navigateTo(entityId_t entityId, const Point& point);
-
-    virtual ~AgentSystem() override {}
 
   private:
     EntityManager& m_entityManager;

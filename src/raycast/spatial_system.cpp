@@ -193,7 +193,7 @@ static void playerBounce(SpatialSystem& spatialSystem, TimeService& timeService,
       spatialSystem.sg.player->changeTallness(-dy);
     }
     return i < nFrames;
-  }, [](long, double, double) {}}, "playerBounce");
+  }, [](long, double, double) {}}, "player_bounce");
 }
 
 //===========================================
@@ -564,18 +564,11 @@ SpatialSystem::SpatialSystem(EntityManager& entityManager, TimeService& timeServ
 // SpatialSystem::handleEvent
 //===========================================
 void SpatialSystem::handleEvent(const GameEvent& event) {
-  if (event.name == "playerActivate") {
-    EPlayerActivateEntity e(*sg.player, entitiesInRadius(sg.player->pos(),
-      sg.player->activationRadius));
-
-    m_entityManager.broadcastEvent(e);
+  if (event.name == "player_activate") {
+    EPlayerActivateEntity e(*sg.player);
+    m_entityManager.fireEvent(e, entitiesInRadius(sg.player->pos(), sg.player->activationRadius));
   }
 }
-
-//===========================================
-// SpatialSystem::~SpatialSystem
-//===========================================
-SpatialSystem::~SpatialSystem() {}
 
 //===========================================
 // SpatialSystem::vRotateCamera
@@ -716,8 +709,8 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
   if (cell != m_playerCell) {
     m_playerCell = cell;
 
-    EPlayerMove e(player, entitiesInRadius(player.pos(), player.collectionRadius));
-    m_entityManager.broadcastEvent(e);
+    EPlayerMove e(player);
+    m_entityManager.fireEvent(e, entitiesInRadius(player.pos(), player.collectionRadius));
   }
 }
 

@@ -18,6 +18,11 @@ struct GameEvent {
   virtual ~GameEvent() {}
 };
 
+struct EActivateEntity : public GameEvent {
+  EActivateEntity()
+    : GameEvent("activate_entity") {}
+};
+
 class Component {
   public:
     static entityId_t getNextId();

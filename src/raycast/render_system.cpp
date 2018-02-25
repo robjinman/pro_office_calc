@@ -325,7 +325,7 @@ void RenderSystem::crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t
 // RenderSystem::handleEvent
 //===========================================
 void RenderSystem::handleEvent(const GameEvent& event) {
-  if (event.name == "entityChangedZone") {
+  if (event.name == "entity_changed_zone") {
     const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
     crossRegions(rg, e.entityId, e.oldZone, e.newZone);
   }

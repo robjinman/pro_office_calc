@@ -2,9 +2,10 @@
 #define __PROCALC_FRAGMENTS_F_PARTIAL_CALC_HPP__
 
 
+#include <set>
 #include <QObject>
 #include "fragment.hpp"
-#include "fragments/f_main/f_app_dialog/f_procalc_setup/setup_complete_event.hpp"
+#include "button_grid.hpp"
 
 
 struct FPartialCalcData : public FragmentData {};

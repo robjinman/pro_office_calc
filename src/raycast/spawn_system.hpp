@@ -20,8 +20,6 @@ struct CSpawn : public Component {
       kind(kind) {}
 
   CSpawnKind kind;
-
-  virtual ~CSpawn() = 0;
 };
 
 struct CSpawnable : public CSpawn {
@@ -40,15 +38,11 @@ struct CSpawnable : public CSpawn {
   entityId_t parentId;
   Matrix parentTransform;
   double delay = 5;
-
-  virtual ~CSpawnable() override {}
 };
 
 struct CSpawnPoint : public CSpawn {
   CSpawnPoint(entityId_t entityId)
     : CSpawn(entityId, CSpawnKind::SPAWN_POINT) {}
-
-  virtual ~CSpawnPoint() override {}
 };
 
 typedef std::unique_ptr<CSpawn> pCSpawn_t;
@@ -66,15 +60,14 @@ class SpawnSystem : public System {
         m_rootFactory(rootFactory),
         m_timeService(timeService) {}
 
-    virtual void update() override {}
-    virtual void handleEvent(const GameEvent& event) override;
+    void update() override {}
+    void handleEvent(const GameEvent& event) override;
+    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
 
-    virtual void addComponent(pComponent_t component) override;
-    virtual bool hasComponent(entityId_t entityId) const override;
-    virtual Component& getComponent(entityId_t entityId) const override;
-    virtual void removeEntity(entityId_t id) override;
-
-    virtual ~SpawnSystem() override {}
+    void addComponent(pComponent_t component) override;
+    bool hasComponent(entityId_t entityId) const override;
+    Component& getComponent(entityId_t entityId) const override;
+    void removeEntity(entityId_t id) override;
 
   private:
     EntityManager& m_entityManager;
