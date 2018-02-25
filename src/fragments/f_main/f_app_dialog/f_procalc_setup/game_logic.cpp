@@ -50,6 +50,18 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 //===========================================
 void GameLogic::setFeatures(const set<buttonId_t>& features) {
   m_features = features;
+
+  entityId_t elevatorId = Component::getIdFromString("progress_lift");
+
+  CElevatorBehaviour& elevator =
+    m_entityManager.getComponent<CElevatorBehaviour>(elevatorId, ComponentKind::C_BEHAVIOUR);
+
+  const double MIN_SPEED = 2;
+  const double MAX_SPEED = 60;
+  const double MAX_FEATURES = 17;
+  double delta = (MAX_SPEED - MIN_SPEED) / MAX_FEATURES;
+
+  elevator.setSpeed(MAX_SPEED - delta * m_features.size());
 }
 
 //===========================================

@@ -771,14 +771,18 @@ void SpatialSystem::gravity() {
   CZone& currentZone = getCurrentZone();
   Player& player = *sg.player;
 
-  if (fabs(player.vVelocity) > 0.001 || player.aboveGround(currentZone)) {
+  double diff = (player.feetHeight() - 0.1) - currentZone.floorHeight;
+
+  if (fabs(player.vVelocity) > 0.001 || diff > 0.0) {
     double a = -600.0;
     double dt = 1.0 / m_frameRate;
     double dv = dt * a;
     player.vVelocity += dv;
     double dy = player.vVelocity * dt;
 
-    player.changeHeight(currentZone, dy);
+    double dy_ = dy > 0.0 ? dy : smallest<double>(diff, dy);
+
+    player.changeHeight(currentZone, dy_);
     moveEntity(player.body, Vec2f(0, 0), player.feetHeight() - currentZone.floorHeight);
 
     if (!player.aboveGround(currentZone)) {
@@ -793,8 +797,10 @@ void SpatialSystem::gravity() {
 void SpatialSystem::buoyancy() {
   CZone& currentZone = getCurrentZone();
 
-  if (sg.player->feetHeight() + 0.1 < currentZone.floorHeight) {
-    double dy = 150.0 / m_frameRate;
+  double diff = currentZone.floorHeight - (sg.player->feetHeight() + 0.1);
+
+  if (diff > 0.0) {
+    double dy = smallest<double>(diff, 150.0 / m_frameRate);
     sg.player->changeHeight(currentZone, dy);
   }
 }
