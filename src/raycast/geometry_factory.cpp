@@ -4,11 +4,13 @@
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/animation_system.hpp"
+#include "raycast/behaviour_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/time_service.hpp"
+#include "raycast/c_player_behaviour.hpp"
 #include "utils.hpp"
 
 
@@ -213,8 +215,8 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
     m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
   DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  EventHandlerSystem& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+  BehaviourSystem& behaviourSystem =
+    m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
@@ -229,42 +231,10 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
   CDamage* damage = new CDamage(player->body, 10, 10);
   damageSystem.addComponent(pCDamage_t(damage));
 
+  CPlayerBehaviour* behaviour = new CPlayerBehaviour(player->body, m_entityManager, m_timeService);
+  behaviourSystem.addComponent(pComponent_t(behaviour));
+
   const Size& viewport = renderSystem.rg.viewport;
-
-  CEventHandler* takeDamage = new CEventHandler(player->body);
-  takeDamage->handlers.push_back(EventHandler{"entity_damaged", [=, &spatialSystem, &renderSystem,
-    &viewport](const GameEvent& e) {
-
-    const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
-
-    if (event.entityId == player->body) {
-      DBG_PRINT("Player health: " << damage->health << "\n");
-
-      if (player->red == -1) {
-        player->red = Component::getNextId();
-
-        double maxAlpha = 80;
-        CColourOverlay* overlay = new CColourOverlay(player->red, QColor(200, 0, 0, maxAlpha),
-          Point(0, 0), viewport);
-
-        renderSystem.addComponent(pCRender_t(overlay));
-
-        double duration = 0.33;
-        int da = maxAlpha / (duration * m_timeService.frameRate);
-
-        m_timeService.addTween(Tween{[=](long, double, double) -> bool {
-          int alpha = overlay->colour.alpha() - da;
-          overlay->colour.setAlpha(alpha);
-
-          return alpha > 0;
-        }, [&, player](long, double, double) {
-          m_entityManager.deleteEntity(player->red);
-          player->red = -1;
-        }}, "redFade");
-      }
-    }
-  }});
-  eventHandlerSystem.addComponent(pComponent_t(takeDamage));
 
   Size sz(0.5, 0.5);
   CImageOverlay* crosshair = new CImageOverlay(player->crosshair, "crosshair",
