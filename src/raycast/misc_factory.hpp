@@ -17,12 +17,10 @@ class MiscFactory : public GameObjectFactory {
     MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
       AudioService& audioService, TimeService& timeService);
 
-    virtual const std::set<std::string>& types() const override;
+    const std::set<std::string>& types() const override;
 
-    virtual bool constructObject(const std::string& type, entityId_t entityId,
-      const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) override;
-
-    virtual ~MiscFactory() override {}
+    bool constructObject(const std::string& type, entityId_t entityId, parser::Object& obj,
+      entityId_t parentId, const Matrix& parentTransform) override;
 
   private:
     RootFactory& m_rootFactory;
@@ -31,13 +29,13 @@ class MiscFactory : public GameObjectFactory {
     TimeService& m_timeService;
 
     bool constructPlayerInventory();
-    bool constructDoor(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructDoor(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructSwitch(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructSwitch(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructElevator(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructElevator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructSpawnPoint(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructSpawnPoint(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };
 

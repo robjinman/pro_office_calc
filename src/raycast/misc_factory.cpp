@@ -102,8 +102,8 @@ bool MiscFactory::constructPlayerInventory() {
 //===========================================
 // MiscFactory::constructSpawnPoint
 //===========================================
-bool MiscFactory::constructSpawnPoint(entityId_t entityId, const parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+bool MiscFactory::constructSpawnPoint(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -130,7 +130,7 @@ bool MiscFactory::constructSpawnPoint(entityId_t entityId, const parser::Object&
 //===========================================
 // MiscFactory::constructDoor
 //===========================================
-bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+bool MiscFactory::constructDoor(entityId_t entityId, parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   if (entityId == -1) {
@@ -161,8 +161,8 @@ bool MiscFactory::constructDoor(entityId_t entityId, const parser::Object& obj, 
 //===========================================
 // MiscFactory::constructSwitch
 //===========================================
-bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -197,8 +197,8 @@ bool MiscFactory::constructSwitch(entityId_t entityId, const parser::Object& obj
 //===========================================
 // MiscFactory::constructElevator
 //===========================================
-bool MiscFactory::constructElevator(entityId_t entityId, const parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+bool MiscFactory::constructElevator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -233,8 +233,8 @@ bool MiscFactory::constructElevator(entityId_t entityId, const parser::Object& o
 //===========================================
 // MiscFactory::constructObject
 //===========================================
-bool MiscFactory::constructObject(const string& type, entityId_t entityId,
-  const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
+bool MiscFactory::constructObject(const string& type, entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
 
   if (type == "player_inventory") {
     return constructPlayerInventory();

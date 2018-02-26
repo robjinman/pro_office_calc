@@ -151,7 +151,9 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   configure(rg, m_audioService, config);
 
   m_rootFactory->constructObject("region", -1, rootRegion, -1, Matrix());
-  m_rootFactory->constructObject("player_inventory", -1, parser::Object(), -1, Matrix());
+
+  parser::Object tmp;
+  m_rootFactory->constructObject("player_inventory", -1, tmp, -1, Matrix());
 }
 
 //===========================================

@@ -16,12 +16,10 @@ class RootFactory : public GameObjectFactory {
   public:
     RootFactory(EntityManager& entityManager, AudioService& audioService, TimeService& timeService);
 
-    virtual const std::set<std::string>& types() const override;
+    const std::set<std::string>& types() const override;
 
-    virtual bool constructObject(const std::string& type, entityId_t entityId,
-      const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) override;
-
-    virtual ~RootFactory() override {}
+    bool constructObject(const std::string& type, entityId_t entityId, parser::Object& obj,
+      entityId_t parentId, const Matrix& parentTransform) override;
 
   private:
     std::vector<pGameObjectFactory_t> m_factories;

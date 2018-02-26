@@ -20,12 +20,10 @@ class GeometryFactory : public GameObjectFactory {
     GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager,
       AudioService& audioService, TimeService& timeService);
 
-    virtual const std::set<std::string>& types() const override;
+    const std::set<std::string>& types() const override;
 
-    virtual bool constructObject(const std::string& type, entityId_t entityId,
-      const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) override;
-
-    virtual ~GeometryFactory() override {}
+    bool constructObject(const std::string& type, entityId_t entityId, parser::Object& obj,
+      entityId_t parentId, const Matrix& parentTransform) override;
 
   private:
     RootFactory& m_rootFactory;
@@ -35,22 +33,19 @@ class GeometryFactory : public GameObjectFactory {
 
     std::map<Point, bool> m_endpoints;
 
-    bool constructWallDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructWallDecal(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructWalls(const parser::Object& obj, entityId_t parentId,
+    bool constructWalls(parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
+    bool constructFloorDecal(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructFloorDecal(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructPlayer(parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
+    bool constructBoundaries(parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructPlayer(const parser::Object& obj, entityId_t parentId,
+    bool constructPortal(parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
+    bool constructRegion_r(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructBoundaries(const parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-    bool constructPortal(const parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-    bool constructRegion_r(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-    bool constructRootRegion(const parser::Object& obj);
-    bool constructRegion(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructRootRegion(parser::Object& obj);
+    bool constructRegion(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };
 

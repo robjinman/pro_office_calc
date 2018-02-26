@@ -44,8 +44,8 @@ const set<string>& RootFactory::types() const {
 //===========================================
 // RootFactory::constructObject
 //===========================================
-bool RootFactory::constructObject(const string& type, entityId_t entityId,
-  const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
+bool RootFactory::constructObject(const string& type, entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
 
   DBG_PRINT(string(m_dbgIndentLvl++, '\t') << "Constructing " << type << "...\n");
 

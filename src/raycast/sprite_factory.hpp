@@ -17,12 +17,10 @@ class SpriteFactory : public GameObjectFactory {
     SpriteFactory(RootFactory& rootFactory, EntityManager& entityManager,
       AudioService& audioService, TimeService& timeService);
 
-    virtual const std::set<std::string>& types() const override;
+    const std::set<std::string>& types() const override;
 
-    virtual bool constructObject(const std::string& type, entityId_t entityId,
-      const parser::Object& obj, entityId_t region, const Matrix& parentTransform) override;
-
-    virtual ~SpriteFactory() override {}
+    bool constructObject(const std::string& type, entityId_t entityId, parser::Object& obj,
+      entityId_t region, const Matrix& parentTransform) override;
 
   private:
     RootFactory& m_rootFactory;
@@ -30,11 +28,11 @@ class SpriteFactory : public GameObjectFactory {
     AudioService& m_audioService;
     TimeService& m_timeService;
 
-    bool constructSprite(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructSprite(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructAmmo(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructAmmo(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructBadGuy(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+    bool constructBadGuy(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };
 

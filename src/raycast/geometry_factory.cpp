@@ -45,7 +45,7 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 //===========================================
 // GeometryFactory::constructWallDecal
 //===========================================
-bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -107,7 +107,7 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, const parser::Obje
 //===========================================
 // GeometryFactory::constructWalls
 //===========================================
-bool GeometryFactory::constructWalls(const parser::Object& obj, entityId_t parentId,
+bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -170,7 +170,7 @@ bool GeometryFactory::constructWalls(const parser::Object& obj, entityId_t paren
 //===========================================
 // GeometryFactory::constructFloorDecal
 //===========================================
-bool GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -207,7 +207,7 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, const parser::Obj
 //===========================================
 // constructPlayer
 //===========================================
-bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t parentId,
+bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -272,7 +272,7 @@ bool GeometryFactory::constructPlayer(const parser::Object& obj, entityId_t pare
 //===========================================
 // GeometryFactory::constructPortal
 //===========================================
-bool GeometryFactory::constructPortal(const parser::Object& obj, entityId_t parentId,
+bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -309,7 +309,7 @@ bool GeometryFactory::constructPortal(const parser::Object& obj, entityId_t pare
 //===========================================
 // GeometryFactory::constructBoundaries
 //===========================================
-bool GeometryFactory::constructBoundaries(const parser::Object& obj, entityId_t parentId,
+bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -363,7 +363,7 @@ bool GeometryFactory::constructBoundaries(const parser::Object& obj, entityId_t 
 //===========================================
 // GeometryFactory::constructRegion_r
 //===========================================
-bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Object& obj,
+bool GeometryFactory::constructRegion_r(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -472,7 +472,7 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
     region->ceilingTexture =  getValue(obj.dict, "ceiling_texture", defaultCeilingTex);
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
-      const parser::Object& child = **it;
+      parser::Object& child = **it;
 
       m_rootFactory.constructObject(child.type, -1, child, entityId, transform);
     }
@@ -493,7 +493,7 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, const parser::Objec
 //===========================================
 // GeometryFactory::constructRootRegion
 //===========================================
-bool GeometryFactory::constructRootRegion(const parser::Object& obj) {
+bool GeometryFactory::constructRootRegion(parser::Object& obj) {
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
@@ -538,8 +538,8 @@ bool GeometryFactory::constructRootRegion(const parser::Object& obj) {
 //===========================================
 // GeometryFactory::constructRegion
 //===========================================
-bool GeometryFactory::constructRegion(entityId_t entityId, const parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+bool GeometryFactory::constructRegion(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
 
   if (parentId == -1) {
     return constructRootRegion(obj);
@@ -580,7 +580,7 @@ const set<string>& GeometryFactory::types() const {
 // GeometryFactory::constructObject
 //===========================================
 bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
-  const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
+  parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
   if (type == "player") {
     return constructPlayer(obj, parentId, parentTransform);

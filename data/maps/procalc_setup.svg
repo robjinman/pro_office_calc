@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627417"
-     inkscape:cx="2062.2553"
-     inkscape:cy="-1082.5606"
+     inkscape:zoom="1"
+     inkscape:cx="1120.7045"
+     inkscape:cy="-847.96665"
      inkscape:document-units="px"
-     inkscape:current-layer="g14814"
+     inkscape:current-layer="svg4381"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="999"
@@ -349,7 +349,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1"
            x="133.65912"
            y="275.51862"
-           style="font-size:12.94190121px">ammo=data/ammo.png</tspan></text>
+           style="font-size:12.94190121px">ammo=data/ammo.png,25,15</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -421,7 +421,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0"
            x="134.72821"
            y="364.62912"
-           style="font-size:12.94190121px">bad_guy=data/bad_guy.png</tspan></text>
+           style="font-size:12.94190121px">bad_guy=data/bad_guy.png,70,70</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
