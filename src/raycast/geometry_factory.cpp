@@ -228,7 +228,7 @@ bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 
-  CDamage* damage = new CDamage(player->body, 10, 10);
+  CDamage* damage = new CDamage(player->body, 10, 3);
   damageSystem.addComponent(pCDamage_t(damage));
 
   CPlayerBehaviour* behaviour = new CPlayerBehaviour(player->body, m_entityManager, m_timeService);

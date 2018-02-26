@@ -28,40 +28,50 @@ void CPlayerBehaviour::update() {
 // CPlayerBehaviour::handleEvent
 //===========================================
 void CPlayerBehaviour::handleEvent(const GameEvent& e) {
-  if (e.name == "entity_damaged") {
-    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  Player& player = *spatialSystem.sg.player;
 
-    Player& player = *spatialSystem.sg.player;
+  if (e.name == "entity_damaged") {
     CDamage& damage = m_entityManager.getComponent<CDamage>(player.body, ComponentKind::C_DAMAGE);
 
-    const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
+    DBG_PRINT("Player health: " << damage.health << "\n");
 
-    if (event.entityId == player.body) {
-      DBG_PRINT("Player health: " << damage.health << "\n");
+    if (player.red == -1) {
+      player.red = Component::getNextId();
 
-      if (player.red == -1) {
-        player.red = Component::getNextId();
+      double maxAlpha = 80;
+      CColourOverlay* overlay = new CColourOverlay(player.red, QColor(200, 0, 0, maxAlpha),
+        Point(0, 0), renderSystem.rg.viewport);
 
-        double maxAlpha = 80;
-        CColourOverlay* overlay = new CColourOverlay(player.red, QColor(200, 0, 0, maxAlpha),
-          Point(0, 0), renderSystem.rg.viewport);
+      renderSystem.addComponent(pCRender_t(overlay));
 
-        renderSystem.addComponent(pCRender_t(overlay));
+      double duration = 0.33;
+      int da = maxAlpha / (duration * m_timeService.frameRate);
 
-        double duration = 0.33;
-        int da = maxAlpha / (duration * m_timeService.frameRate);
+      m_timeService.addTween(Tween{[=](long, double, double) -> bool {
+        int alpha = overlay->colour.alpha() - da;
+        overlay->colour.setAlpha(alpha);
 
-        m_timeService.addTween(Tween{[=](long, double, double) -> bool {
-          int alpha = overlay->colour.alpha() - da;
-          overlay->colour.setAlpha(alpha);
-
-          return alpha > 0;
-        }, [&](long, double, double) {
-          m_entityManager.deleteEntity(player.red);
-          player.red = -1;
-        }}, "redFade");
-      }
+        return alpha > 0;
+      }, [&](long, double, double) {
+        m_entityManager.deleteEntity(player.red);
+        player.red = -1;
+      }}, "redFade");
     }
+  }
+  else if (e.name == "entity_destroyed") {
+    player.alive = false;
+
+    CColourOverlay* overlay = new CColourOverlay(player.red, QColor(200, 0, 0, 80), Point(0, 0),
+      renderSystem.rg.viewport);
+
+    renderSystem.addComponent(pCRender_t(overlay));
+
+    double y = player.feetHeight();
+    double h = player.getTallness();
+
+    player.setFeetHeight(y + 0.9 * h);
+    player.changeTallness(-0.9 * h);
   }
 }

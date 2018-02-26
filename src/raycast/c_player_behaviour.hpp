@@ -17,14 +17,8 @@ class CPlayerBehaviour : public CBehaviour {
     virtual void handleEvent(const GameEvent& e) override;
 
   private:
-    enum state_t {
-      ST_ALIVE,
-      ST_DEAD
-    };
-
     EntityManager& m_entityManager;
     TimeService& m_timeService;
-    state_t m_state = ST_ALIVE;
 };
 
 

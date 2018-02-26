@@ -202,6 +202,12 @@ void CAgent::navigateTo(SpatialSystem& spatialSystem, const Point& p,
 void CAgent::update(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
   DamageSystem& damageSystem, TimeService& timeService, AudioService& audioService) {
 
+  const Player& player = *spatialSystem.sg.player;
+
+  if (!player.alive) {
+    return;
+  }
+
   switch (m_state) {
     case ST_STATIONARY:
       break;

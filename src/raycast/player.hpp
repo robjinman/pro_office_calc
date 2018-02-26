@@ -22,6 +22,7 @@ class Player {
     Player(EntityManager& entityManager, AudioService& audioService, double tallness,
       CZone& zone, const Matrix& transform);
 
+    bool alive = true;
     double vVelocity = 0;
     double activationRadius = 100.0;
     double collectionRadius = 50.0;

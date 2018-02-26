@@ -300,65 +300,67 @@ void RaycastWidget::tick() {
     spatialSystem.jump();
   }
 
-  if (m_keyStates[Qt::Key_Space]) {
-    GameEvent e("player_activate");
-    spatialSystem.handleEvent(e);
+  if (spatialSystem.sg.player->alive) {
+    if (m_keyStates[Qt::Key_Space]) {
+      GameEvent e("player_activate");
+      spatialSystem.handleEvent(e);
 
-    m_keyStates[Qt::Key_Space] = false;
-  }
+      m_keyStates[Qt::Key_Space] = false;
+    }
 
-  Vec2f v; // The vector is in camera space
-  if (m_keyStates[Qt::Key_A]) {
-    v.y -= 1;
-  }
-  if (m_keyStates[Qt::Key_D]) {
-    v.y += 1;
-  }
-  if (m_keyStates[Qt::Key_W] || m_keyStates[Qt::Key_Up]) {
-    v.x += 1;
-  }
-  if (m_keyStates[Qt::Key_S] || m_keyStates[Qt::Key_Down]) {
-    v.x -= 1;
-  }
-
-  if (v.x != 0 || v.y != 0) {
-    double ds = PLAYER_SPEED / FRAME_RATE;
-    spatialSystem.movePlayer(normalise(v) * ds);
-  }
-
-  if (m_keyStates[Qt::Key_Left]) {
-    spatialSystem.hRotateCamera(-(1.2 / FRAME_RATE) * PI);
-  }
-  if (m_keyStates[Qt::Key_Right]) {
-    spatialSystem.hRotateCamera((1.2 / FRAME_RATE) * PI);
-  }
-
-  if (m_cursorCaptured) {
-    setFocus();
-
-    Point centre(width() / 2, height() / 2);
-
-    // Y-axis is top to bottom
-    Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
+    Vec2f v; // The vector is in camera space
+    if (m_keyStates[Qt::Key_A]) {
+      v.y -= 1;
+    }
+    if (m_keyStates[Qt::Key_D]) {
+      v.y += 1;
+    }
+    if (m_keyStates[Qt::Key_W] || m_keyStates[Qt::Key_Up]) {
+      v.x += 1;
+    }
+    if (m_keyStates[Qt::Key_S] || m_keyStates[Qt::Key_Down]) {
+      v.x -= 1;
+    }
 
     if (v.x != 0 || v.y != 0) {
-      QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
-      m_cursor = centre;
+      double ds = PLAYER_SPEED / FRAME_RATE;
+      spatialSystem.movePlayer(normalise(v) * ds);
     }
 
-    if (fabs(v.x) > 0) {
-      double da = 0.0006 * PI * v.x;
-      spatialSystem.hRotateCamera(da);
+    if (m_keyStates[Qt::Key_Left]) {
+      spatialSystem.hRotateCamera(-(1.2 / FRAME_RATE) * PI);
+    }
+    if (m_keyStates[Qt::Key_Right]) {
+      spatialSystem.hRotateCamera((1.2 / FRAME_RATE) * PI);
     }
 
-    if (fabs(v.y) > 0) {
-      double da = 0.0006 * PI * v.y;
-      spatialSystem.vRotateCamera(da);
-    }
+    if (m_cursorCaptured) {
+      setFocus();
 
-    if (m_mouseBtnState == true) {
-      spatialSystem.sg.player->shoot();
-      m_mouseBtnState = false;
+      Point centre(width() / 2, height() / 2);
+
+      // Y-axis is top to bottom
+      Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
+
+      if (v.x != 0 || v.y != 0) {
+        QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
+        m_cursor = centre;
+      }
+
+      if (fabs(v.x) > 0) {
+        double da = 0.0006 * PI * v.x;
+        spatialSystem.hRotateCamera(da);
+      }
+
+      if (fabs(v.y) > 0) {
+        double da = 0.0006 * PI * v.y;
+        spatialSystem.vRotateCamera(da);
+      }
+
+      if (m_mouseBtnState == true) {
+        spatialSystem.sg.player->shoot();
+        m_mouseBtnState = false;
+      }
     }
   }
 
