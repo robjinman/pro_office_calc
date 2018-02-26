@@ -30,6 +30,8 @@ class SpriteFactory : public GameObjectFactory {
     AudioService& m_audioService;
     TimeService& m_timeService;
 
+    bool constructSprite(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
     bool constructAmmo(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructBadGuy(entityId_t entityId, const parser::Object& obj, entityId_t parentId,

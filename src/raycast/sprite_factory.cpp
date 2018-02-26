@@ -21,6 +21,41 @@ using std::set;
 
 
 //===========================================
+// SpriteFactory::constructSprite
+//===========================================
+bool SpriteFactory::constructSprite(entityId_t entityId, const parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  string texName = getValue(obj.dict, "texture", "default");
+  const Texture& texture = renderSystem.rg.textures.at(texName);
+
+  CVRect* vRect = new CVRect(entityId, zone.entityId(), texture.size_wd);
+  Matrix m = transformFromTriangle(obj.path);
+  vRect->setTransform(parentTransform * obj.transform * m);
+  vRect->zone = &zone;
+
+  spatialSystem.addComponent(pComponent_t(vRect));
+
+  CSprite* sprite = new CSprite(entityId, zone.entityId(), texName);
+  sprite->texViews = {
+    QRectF(0, 0, 1, 1)
+  };
+
+  renderSystem.addComponent(pComponent_t(sprite));
+
+  return true;
+}
+
+//===========================================
 // SpriteFactory::constructAmmo
 //===========================================
 bool SpriteFactory::constructAmmo(entityId_t entityId, const parser::Object& obj,
@@ -261,7 +296,7 @@ SpriteFactory::SpriteFactory(RootFactory& rootFactory, EntityManager& entityMana
 // SpriteFactory::types
 //===========================================
 const set<string>& SpriteFactory::types() const {
-  static const set<string> types{"bad_guy", "ammo"};
+  static const set<string> types{"sprite", "bad_guy", "ammo"};
   return types;
 }
 
@@ -271,7 +306,10 @@ const set<string>& SpriteFactory::types() const {
 bool SpriteFactory::constructObject(const string& type, entityId_t entityId,
   const parser::Object& obj, entityId_t region, const Matrix& parentTransform) {
 
-  if (type == "bad_guy") {
+  if (type == "sprite") {
+    return constructSprite(entityId, obj, region, parentTransform);
+  }
+  else if (type == "bad_guy") {
     return constructBadGuy(entityId, obj, region, parentTransform);
   }
   else if (type == "ammo") {
