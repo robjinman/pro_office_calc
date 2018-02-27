@@ -296,11 +296,11 @@ void RaycastWidget::tick() {
 
   m_timeService.update();
 
-  if (m_keyStates[Qt::Key_E]) {
-    spatialSystem.jump();
-  }
-
   if (spatialSystem.sg.player->alive) {
+    if (m_keyStates[Qt::Key_E]) {
+      spatialSystem.jump();
+    }
+
     if (m_keyStates[Qt::Key_Space]) {
       GameEvent e("player_activate");
       spatialSystem.handleEvent(e);

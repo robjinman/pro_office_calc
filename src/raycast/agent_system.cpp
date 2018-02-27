@@ -204,24 +204,24 @@ void CAgent::update(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
 
   const Player& player = *spatialSystem.sg.player;
 
-  if (!player.alive) {
-    return;
-  }
-
   switch (m_state) {
     case ST_STATIONARY:
       break;
     case ST_CHASING_OBJECT:
-      assert(m_targetObject != -1);
-      m_path = spatialSystem.shortestPath(entityId(), m_targetObject, 10);
-      m_pathClosed = false;
+      if (player.alive) {
+        assert(m_targetObject != -1);
+        m_path = spatialSystem.shortestPath(entityId(), m_targetObject, 10);
+        m_pathClosed = false;
+      }
     case ST_ON_FIXED_PATH:
       assert(m_path.size() > 0);
       followPath(spatialSystem, timeService);
       break;
   }
 
-  attemptShot(agentSystem, spatialSystem, damageSystem, timeService, audioService);
+  if (player.alive) {
+    attemptShot(agentSystem, spatialSystem, damageSystem, timeService, audioService);
+  }
 }
 
 //===========================================

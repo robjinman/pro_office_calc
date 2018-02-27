@@ -177,11 +177,10 @@ void Player::shoot() {
   if (m_shootTimer.ready()) {
     InventorySystem& inventorySystem = m_entityManager
       .system<InventorySystem>(ComponentKind::C_INVENTORY);
+    AnimationSystem& animationSystem = m_entityManager
+      .system<AnimationSystem>(ComponentKind::C_ANIMATION);
 
     if (inventorySystem.getBucketValue("ammo") > 0) {
-      AnimationSystem& animationSystem = m_entityManager
-        .system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
       DamageSystem& damageSystem = m_entityManager
         .system<DamageSystem>(ComponentKind::C_DAMAGE);
 
@@ -191,6 +190,7 @@ void Player::shoot() {
       damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
     }
     else {
+      animationSystem.playAnimation(sprite, "shoot_no_ammo", false);
       m_audioService.playSound("click");
     }
   }

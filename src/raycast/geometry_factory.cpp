@@ -261,6 +261,14 @@ bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
       QRectF(0, 0, 0.25, 1)
     }}
   })));
+  shoot->animations.insert(std::make_pair("shoot_no_ammo", Animation(m_timeService.frameRate, 0.2, {
+    AnimationFrame{{
+      QRectF(0.25, 0, 0.25, 1)
+    }},
+    AnimationFrame{{
+      QRectF(0, 0, 0.25, 1)
+    }}
+  })));
 
   animationSystem.addComponent(pCAnimation_t(shoot));
 
