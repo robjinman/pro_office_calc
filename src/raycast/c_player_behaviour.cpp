@@ -25,9 +25,9 @@ void CPlayerBehaviour::update() {
 }
 
 //===========================================
-// CPlayerBehaviour::handleEvent
+// CPlayerBehaviour::handleTargetedEvent
 //===========================================
-void CPlayerBehaviour::handleEvent(const GameEvent& e) {
+void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   Player& player = *spatialSystem.sg.player;

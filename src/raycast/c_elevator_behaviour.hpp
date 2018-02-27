@@ -24,7 +24,8 @@ class CElevatorBehaviour : public CBehaviour {
       const std::vector<double>& levels);
 
     virtual void update() override;
-    virtual void handleEvent(const GameEvent& e) override;
+    virtual void handleBroadcastedEvent(const GameEvent& e) override {}
+    virtual void handleTargetedEvent(const GameEvent& e) override;
 
     void setSpeed(double speed);
 

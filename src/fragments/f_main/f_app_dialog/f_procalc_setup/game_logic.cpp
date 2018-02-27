@@ -110,7 +110,7 @@ void GameLogic::onButtonPress(const Event& event) {
       EActivateEntity e;
 
       m_success = true;
-      m_entityManager.fireEvent(e, set<entityId_t>{doorId});
+      m_entityManager.fireEvent(e, {doorId});
       return;
     }
   }

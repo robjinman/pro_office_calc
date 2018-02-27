@@ -14,7 +14,8 @@ class CPlayerBehaviour : public CBehaviour {
     CPlayerBehaviour(entityId_t entityId, EntityManager& entityManager, TimeService& timeService);
 
     virtual void update() override;
-    virtual void handleEvent(const GameEvent& e) override;
+    virtual void handleBroadcastedEvent(const GameEvent& e) override {}
+    virtual void handleTargetedEvent(const GameEvent& e) override;
 
   private:
     EntityManager& m_entityManager;

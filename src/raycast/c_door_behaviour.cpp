@@ -68,13 +68,13 @@ void CDoorBehaviour::update() {
 }
 
 //===========================================
-// CDoorBehaviour::handleEvent
+// CDoorBehaviour::handleTargetedEvent
 //===========================================
-void CDoorBehaviour::handleEvent(const GameEvent& e) {
+void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
   const std::set<std::string> EVENT_NAMES{
     "activate_entity",
     "player_activate_entity",
-    "switch_activate_entity"
+    "switch_activated"
   };
 
   if (!isPlayerActivated && e.name == "player_activate_entity") {

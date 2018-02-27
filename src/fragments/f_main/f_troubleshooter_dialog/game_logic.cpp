@@ -41,7 +41,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 // GameLogic::onRaycastEvent
 //===========================================
 void GameLogic::onRaycastEvent(const GameEvent& event) {
-  if (event.name == "switch_activate") {
+  if (event.name == "switch_activated") {
     const auto& e = dynamic_cast<const ESwitchActivate&>(event);
 
     if (e.state == SwitchState::ON) {

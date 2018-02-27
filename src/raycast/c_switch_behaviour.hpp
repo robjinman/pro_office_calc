@@ -16,19 +16,7 @@ enum class SwitchState { ON, OFF };
 
 struct ESwitchActivate : public GameEvent {
   ESwitchActivate(entityId_t switchEntityId, SwitchState state, const std::string& message)
-    : GameEvent("switch_activate"),
-      switchEntityId(switchEntityId),
-      state(state),
-      message(message) {}
-
-  entityId_t switchEntityId;
-  SwitchState state;
-  std::string message;
-};
-
-struct ESwitchActivateEntity : public GameEvent {
-  ESwitchActivateEntity(entityId_t switchEntityId, SwitchState state, const std::string& message)
-    : GameEvent("switch_activate_entity"),
+    : GameEvent("switch_activated"),
       switchEntityId(switchEntityId),
       state(state),
       message(message) {}
@@ -43,10 +31,11 @@ class CSwitchBehaviour : public CBehaviour {
     CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, entityId_t target,
       const std::string& message, SwitchState initialState, bool toggleable, double toggleDelay);
 
-    virtual void update() override;
-    virtual void handleEvent(const GameEvent& e) override;
+    void update() override;
+    void handleBroadcastedEvent(const GameEvent& event) override {}
+    void handleTargetedEvent(const GameEvent& event) override;
 
-    virtual ~CSwitchBehaviour() override {}
+    ~CSwitchBehaviour() override {}
 
   private:
     CWallDecal* getDecal() const;

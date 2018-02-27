@@ -14,7 +14,8 @@ struct CBehaviour : public Component {
     : Component(entityId, ComponentKind::C_BEHAVIOUR) {}
 
   virtual void update() = 0;
-  virtual void handleEvent(const GameEvent& e) = 0;
+  virtual void handleBroadcastedEvent(const GameEvent& event) = 0;
+  virtual void handleTargetedEvent(const GameEvent& event) = 0;
 };
 
 typedef std::unique_ptr<CBehaviour> pCBehaviour_t;

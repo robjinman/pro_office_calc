@@ -67,11 +67,11 @@ void CElevatorBehaviour::update() {
 }
 
 //===========================================
-// CElevatorBehaviour::handleEvent
+// CElevatorBehaviour::handleTargetedEvent
 //===========================================
-void CElevatorBehaviour::handleEvent(const GameEvent& e) {
-  if (e.name == "switch_activate_entity") {
-    const ESwitchActivateEntity& event = dynamic_cast<const ESwitchActivateEntity&>(e);
+void CElevatorBehaviour::handleTargetedEvent(const GameEvent& e) {
+  if (e.name == "switch_activated") {
+    const ESwitchActivate& event = dynamic_cast<const ESwitchActivate&>(e);
 
     DBG_PRINT("Elevator activated\n");
 

@@ -13,7 +13,8 @@ class CDoorBehaviour : public CBehaviour {
     CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate);
 
     virtual void update() override;
-    virtual void handleEvent(const GameEvent& e) override;
+    virtual void handleBroadcastedEvent(const GameEvent& e) override {}
+    virtual void handleTargetedEvent(const GameEvent& e) override;
 
     bool isPlayerActivated = true;
     bool closeAutomatically = true;

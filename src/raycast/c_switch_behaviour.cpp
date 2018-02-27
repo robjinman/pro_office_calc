@@ -54,9 +54,9 @@ void CSwitchBehaviour::setDecal() {
 }
 
 //===========================================
-// CSwitchBehaviour::handleEvent
+// CSwitchBehaviour::handleTargetedEvent
 //===========================================
-void CSwitchBehaviour::handleEvent(const GameEvent& e) {
+void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e) {
   if (e.name == "player_activate_entity") {
     if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {
@@ -72,10 +72,8 @@ void CSwitchBehaviour::handleEvent(const GameEvent& e) {
         setDecal();
 
         ESwitchActivate eActivate(entityId(), m_state, m_message);
+        m_entityManager.fireEvent(eActivate, {m_target});
         m_entityManager.broadcastEvent(eActivate);
-
-        ESwitchActivateEntity eActivateEntity(entityId(), m_state, m_message);
-        m_entityManager.fireEvent(eActivateEntity, set<entityId_t>{m_target});
       }
     }
   }

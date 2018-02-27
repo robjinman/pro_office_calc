@@ -22,7 +22,7 @@ void BehaviourSystem::handleEvent(const GameEvent& event, const set<entityId_t>&
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
     if (entities.count(it->first)) {
       CBehaviour& c = *it->second;
-      c.handleEvent(event);
+      c.handleTargetedEvent(event);
     }
   }
 }
@@ -33,7 +33,7 @@ void BehaviourSystem::handleEvent(const GameEvent& event, const set<entityId_t>&
 void BehaviourSystem::handleEvent(const GameEvent& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
     CBehaviour& c = *it->second;
-    c.handleEvent(event);
+    c.handleBroadcastedEvent(event);
   }
 }
 

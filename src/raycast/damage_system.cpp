@@ -49,11 +49,13 @@ void DamageSystem::damageEntity(entityId_t id, double damage) {
 
     if (component.health > 0) {
       component.health -= damage;
+      m_entityManager.fireEvent(EEntityDamaged(id), {id});
       m_entityManager.broadcastEvent(EEntityDamaged(id));
 
       if (component.health <= 0) {
         component.health = 0;
 
+        m_entityManager.fireEvent(EEntityDestroyed(id), {id});
         m_entityManager.broadcastEvent(EEntityDestroyed(id));
       }
     }
