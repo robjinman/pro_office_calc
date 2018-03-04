@@ -22,7 +22,7 @@ using std::string;
 namespace making_progress {
 
 
-static const int MAX_KEY_PRESSES = 16;
+static const int MAX_KEY_PRESSES = 24;
 static std::mt19937 randEngine(randomSeed());
 
 
@@ -191,7 +191,6 @@ void GameLogic::onEntityChangeZone(const GameEvent& event) {
 //===========================================
 GameLogic::~GameLogic() {
   m_eventSystem.forget(m_eventIdx);
-  m_entityManager.deleteEntity(m_entityId);
 }
 
 
