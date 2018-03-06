@@ -220,7 +220,7 @@ void CAgent::update(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
   }
 
   if (player.alive) {
-    attemptShot(agentSystem, spatialSystem, damageSystem, timeService, audioService);
+    //attemptShot(agentSystem, spatialSystem, damageSystem, timeService, audioService);
   }
 }
 

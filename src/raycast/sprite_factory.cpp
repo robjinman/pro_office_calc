@@ -17,6 +17,7 @@
 #include "utils.hpp"
 
 
+using std::vector;
 using std::string;
 using std::set;
 
@@ -104,99 +105,35 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     CSprite& sprite = m_entityManager.getComponent<CSprite>(entityId, ComponentKind::C_RENDER);
     sprite.texViews = {
-      QRectF(0, 0, 0.125, 0.125),
-      QRectF(0.125, 0, 0.125, 0.125),
-      QRectF(0.25, 0, 0.125, 0.125),
-      QRectF(0.375, 0, 0.125, 0.125),
-      QRectF(0.5, 0, 0.125, 0.125),
-      QRectF(0.625, 0, 0.125, 0.125),
-      QRectF(0.750, 0, 0.125, 0.125),
-      QRectF(0.875, 0, 0.125, 0.125)
+      QRectF(0, 0, 0.125, 0.0833),
+      QRectF(0.125, 0, 0.125, 0.0833),
+      QRectF(0.25, 0, 0.125, 0.0833),
+      QRectF(0.375, 0, 0.125, 0.0833),
+      QRectF(0.5, 0, 0.125, 0.0833),
+      QRectF(0.625, 0, 0.125, 0.0833),
+      QRectF(0.750, 0, 0.125, 0.0833),
+      QRectF(0.875, 0, 0.125, 0.0833)
     };
 
     CAnimation* anim = new CAnimation(entityId);
-    anim->animations.insert(std::make_pair("idle", Animation(m_timeService.frameRate, 1.0, {
-      AnimationFrame{{
-        QRectF(0, 0, 0.125, 0.125),
-        QRectF(0.125, 0, 0.125, 0.125),
-        QRectF(0.25, 0, 0.125, 0.125),
-        QRectF(0.375, 0, 0.125, 0.125),
-        QRectF(0.5, 0, 0.125, 0.125),
-        QRectF(0.625, 0, 0.125, 0.125),
-        QRectF(0.750, 0, 0.125, 0.125),
-        QRectF(0.875, 0, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.125, 0.125, 0.125),
-        QRectF(0.125, 0.125, 0.125, 0.125),
-        QRectF(0.25, 0.125, 0.125, 0.125),
-        QRectF(0.375, 0.125, 0.125, 0.125),
-        QRectF(0.5, 0.125, 0.125, 0.125),
-        QRectF(0.625, 0.125, 0.125, 0.125),
-        QRectF(0.750, 0.125, 0.125, 0.125),
-        QRectF(0.875, 0.125, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.25, 0.125, 0.125),
-        QRectF(0.125, 0.25, 0.125, 0.125),
-        QRectF(0.25, 0.25, 0.125, 0.125),
-        QRectF(0.375, 0.25, 0.125, 0.125),
-        QRectF(0.5, 0.25, 0.125, 0.125),
-        QRectF(0.625, 0.25, 0.125, 0.125),
-        QRectF(0.750, 0.25, 0.125, 0.125),
-        QRectF(0.875, 0.25, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.375, 0.125, 0.125),
-        QRectF(0.125, 0.375, 0.125, 0.125),
-        QRectF(0.25, 0.375, 0.125, 0.125),
-        QRectF(0.375, 0.375, 0.125, 0.125),
-        QRectF(0.5, 0.375, 0.125, 0.125),
-        QRectF(0.625, 0.375, 0.125, 0.125),
-        QRectF(0.750, 0.375, 0.125, 0.125),
-        QRectF(0.875, 0.375, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.5, 0.125, 0.125),
-        QRectF(0.125, 0.5, 0.125, 0.125),
-        QRectF(0.25, 0.5, 0.125, 0.125),
-        QRectF(0.375, 0.5, 0.125, 0.125),
-        QRectF(0.5, 0.5, 0.125, 0.125),
-        QRectF(0.625, 0.5, 0.125, 0.125),
-        QRectF(0.750, 0.5, 0.125, 0.125),
-        QRectF(0.875, 0.5, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.625, 0.125, 0.125),
-        QRectF(0.125, 0.625, 0.125, 0.125),
-        QRectF(0.25, 0.625, 0.125, 0.125),
-        QRectF(0.375, 0.625, 0.125, 0.125),
-        QRectF(0.5, 0.625, 0.125, 0.125),
-        QRectF(0.625, 0.625, 0.125, 0.125),
-        QRectF(0.750, 0.625, 0.125, 0.125),
-        QRectF(0.875, 0.625, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.75, 0.125, 0.125),
-        QRectF(0.125, 0.75, 0.125, 0.125),
-        QRectF(0.25, 0.75, 0.125, 0.125),
-        QRectF(0.375, 0.75, 0.125, 0.125),
-        QRectF(0.5, 0.75, 0.125, 0.125),
-        QRectF(0.625, 0.75, 0.125, 0.125),
-        QRectF(0.750, 0.75, 0.125, 0.125),
-        QRectF(0.875, 0.75, 0.125, 0.125)
-      }},
-      AnimationFrame{{
-        QRectF(0, 0.875, 0.125, 0.125),
-        QRectF(0.125, 0.875, 0.125, 0.125),
-        QRectF(0.25, 0.875, 0.125, 0.125),
-        QRectF(0.375, 0.875, 0.125, 0.125),
-        QRectF(0.5, 0.875, 0.125, 0.125),
-        QRectF(0.625, 0.875, 0.125, 0.125),
-        QRectF(0.750, 0.875, 0.125, 0.125),
-        QRectF(0.875, 0.875, 0.125, 0.125)
-      }}
-    })));
+    int numFrames = 12;
+    int numViews = 8;
+    double w = 1.0 / numViews;
+    double h = 1.0 / numFrames;
+
+    vector<AnimationFrame> frames;
+    for (int f = 0; f < numFrames; ++f) {
+      AnimationFrame frame;
+
+      for (int v = 0; v < numViews; ++v) {
+        frame.texViews.push_back(QRectF(w * v, h * f, w, h));
+      }
+
+      frames.push_back(frame);
+    }
+
+    anim->animations.insert(std::make_pair("idle", Animation(m_timeService.frameRate, 1.0,
+      frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
     animationSystem.playAnimation(entityId, "idle", true);
