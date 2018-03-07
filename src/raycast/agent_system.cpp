@@ -180,7 +180,6 @@ void CAgent::attemptShot(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
   });
 }
 
-
 //===========================================
 // CAgent::navigateTo
 //===========================================

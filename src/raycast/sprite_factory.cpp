@@ -83,6 +83,27 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, parser::Object& obj, enti
 }
 
 //===========================================
+// constructFrames
+//===========================================
+static vector<AnimationFrame> constructFrames(int W, int H, int firstRow, int lastRow) {
+  double w = 1.0 / W;
+  double h = 1.0 / H;
+
+  vector<AnimationFrame> frames;
+  for (int f = firstRow; f < lastRow + 1; ++f) {
+    AnimationFrame frame;
+
+    for (int v = 0; v < W; ++v) {
+      frame.texViews.push_back(QRectF(w * v, h * f, w, h));
+    }
+
+    frames.push_back(frame);
+  }
+
+  return frames;
+}
+
+//===========================================
 // SpriteFactory::constructBadGuy
 //===========================================
 bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, entityId_t parentId,
@@ -115,28 +136,15 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
       QRectF(0.875, 0, 0.125, 0.0833)
     };
 
+    // Number of frames in sprite sheet
+    const int W = 8;
+    const int H = 13;
+
     CAnimation* anim = new CAnimation(entityId);
-    int numFrames = 12;
-    int numViews = 8;
-    double w = 1.0 / numViews;
-    double h = 1.0 / numFrames;
-
-    vector<AnimationFrame> frames;
-    for (int f = 0; f < numFrames; ++f) {
-      AnimationFrame frame;
-
-      for (int v = 0; v < numViews; ++v) {
-        frame.texViews.push_back(QRectF(w * v, h * f, w, h));
-      }
-
-      frames.push_back(frame);
-    }
-
-    anim->animations.insert(std::make_pair("idle", Animation(m_timeService.frameRate, 1.0,
-      frames)));
+    vector<AnimationFrame> frames = constructFrames(W, H, 1, 12);
+    anim->animations.insert(std::make_pair("run", Animation(m_timeService.frameRate, 1.0, frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
-    animationSystem.playAnimation(entityId, "idle", true);
 
     string s = getValue(obj.dict, "spawn_point", "");
     if (s != "") {
