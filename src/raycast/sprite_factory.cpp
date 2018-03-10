@@ -85,12 +85,12 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, parser::Object& obj, enti
 //===========================================
 // constructFrames
 //===========================================
-static vector<AnimationFrame> constructFrames(int W, int H, int firstRow, int lastRow) {
+static vector<AnimationFrame> constructFrames(int W, int H, const vector<int>& rows) {
   double w = 1.0 / W;
   double h = 1.0 / H;
 
   vector<AnimationFrame> frames;
-  for (int f = firstRow; f < lastRow + 1; ++f) {
+  for (int f : rows) {
     AnimationFrame frame;
 
     for (int v = 0; v < W; ++v) {
@@ -124,27 +124,27 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
     SpawnSystem& spawnSystem = m_entityManager.system<SpawnSystem>(ComponentKind::C_SPAWN);
     AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
 
-    CSprite& sprite = m_entityManager.getComponent<CSprite>(entityId, ComponentKind::C_RENDER);
-    sprite.texViews = {
-      QRectF(0, 0, 0.125, 0.0833),
-      QRectF(0.125, 0, 0.125, 0.0833),
-      QRectF(0.25, 0, 0.125, 0.0833),
-      QRectF(0.375, 0, 0.125, 0.0833),
-      QRectF(0.5, 0, 0.125, 0.0833),
-      QRectF(0.625, 0, 0.125, 0.0833),
-      QRectF(0.750, 0, 0.125, 0.0833),
-      QRectF(0.875, 0, 0.125, 0.0833)
-    };
-
     // Number of frames in sprite sheet
     const int W = 8;
-    const int H = 13;
+    const int H = 14;
 
     CAnimation* anim = new CAnimation(entityId);
-    vector<AnimationFrame> frames = constructFrames(W, H, 1, 12);
-    anim->animations.insert(std::make_pair("run", Animation(m_timeService.frameRate, 1.0, frames)));
+
+    vector<AnimationFrame> frames = constructFrames(W, H,
+      { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 });
+    anim->animations.insert(std::make_pair("run",
+      Animation(m_timeService.frameRate, 1.0, frames)));
+
+    frames = constructFrames(W, H, { 1, 0 });
+    anim->animations.insert(std::make_pair("shoot",
+      Animation(m_timeService.frameRate, 1.0, frames)));
+
+    frames = constructFrames(W, H, { 0 });
+    anim->animations.insert(std::make_pair("idle",
+      Animation(m_timeService.frameRate, 1.0, frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
+    animationSystem.playAnimation(entityId, "idle", true);
 
     string s = getValue(obj.dict, "spawn_point", "");
     if (s != "") {

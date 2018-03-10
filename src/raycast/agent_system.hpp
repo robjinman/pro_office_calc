@@ -18,6 +18,7 @@ class DamageSystem;
 class SpatialSystem;
 class AgentSystem;
 class CVRect;
+class EntityManager;
 
 class CAgent : public Component {
   friend class AgentSystem;
@@ -35,7 +36,8 @@ class CAgent : public Component {
     enum state_t {
       ST_STATIONARY,
       ST_ON_FIXED_PATH,
-      ST_CHASING_OBJECT
+      ST_CHASING_OBJECT,
+      ST_SHOOTING
     };
 
     state_t m_state = ST_STATIONARY;
@@ -49,22 +51,25 @@ class CAgent : public Component {
     int m_waypointIdx = -1;
     std::function<void(CAgent&)> m_onFinish;
 
-    void navigateTo(SpatialSystem& spatialSystem, const Point& p,
+    void navigateTo(EntityManager& entityManager, const Point& p,
       std::function<void(CAgent&)> onFinish);
-    void startPatrol();
+    void startPatrol(EntityManager& entityManager);
 
-    bool hasLineOfSight(SpatialSystem& spatialSystem, Matrix& m, Vec2f& ray, double& hAngle,
+    bool hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f& ray, double& hAngle,
       double& vAngle, double& height) const;
 
-    void followPath(SpatialSystem& spatialSystem, TimeService& timeService);
-    void attemptShot(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
-      DamageSystem& damageSystem, TimeService& timeService, AudioService& audioService);
+    void followPath(EntityManager& entityManager, TimeService& timeService);
+    void attemptShot(EntityManager& entityManager, TimeService& timeService,
+      AudioService& audioService);
 
-    virtual void update(AgentSystem& agentSystem, SpatialSystem& spatialSystem,
-      DamageSystem& damageSystem, TimeService& timeService, AudioService& audioService);
+    virtual void update(EntityManager& entityManager, TimeService& timeService,
+      AudioService& audioService);
 
-    void onPlayerChangeZone(entityId_t newZone, SpatialSystem& spatialSystem);
-    void onDamage(SpatialSystem& spatialSystem);
+    void onPlayerChangeZone(entityId_t newZone, EntityManager& entityManager);
+    void onDamage(EntityManager& entityManager);
+
+    void setAnimation(EntityManager& entityManager);
+    void setState(EntityManager& entityManager, state_t state);
 };
 
 typedef std::unique_ptr<CAgent> pCAgent_t;
