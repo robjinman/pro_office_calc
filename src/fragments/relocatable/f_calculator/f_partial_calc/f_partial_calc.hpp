@@ -14,8 +14,7 @@ class FPartialCalc : public QObject, public Fragment {
   Q_OBJECT
 
   public:
-    FPartialCalc(Fragment& parent, FragmentData& parentData,
-      const CommonFragData& commonData);
+    FPartialCalc(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
@@ -24,6 +23,7 @@ class FPartialCalc : public QObject, public Fragment {
 
   private slots:
     void onButtonClick(int id);
+    void onButtonPress(int id);
 
   private:
     void toggleFeatures(const std::set<buttonId_t>& features);

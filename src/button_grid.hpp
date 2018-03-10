@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <QWidget>
+#include <QGridLayout>
 #include "qt_obj_ptr.hpp"
 
 
@@ -42,14 +43,17 @@ class ButtonGrid : public QWidget {
     ButtonGrid(QWidget* parent);
     virtual ~ButtonGrid();
 
+    QtObjPtr<QGridLayout> grid;
     std::vector<QtObjPtr<QPushButton>> buttons;
     QtObjPtr<QButtonGroup> buttonGroup;
 
   private slots:
     void onBtnClick(int id);
+    void onBtnPress(int id);
 
   signals:
     void buttonClicked(int id);
+    void buttonPressed(int id);
 };
 
 

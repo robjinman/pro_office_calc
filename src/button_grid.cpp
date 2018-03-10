@@ -1,5 +1,4 @@
 #include <string>
-#include <QGridLayout>
 #include <QButtonGroup>
 #include <QPushButton>
 #include "button_grid.hpp"
@@ -15,7 +14,11 @@ using std::string;
 static QtObjPtr<QPushButton> makeButton(QWidget* parent, const QString& text) {
   auto btn = makeQtObjPtr<QPushButton>(text, parent);
 
+  QSizePolicy sp = btn->sizePolicy();
+  sp.setRetainSizeWhenHidden(true);
+
   btn->setMaximumHeight(60);
+  btn->setSizePolicy(sp);
 
   return btn;
 }
@@ -26,10 +29,10 @@ static QtObjPtr<QPushButton> makeButton(QWidget* parent, const QString& text) {
 ButtonGrid::ButtonGrid(QWidget* parent)
   : QWidget(parent) {
 
-  QGridLayout* grid = new QGridLayout;
+  grid = makeQtObjPtr<QGridLayout>();
   grid->setSpacing(1);
 
-  setLayout(grid);
+  setLayout(grid.get());
 
   auto btn0 = makeButton(this, "0");
   auto btn1 = makeButton(this, "1");
@@ -104,6 +107,7 @@ ButtonGrid::ButtonGrid(QWidget* parent)
   buttons.push_back(std::move(btnClear));
   buttons.push_back(std::move(btnEquals));
 
+  connect(buttonGroup.get(), SIGNAL(buttonPressed(int)), this, SLOT(onBtnPress(int)));
   connect(buttonGroup.get(), SIGNAL(buttonClicked(int)), this, SLOT(onBtnClick(int)));
 }
 
@@ -112,6 +116,13 @@ ButtonGrid::ButtonGrid(QWidget* parent)
 //===========================================
 void ButtonGrid::onBtnClick(int id) {
   emit buttonClicked(id);
+}
+
+//===========================================
+// ButtonGrid::onBtnPress
+//===========================================
+void ButtonGrid::onBtnPress(int id) {
+  emit buttonPressed(id);
 }
 
 //===========================================

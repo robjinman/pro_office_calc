@@ -1,4 +1,5 @@
 #include <cassert>
+#include <map>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QApplication>
@@ -11,11 +12,29 @@
 #include "state_ids.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
+#include "evasive_button.hpp"
+#include "exploding_button.hpp"
 
 
 using std::string;
 using making_progress::SetupCompleteEvent;
 
+
+struct BtnDesc {
+  QString text;
+  int idx;
+  int row;
+  int col;
+};
+
+static const std::map<buttonId_t, BtnDesc> EVASIVE_BTNS = {
+  { BTN_POINT, { ".", 14, 4, 1 } },
+  { BTN_ONE, { "1", 1, 3, 0 } }
+};
+
+static const std::map<buttonId_t, BtnDesc> EXPLODING_BTNS = {
+  { BTN_THREE, { "3", 3, 3, 2 } }
+};
 
 //===========================================
 // FPartialCalc::FPartialCalc
@@ -39,6 +58,15 @@ void FPartialCalc::toggleFeatures(const std::set<buttonId_t>& features) {
   auto& parentData = parentFragData<FCalculatorData>();
   auto& group = *parentData.wgtButtonGrid->buttonGroup;
 
+  for (auto it = EVASIVE_BTNS.begin(); it != EVASIVE_BTNS.end(); ++it) {
+    int idx = it->second.idx;
+
+    EvasiveButton& btn = dynamic_cast<EvasiveButton&>(*parentData.wgtButtonGrid->buttons[idx]);
+    btn.reset();
+  }
+
+  parentData.wgtButtonGrid->grid->update();
+
   for (auto& button : parentData.wgtButtonGrid->buttons) {
     buttonId_t id = static_cast<buttonId_t>(group.id(button.get()));
 
@@ -52,6 +80,23 @@ void FPartialCalc::toggleFeatures(const std::set<buttonId_t>& features) {
 }
 
 //===========================================
+// addButton
+//===========================================
+template <class T>
+void addButton(ButtonGrid& btnGrid, buttonId_t id, const BtnDesc& desc) {
+  T* btn = new T(desc.text);
+
+  QSizePolicy sp = btn->sizePolicy();
+  sp.setRetainSizeWhenHidden(true);
+  btn->setMaximumHeight(60);
+  btn->setSizePolicy(sp);
+
+  btnGrid.grid->addWidget(btn, desc.row, desc.col);
+  btnGrid.buttonGroup->addButton(btn, id);
+  btnGrid.buttons[desc.idx] = makeQtObjPtrFromRawPtr<QPushButton>(btn);
+}
+
+//===========================================
 // FPartialCalc::reload
 //===========================================
 void FPartialCalc::reload(const FragmentSpec& spec_) {
@@ -60,10 +105,22 @@ void FPartialCalc::reload(const FragmentSpec& spec_) {
   auto& parentData = parentFragData<FCalculatorData>();
   auto& parent = parentFrag<FCalculator>();
 
+  auto& wgtButtonGrid = *parentData.wgtButtonGrid;
+
+  for (auto it = EXPLODING_BTNS.begin(); it != EXPLODING_BTNS.end(); ++it) {
+    addButton<ExplodingButton>(wgtButtonGrid, it->first, it->second);
+  }
+
+  for (auto it = EVASIVE_BTNS.begin(); it != EVASIVE_BTNS.end(); ++it) {
+    addButton<EvasiveButton>(wgtButtonGrid, it->first, it->second);
+  }
+
   disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
     SLOT(onButtonClick(int)));
   connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
+  connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
+    SLOT(onButtonPress(int)));
 }
 
 //===========================================
@@ -79,6 +136,8 @@ void FPartialCalc::cleanUp() {
     button->show();
   }
 
+  disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
+    SLOT(onButtonPress(int)));
   disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
   connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
@@ -91,6 +150,24 @@ void FPartialCalc::cleanUp() {
 // FPartialCalc:onButtonClick
 //===========================================
 void FPartialCalc::onButtonClick(int id) {
+  if (EVASIVE_BTNS.count(static_cast<buttonId_t>(id)) > 0) {
+    return;
+  }
+
+  parentFrag<FCalculator>().onButtonClick(id);
+
+  string display = parentFragData<FCalculatorData>().wgtDigitDisplay->text().toStdString();
+  commonData.eventSystem.fire(pEvent_t(new making_progress::ButtonPressEvent(display)));
+}
+
+//===========================================
+// FPartialCalc:onButtonPress
+//===========================================
+void FPartialCalc::onButtonPress(int id) {
+  if (EVASIVE_BTNS.count(static_cast<buttonId_t>(id)) == 0) {
+    return;
+  }
+
   parentFrag<FCalculator>().onButtonClick(id);
 
   string display = parentFragData<FCalculatorData>().wgtDigitDisplay->text().toStdString();
