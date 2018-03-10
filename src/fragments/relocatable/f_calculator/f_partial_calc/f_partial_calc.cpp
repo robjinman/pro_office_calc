@@ -82,10 +82,7 @@ void FPartialCalc::toggleFeatures(const std::set<buttonId_t>& features) {
 //===========================================
 // addButton
 //===========================================
-template <class T>
-void addButton(ButtonGrid& btnGrid, buttonId_t id, const BtnDesc& desc) {
-  T* btn = new T(desc.text);
-
+static void addButton(QPushButton* btn, ButtonGrid& btnGrid, buttonId_t id, const BtnDesc& desc) {
   QSizePolicy sp = btn->sizePolicy();
   sp.setRetainSizeWhenHidden(true);
   btn->setMaximumHeight(60);
@@ -108,11 +105,12 @@ void FPartialCalc::reload(const FragmentSpec& spec_) {
   auto& wgtButtonGrid = *parentData.wgtButtonGrid;
 
   for (auto it = EXPLODING_BTNS.begin(); it != EXPLODING_BTNS.end(); ++it) {
-    addButton<ExplodingButton>(wgtButtonGrid, it->first, it->second);
+    addButton(new ExplodingButton(&wgtButtonGrid, it->second.text, commonData.updateLoop),
+      wgtButtonGrid, it->first, it->second);
   }
 
   for (auto it = EVASIVE_BTNS.begin(); it != EVASIVE_BTNS.end(); ++it) {
-    addButton<EvasiveButton>(wgtButtonGrid, it->first, it->second);
+    addButton(new EvasiveButton(it->second.text), wgtButtonGrid, it->first, it->second);
   }
 
   disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
