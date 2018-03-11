@@ -612,10 +612,11 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
 
   double vWorldUnit_px_rp = 1.0 / vWorldUnit_px;
   double F_rp = 1.0 / cam.F;
-  double rayLen_rp = 1.0 / ray.length();
+  double rayLen = ray.length();
+  double rayLen_rp = 1.0 / rayLen;
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
-  for (int j = slice.sliceBottom_px; j < slice.viewportBottom_px; ++j) {
+  for (int j = slice.sliceBottom_px; j <= slice.viewportBottom_px; ++j) {
     assert(isBetween(screenX_px, 0, target.width() - 1) && isBetween(j, 0, target.height() - 1));
 
     QRgb* pixels = reinterpret_cast<QRgb*>(target.scanLine(j));
@@ -625,6 +626,11 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
     double d_ = (cam.height - floorHeight) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
     double s = d * rayLen_rp;
+
+    if (!isBetween(d, 0, rayLen)) {
+      d = rayLen;
+    }
+
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
     Point decalPt;
@@ -727,8 +733,7 @@ static void sampleWallTexture(const QRect& texRect, double camHeight_wd, const S
     }
 
     srcRects.push_back(QRect(srcX, srcY, srcW, srcH));
-    // TODO: The -1 and +2 are a hack to fill ugly seams. Need to find out why this is necessary
-    trgRects.push_back(QRect(trgX, trgY - 1, trgW, trgH + 2));
+    trgRects.push_back(QRect(trgX, trgY, trgW, ceil(trgH)));
   }
 }
 
@@ -766,8 +771,8 @@ static ScreenSlice drawSlice(QImage& target, const RenderGraph& rg, const Camera
 
   const Texture& wallTex = rg.textures.at(texture);
 
-  int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
-  int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
+  double screenSliceBottom_px = floor(viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px);
+  double screenSliceTop_px = ceil(viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px);
 
   if (screenSliceBottom_px - screenSliceTop_px > 0) {
     vector<QRect> srcRects;
@@ -783,8 +788,8 @@ static ScreenSlice drawSlice(QImage& target, const RenderGraph& rg, const Camera
     }
   }
 
-  int viewportBottom_px = (rg.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px;
-  int viewportTop_px = (rg.viewport.y - slice.viewportTop_wd) * vWorldUnit_px;
+  double viewportBottom_px = ceil((rg.viewport.y - slice.viewportBottom_wd) * vWorldUnit_px);
+  double viewportTop_px = floor((rg.viewport.y - slice.viewportTop_wd) * vWorldUnit_px);
 
   return ScreenSlice{
     static_cast<int>(clipNumber(screenSliceBottom_px, Range(0, target.height() - 1))),
@@ -986,7 +991,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   double vWorldUnit_px = viewport_px.y / rg.viewport.y;
 
   QRect rect(QPoint(), QSize(viewport_px.x, viewport_px.y));
-  painter.fillRect(rect, QBrush(QColor(0, 0, 0)));
+  painter.fillRect(rect, QBrush(QColor(255, 0, 0)));
 
   const int W = viewport_px.x;
   CastResult prev;
@@ -1069,7 +1074,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         }
 
         CWallDecal* decal = getWallDecal(spatialSystem, *joinX.join, joinX.X->distanceAlongTarget);
-        if (decal != nullptr) {/*
+        if (decal != nullptr) {
           Slice slice = joinX.slice0;
 
           if (joinX.slice1.visible) {
@@ -1077,8 +1082,8 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
             slice.projSliceTop_wd = joinX.slice1.projSliceTop_wd;
             slice.viewportTop_wd = joinX.slice1.viewportTop_wd;
           }
-*/
-          drawWallDecal(m_target, spatialSystem, rg, *decal, *joinX.X, joinX.slice1, *joinX.nearZone,
+
+          drawWallDecal(m_target, spatialSystem, rg, *decal, *joinX.X, slice, *joinX.nearZone,
             screenX_px, viewport_px, cam.height, vWorldUnit_px);
         }
       }

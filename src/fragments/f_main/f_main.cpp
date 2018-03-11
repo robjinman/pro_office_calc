@@ -1,5 +1,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QApplication>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 #include "utils.hpp"
@@ -88,6 +89,8 @@ void FMain::showAbout() {
 void FMain::closeEvent(QCloseEvent*) {
   m_data.fnOnQuit();
   DBG_PRINT("Quitting\n");
+
+  QApplication::quit();
 }
 
 //===========================================
