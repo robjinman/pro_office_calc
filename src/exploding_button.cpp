@@ -26,8 +26,6 @@ ExplodingButton::ExplodingButton(QWidget* parent, const QString& caption, Update
 // ExplodingButton::onClick
 //===========================================
 void ExplodingButton::onClick() {
-  DBG_PRINT("Explode!\n");
-
   QPoint A = geometry().center();
   QPoint B = m_wgtLabel->geometry().center();
 
