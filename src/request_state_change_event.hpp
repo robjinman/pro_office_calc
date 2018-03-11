@@ -6,11 +6,13 @@
 
 
 struct RequestStateChangeEvent : public Event {
-  RequestStateChangeEvent(int stateId)
+  RequestStateChangeEvent(int stateId, bool hardReset = false)
     : Event("requestStateChange"),
-      stateId(stateId) {}
+      stateId(stateId),
+      hardReset(hardReset) {}
 
     int stateId;
+    bool hardReset;
 };
 
 

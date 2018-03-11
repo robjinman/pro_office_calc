@@ -44,14 +44,14 @@ const string& Fragment::name() const {
 //===========================================
 // Fragment::rebuild
 //===========================================
-void Fragment::rebuild(const FragmentSpec& spec) {
+void Fragment::rebuild(const FragmentSpec& spec, bool hardReset) {
   // Remove unused child fragments, recursively triggering their cleanUp methods
   //
   for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
     const string& chName = it->first;
     const FragmentSpec& chSpec = *it->second;
 
-    if (!chSpec.isEnabled()) {
+    if (!chSpec.isEnabled() || hardReset) {
       auto jt = m_children.find(chName);
       if (jt != m_children.end()) {
         Fragment& chFrag = *jt->second;
@@ -86,7 +86,7 @@ void Fragment::rebuild(const FragmentSpec& spec) {
     const string& name = it->first;
     Fragment& frag = *it->second;
 
-    frag.rebuild(spec.spec(name));
+    frag.rebuild(spec.spec(name), hardReset);
   }
 }
 

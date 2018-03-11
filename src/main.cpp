@@ -96,18 +96,18 @@ int main(int argc, char** argv) {
     Application app(argc, argv);
 
     FMain mainFragment({eventSystem, updateLoop});
-    mainFragment.rebuild(*mainSpec);
+    mainFragment.rebuild(*mainSpec, false);
     mainFragment.show();
 
     int requestStateChangeEventId = 0;
-    eventSystem.listen("requestStateChange", [&](const Event& e) {
-      stateId = dynamic_cast<const RequestStateChangeEvent&>(e).stateId;
+    eventSystem.listen("requestStateChange", [&](const Event& e_) {
+      const RequestStateChangeEvent& e = dynamic_cast<const RequestStateChangeEvent&>(e_);
 
       updateLoop.finishAll();
       app.processEvents();
 
-      mainSpec.reset(makeFMainSpec(stateId));
-      mainFragment.rebuild(*mainSpec);
+      mainSpec.reset(makeFMainSpec(e.stateId));
+      mainFragment.rebuild(*mainSpec, e.hardReset);
     }, requestStateChangeEventId);
 
     int code = app.exec();

@@ -37,7 +37,7 @@ class Fragment {
 
     // Rebuild fragment tree by adding/removing children and calling their respective
     // lifecycle functions
-    void rebuild(const FragmentSpec& spec);
+    void rebuild(const FragmentSpec& spec, bool hardReset);
 
     // Re-initialise fragment with new spec. Called when the app state changes and the
     // fragment tree is rebuilt

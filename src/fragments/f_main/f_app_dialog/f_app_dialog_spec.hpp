@@ -25,6 +25,7 @@ struct FAppDialogSpec : public FragmentSpec {
   FMailClientSpec mailClientSpec;
   FProcalcSetupSpec procalcSetupSpec;
 
+  std::string name = "dialog";
   QString titleText = "Application";
   int width = 640;
   int height = 480;

@@ -26,6 +26,8 @@ void FAppDialog::reload(const FragmentSpec& spec_) {
 
   auto& spec = dynamic_cast<const FAppDialogSpec&>(spec_);
 
+  m_name = spec.name;
+
   setWindowTitle(spec.titleText);
   setFixedSize(spec.width, spec.height);
 
@@ -45,6 +47,13 @@ void FAppDialog::reload(const FragmentSpec& spec_) {
 //===========================================
 void FAppDialog::keyPressEvent(QKeyEvent* e) {
   if (e->key() == Qt::Key_Escape) {}
+}
+
+//===========================================
+// FAppDialog::closeEvent
+//===========================================
+void FAppDialog::closeEvent(QCloseEvent*) {
+  commonData.eventSystem.fire(pEvent_t(new DialogClosedEvent(m_name)));
 }
 
 //===========================================

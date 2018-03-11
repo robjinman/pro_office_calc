@@ -7,6 +7,7 @@
 #include "fragments/relocatable/f_calculator/f_partial_calc/f_partial_calc.hpp"
 #include "fragments/relocatable/f_calculator/f_partial_calc/f_partial_calc_spec.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
+#include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/events.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
@@ -14,6 +15,7 @@
 #include "utils.hpp"
 #include "evasive_button.hpp"
 #include "exploding_button.hpp"
+#include "state_ids.hpp"
 
 
 using std::string;
@@ -29,13 +31,13 @@ struct BtnDesc {
 
 static const std::map<buttonId_t, BtnDesc> EVASIVE_BTNS = {
   { BTN_ONE, { "1", 1, 3, 0 } },
-  { BTN_PLUS, { "+", 10, 4, 3 } }
+  { BTN_FIVE, { "5", 5, 2, 1 } }
 };
 
 static const std::map<buttonId_t, BtnDesc> EXPLODING_BTNS = {
   { BTN_THREE, { "3", 3, 3, 2 } },
-  { BTN_POINT, { ".", 14, 4, 1 } },
-  { BTN_CLEAR, { "C", 15, 0, 0 } }
+  { BTN_NINE, { "9", 9, 1, 2 } },
+  { BTN_POINT, { ".", 14, 4, 1 } }
 };
 
 //===========================================
@@ -50,7 +52,15 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
   commonData.eventSystem.listen("makingProgress/setupComplete", [this](const Event& event) {
     const SetupCompleteEvent& e = dynamic_cast<const SetupCompleteEvent&>(event);
     toggleFeatures(e.features);
-  }, m_eventIdx);
+  }, m_setupCompleteIdx);
+
+  commonData.eventSystem.listen("dialogClosed", [this, &commonData](const Event& event) {
+    const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
+
+    if (e.name == "procalcSetup") {
+      commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_OFFICE_ASSISTANT, true)));
+    }
+  }, m_dialogClosedIdx);
 }
 
 //===========================================
@@ -79,6 +89,8 @@ void FPartialCalc::toggleFeatures(const std::set<buttonId_t>& features) {
       button->hide();
     }
   }
+
+  parentData.wgtDigitDisplay->clear();
 }
 
 //===========================================
@@ -143,7 +155,8 @@ void FPartialCalc::cleanUp() {
   connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
     SLOT(onButtonClick(int)));
 
-  commonData.eventSystem.forget(m_eventIdx);
+  commonData.eventSystem.forget(m_setupCompleteIdx);
+  commonData.eventSystem.forget(m_dialogClosedIdx);
 }
 
 //===========================================

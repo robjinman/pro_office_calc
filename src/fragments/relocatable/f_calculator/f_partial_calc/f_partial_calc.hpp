@@ -10,6 +10,8 @@
 
 struct FPartialCalcData : public FragmentData {};
 
+class DialogClosedEvent;
+
 class FPartialCalc : public QObject, public Fragment {
   Q_OBJECT
 
@@ -30,7 +32,9 @@ class FPartialCalc : public QObject, public Fragment {
 
     FPartialCalcData m_data;
 
-    int m_eventIdx = -1;
+    // Event handles
+    int m_setupCompleteIdx = -1;
+    int m_dialogClosedIdx = -1;
 };
 
 

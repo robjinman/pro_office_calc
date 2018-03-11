@@ -6,7 +6,16 @@
 #include <QDialog>
 #include "fragment.hpp"
 #include "fragments/relocatable/widget_frag_data.hpp"
+#include "event.hpp"
 
+
+struct DialogClosedEvent : public Event {
+  DialogClosedEvent(const std::string& name)
+    : Event("dialogClosed"),
+      name(name) {}
+
+  std::string name;
+};
 
 struct FAppDialogData : public WidgetFragData {
   FAppDialogData()
@@ -25,11 +34,13 @@ class FAppDialog : public QDialog, public Fragment {
     virtual ~FAppDialog() override;
 
   protected:
-     void keyPressEvent(QKeyEvent* e);
+     void keyPressEvent(QKeyEvent* e) override;
+     void closeEvent(QCloseEvent* e) override;
 
   private:
     FAppDialogData m_data;
 
+    std::string m_name;
     int m_eventIdx = -1;
 };
 

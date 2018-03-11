@@ -31,6 +31,7 @@ FMainSpec* makeFMainSpec(int stateId) {
     {"data/procalc.png", "Pro Office Calculator", "procalcLaunch"}
   };
   mainSpec->appDialogSpec0.setEnabled(true);
+  mainSpec->appDialogSpec0.name = "procalcSetup";
   mainSpec->appDialogSpec0.titleText = "Installation Setup";
   mainSpec->appDialogSpec0.width = 320;
   mainSpec->appDialogSpec0.height = 240;
