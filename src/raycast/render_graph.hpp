@@ -2,6 +2,7 @@
 #define __PROCALC_RAYCAST_RENDER_GRAPH_HPP__
 
 
+#include <set>
 #include "raycast/render_components.hpp"
 
 
@@ -18,7 +19,7 @@ struct RenderGraph {
 
   pCRegion_t rootRegion;
   std::list<pCBoundary_t> boundaries;
-  std::list<pCOverlay_t> overlays;
+  std::multiset<pCOverlay_t> overlays;
 };
 
 

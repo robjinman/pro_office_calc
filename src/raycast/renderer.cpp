@@ -551,7 +551,8 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Camera
 
   double vWorldUnit_px_rp = 1.0 / vWorldUnit_px;
   double F_rp = 1.0 / cam.F;
-  double rayLen_rp = 1.0 / ray.length();
+  double rayLen = ray.length();
+  double rayLen_rp = 1.0 / rayLen;
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
@@ -563,6 +564,9 @@ static void drawCeilingSlice(QImage& target, const RenderGraph& rg, const Camera
     double vAngle = fastATan(atanMap, projY_wd * F_rp) + cam.vAngle;
     double d_ = (ceilingHeight - cam.height) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
+    if (!isBetween(d, 0, rayLen)) {
+      d = rayLen;
+    }
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
@@ -625,11 +629,10 @@ static void drawFloorSlice(QImage& target, const SpatialSystem& spatialSystem,
     double vAngle = fastATan(atanMap, projY_wd * F_rp) - cam.vAngle;
     double d_ = (cam.height - floorHeight) * fastTan_rp(tanMap_rp, vAngle);
     double d = d_ * cosHAngle_rp;
-    double s = d * rayLen_rp;
-
     if (!isBetween(d, 0, rayLen)) {
       d = rayLen;
     }
+    double s = d * rayLen_rp;
 
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
@@ -1099,6 +1102,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
   for (auto it = rg.overlays.begin(); it != rg.overlays.end(); ++it) {
     const COverlay& overlay = **it;
+
     switch (overlay.kind) {
       case COverlayKind::IMAGE:
         drawImageOverlay(painter, dynamic_cast<const CImageOverlay&>(overlay), rg, viewport_px);

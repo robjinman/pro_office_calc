@@ -388,7 +388,7 @@ void RenderSystem::addComponent(pComponent_t component) {
     }
     else if (c->kind == CRenderKind::OVERLAY) {
       pCOverlay_t z(dynamic_cast<COverlay*>(c.release()));
-      rg.overlays.push_back(std::move(z));
+      rg.overlays.insert(std::move(z));
     }
     else {
       EXCEPTION("Component has no parent and is not of type REGION or OVERLAY");

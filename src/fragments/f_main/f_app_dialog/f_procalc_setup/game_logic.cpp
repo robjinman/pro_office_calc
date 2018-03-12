@@ -22,7 +22,7 @@ using std::string;
 namespace making_progress {
 
 
-static const int MAX_KEY_PRESSES = 24;
+static const int MAX_KEY_PRESSES = 20;
 static std::mt19937 randEngine(randomSeed());
 
 
@@ -147,7 +147,7 @@ void GameLogic::setElevatorSpeed() {
     m_entityManager.getComponent<CElevatorBehaviour>(elevatorId, ComponentKind::C_BEHAVIOUR);
 
   const double MIN_SPEED = 2;
-  const double MAX_SPEED = 40;
+  const double MAX_SPEED = 16;
   const double MAX_FEATURES = 17;
   double delta = (MAX_SPEED - MIN_SPEED) / MAX_FEATURES;
 

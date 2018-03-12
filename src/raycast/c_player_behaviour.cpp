@@ -42,7 +42,7 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
 
       double maxAlpha = 80;
       CColourOverlay* overlay = new CColourOverlay(player.red, QColor(200, 0, 0, maxAlpha),
-        Point(0, 0), renderSystem.rg.viewport);
+        Point(0, 0), renderSystem.rg.viewport, 10);
 
       renderSystem.addComponent(pCRender_t(overlay));
 

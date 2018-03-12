@@ -49,21 +49,28 @@ enum class COverlayKind {
 
 class COverlay : public CRender {
   public:
-    COverlay(COverlayKind kind, entityId_t entityId, const Point& pos)
+    COverlay(COverlayKind kind, entityId_t entityId, const Point& pos, int zIndex)
       : CRender(CRenderKind::OVERLAY, entityId, -1),
         kind(kind),
-        pos(pos) {}
+        pos(pos),
+        zIndex(zIndex) {}
 
     COverlayKind kind;
     Point pos;
+    int zIndex;
 };
 
 typedef std::unique_ptr<COverlay> pCOverlay_t;
 
+inline bool operator<(const pCOverlay_t& lhs, const pCOverlay_t& rhs) {
+  return lhs->zIndex < rhs->zIndex;
+}
+
 class CColourOverlay : public COverlay {
   public:
-    CColourOverlay(entityId_t entityId, const QColor& colour, const Point& pos, const Size& size)
-      : COverlay(COverlayKind::COLOUR, entityId, pos),
+    CColourOverlay(entityId_t entityId, const QColor& colour, const Point& pos, const Size& size,
+      int zIndex = 0)
+      : COverlay(COverlayKind::COLOUR, entityId, pos, zIndex),
         colour(colour),
         size(size) {}
 
@@ -76,8 +83,8 @@ typedef std::unique_ptr<COverlay> pCOverlay_t;
 class CImageOverlay : public COverlay {
   public:
     CImageOverlay(entityId_t entityId, const std::string& texture, const Point& pos,
-      const Size& size)
-      : COverlay(COverlayKind::IMAGE, entityId, pos),
+      const Size& size, int zIndex = 0)
+      : COverlay(COverlayKind::IMAGE, entityId, pos, zIndex),
         texture(texture),
         size(size) {}
 
@@ -91,8 +98,8 @@ typedef std::unique_ptr<CImageOverlay> pCImageOverlay_t;
 class CTextOverlay : public COverlay {
   public:
     CTextOverlay(entityId_t entityId, std::string text, const Point& pos, double height,
-      const QColor& colour)
-      : COverlay(COverlayKind::TEXT, entityId, pos),
+      const QColor& colour, int zIndex)
+      : COverlay(COverlayKind::TEXT, entityId, pos, zIndex),
         text(text),
         height(height),
         colour(colour) {}

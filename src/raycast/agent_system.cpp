@@ -19,6 +19,7 @@ using std::function;
 
 
 static const double AGENT_SPEED = 120.0;
+static const double REACTION_SPEED = 0.25;
 
 
 static std::mt19937 randEngine(randomSeed());
@@ -200,12 +201,10 @@ void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
         }
       }, 1.0);
 
-      audioService.playSoundAtPos("shotgun_shoot", body.pos);
-
       // Move ray randomly to simulate inaccurate aim
       //
 
-      std::normal_distribution<double> dist(0, DEG_TO_RAD(2));
+      std::normal_distribution<double> dist(0, DEG_TO_RAD(1));
 
       double vDa = dist(randEngine);
       double hDa = dist(randEngine);
@@ -213,7 +212,12 @@ void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
       Matrix rot(hDa, Vec2f(0, 0));
       ray = rot * ray;
 
-      damageSystem.damageAtIntersection(*body.zone, ray * 0.1, height, ray, vAngle + vDa, m, 1);
+      timeService.onTimeout([=, &agentSystem, &damageSystem, &audioService, &body]() {
+        if (agentSystem.hasComponent(id)) {
+          damageSystem.damageAtIntersection(*body.zone, ray * 0.1, height, ray, vAngle + vDa, m, 1);
+          audioService.playSoundAtPos("shotgun_shoot", body.pos);
+        }
+      }, REACTION_SPEED);
     }
   });
 }

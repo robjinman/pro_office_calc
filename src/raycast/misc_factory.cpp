@@ -67,22 +67,32 @@ const set<string>& MiscFactory::types() const {
 //===========================================
 bool MiscFactory::constructPlayerInventory() {
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   InventorySystem& inventorySystem =
     m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+  DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+
+  const Player& player = *spatialSystem.sg.player;
+  const Size& viewport = renderSystem.rg.viewport;
 
   entityId_t ammoId = Component::getNextId();
+  entityId_t healthId = Component::getNextId();
 
   CBucket* ammoBucket = new CBucket(ammoId, "ammo", 50);
   inventorySystem.addComponent(pComponent_t(ammoBucket));
 
-  CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, 0.1), 0.5,
-    Qt::green);
+  CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, viewport.y - 0.5),
+    0.5, Qt::green, 2);
   renderSystem.addComponent(pComponent_t(ammoCounter));
 
-  CEventHandler* syncCounter = new CEventHandler(ammoId);
-  syncCounter->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
+  CTextOverlay* healthCounter = new CTextOverlay(healthId, "HEALTH 10/10",
+    Point(9.5, viewport.y - 0.5), 0.5, Qt::red, 2);
+  renderSystem.addComponent(pComponent_t(healthCounter));
+
+  CEventHandler* syncCounters = new CEventHandler(ammoId);
+  syncCounters->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
 
     stringstream ss;
@@ -93,8 +103,24 @@ bool MiscFactory::constructPlayerInventory() {
       m_audioService.playSound("ammo_collect");
     }
   }});
+  syncCounters->handlers.push_back(EventHandler{"entity_damaged",
+    [=, &damageSystem, &player](const GameEvent&) {
 
-  eventHandlerSystem.addComponent(pComponent_t(syncCounter));
+    const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(player.body));
+
+    stringstream ss;
+    ss << "HEALTH " << damage.health << "/" << damage.maxHealth;
+    healthCounter->text = ss.str();
+  }});
+
+  eventHandlerSystem.addComponent(pComponent_t(syncCounters));
+
+  entityId_t bgId = Component::getNextId();
+
+  CColourOverlay* bg = new CColourOverlay(bgId, QColor(0, 0, 0, 100), Point(0, viewport.y - 0.7),
+    Size(viewport.x, 0.7), 1);
+
+  renderSystem.addComponent(pComponent_t(bg));
 
   return true;
 }

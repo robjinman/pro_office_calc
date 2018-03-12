@@ -24,14 +24,14 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
-     inkscape:window-height="999"
+     inkscape:window-height="975"
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="0.22627417"
-     inkscape:cx="3578.0536"
-     inkscape:cy="2067.8061"
-     inkscape:window-x="1280"
+     inkscape:zoom="14.481547"
+     inkscape:cx="1553.9949"
+     inkscape:cy="3318.9614"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="g3696"
@@ -144,7 +144,7 @@
          transform="scale(1.0603588,0.94307701)"><tspan
            id="tspan4223-1-8-3-2"
            x="402.30313"
-           y="514.19781">ceiling_height=200</tspan></text>
+           y="514.19781">ceiling_height=100</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -253,28 +253,6 @@
              y="538.23071"
              x="626.84985"
              id="tspan4215-5-6-9-7-62">type=region</tspan></text>
-        <text
-           transform="scale(1.0603588,0.94307701)"
-           id="text4217-6-2-2-3-9"
-           y="542.1792"
-           x="627.04089"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="542.1792"
-             x="627.04089"
-             id="tspan4219-2-6-0-6-1">floor_height=100</tspan></text>
-        <text
-           transform="scale(1.0603588,0.94307701)"
-           id="text4221-9-1-2-1-2"
-           y="546.31873"
-           x="627.55035"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="546.31873"
-             x="627.55035"
-             id="tspan4223-1-8-3-2-7">ceiling_height=200</tspan></text>
         <g
            id="g3808">
           <rect
@@ -313,9 +291,10 @@
          transform="matrix(0.59325168,0,0,0.59323584,36.384828,61.160848)">
         <path
            style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.68564773px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 146.2569,971.0793 0,-706.25 179.2969,0 -5.2967,-467.65648 123.7437,0 -10.2439,-385.46852 -437.5,0 6.25,1696.8749 618.7499,3.125 -7.3874,-142.18741 z"
+           d="m 146.2569,971.0793 0,-706.25 179.2969,0 -5.2967,-467.65648 123.7437,0 -10.2439,-407.23555 -437.5,0 6.25,1718.64193 618.7499,3.125 -7.3874,-142.18741 z"
            id="path3455"
-           inkscape:connector-curvature="0" />
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccccccc" />
         <text
            sodipodi:linespacing="125%"
            xml:space="preserve"
@@ -384,28 +363,6 @@
              y="538.23071"
              x="626.84985"
              id="tspan4215-5-6-9-7-62-9">type=region</tspan></text>
-        <text
-           transform="scale(1.0603588,0.94307701)"
-           id="text4217-6-2-2-3-9-3"
-           y="542.1792"
-           x="627.04089"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="542.1792"
-             x="627.04089"
-             id="tspan4219-2-6-0-6-1-6">floor_height=100</tspan></text>
-        <text
-           transform="scale(1.0603588,0.94307701)"
-           id="text4221-9-1-2-1-2-0"
-           y="546.31873"
-           x="627.55035"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="546.31873"
-             x="627.55035"
-             id="tspan4223-1-8-3-2-7-6">ceiling_height=200</tspan></text>
         <g
            id="g3808-2">
           <rect
@@ -463,18 +420,7 @@
            sodipodi:linespacing="125%"><tspan
              y="542.1792"
              x="627.04089"
-             id="tspan4219-2-6-0-6-1-9">floor_height=160</tspan></text>
-        <text
-           transform="scale(1.0603588,0.94307701)"
-           id="text4221-9-1-2-1-2-2"
-           y="546.31873"
-           x="627.55035"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="546.31873"
-             x="627.55035"
-             id="tspan4223-1-8-3-2-7-2">ceiling_height=200</tspan></text>
+             id="tspan4219-2-6-0-6-1-9">floor_offset=60</tspan></text>
         <g
            id="g3808-8">
           <rect
@@ -606,37 +552,84 @@
         </g>
         <text
            transform="scale(1.0603588,0.943077)"
-           id="text4217-6-2-2-3-9-5-6"
-           y="550.23602"
-           x="627.53595"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"
-           sodipodi:linespacing="125%"><tspan
-             y="550.23602"
-             x="627.53595"
-             id="tspan4219-2-6-0-6-1-9-1">has_ceiling=true</tspan></text>
-        <text
-           transform="scale(1.0603588,0.943077)"
            id="text4217-6-2-2-3-9-5-6-0"
-           y="553.74481"
+           y="546.35156"
            x="627.57605"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"
            sodipodi:linespacing="125%"><tspan
-             y="553.74481"
+             y="546.35156"
              x="627.57605"
              id="tspan4219-2-6-0-6-1-9-1-6">floor_texture=machine</tspan></text>
+      </g>
+      <g
+         id="g3815-7-3"
+         transform="matrix(0.81205646,0,0,0.70970415,-276.53322,-695.12062)">
         <text
-           transform="scale(1.0603588,0.943077)"
-           id="text4217-6-2-2-3-9-5-6-0-3"
-           y="557.25122"
-           x="627.44098"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.72065163px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           transform="scale(1.0603588,0.94307701)"
+           id="text4213-3-0-7-9-35-0-6"
+           y="532.31134"
+           x="645.17328"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.71965504px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            xml:space="preserve"
            sodipodi:linespacing="125%"><tspan
-             y="557.25122"
-             x="627.44098"
-             id="tspan4219-2-6-0-6-1-9-1-6-2">ceiling_texture=metal_ceiling</tspan></text>
+             y="532.31134"
+             x="645.17328"
+             id="tspan4215-5-6-9-7-62-9-7">type=door</tspan></text>
+        <g
+           id="g3808-2-5">
+          <rect
+             style="opacity:1;fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:1.31725001;stroke-miterlimit:4;stroke-dasharray:5.26900011, 1.31725002;stroke-dashoffset:0;stroke-opacity:1"
+             id="rect3722-6-3"
+             width="21.486025"
+             height="111.31394"
+             x="679.78223"
+             y="444.41699" />
+          <text
+             sodipodi:linespacing="125%"
+             xml:space="preserve"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.10151815px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             x="642.39789"
+             y="499.47269"
+             id="text4213-3-0-7-9-35-2-18-5"
+             transform="scale(1.0603588,0.94307701)"><tspan
+               id="tspan4215-5-6-9-7-62-6-7-6"
+               x="642.39789"
+               y="499.47269">type=joining_edge</tspan></text>
+          <text
+             sodipodi:linespacing="125%"
+             xml:space="preserve"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.10151815px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             x="642.58698"
+             y="500.91251"
+             id="text4213-3-0-7-9-35-2-1-9-2"
+             transform="scale(1.0603588,0.94307701)"><tspan
+               id="tspan4215-5-6-9-7-62-6-8-2-9"
+               x="642.58698"
+               y="500.91251">top_texture=door</tspan></text>
+        </g>
+        <text
+           transform="scale(1.0603588,0.943077)"
+           id="text4213-3-0-7-9-35-0-6-1"
+           y="533.19031"
+           x="645.18872"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.71965504px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="533.19031"
+             x="645.18872"
+             id="tspan4215-5-6-9-7-62-9-7-2">player_activated=true</tspan></text>
+        <text
+           transform="scale(1.0603588,0.943077)"
+           id="text4213-3-0-7-9-35-0-6-1-7"
+           y="534.08228"
+           x="645.24286"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.71965504px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="534.08228"
+             x="645.24286"
+             id="tspan4215-5-6-9-7-62-9-7-2-0">close_automatically=true</tspan></text>
       </g>
     </g>
   </g>
@@ -913,6 +906,18 @@
            x="133.01843"
            y="302.07828"
            style="font-size:12.94190121px">switch=data/switch.png</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="132.49707"
+         y="316.54245"
+         id="text5258-7-8-5-3-1-6-2-0-9"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5260-9-4-0-6-0-3-0-3-3"
+           x="132.49707"
+           y="316.54245"
+           style="font-size:12.94190121px">door=data/door.png,80,100</tspan></text>
     </g>
   </g>
 </svg>

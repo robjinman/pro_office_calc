@@ -30,14 +30,13 @@ struct BtnDesc {
 };
 
 static const std::map<buttonId_t, BtnDesc> EVASIVE_BTNS = {
-  { BTN_ONE, { "1", 1, 3, 0 } },
   { BTN_FIVE, { "5", 5, 2, 1 } }
 };
 
 static const std::map<buttonId_t, BtnDesc> EXPLODING_BTNS = {
   { BTN_THREE, { "3", 3, 3, 2 } },
-  { BTN_NINE, { "9", 9, 1, 2 } },
-  { BTN_POINT, { ".", 14, 4, 1 } }
+  { BTN_POINT, { ".", 14, 4, 1 } },
+  { BTN_DIVIDE, { "/", 13, 1, 3 } }
 };
 
 //===========================================

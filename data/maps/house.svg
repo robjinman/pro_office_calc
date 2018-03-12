@@ -24,17 +24,17 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
-     inkscape:window-height="999"
+     inkscape:window-height="975"
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="4"
-     inkscape:cx="1249.553"
-     inkscape:cy="1036.3706"
-     inkscape:window-x="1280"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="99.849013"
+     inkscape:cy="969.72002"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g4714"
+     inkscape:current-layer="svg4960"
      showguides="true"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -56,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -5594,7 +5594,7 @@
            style="font-size:12.9418993px"
            y="374.57211"
            x="135.97549"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1">ammo=data/ammo.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1">ammo=data/ammo.png,25,15</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-9"
          y="388.61642"
