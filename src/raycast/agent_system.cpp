@@ -124,8 +124,10 @@ CAgent::CAgent(entityId_t entityId)
 // CAgent::startPatrol
 //===========================================
 void CAgent::startPatrol(EntityManager& entityManager) {
-  if (patrolPath.size() > 0) {
-    m_path = patrolPath;
+  if (patrolPath != -1) {
+    const CPath& path = entityManager.getComponent<CPath>(patrolPath, ComponentKind::C_SPATIAL);
+
+    m_path = path.points;
     m_pathClosed = true;
     setState(entityManager, ST_ON_FIXED_PATH);
     m_waypointIdx = -1;
@@ -133,6 +135,17 @@ void CAgent::startPatrol(EntityManager& entityManager) {
   else {
     setState(entityManager, ST_STATIONARY);
   }
+}
+
+//===========================================
+// CAgent::startChase
+//===========================================
+void CAgent::startChase(EntityManager& entityManager) {
+  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+  m_waypointIdx = -1;
+  setState(entityManager, ST_CHASING_OBJECT);
+  m_targetObject = spatialSystem.sg.player->body;
 }
 
 //===========================================
@@ -275,29 +288,21 @@ void CAgent::update(EntityManager& entityManager, TimeService& timeService,
 }
 
 //===========================================
-// CAgent::onPlayerChangeZone
+// CAgent::handleEvent
 //===========================================
-void CAgent::onPlayerChangeZone(entityId_t newZone, EntityManager& entityManager) {
-  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  const Player& player = *spatialSystem.sg.player;
-
-  AnimationSystem& animationSystem =
-    entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
-  if (newZone == stPatrollingTrigger && m_state == ST_STATIONARY) {
-    m_path = patrolPath;
-    m_pathClosed = true;
-    m_waypointIdx = -1;
-    setState(entityManager, ST_ON_FIXED_PATH);
-
-    animationSystem.playAnimation(entityId(), "run", true);
+void CAgent::handleEvent(const GameEvent& event, EntityManager& entityManager) {
+  if (event.name == stPatrollingTrigger) {
+    startPatrol(entityManager);
   }
-  else if (newZone == stChasingTrigger) {
-    m_waypointIdx = -1;
-    setState(entityManager, ST_CHASING_OBJECT);
-    m_targetObject = player.body;
+  else if (event.name == stChasingTrigger && m_state == ST_STATIONARY) {
+    startChase(entityManager);
+  }
+  else if (event.name == "entityDamaged") {
+    const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(event);
 
-    animationSystem.playAnimation(entityId(), "run", true);
+    if (e.entityId == entityId()) {
+      onDamage(entityManager);
+    }
   }
 }
 
@@ -305,11 +310,7 @@ void CAgent::onPlayerChangeZone(entityId_t newZone, EntityManager& entityManager
 // CAgent::onDamage
 //===========================================
 void CAgent::onDamage(EntityManager& entityManager) {
-  //const Player& player = *spatialSystem.sg.player;
-
-  //m_waypointIdx = -1;
-  //m_state = ST_CHASING_OBJECT;
-  //m_targetObject = player.body;
+  // TODO: Chase player?
 }
 
 //===========================================
@@ -325,25 +326,8 @@ void AgentSystem::update() {
 // AgentSystem::handleEvent
 //===========================================
 void AgentSystem::handleEvent(const GameEvent& event) {
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  if (event.name == "entityChangedZone") {
-    const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
-    const Player& player = *spatialSystem.sg.player;
-
-    if (e.entityId == player.body) {
-      for (auto& c : m_components) {
-        c.second->onPlayerChangeZone(e.newZone, m_entityManager);
-      }
-    }
-  }
-  else if (event.name == "entityDamaged") {
-    const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(event);
-
-    auto it = m_components.find(e.entityId);
-    if (it != m_components.end()) {
-      it->second->onDamage(m_entityManager);
-    }
+  for (auto& c : m_components) {
+    c.second->handleEvent(event, m_entityManager);
   }
 }
 

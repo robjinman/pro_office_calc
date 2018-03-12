@@ -26,9 +26,9 @@ class CAgent : public Component {
   public:
     CAgent(entityId_t entityId);
 
-    std::vector<Point> patrolPath;
-    entityId_t stPatrollingTrigger = -1;
-    entityId_t stChasingTrigger = -1;
+    entityId_t patrolPath = -1;
+    std::string stPatrollingTrigger;
+    std::string stChasingTrigger;
 
     virtual ~CAgent() override {}
 
@@ -54,6 +54,7 @@ class CAgent : public Component {
     void navigateTo(EntityManager& entityManager, const Point& p,
       std::function<void(CAgent&)> onFinish);
     void startPatrol(EntityManager& entityManager);
+    void startChase(EntityManager& entityManager);
 
     bool hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f& ray, double& hAngle,
       double& vAngle, double& height) const;
@@ -65,7 +66,8 @@ class CAgent : public Component {
     virtual void update(EntityManager& entityManager, TimeService& timeService,
       AudioService& audioService);
 
-    void onPlayerChangeZone(entityId_t newZone, EntityManager& entityManager);
+    void handleEvent(const GameEvent& event, EntityManager& entityManager);
+
     void onDamage(EntityManager& entityManager);
 
     void setAnimation(EntityManager& entityManager);

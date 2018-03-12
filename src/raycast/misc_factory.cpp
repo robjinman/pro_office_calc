@@ -176,6 +176,8 @@ bool MiscFactory::constructDoor(entityId_t entityId, parser::Object& obj, entity
     s = getValue(obj.dict, "player_activated", "");
     setBoolean(behaviour->closeAutomatically, s);
 
+    behaviour->openOnEvent = getValue(obj.dict, "open_on_event", "");
+
     behaviourSystem.addComponent(pComponent_t(behaviour));
 
     return true;

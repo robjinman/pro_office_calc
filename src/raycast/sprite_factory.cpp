@@ -187,23 +187,15 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     CAgent* agent = new CAgent(entityId);
 
-    s = getValue(obj.dict, "st_patrolling_trigger", "");
+    agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
+    agent->stChasingTrigger = getValue(obj.dict, "st_chasing_trigger", "");
+
+    s = getValue(obj.dict, "patrol_path", "");
     if (s != "") {
-      agent->stPatrollingTrigger = Component::getIdFromString(s);
+      agent->patrolPath = Component::getIdFromString(s);
     }
-    s = getValue(obj.dict, "st_chasing_trigger", "");
-    if (s != "") {
-      agent->stChasingTrigger = Component::getIdFromString(s);
-    }
+
     agentSystem.addComponent(pComponent_t(agent));
-
-    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
-      parser::Object& child = **it;
-
-      if (child.type == "patrol_path") {
-        agent->patrolPath = child.path.points;
-      }
-    }
 
     return true;
   }

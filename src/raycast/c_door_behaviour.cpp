@@ -68,6 +68,17 @@ void CDoorBehaviour::update() {
 }
 
 //===========================================
+// CDoorBehaviour::handleBroadcastedEvent
+//===========================================
+void CDoorBehaviour::handleBroadcastedEvent(const GameEvent& e) {
+  if (e.name == openOnEvent) {
+    if (m_state != ST_OPEN) {
+      m_state = ST_OPENING;
+    }
+  }
+}
+
+//===========================================
 // CDoorBehaviour::handleTargetedEvent
 //===========================================
 void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {

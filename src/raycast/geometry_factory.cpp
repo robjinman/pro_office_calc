@@ -43,6 +43,27 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 };
 
 //===========================================
+// GeometryFactory::constructPath
+//===========================================
+bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+  Matrix m = parentTransform * obj.transform;
+
+  CPath* path = new CPath(makeIdForObj(obj), parentId);
+
+  for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
+    path->points.push_back(m * obj.path.points[i]);
+  }
+
+  spatialSystem.addComponent(pComponent_t(path));
+
+  return true;
+}
+
+//===========================================
 // GeometryFactory::constructWallDecal
 //===========================================
 bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& obj,
@@ -578,7 +599,8 @@ const set<string>& GeometryFactory::types() const {
     "portal",
     "wall",
     "wall_decal",
-    "floor_decal"
+    "floor_decal",
+    "path"
   };
 
   return types;
@@ -610,6 +632,9 @@ bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "floor_decal") {
     return constructFloorDecal(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "path") {
+    return constructPath(entityId, obj, parentId, parentTransform);
   }
 
   return false;

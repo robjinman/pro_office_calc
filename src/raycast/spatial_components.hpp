@@ -16,7 +16,8 @@ enum class CSpatialKind {
   HARD_EDGE,
   SOFT_EDGE,
   V_RECT,
-  H_RECT
+  H_RECT,
+  PATH
 };
 
 struct CSpatial : public Component {
@@ -30,6 +31,15 @@ struct CSpatial : public Component {
 };
 
 typedef std::unique_ptr<CSpatial> pCSpatial_t;
+
+struct CPath : public CSpatial {
+  CPath(entityId_t entityId, entityId_t parentId)
+    : CSpatial(CSpatialKind::PATH, entityId, parentId) {}
+
+  std::vector<Point> points;
+};
+
+typedef std::unique_ptr<CPath> pCPath_t;
 
 class CZone;
 
@@ -85,6 +95,7 @@ struct CZone : public CSpatial {
   std::list<CEdge*> edges;
   std::list<pCVRect_t> vRects;
   std::list<pCHRect_t> hRects;
+  std::list<pCPath_t> paths;
   CZone* parent = nullptr;
 };
 

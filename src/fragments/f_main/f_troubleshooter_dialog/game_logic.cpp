@@ -49,6 +49,9 @@ void GameLogic::onRaycastEvent(const GameEvent& event) {
 
       m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_OFFICE_ASSISTANT)));
     }
+    else {
+      m_entityManager.broadcastEvent(GameEvent("machine_deactivated"));
+    }
   }
 }
 

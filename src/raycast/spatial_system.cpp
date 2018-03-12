@@ -41,6 +41,7 @@ ostream& operator<<(ostream& os, CSpatialKind kind) {
     case CSpatialKind::SOFT_EDGE: os << "SOFT_EDGE"; break;
     case CSpatialKind::H_RECT: os << "H_RECT"; break;
     case CSpatialKind::V_RECT: os << "V_RECT"; break;
+    case CSpatialKind::PATH: os << "PATH"; break;
   }
   return os;
 }
@@ -308,8 +309,14 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
       zone.vRects.push_back(std::move(ptr));
       break;
     }
-    default:
+    case CSpatialKind::PATH: {
+      pCPath_t ptr(dynamic_cast<CPath*>(child.release()));
+      zone.paths.push_back(std::move(ptr));
+      break;
+    }
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to zone");
+    }
   }
 }
 
@@ -323,8 +330,9 @@ static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
       edge.vRects.push_back(std::move(ptr));
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to HardEdge");
+    }
   }
 }
 
@@ -338,8 +346,9 @@ static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
       edge.vRects.push_back(std::move(ptr));
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to SoftEdge");
+    }
   }
 }
 
@@ -427,8 +436,22 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
       }
       break;
     }
-    default:
+    case CSpatialKind::PATH: {
+      auto it = find_if(zone.paths.begin(), zone.paths.end(), [&](const pCPath_t& e) {
+        return e.get() == dynamic_cast<const CPath*>(&child);
+      });
+      if (it != zone.paths.end()) {
+        if (keepAlive) {
+          it->release();
+        }
+        erase(zone.paths, it);
+        found = true;
+      }
+      break;
+    }
+    default: {
       EXCEPTION("Cannot add component of kind " << child.kind << " to zone");
+    }
   }
 
   return found;
@@ -454,8 +477,9 @@ static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keep
       }
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot remove component of kind " << child.kind << " from HardEdge");
+    }
   }
 
   return found;
@@ -964,8 +988,9 @@ pair<Range, Range> SpatialSystem::getHeightRangeForEntity(entityId_t id) const {
           Range(se.zoneA->ceilingHeight, se.zoneB->ceilingHeight));
       }
       // ...
-      default:
+      default: {
         return make_pair(Range(-10000, 10000), Range(0, 0));
+      }
     }
   }
   else {
@@ -1074,12 +1099,12 @@ void SpatialSystem::addComponent(pComponent_t component) {
   pCSpatial_t c(ptr);
 
   if (c->parentId == -1) {
-    if (sg.rootZone) {
-      EXCEPTION("Root zone already set");
+    if (c->kind != CSpatialKind::ZONE) {
+      EXCEPTION("Component has no parent and is not root zone");
     }
 
-    if (c->kind != CSpatialKind::ZONE) {
-      EXCEPTION("Component has no parent; Only zones can be root");
+    if (sg.rootZone) {
+      EXCEPTION("Root zone already set");
     }
 
     pCZone_t z(dynamic_cast<CZone*>(c.release()));
@@ -1150,9 +1175,6 @@ void SpatialSystem::removeEntity(entityId_t id) {
   if (jt != m_components.end()) {
     CSpatial& parent = *jt->second;
     removeChildFromComponent(sg, parent, c);
-  }
-  else {
-    assert(isRoot(c));
   }
 
   removeEntity_r(id);
