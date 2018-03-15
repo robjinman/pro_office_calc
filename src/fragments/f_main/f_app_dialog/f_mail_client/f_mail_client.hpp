@@ -4,7 +4,10 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QLabel>
+#include <QGridLayout>
+#include <QTabWidget>
+#include <QTableWidget>
+#include <QTextBrowser>
 #include <QMargins>
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
@@ -13,7 +16,19 @@
 
 struct FMailClientData : public FragmentData {
   QtObjPtr<QVBoxLayout> vbox;
-  QtObjPtr<QLabel> wgtLabel;
+  QtObjPtr<QTabWidget> wgtTabs;
+
+  struct {
+    QtObjPtr<QWidget> page;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<QTableWidget> wgtTable;
+  } inboxTab;
+
+  struct {
+    QtObjPtr<QWidget> page;
+    QtObjPtr<QGridLayout> grid;
+    QtObjPtr<QTextBrowser> wgtText;
+  } emailTab;
 };
 
 class FMailClient : public QWidget, public Fragment {
@@ -27,6 +42,10 @@ class FMailClient : public QWidget, public Fragment {
 
     virtual ~FMailClient() override;
 
+  private slots:
+    void onCellDoubleClick(int row, int col);
+    void onTabClose(int idx);
+
   private:
     FMailClientData m_data;
 
@@ -34,6 +53,11 @@ class FMailClient : public QWidget, public Fragment {
       int spacing;
       QMargins margins;
     } m_origParentState;
+
+    void setupInboxTab();
+    void setupEmailTab();
+
+    void enableEmail(int idx);
 };
 
 

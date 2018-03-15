@@ -40,10 +40,11 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec0.calculatorSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
   mainSpec->appDialogSpec1.titleText = "Mail Client";
-  mainSpec->appDialogSpec1.width = 400;
-  mainSpec->appDialogSpec1.height = 300;
+  mainSpec->appDialogSpec1.width = 500;
+  mainSpec->appDialogSpec1.height = 375;
   mainSpec->appDialogSpec1.showOnEvent = "mailClientLaunch";
   mainSpec->appDialogSpec1.mailClientSpec.setEnabled(true);
+  mainSpec->appDialogSpec1.glitchSpec.setEnabled(true);
 
   return mainSpec;
 }
