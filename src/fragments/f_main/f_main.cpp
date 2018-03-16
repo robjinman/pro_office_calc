@@ -6,6 +6,7 @@
 #include "utils.hpp"
 #include "exception.hpp"
 #include "effects.hpp"
+#include "event_system.hpp"
 
 
 using std::string;
@@ -90,7 +91,7 @@ void FMain::closeEvent(QCloseEvent*) {
   m_data.fnOnQuit();
   DBG_PRINT("Quitting\n");
 
-  QApplication::quit();
+  commonData.eventSystem.fire(pEvent_t(new Event("quit")));
 }
 
 //===========================================

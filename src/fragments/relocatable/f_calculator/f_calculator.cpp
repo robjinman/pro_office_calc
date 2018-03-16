@@ -44,6 +44,8 @@ void FCalculator::reload(const FragmentSpec& spec_) {
 
   m_data.wgtButtonGrid = makeQtObjPtr<ButtonGrid>(this);
 
+  delete m_data.vbox.get();
+
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.vbox->addWidget(m_data.wgtDigitDisplay.get());
   m_data.vbox->addWidget(m_data.wgtButtonGrid.get());

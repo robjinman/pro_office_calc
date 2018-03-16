@@ -61,6 +61,8 @@ int loadStateId(const AppConfig& conf) {
 // persistStateId
 //===========================================
 void persistStateId(const AppConfig& conf, int id) {
+  DBG_PRINT("Persisting state id " << id << "\n");
+
   ofstream fout(conf.userDataDir + sep + "procalc.dat", ofstream::binary | ofstream::trunc);
   fout.write(reinterpret_cast<const char*>(&id), sizeof(id));
 }
@@ -99,14 +101,20 @@ int main(int argc, char** argv) {
     mainFragment.rebuild(*mainSpec, false);
     mainFragment.show();
 
-    int requestStateChangeEventId = 0;
+    int quitEventId = -1;
+    eventSystem.listen("quit", [](const Event&) {
+      QApplication::exit(0);
+    }, quitEventId);
+
+    int requestStateChangeEventId = -1;
     eventSystem.listen("requestStateChange", [&](const Event& e_) {
       const RequestStateChangeEvent& e = dynamic_cast<const RequestStateChangeEvent&>(e_);
+      stateId = e.stateId;
 
       updateLoop.finishAll();
       app.processEvents();
 
-      mainSpec.reset(makeFMainSpec(e.stateId));
+      mainSpec.reset(makeFMainSpec(stateId));
       mainFragment.rebuild(*mainSpec, e.hardReset);
     }, requestStateChangeEventId);
 
