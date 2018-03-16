@@ -9,6 +9,7 @@
 #include "fragments/relocatable/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor_spec.hpp"
 
 
 struct FAppDialogSpec : public FragmentSpec {
@@ -17,13 +18,15 @@ struct FAppDialogSpec : public FragmentSpec {
         &glitchSpec,
         &calculatorSpec,
         &mailClientSpec,
-        &procalcSetupSpec
+        &procalcSetupSpec,
+        &textEditorSpec
       }) {}
 
   FGlitchSpec glitchSpec;
   FCalculatorSpec calculatorSpec;
   FMailClientSpec mailClientSpec;
   FProcalcSetupSpec procalcSetupSpec;
+  FTextEditorSpec textEditorSpec;
 
   std::string name = "dialog";
   QString titleText = "Application";

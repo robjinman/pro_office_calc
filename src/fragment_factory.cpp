@@ -15,6 +15,7 @@
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup.hpp"
+#include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
 #include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/relocatable/f_calculator/f_partial_calc/f_partial_calc.hpp"
@@ -76,6 +77,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FProcalcSetup") {
     return new FProcalcSetup(parent, parentData, commonData);
+  }
+  else if (name == "FTextEditor") {
+    return new FTextEditor(parent, parentData, commonData);
   }
   else if (name == "FConfigMaze") {
     return new FConfigMaze(parent, parentData, commonData);

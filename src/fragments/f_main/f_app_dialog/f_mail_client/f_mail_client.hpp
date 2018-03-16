@@ -8,6 +8,7 @@
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QTextBrowser>
+#include <QLabel>
 #include <QMargins>
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
@@ -28,6 +29,9 @@ struct FMailClientData : public FragmentData {
     QtObjPtr<QWidget> page;
     QtObjPtr<QGridLayout> grid;
     QtObjPtr<QTextBrowser> wgtText;
+    QtObjPtr<QLabel> wgtFrom;
+    QtObjPtr<QLabel> wgtSubject;
+    QtObjPtr<QLabel> wgtTo;
   } emailTab;
 };
 

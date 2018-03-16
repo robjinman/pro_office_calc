@@ -29,8 +29,8 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->desktopSpec.setEnabled(true);
   mainSpec->desktopSpec.icons = {
     {"data/procalc.png", "Pro Office Calculator", "procalcLaunch"},
-    {"data/youve_got_mail/mail.png", "Mail Client", "mailClientLaunch"},
-    {"data/youve_got_mail/tetrisweeper.png", "Tetr̵̪͉͛i̷̛͚͉̤s̴̨̰͍̔̈́͌̌͐ŵ̵̡̜̭̮̎̈́̐͝eeper", "tetrisweeperLaunch"}
+    {"data/youve_got_mail/mail.png", "Email Client", "mailClientLaunch"},
+    {"data/youve_got_mail/text_file.png", "y2k_threat.txt", "y2kThreatLaunch"}
   };
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.titleText = "Pro Office Calculator";
@@ -45,6 +45,19 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec1.showOnEvent = "mailClientLaunch";
   mainSpec->appDialogSpec1.mailClientSpec.setEnabled(true);
   mainSpec->appDialogSpec1.glitchSpec.setEnabled(true);
+  mainSpec->appDialogSpec2.setEnabled(true);
+  mainSpec->appDialogSpec2.titleText = "y2k_threat.doc";
+  mainSpec->appDialogSpec2.width = 400;
+  mainSpec->appDialogSpec2.height = 300;
+  mainSpec->appDialogSpec2.showOnEvent = "y2kThreatLaunch";
+  mainSpec->appDialogSpec2.textEditorSpec.setEnabled(true);
+  mainSpec->appDialogSpec2.textEditorSpec.content = "<h2>The Y2K threat</h2>"
+    "Concern has been steadily rising amongst a small number of academics and industry experts "
+    "about whether the various systems in use today can cope with the transition of their clocks "
+    "from this century into the next - that is, from 11:59:59 pm on 31st December 1999 to "
+    "12:00:00 am on 1st January 2000. There is little consensus on what if any deleterious effects "
+    "may result, but relevant parties are urged to consider how it may affect them and to make "
+    "adjustments to their systems accordingly.";
 
   return mainSpec;
 }

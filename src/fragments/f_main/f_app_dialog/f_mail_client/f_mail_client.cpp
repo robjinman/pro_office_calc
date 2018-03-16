@@ -1,3 +1,4 @@
+#include <QPushButton>
 #include <QHeaderView>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
@@ -26,7 +27,7 @@ const std::array<Email, 6> EMAILS = {{
   {
     "Potentially dangerous app - remove ASAP",
     "Alan Shand",
-    "devteam@apex.com",
+    "devteam",
     "13/03/95 13:06:44",
 
     "Potentially dangerous app - remove ASAP",
@@ -48,7 +49,7 @@ const std::array<Email, 6> EMAILS = {{
   {
     "Quick question",
     "Alan Shand",
-    "devteam@apex.com",
+    "devteam",
     "13/03/95 13:08:17",
 
     "Q̴̡̐̉u̵̻͑į̵̌̀c̸͍̆̒ḵ̶̛͊ ̸̲̽q̷̱̹͋ú̴̞ë̶̢̛̯́ŝ̷͘ͅt̷̢̅i̶̧̿o̵͓͋̈́n̵͖̄͂͜",
@@ -66,7 +67,7 @@ const std::array<Email, 6> EMAILS = {{
   {
     "Re: Quick question",
     "Paul Gresham",
-    "devteam@apex.com",
+    "devteam",
     "13/03/95 13:06:44",
 
     "R̴̩̄̚e̵͖̽͜:̵̒͜ ̵̢̺͌Q̵̦̲̑͌u̸̡̫͂ī̵̬̖̕c̶͇̍k̸̲̳̔͘ ̶͓̳̚q̶͕̺̈́́u̷͔̓̚ȩ̷̟̃̚s̵̫̪͛t̸̨̞́i̵̬͓͌ȯ̷̦͓̃ṇ̸̟̚",
@@ -78,7 +79,7 @@ const std::array<Email, 6> EMAILS = {{
     "Hi Alan,\n\n"
 
     "Yes, he one day dropped off the radar and we haven't seen him since - never even got his last "
-    "invoice IIRC\n\n."
+    "invoice IIRC.\n\n"
 
     "Paul Gresham,\n"
     "Systems Architect,\n"
@@ -87,7 +88,7 @@ const std::array<Email, 6> EMAILS = {{
   {
     "Latest regarding Pro Office Calc",
     "Brian Williams",
-    "devteam@apex.com",
+    "devteam",
     "15/03/95 11:20:09",
 
     "Ḽ̶̓͘à̷̬͜ṫ̶̙̑e̶͓̅s̷̙̈́̉t̸̲͉̓̚ ̸̨̜̏̈́r̵̥͂͝ë̸̡͕́g̸̮͋ã̶̟͇͒r̶̢̉̚d̷̹͌i̷̠̬͒̾n̶̛̗̎g̶̺͐ ̶̼͎̈̓P̶̡͕̂͌ṟ̷̺͂̕ȏ̷͚̔ ̷̗̎Ō̶͙̹f̵̮̫̿̐f̵͙͂͝î̴̗͗c̸̲̽̀e̸̮͓̒ ̷̳̮̋̾C̷̩̯̏ä̶̛͎͈́l̸̠̑͝c̶̛͎̔",
@@ -109,7 +110,7 @@ const std::array<Email, 6> EMAILS = {{
   {
     "re: Latest regarding Pro Office Calc",
     "Michael Considine",
-    "devteam@apex.com",
+    "devteam",
     "15/03/95 11:55:12",
 
     "ŕ̶̰̍ę̸̩̕:̵̯̣͌͂ ̵̯̖̈͛L̷̥͎͑a̴͇̭̕t̸͍̟͝͠e̴̛̤̒s̶͙̝͋t̵̼̐ ̸̖̪̓r̸̫͒̃e̶̦̅͠g̶͔͛͜â̶͇̑r̶̬̈́ḓ̵̃i̷̬͇̍̐ṋ̶͋g̶̣͇̃̑ ̷̱̓̐P̶͚̐̈r̴̙̼̎ȯ̶̥ ̷̹̽̿Õ̶̬͖͘ḟ̷̖͔̾f̴͍̘̌͊ī̵̧̉c̴̩̜͋̑ẻ̸̳ ̸̧̀C̷͍̈â̶̡̗͝l̶̠̞̈́̅c̷̻͑͝",
@@ -130,7 +131,7 @@ const std::array<Email, 6> EMAILS = {{
   {
     "re: re: Latest regarding Pro Office Calc",
     "Brian Williams",
-    "devteam@apex.com",
+    "devteam",
     "15/03/95 12:01:19",
 
     "r̶̘͐e̸̱͙͌̌:̴͍̭̎ ̴̬̋r̷̪͆ê̴̡͕:̶͉̍ ̶͇̈́L̷̛̳ą̵̪͋ť̶̮̯ḙ̵͑̄s̵̗̈́́t̴̰͖̓́ ̶͈̜̂r̶̫̖͒e̶̛͔g̵̰̠̈ả̸̩̣̕r̴̛̩̟̀d̶̖̚i̷̝̒̊n̸̥̈̂ğ̷̻ ̵͉̊̏P̷͈̅r̸̩̝̓o̸͇̞̊͌ ̵̩̅͝O̴͚̔͋f̷̱̪͛̈́f̷̯̈́͆i̸̠̋ͅc̷̫̫̿ę̶͝ ̸̭̒̉C̴̻͊̊á̴̟͈͝l̷̰̐͆c̶̛̰̑ͅ",
@@ -143,7 +144,7 @@ const std::array<Email, 6> EMAILS = {{
 
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
 
     // CC
     "Kirk Guthrie, Paul Gresham, Michael Considine"
@@ -261,6 +262,9 @@ void FMailClient::onCellDoubleClick(int row, int col) {
     m_data.wgtTabs->setCurrentIndex(1);
 
     tab.wgtText->setText(email.body);
+    tab.wgtFrom->setText(email.from);
+    tab.wgtSubject->setText(email.subject);
+    tab.wgtTo->setText(email.to);
 
     m_data.wgtTabs->addTab(tab.page.get(), email.subject);
 
@@ -283,7 +287,33 @@ void FMailClient::setupEmailTab() {
 
   tab.wgtText = makeQtObjPtr<QTextBrowser>();
 
-  tab.grid->addWidget(tab.wgtText.get(), 0, 0);
+  QLabel* wgtFromLabel = new QLabel("From");
+  QLabel* wgtSubjectLabel = new QLabel("Subject");
+  QLabel* wgtToLabel = new QLabel("To");
+
+  tab.wgtFrom = makeQtObjPtr<QLabel>("...");
+  tab.wgtSubject = makeQtObjPtr<QLabel>("...");
+  tab.wgtTo = makeQtObjPtr<QLabel>("...");
+
+  QPushButton* wgtReply = new QPushButton("R̵̛e͞p͠ļ̧̀y̶̨");
+  wgtReply->setDisabled(true);
+
+  QPushButton* wgtForward = new QPushButton("̨Fo̕ŗ͡w̛a̸r̵͏͟d҉");
+  wgtForward->setDisabled(true);
+
+  QPushButton* wgtDelete = new QPushButton("̵D̴̀́e̴͟l͏et͠͝ȩ͟");
+  wgtDelete->setDisabled(true);
+
+  tab.grid->addWidget(tab.wgtText.get(), 4, 0, 1, 4);
+  tab.grid->addWidget(wgtFromLabel, 0, 0);
+  tab.grid->addWidget(wgtSubjectLabel, 1, 0);
+  tab.grid->addWidget(wgtToLabel, 2, 0);
+  tab.grid->addWidget(tab.wgtFrom.get(), 0, 1, 1, 3);
+  tab.grid->addWidget(tab.wgtSubject.get(), 1, 1, 1, 3);
+  tab.grid->addWidget(tab.wgtTo.get(), 2, 1, 1, 3);
+  tab.grid->addWidget(wgtReply, 3, 1);
+  tab.grid->addWidget(wgtForward, 3, 2);
+  tab.grid->addWidget(wgtDelete, 3, 3);
 }
 
 //===========================================
@@ -316,7 +346,7 @@ void FMailClient::setupInboxTab() {
 
   tab.vbox->addWidget(tab.wgtTable.get());
 
-  m_data.wgtTabs->addTab(tab.page.get(), "Inbox");
+  m_data.wgtTabs->addTab(tab.page.get(), "larrym@apex.com");
 }
 
 //===========================================
