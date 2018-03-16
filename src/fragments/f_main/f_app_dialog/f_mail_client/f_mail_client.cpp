@@ -19,7 +19,6 @@ struct Email {
 
   QString body;
 
-  QString cc;
   QString attachment;
 };
 
@@ -104,7 +103,6 @@ const std::array<Email, 6> EMAILS = {{
     "Lead Kernel Developer,\n"
     "Apex Systems\n",
 
-    "",
     "syscalls.txt"
   },
   {
@@ -123,10 +121,7 @@ const std::array<Email, 6> EMAILS = {{
 
     "Michael Considine,\n"
     "Senior Kernel Developer,\n"
-    "Apex Systems\n",
-
-    // CC
-    "Kirk Guthrie, Paul Gresham, Michael Considine"
+    "Apex Systems\n"
   },
   {
     "re: re: Latest regarding Pro Office Calc",
@@ -144,10 +139,7 @@ const std::array<Email, 6> EMAILS = {{
 
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"
-    "Apex Systems\n",
-
-    // CC
-    "Kirk Guthrie, Paul Gresham, Michael Considine"
+    "Apex Systems\n"
   }
 }};
 
@@ -216,15 +208,17 @@ static QTableWidgetItem* constructTableItem(const QString& text) {
 // constructInboxEntry
 //===========================================
 static void constructInboxEntry(QTableWidget& table, int row, const QString& subject,
-  const QString& from, const QString& date) {
+  bool attachment, const QString& from, const QString& date) {
 
   QTableWidgetItem* subItem = constructTableItem(subject);
+  QTableWidgetItem* attItem = constructTableItem(attachment ? "✓" : "");
   QTableWidgetItem* fromItem = constructTableItem(from);
   QTableWidgetItem* dateItem = constructTableItem(date);
 
   table.setItem(row, 0, subItem);
-  table.setItem(row, 1, fromItem);
-  table.setItem(row, 2, dateItem);
+  table.setItem(row, 1, attItem);
+  table.setItem(row, 2, fromItem);
+  table.setItem(row, 3, dateItem);
 }
 
 //===========================================
@@ -232,8 +226,11 @@ static void constructInboxEntry(QTableWidget& table, int row, const QString& sub
 //===========================================
 static void enableRow(QTableWidget& table, int row) {
   for (int i = 0; i < table.columnCount(); ++i) {
-    QTableWidgetItem& item = *table.item(row, i);
-    item.setFlags(item.flags() | Qt::ItemIsEnabled);
+    QTableWidgetItem* item = table.item(row, i);
+
+    if (item != nullptr) {
+      item->setFlags(item->flags() | Qt::ItemIsEnabled);
+    }
   }
 }
 
@@ -246,8 +243,11 @@ void FMailClient::enableEmail(int idx) {
 
   enableRow(*inbox.wgtTable, idx);
   inbox.wgtTable->item(idx, 0)->setText(email.subject);
-  inbox.wgtTable->item(idx, 1)->setText(email.from);
-  inbox.wgtTable->item(idx, 2)->setText(email.date);
+  if (email.attachment != "") {
+    inbox.wgtTable->item(idx, 1)->setText("✓");
+  }
+  inbox.wgtTable->item(idx, 2)->setText(email.from);
+  inbox.wgtTable->item(idx, 3)->setText(email.date);
 }
 
 //===========================================
@@ -264,6 +264,7 @@ void FMailClient::onCellDoubleClick(int row, int col) {
     tab.wgtText->setText(email.body);
     tab.wgtFrom->setText(email.from);
     tab.wgtSubject->setText(email.subject);
+    tab.wgtAttachments->setText(email.attachment);
     tab.wgtTo->setText(email.to);
 
     m_data.wgtTabs->addTab(tab.page.get(), email.subject);
@@ -289,10 +290,12 @@ void FMailClient::setupEmailTab() {
 
   QLabel* wgtFromLabel = new QLabel("From");
   QLabel* wgtSubjectLabel = new QLabel("Subject");
+  QLabel* wgtAttachmentsLabel = new QLabel("Attachments");
   QLabel* wgtToLabel = new QLabel("To");
 
   tab.wgtFrom = makeQtObjPtr<QLabel>("...");
   tab.wgtSubject = makeQtObjPtr<QLabel>("...");
+  tab.wgtAttachments = makeQtObjPtr<QLabel>("...");
   tab.wgtTo = makeQtObjPtr<QLabel>("...");
 
   QPushButton* wgtReply = new QPushButton("R̵̛e͞p͠ļ̧̀y̶̨");
@@ -304,16 +307,18 @@ void FMailClient::setupEmailTab() {
   QPushButton* wgtDelete = new QPushButton("̵D̴̀́e̴͟l͏et͠͝ȩ͟");
   wgtDelete->setDisabled(true);
 
-  tab.grid->addWidget(tab.wgtText.get(), 4, 0, 1, 4);
+  tab.grid->addWidget(tab.wgtText.get(), 5, 0, 1, 4);
   tab.grid->addWidget(wgtFromLabel, 0, 0);
   tab.grid->addWidget(wgtSubjectLabel, 1, 0);
   tab.grid->addWidget(wgtToLabel, 2, 0);
+  tab.grid->addWidget(wgtAttachmentsLabel, 3, 0);
   tab.grid->addWidget(tab.wgtFrom.get(), 0, 1, 1, 3);
   tab.grid->addWidget(tab.wgtSubject.get(), 1, 1, 1, 3);
   tab.grid->addWidget(tab.wgtTo.get(), 2, 1, 1, 3);
-  tab.grid->addWidget(wgtReply, 3, 1);
-  tab.grid->addWidget(wgtForward, 3, 2);
-  tab.grid->addWidget(wgtDelete, 3, 3);
+  tab.grid->addWidget(tab.wgtAttachments.get(), 3, 1, 1, 3);
+  tab.grid->addWidget(wgtReply, 4, 1);
+  tab.grid->addWidget(wgtForward, 4, 2);
+  tab.grid->addWidget(wgtDelete, 4, 3);
 }
 
 //===========================================
@@ -325,19 +330,21 @@ void FMailClient::setupInboxTab() {
   tab.page = makeQtObjPtr<QWidget>();
   tab.vbox = makeQtObjPtr<QVBoxLayout>(tab.page.get());
 
-  tab.wgtTable = makeQtObjPtr<QTableWidget>(6, 3);
+  tab.wgtTable = makeQtObjPtr<QTableWidget>(6, 4);
   tab.wgtTable->setShowGrid(false);
   tab.wgtTable->setContextMenuPolicy(Qt::NoContextMenu);
-  tab.wgtTable->setHorizontalHeaderLabels({"Subject", "From", "Date"});
+  tab.wgtTable->setHorizontalHeaderLabels({"Subject", "", "From", "Date"});
+  tab.wgtTable->horizontalHeaderItem(1)->setIcon(QIcon("data/youve_got_mail/attachment.png"));
   tab.wgtTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+  tab.wgtTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
   tab.wgtTable->verticalHeader()->setVisible(false);
   connect(tab.wgtTable.get(), SIGNAL(cellDoubleClicked(int, int)), this,
     SLOT(onCellDoubleClick(int, int)));
 
   int i = 0;
   for (auto& email : EMAILS) {
-    constructInboxEntry(*tab.wgtTable, i, email.subjectGarbled, email.fromGarbled,
-      email.dateGarbled);
+    constructInboxEntry(*tab.wgtTable, i, email.subjectGarbled, email.attachment != "",
+      email.fromGarbled, email.dateGarbled);
 
     ++i;
   }

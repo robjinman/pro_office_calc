@@ -32,6 +32,7 @@ struct FMailClientData : public FragmentData {
     QtObjPtr<QLabel> wgtFrom;
     QtObjPtr<QLabel> wgtSubject;
     QtObjPtr<QLabel> wgtTo;
+    QtObjPtr<QLabel> wgtAttachments;
   } emailTab;
 };
 
