@@ -8,6 +8,7 @@
 #include "fragments/relocatable/f_glitch/f_glitch_spec.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_server_room/f_server_room_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor_spec.hpp"
 
@@ -18,6 +19,7 @@ struct FAppDialogSpec : public FragmentSpec {
         &glitchSpec,
         &calculatorSpec,
         &mailClientSpec,
+        &serverRoomSpec,
         &procalcSetupSpec,
         &textEditorSpec
       }) {}
@@ -25,6 +27,7 @@ struct FAppDialogSpec : public FragmentSpec {
   FGlitchSpec glitchSpec;
   FCalculatorSpec calculatorSpec;
   FMailClientSpec mailClientSpec;
+  FServerRoomSpec serverRoomSpec;
   FProcalcSetupSpec procalcSetupSpec;
   FTextEditorSpec textEditorSpec;
 

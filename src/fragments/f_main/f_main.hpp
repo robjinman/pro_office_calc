@@ -15,7 +15,7 @@
 
 struct FMainData : public WidgetFragData {
   FMainData()
-    : WidgetFragData(new QVBoxLayout) {}
+    : WidgetFragData(makeQtObjPtr<QVBoxLayout>()) {}
 
   QtObjPtr<QWidget> wgtCentral;
   QtObjPtr<QMenu> mnuFile;

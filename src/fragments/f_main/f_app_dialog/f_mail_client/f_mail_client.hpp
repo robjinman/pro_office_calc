@@ -12,7 +12,6 @@
 #include <QMargins>
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
-#include "fragments/relocatable/widget_frag_data.hpp"
 
 
 struct FMailClientData : public FragmentData {

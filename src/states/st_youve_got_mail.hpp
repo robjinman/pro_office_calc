@@ -29,15 +29,17 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->desktopSpec.setEnabled(true);
   mainSpec->desktopSpec.icons = {
     {"data/procalc.png", "Pro Office Calculator", "procalcLaunch"},
-    {"data/youve_got_mail/mail.png", "Email Client", "mailClientLaunch"},
-    {"data/youve_got_mail/text_file.png", "y2k_threat.txt", "y2kThreatLaunch"}
+    {"data/youve_got_mail/text_file.png", "y2k_threat.txt", "y2kThreatLaunch"},
+    {"data/youve_got_mail/mail.png", "Email Client", "mailClientLaunch"}
   };
+  mainSpec->desktopSpec.serverRoomInitSpec.setEnabled(true);
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.titleText = "Pro Office Calculator";
   mainSpec->appDialogSpec0.width = 400;
   mainSpec->appDialogSpec0.height = 300;
   mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
   mainSpec->appDialogSpec0.calculatorSpec.setEnabled(true);
+  mainSpec->appDialogSpec0.serverRoomSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
   mainSpec->appDialogSpec1.titleText = "Mail Client";
   mainSpec->appDialogSpec1.width = 500;
@@ -52,12 +54,12 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec2.showOnEvent = "y2kThreatLaunch";
   mainSpec->appDialogSpec2.textEditorSpec.setEnabled(true);
   mainSpec->appDialogSpec2.textEditorSpec.content = "<h2>The Y2K threat</h2>"
-    "Concern has been steadily rising amongst a small number of academics and industry experts "
-    "about whether the various systems in use today can cope with the transition of their clocks "
-    "from this century into the next - that is, from 11:59:59 pm on 31st December 1999 to "
-    "12:00:00 am on 1st January 2000. There is little consensus on what if any deleterious effects "
-    "may result, but relevant parties are urged to consider how it may affect them and to make "
-    "adjustments to their systems accordingly.";
+    "There is growing concern amongst a minority of academics and industry experts whether the "
+    "various systems in use today can cope with their clocks transitioning from this century into "
+    "the next - that is, from 11:59:59 pm on 31st December 1999 to 12:00:00 am on 1st January "
+    "2000. Whilst there's little consensus on what if any deleterious effects may result, "
+    "developers and administrators are urged to consider how their systems may be affected and to "
+    "implement any precautionary measures well in advance.";
 
   return mainSpec;
 }

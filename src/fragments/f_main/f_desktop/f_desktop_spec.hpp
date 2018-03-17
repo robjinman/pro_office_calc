@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "fragment_spec.hpp"
+#include "fragments/f_main/f_desktop/f_server_room_init/f_server_room_init_spec.hpp"
 
 
 struct FDesktopSpec : public FragmentSpec {
@@ -15,8 +16,11 @@ struct FDesktopSpec : public FragmentSpec {
   };
 
   FDesktopSpec()
-    : FragmentSpec("FDesktop", {}) {}
+    : FragmentSpec("FDesktop", {
+      &serverRoomInitSpec
+    }) {}
 
+  FServerRoomInitSpec serverRoomInitSpec;
   std::vector<Icon> icons;
 };
 

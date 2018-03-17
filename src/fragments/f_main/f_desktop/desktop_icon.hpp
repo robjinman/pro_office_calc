@@ -18,6 +18,9 @@ class DesktopIcon : public QWidget {
 
     virtual ~DesktopIcon() override;
 
+    QtObjPtr<QPushButton> wgtButton;
+    QtObjPtr<QLabel> wgtText;
+
   signals:
     void activated(const std::string& name);
 
@@ -27,8 +30,6 @@ class DesktopIcon : public QWidget {
   private:
     std::string m_name;
     QtObjPtr<QVBoxLayout> m_vbox;
-    QtObjPtr<QPushButton> m_wgtButton;
-    QtObjPtr<QLabel> m_wgtText;
 
     long long m_lastClick = 0;
 

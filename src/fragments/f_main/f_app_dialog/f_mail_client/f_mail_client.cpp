@@ -1,5 +1,6 @@
 #include <QPushButton>
 #include <QHeaderView>
+#include "fragments/relocatable/widget_frag_data.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
@@ -271,6 +272,9 @@ void FMailClient::onCellDoubleClick(int row, int col) {
 
     if (row + 1 < static_cast<int>(EMAILS.size())) {
       enableEmail(row + 1);
+    }
+    else {
+      commonData.eventSystem.fire(pEvent_t(new Event("launchServerRoom")));
     }
   }
 

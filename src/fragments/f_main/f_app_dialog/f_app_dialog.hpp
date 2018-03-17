@@ -19,7 +19,7 @@ struct DialogClosedEvent : public Event {
 
 struct FAppDialogData : public WidgetFragData {
   FAppDialogData()
-    : WidgetFragData(new QVBoxLayout) {}
+    : WidgetFragData(makeQtObjPtr<QVBoxLayout>()) {}
 };
 
 class FAppDialog : public QDialog, public Fragment {

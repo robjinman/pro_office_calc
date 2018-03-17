@@ -9,7 +9,7 @@
 
 
 template <class T>
-using CustomQtObjDeleter = std::function<void(const T*)>;
+using CustomQtObjDeleter = std::function<void(const QObject*)>;
 
 template <class T>
 using QtObjPtr = std::unique_ptr<T, CustomQtObjDeleter<T>>;
@@ -24,7 +24,7 @@ auto makeQtObjPtr(Args&&... args) {
   // A QPointer will keep track of whether the object is still alive
   QPointer<T> qPtr(tmp.get());
 
-  CustomQtObjDeleter<T> deleter = [qPtr](const T*) {
+  CustomQtObjDeleter<T> deleter = [qPtr](const QObject*) {
     if (qPtr) {
       qPtr->deleteLater();
     }
@@ -39,7 +39,7 @@ auto makeQtObjPtrFromRawPtr(T* rawPtr) {
 
   QPointer<T> qPtr(rawPtr);
 
-  CustomQtObjDeleter<T> deleter = [qPtr](const T*) {
+  CustomQtObjDeleter<T> deleter = [qPtr](const QObject*) {
     if (qPtr) {
       qPtr->deleteLater();
     }

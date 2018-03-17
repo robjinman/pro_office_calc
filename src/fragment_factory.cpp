@@ -7,6 +7,7 @@
 #include "fragments/f_main/f_countdown_to_start/f_countdown_to_start.hpp"
 #include "fragments/f_main/f_login_screen/f_login_screen.hpp"
 #include "fragments/f_main/f_desktop/f_desktop.hpp"
+#include "fragments/f_main/f_desktop/f_server_room_init/f_server_room_init.hpp"
 #include "fragments/f_main/f_settings_dialog/f_settings_dialog.hpp"
 #include "fragments/f_main/f_settings_dialog/f_loading_screen/f_loading_screen.hpp"
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d.hpp"
@@ -14,6 +15,7 @@
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
+#include "fragments/f_main/f_app_dialog/f_server_room/f_server_room.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup.hpp"
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
@@ -63,6 +65,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   else if (name == "FDesktop") {
     return new FDesktop(parent, parentData, commonData);
   }
+  else if (name == "FServerRoomInit") {
+    return new FServerRoomInit(parent, parentData, commonData);
+  }
   else if (name == "FMaze3d") {
     return new FMaze3d(parent, parentData, commonData);
   }
@@ -74,6 +79,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FMailClient") {
     return new FMailClient(parent, parentData, commonData);
+  }
+  else if (name == "FServerRoom") {
+    return new FServerRoom(parent, parentData, commonData);
   }
   else if (name == "FProcalcSetup") {
     return new FProcalcSetup(parent, parentData, commonData);

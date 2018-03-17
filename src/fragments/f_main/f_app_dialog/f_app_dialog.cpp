@@ -15,7 +15,7 @@ FAppDialog::FAppDialog(Fragment& parent_, FragmentData& parentData_,
 
   DBG_PRINT("FAppDialog::FAppDialog\n");
 
-  setLayout(m_data.box);
+  setLayout(m_data.box.get());
 }
 
 //===========================================

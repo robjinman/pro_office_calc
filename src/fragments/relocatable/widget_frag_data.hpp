@@ -4,14 +4,15 @@
 
 #include <QBoxLayout>
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 
 
 struct WidgetFragData : public FragmentData {
-  WidgetFragData(QBoxLayout* box)
+  WidgetFragData(QtObjPtr<QBoxLayout> box)
     : FragmentData(),
-      box(box) {}
+      box(std::move(box)) {}
 
-  QBoxLayout* box;
+  QtObjPtr<QBoxLayout> box;
 
   virtual ~WidgetFragData() override {}
 };
