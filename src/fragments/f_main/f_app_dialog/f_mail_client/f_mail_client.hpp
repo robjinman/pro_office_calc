@@ -58,6 +58,8 @@ class FMailClient : public QWidget, public Fragment {
       QMargins margins;
     } m_origParentState;
 
+    bool m_serverRoomLaunched = false;
+
     void setupInboxTab();
     void setupEmailTab();
 

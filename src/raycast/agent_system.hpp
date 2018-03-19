@@ -26,6 +26,7 @@ class CAgent : public Component {
   public:
     CAgent(entityId_t entityId);
 
+    bool isHostile = true;
     entityId_t patrolPath = -1;
     std::string stPatrollingTrigger;
     std::string stChasingTrigger;

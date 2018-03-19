@@ -274,7 +274,10 @@ void FMailClient::onCellDoubleClick(int row, int col) {
       enableEmail(row + 1);
     }
     else {
-      commonData.eventSystem.fire(pEvent_t(new Event("launchServerRoom")));
+      if (!m_serverRoomLaunched) {
+        m_serverRoomLaunched = true;
+        commonData.eventSystem.fire(pEvent_t(new Event("launchServerRoom")));
+      }
     }
   }
 

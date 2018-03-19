@@ -282,7 +282,7 @@ void CAgent::update(EntityManager& entityManager, TimeService& timeService,
       break;
   }
 
-  if (player.alive) {
+  if (isHostile && player.alive) {
     attemptShot(entityManager, timeService, audioService);
   }
 }

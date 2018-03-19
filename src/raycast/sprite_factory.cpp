@@ -104,6 +104,87 @@ static vector<AnimationFrame> constructFrames(int W, int H, const vector<int>& r
 }
 
 //===========================================
+// SpriteFactory::constructCivilian
+//===========================================
+bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["texture"] = "civilian";
+
+  if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
+    AnimationSystem& animationSystem =
+      m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+    EventHandlerSystem& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+    AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
+
+    // Number of frames in sprite sheet
+    const int W = 8;
+    const int H = 13;
+
+    CAnimation* anim = new CAnimation(entityId);
+
+    vector<AnimationFrame> frames = constructFrames(W, H,
+      { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
+    anim->animations.insert(std::make_pair("run",
+      Animation(m_timeService.frameRate, 1.0, frames)));
+
+    frames = constructFrames(W, H, { 0 });
+    anim->animations.insert(std::make_pair("idle",
+      Animation(m_timeService.frameRate, 1.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+    animationSystem.playAnimation(entityId, "idle", true);
+
+    CDamage* damage = new CDamage(entityId, 2, 2);
+    damageSystem.addComponent(pComponent_t(damage));
+
+    CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
+
+    CEventHandler* takeDamage = new CEventHandler(entityId);
+    takeDamage->handlers.push_back(EventHandler{"entity_damaged",
+      [=, &animationSystem, &vRect](const GameEvent& e) {
+
+      const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
+
+      if (event.entityId == entityId) {
+        DBG_PRINT("Enemy health: " << damage->health << "\n");
+        animationSystem.playAnimation(entityId, "hurt", false);
+
+        if (damage->health == 0) {
+          m_audioService.playSoundAtPos("monster_death", vRect.pos);
+          m_entityManager.deleteEntity(entityId);
+        }
+        else {
+          m_audioService.playSoundAtPos("monster_hurt", vRect.pos);
+        }
+      }
+    }});
+    eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+
+    CAgent* agent = new CAgent(entityId);
+    agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
+    agent->isHostile = false;
+
+    string s = getValue(obj.dict, "patrol_path", "");
+    if (s != "") {
+      agent->patrolPath = Component::getIdFromString(s);
+    }
+
+    agentSystem.addComponent(pComponent_t(agent));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // SpriteFactory::constructBadGuy
 //===========================================
 bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, entityId_t parentId,
@@ -217,7 +298,7 @@ SpriteFactory::SpriteFactory(RootFactory& rootFactory, EntityManager& entityMana
 // SpriteFactory::types
 //===========================================
 const set<string>& SpriteFactory::types() const {
-  static const set<string> types{"sprite", "bad_guy", "ammo"};
+  static const set<string> types{"sprite", "bad_guy", "civilian", "ammo"};
   return types;
 }
 
@@ -232,6 +313,9 @@ bool SpriteFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "bad_guy") {
     return constructBadGuy(entityId, obj, region, parentTransform);
+  }
+  else if (type == "civilian") {
+    return constructCivilian(entityId, obj, region, parentTransform);
   }
   else if (type == "ammo") {
     return constructAmmo(entityId, obj, region, parentTransform);

@@ -46,9 +46,15 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     parentData.box->addWidget(this);
 
     m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
+    m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem,
+      m_data.wgtRaycast->entityManager()));
+
     m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
-    m_data.wgtRaycast->initialise("data/maps/house.svg");
+    m_data.wgtRaycast->initialise("data/youve_got_mail/map.svg");
+
+    // TODO
+    commonData.eventSystem.fire(pEvent_t(new Event("youveGotMail/divByZero")));
   }, m_launchEventId);
 }
 
