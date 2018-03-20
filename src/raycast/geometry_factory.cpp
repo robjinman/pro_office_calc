@@ -24,7 +24,7 @@ using std::set;
 using std::vector;
 
 
-const double SNAP_DISTANCE = 4.0;
+const double SNAP_DISTANCE = 1.0;
 
 
 //===========================================

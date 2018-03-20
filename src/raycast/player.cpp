@@ -123,7 +123,7 @@ void Player::changeHeight(const CZone& zone, double deltaH) {
     }
   }
   // If applying this delta puts the player's head through the ceiling
-  else if (headHeight() + deltaH > zone.ceilingHeight) {
+  else if (zone.hasCeiling && (headHeight() + deltaH > zone.ceilingHeight)) {
     // Only permit negative delta
     if (deltaH >= 0) {
       vVelocity = 0;
