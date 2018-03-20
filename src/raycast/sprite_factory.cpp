@@ -153,7 +153,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
 
       if (event.entityId == entityId) {
-        DBG_PRINT("Enemy health: " << damage->health << "\n");
+        DBG_PRINT("Civilian health: " << damage->health << "\n");
         animationSystem.playAnimation(entityId, "hurt", false);
 
         if (damage->health == 0) {
