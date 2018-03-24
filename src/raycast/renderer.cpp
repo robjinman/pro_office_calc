@@ -388,7 +388,9 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       wallX.nearZone = zone;
 
       double floorHeight = zone->floorHeight;
-      double targetHeight = zone->ceilingHeight - zone->floorHeight;
+      double ceilingHeight = zone->hasCeiling ? zone->ceilingHeight
+        : wallX.hardEdge->zone->ceilingHeight;
+      double targetHeight = ceilingHeight - floorHeight;
       const Point& pt = wallX.X->point_rel;
 
       LineSegment wall(Point(pt.x, floorHeight - cam.height),
@@ -404,7 +406,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       JoinX& joinX = dynamic_cast<JoinX&>(*X);
 
       if(!(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB)) {
-        DBG_PRINT("Warning: Possibly overlapping regions\n");
+        //DBG_PRINT("Warning: Possibly overlapping regions\n");
       }
 
       CZone* nextZone = zone == joinX.softEdge->zoneA ? joinX.softEdge->zoneB

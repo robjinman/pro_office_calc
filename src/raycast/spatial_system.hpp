@@ -28,6 +28,8 @@ struct Intersection {
   Point viewPoint;
   double distanceFromOrigin;
   double distanceAlongTarget;
+  entityId_t zoneB;
+  entityId_t zoneA;
 };
 
 typedef std::unique_ptr<Intersection> pIntersection_t;
@@ -117,6 +119,9 @@ class SpatialSystem : public System {
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
     void crossZones(entityId_t entityId, entityId_t oldZone, entityId_t newZone);
+    void connectSubzones(CZone& zone);
+    bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) const;
+    bool isAncestor(entityId_t a, entityId_t b) const;
     std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
 
     inline CZone& getCurrentZone() const {
@@ -126,8 +131,6 @@ class SpatialSystem : public System {
     void buoyancy();
     void gravity();
 };
-
-void connectSubzones(CZone& zone);
 
 void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
   const CZone& zone, std::list<pIntersection_t>& intersections,

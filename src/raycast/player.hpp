@@ -26,7 +26,7 @@ class Player {
     double vVelocity = 0;
     double activationRadius = 100.0;
     double collectionRadius = 50.0;
-    const double FOREHEAD_SIZE = 5.0;
+    const double FOREHEAD_SIZE = 10.0;
 
     entityId_t crosshair = -1;
     entityId_t sprite = -1;

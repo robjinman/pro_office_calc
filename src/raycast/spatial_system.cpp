@@ -4,6 +4,7 @@
 #include <ostream>
 #include <list>
 #include <iterator>
+#include <deque>
 #include "raycast/spatial_system.hpp"
 #include "raycast/geometry.hpp"
 #include "raycast/map_parser.hpp"
@@ -32,6 +33,7 @@ using std::vector;
 
 static const double GRID_CELL_SIZE = 25.0;
 static const double SNAP_DISTANCE = 4.0;
+static const int MAX_ANCESTOR_SEARCH = 2;
 
 
 ostream& operator<<(ostream& os, CSpatialKind kind) {
@@ -65,6 +67,20 @@ void forEachZone(CZone& zone, function<void(CZone&)> fn) {
   for_each(zone.children.begin(), zone.children.end(), [&](unique_ptr<CZone>& r) {
     forEachZone(*r, fn);
   });
+}
+
+//===========================================
+// nthAncestor
+//===========================================
+static CZone& nthAncestor(CZone& z, int n) {
+  return (n <= 0 || z.parent == nullptr) ? z : nthAncestor(*z.parent, n - 1);
+}
+
+//===========================================
+// nthConstAncestor
+//===========================================
+static const CZone& nthConstAncestor(const CZone& z, int n) {
+  return (n <= 0 || z.parent == nullptr) ? z : nthConstAncestor(*z.parent, n - 1);
 }
 
 //===========================================
@@ -105,7 +121,7 @@ static bool pathBlocked(const CZone& zone, const Point& pos, double height, cons
 
   bool b = false;
 
-  forEachConstZone(*zone.parent, [&](const CZone& r) {
+  forEachConstZone(nthConstAncestor(zone, MAX_ANCESTOR_SEARCH), [&](const CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       const CEdge& edge = **it;
 
@@ -132,6 +148,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   int depth = 0) {
 
   if (depth > 4) {
+    DBG_PRINT("depth > 4\n");
     return Vec2f(0, 0);
   }
 
@@ -144,7 +161,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   Vec2f newV(9999, 9999); // Value closest to oldV
   Circle circle{pos + oldV, radius};
 
-  forEachConstZone(*zone.parent, [&](const CZone& r) {
+  forEachConstZone(nthConstAncestor(zone, MAX_ANCESTOR_SEARCH), [&](const CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       const CEdge& edge = **it;
 
@@ -264,21 +281,6 @@ static void entitiesInRadius_r(const CZone& zone, const Circle& circle, set<enti
   for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
     entitiesInRadius_r(**it, circle, entities);
   }
-}
-
-//===========================================
-// similar
-//===========================================
-static bool similar(const LineSegment& l1, const LineSegment& l2) {
-  return (distance(l1.A, l2.A) <= SNAP_DISTANCE && distance(l1.B, l2.B) <= SNAP_DISTANCE)
-    || (distance(l1.A, l2.B) <= SNAP_DISTANCE && distance(l1.B, l2.A) <= SNAP_DISTANCE);
-}
-
-//===========================================
-// areTwins
-//===========================================
-static bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) {
-  return similar(se1.lseg, se2.lseg);
 }
 
 //===========================================
@@ -503,9 +505,52 @@ static bool removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSp
 }
 
 //===========================================
-// connectSubzones
+// similar
 //===========================================
-void connectSubzones(CZone& zone) {
+static bool similar(const LineSegment& l1, const LineSegment& l2) {
+  return (distance(l1.A, l2.A) <= SNAP_DISTANCE && distance(l1.B, l2.B) <= SNAP_DISTANCE)
+    || (distance(l1.A, l2.B) <= SNAP_DISTANCE && distance(l1.B, l2.A) <= SNAP_DISTANCE);
+}
+
+//===========================================
+// SpatialSystem::isAncestor
+//===========================================
+bool SpatialSystem::isAncestor(entityId_t a, entityId_t b) const {
+  if (a == -1 || b == -1) {
+    return false;
+  }
+
+  const CSpatial& bComp = *m_components.at(b);
+  if (bComp.parentId == -1) {
+    return false;
+  }
+
+  const CSpatial* anc = m_components.at(bComp.parentId);
+
+  while (anc->parentId != -1) {
+    if (anc->entityId() == a) {
+      DBG_PRINT("true!\n");
+      return true;
+    }
+
+    anc = m_components.at(anc->parentId);
+  };
+
+  return false;
+}
+
+//===========================================
+// SpatialSystem::areTwins
+//===========================================
+bool SpatialSystem::areTwins(const CSoftEdge& se1, const CSoftEdge& se2) const {
+  return similar(se1.lseg, se2.lseg) &&
+    !(isAncestor(se1.parentId, se2.parentId) || isAncestor(se2.parentId, se1.parentId));
+}
+
+//===========================================
+// SpatialSystem::connectSubzones
+//===========================================
+void SpatialSystem::connectSubzones(CZone& zone) {
   forEachZone(zone, [&](CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
@@ -614,6 +659,8 @@ void SpatialSystem::hRotateCamera(double da) {
 // Doesn't set the zone on the entity
 //===========================================
 void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entityId_t newZoneId) {
+  DBG_PRINT("Crossing from zone " << oldZoneId << " to zone " << newZoneId << "\n");
+
   if (oldZoneId == newZoneId) {
     return;
   }
@@ -671,28 +718,33 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 
       assert(body.zone->parent != nullptr);
 
-      map<double, const CSoftEdge*> edgesCrossed;
+      list<const CSoftEdge*> edgesCrossed;
       LineSegment lseg(body.pos, body.pos + dv);
 
-      forEachConstZone(*body.zone->parent, [&](const CZone& r) {
+      forEachConstZone(nthAncestor(*body.zone, MAX_ANCESTOR_SEARCH), [&](const CZone& r) {
         for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
           const CEdge& edge = **it;
 
           Point X;
           if (lineSegmentIntersect(lseg, edge.lseg, X)) {
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
-
-            double dist = distance(body.pos, X);
-
-            edgesCrossed[dist] = &se;
+            edgesCrossed.push_back(&se);
           }
         }
       });
 
       Matrix m;
       map<entityId_t, bool> crossed;
+      list<const CSoftEdge*> excluded;
       for (auto jt = edgesCrossed.begin(); jt != edgesCrossed.end(); ++jt) {
-        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(*jt->second);
+        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(**jt);
+
+        if (se.zoneA->entityId() != body.zone->entityId() &&
+          se.zoneB->entityId() != body.zone->entityId()) {
+
+          excluded.push_back(&se);
+          continue;
+        }
 
         if (!crossed[se.joinId]) {
           CZone* nextZone = getNextZone(*body.zone, se);
@@ -702,8 +754,13 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 
           m = m * se.toTwin;
 
-          crossed[se.joinId] = true;
+          if (se.joinId != -1) {
+            crossed[se.joinId] = true;
+          }
         }
+
+        edgesCrossed.insert(edgesCrossed.end(), excluded.begin(), excluded.end());
+        excluded.clear();
       }
 
       body.pos = body.pos + dv;
@@ -869,6 +926,7 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
       X->viewPoint = invMatrix * point;
       X->distanceFromOrigin = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
+      X->zoneA = X->zoneB = zone.entityId();
     }
   }
 
@@ -889,13 +947,17 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
       X->viewPoint = invMatrix * point;
       X->distanceFromOrigin = pt.x;
       X->distanceAlongTarget = distance(lseg.A, pt);
+      X->zoneA = zone.entityId();
 
       if (edge.kind == CSpatialKind::HARD_EDGE) {
+        X->zoneB = zone.parent->entityId();
         intersections.push_back(pIntersection_t(X));
       }
       else if (edge.kind == CSpatialKind::SOFT_EDGE) {
         CSoftEdge& softEdge = dynamic_cast<CSoftEdge&>(edge);
         const CZone& next = softEdge.zoneA == &zone ? *softEdge.zoneB : *softEdge.zoneA;
+
+        X->zoneB = next.entityId();
 
         Matrix mat = matrix;
         double cullNearerThan_ = cullNearerThan;
@@ -957,15 +1019,41 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
     return a->distanceFromOrigin < b->distanceFromOrigin;
   });
 
-  auto it = find_if(intersections.begin(), intersections.end(), [](const pIntersection_t& i) {
+  std::list<pIntersection_t> Xs;
+  std::list<pIntersection_t> excluded;
+  entityId_t currentZone = sg.player->region();
+
+  while (!intersections.empty()) {
+    const auto& X = intersections.front();
+
+    if (X->zoneA == currentZone || X->zoneB == currentZone) {
+      auto other = currentZone == X->zoneA ? X->zoneB : X->zoneA;
+
+      Xs.push_back(std::move(intersections.front()));
+      intersections.pop_front();
+
+      currentZone = other;
+
+      for (auto& excl : excluded) {
+        intersections.push_front(std::move(excl));
+      }
+      excluded.clear();
+    }
+    else {
+      excluded.push_back(std::move(intersections.front()));
+      intersections.pop_front();
+    }
+  }
+
+  auto it = find_if(Xs.begin(), Xs.end(), [](const pIntersection_t& i) {
     return i->kind == CSpatialKind::HARD_EDGE;
   });
 
-  if (it != intersections.end()) {
-    intersections.erase(++it, intersections.end());
+  if (it != Xs.end()) {
+    Xs.erase(++it, Xs.end());
   }
 
-  return intersections;
+  return Xs;
 }
 
 //===========================================
@@ -1058,7 +1146,7 @@ set<entityId_t> SpatialSystem::entitiesInRadius(const Point& pos, double radius)
 
   assert(zone.parent != nullptr);
 
-  forEachConstZone(*zone.parent, [&](const CZone& z) {
+  forEachConstZone(nthConstAncestor(zone, MAX_ANCESTOR_SEARCH), [&](const CZone& z) {
     entitiesInRadius_r(z, circle, entities);
   });
 
