@@ -148,7 +148,6 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
   int depth = 0) {
 
   if (depth > 4) {
-    DBG_PRINT("depth > 4\n");
     return Vec2f(0, 0);
   }
 
@@ -721,17 +720,34 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
       list<const CSoftEdge*> edgesCrossed;
       LineSegment lseg(body.pos, body.pos + dv);
 
+      bool abort = false;
       forEachConstZone(nthAncestor(*body.zone, MAX_ANCESTOR_SEARCH), [&](const CZone& r) {
+        if (abort) {
+          return;
+        }
+
         for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
           const CEdge& edge = **it;
 
           Point X;
           if (lineSegmentIntersect(lseg, edge.lseg, X)) {
+            if (edge.kind != CSpatialKind::SOFT_EDGE) {
+              // TODO: Find out how this is possible and prevent it
+
+              DBG_PRINT("Warning: Crossed edge is not soft edge\n");
+              abort = true;
+              return;
+            }
+
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
             edgesCrossed.push_back(&se);
           }
         }
       });
+
+      if (abort) {
+        return;
+      }
 
       Matrix m;
       map<entityId_t, bool> crossed;
