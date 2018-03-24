@@ -528,7 +528,6 @@ bool SpatialSystem::isAncestor(entityId_t a, entityId_t b) const {
 
   while (anc->parentId != -1) {
     if (anc->entityId() == a) {
-      DBG_PRINT("true!\n");
       return true;
     }
 
