@@ -19,30 +19,13 @@ void InventorySystem::update() {}
 // InventorySystem::handleEvent
 //===========================================
 void InventorySystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
-  const double MIN_HEIGHT_DIFF = 10;
-
   if (event.name == "player_move") {
-    const EPlayerMove& e = dynamic_cast<const EPlayerMove&>(event);
-
     for (auto it = m_collectables.begin(); it != m_collectables.end(); ++it) {
       CCollectable& collectable = *it->second;
       entityId_t id = it->first;
 
       if (entities.count(id)) {
-        const CSpatial& c = m_entityManager.getComponent<CSpatial>(id, ComponentKind::C_SPATIAL);
-
-        // Only deal with VRects for now
-        //
-        if (c.kind == CSpatialKind::V_RECT) {
-          const CVRect& vRect = dynamic_cast<const CVRect&>(c);
-          const CZone& itemZone = *vRect.zone;
-          const CZone& playerZone = m_entityManager.getComponent<CZone>(e.player.region(),
-            ComponentKind::C_SPATIAL);
-
-          if (fabs(playerZone.floorHeight - itemZone.floorHeight) < MIN_HEIGHT_DIFF) {
-            addToBucket(collectable);
-          }
-        }
+        addToBucket(collectable);
       }
     }
   }
@@ -70,7 +53,7 @@ void InventorySystem::addBucket(CInventory* component) {
   assert(ptr != nullptr);
 
   m_buckets.insert(make_pair(ptr->entityId(), pCBucket_t(ptr)));
-  m_bucketAssignment.insert(make_pair(ptr->type, ptr->entityId()));
+  m_bucketAssignment.insert(make_pair(ptr->collectableType, ptr->entityId()));
 }
 
 //===========================================
@@ -109,7 +92,7 @@ Component& InventorySystem::getComponent(entityId_t entityId) const {
 void InventorySystem::removeEntity(entityId_t id) {
   auto it = m_buckets.find(id);
   if (it != m_buckets.end()) {
-    m_bucketAssignment.erase(it->second->type);
+    m_bucketAssignment.erase(it->second->collectableType);
     m_buckets.erase(it);
   }
   else {
@@ -121,7 +104,7 @@ void InventorySystem::removeEntity(entityId_t id) {
 // InventorySystem::addToBucket
 //===========================================
 void InventorySystem::addToBucket(const CCollectable& item) {
-  auto it = m_bucketAssignment.find(item.type);
+  auto it = m_bucketAssignment.find(item.collectableType);
 
   if (it != m_bucketAssignment.end()) {
     entityId_t id = it->second;
@@ -145,8 +128,8 @@ void InventorySystem::addToBucket(const CCollectable& item) {
 //===========================================
 // InventorySystem::subtractFromBucket
 //===========================================
-int InventorySystem::subtractFromBucket(const string& type, int value) {
-  auto it = m_bucketAssignment.find(type);
+int InventorySystem::subtractFromBucket(const string& collectableType, int value) {
+  auto it = m_bucketAssignment.find(collectableType);
   if (it != m_bucketAssignment.end()) {
     entityId_t id = it->second;
     CBucket& bucket = *m_buckets.at(id);
@@ -167,7 +150,7 @@ int InventorySystem::subtractFromBucket(const string& type, int value) {
 //===========================================
 // InventorySystem::getBucketValue
 //===========================================
-int InventorySystem::getBucketValue(const string& type) const {
-  entityId_t id = m_bucketAssignment.at(type);
+int InventorySystem::getBucketValue(const string& collectableType) const {
+  entityId_t id = m_bucketAssignment.at(collectableType);
   return m_buckets.at(id)->count;
 }

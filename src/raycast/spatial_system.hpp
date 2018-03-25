@@ -85,7 +85,8 @@ class SpatialSystem : public System {
     void moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor = 0);
     void relocateEntity(entityId_t id, CZone& zone, const Point& point);
 
-    std::set<entityId_t> entitiesInRadius(const Point& pos, double radius) const;
+    std::set<entityId_t> entitiesInRadius(const CZone& zone, const Point& pos, double radius,
+      double heightAboveFloor = 0.0) const;
 
     std::list<pIntersection_t> entitiesAlongRay(const CZone& zone, const Point& pos,
       const Vec2f& dir, const Matrix& matrix) const;

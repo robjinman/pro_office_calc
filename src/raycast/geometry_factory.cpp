@@ -100,6 +100,8 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
     return false;
   }
 
+  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(edge.parentId));
+
   double r = std::stod(getValue(obj.dict, "aspect_ratio"));
   Size size(w, w / r);
 
@@ -114,6 +116,7 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
 
   CVRect* vRect = new CVRect(entityId, parentId, size);
   vRect->pos = pos;
+  vRect->zone = &zone;
 
   spatialSystem.addComponent(pComponent_t(vRect));
 

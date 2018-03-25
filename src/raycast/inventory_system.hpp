@@ -25,12 +25,12 @@ struct CInventory : public Component {
 typedef std::unique_ptr<CInventory> pCInventory_t;
 
 struct CBucket : public CInventory {
-  CBucket(entityId_t entityId, const std::string& type, int capacity)
+  CBucket(entityId_t entityId, const std::string& collectableType, int capacity)
     : CInventory(CInventoryKind::BUCKET, entityId),
-      type(type),
+      collectableType(collectableType),
       capacity(capacity) {}
 
-  std::string type;
+  std::string collectableType;
   int capacity;
   int count = 0;
 };
@@ -38,12 +38,12 @@ struct CBucket : public CInventory {
 typedef std::unique_ptr<CBucket> pCBucket_t;
 
 struct CCollectable : public CInventory {
-  CCollectable(entityId_t entityId, const std::string& type, int value)
+  CCollectable(entityId_t entityId, const std::string& collectableType, int value)
     : CInventory(CInventoryKind::COLLECTABLE, entityId),
-      type(type),
+      collectableType(collectableType),
       value(value) {}
 
-  std::string type;
+  std::string collectableType;
   int value;
 };
 
@@ -78,8 +78,8 @@ class InventorySystem : public System {
     void removeEntity(entityId_t id) override;
 
     void addToBucket(const CCollectable& item);
-    int getBucketValue(const std::string& type) const;
-    int subtractFromBucket(const std::string& type, int value);
+    int getBucketValue(const std::string& collectableType) const;
+    int subtractFromBucket(const std::string& collectableType, int value);
 
   private:
     EntityManager& m_entityManager;

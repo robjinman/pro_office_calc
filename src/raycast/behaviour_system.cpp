@@ -1,6 +1,7 @@
 #include "event.hpp"
 #include "exception.hpp"
 #include "raycast/behaviour_system.hpp"
+#include "utils.hpp"
 
 
 using std::set;

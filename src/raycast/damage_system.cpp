@@ -65,13 +65,13 @@ void DamageSystem::damageEntity(entityId_t id, double damage) {
 //===========================================
 // DamageSystem::damageWithinRadius
 //===========================================
-void DamageSystem::damageWithinRadius(const Point& pos, double radius, int damage,
-  AttenuationCurve attenuation) {
+void DamageSystem::damageWithinRadius(const CZone& zone, const Point& pos, double radius,
+  int damage, AttenuationCurve attenuation) {
 
   // TODO: Attenuation
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  set<entityId_t> entities = spatialSystem.entitiesInRadius(pos, radius);
+  set<entityId_t> entities = spatialSystem.entitiesInRadius(zone, pos, radius);
 
   for (auto it = entities.begin(); it != entities.end(); ++it) {
     damageEntity(*it, damage);

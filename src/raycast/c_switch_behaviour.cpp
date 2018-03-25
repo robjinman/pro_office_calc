@@ -60,6 +60,8 @@ void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e) {
   if (e.name == "player_activate_entity") {
     if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {
+        // TODO: if required item is present in player inventory
+        
         switch (m_state) {
           case SwitchState::OFF:
             m_state = SwitchState::ON;

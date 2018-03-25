@@ -247,38 +247,62 @@ static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
 //===========================================
 // entitiesInRadius
 //===========================================
-static void entitiesInRadius_r(const CZone& zone, const Circle& circle, set<entityId_t>& entities) {
-  for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-      entities.insert(zone.entityId());
+static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const Circle& circle,
+  double heightAboveFloor, set<entityId_t>& entities) {
 
-      if ((*it)->kind == CSpatialKind::HARD_EDGE || (*it)->kind == CSpatialKind::SOFT_EDGE) {
-        const CEdge& edge = dynamic_cast<const CEdge&>(**it);
+  const double MAX_VERTICAL_DISTANCE = 10.0;
 
+  for (auto it = searchZone.edges.begin(); it != searchZone.edges.end(); ++it) {
+    const CEdge& edge = **it;
+
+    if (overlapsCircle(circle, edge)) {
+      entities.insert(edge.entityId());
+      entities.insert(searchZone.entityId());
+
+      if (edge.kind == CSpatialKind::HARD_EDGE || edge.kind == CSpatialKind::SOFT_EDGE) {
         for (auto jt = edge.vRects.begin(); jt != edge.vRects.end(); ++jt) {
-          if (overlapsCircle(circle, edge.lseg, **jt)) {
-            entities.insert((*jt)->entityId());
+          const CVRect& vRect = **jt;
+
+          if (overlapsCircle(circle, edge.lseg, vRect)) {
+            assert(vRect.zone != nullptr);
+
+            double y1 = zone.floorHeight + heightAboveFloor;
+            double y2 = vRect.zone->floorHeight + vRect.pos.y + 0.5 * vRect.size.y;
+
+            if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
+              entities.insert(vRect.entityId());
+            }
           }
         }
       }
     }
   }
 
-  for (auto it = zone.vRects.begin(); it != zone.vRects.end(); ++it) {
+  for (auto it = searchZone.vRects.begin(); it != searchZone.vRects.end(); ++it) {
+    const CVRect& vRect = **it;
+
+    if (overlapsCircle(circle, vRect)) {
+      assert(vRect.zone != nullptr);
+
+      double y1 = zone.floorHeight + heightAboveFloor;
+      // TODO: Currently CVRects that are direct children of zones don't have a vertical position.
+      // Their y coord corresponds to the x-y coords of the map.
+      double y2 = vRect.zone->floorHeight + 0.5 * vRect.size.y;
+
+      if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
+        entities.insert(vRect.entityId());
+      }
+    }
+  }
+
+  for (auto it = searchZone.hRects.begin(); it != searchZone.hRects.end(); ++it) {
     if (overlapsCircle(circle, **it)) {
       entities.insert((*it)->entityId());
     }
   }
 
-  for (auto it = zone.hRects.begin(); it != zone.hRects.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-    }
-  }
-
-  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
-    entitiesInRadius_r(**it, circle, entities);
+  for (auto it = searchZone.children.begin(); it != searchZone.children.end(); ++it) {
+    entitiesInRadius_r(**it, zone, circle, heightAboveFloor, entities);
   }
 }
 
@@ -633,7 +657,13 @@ SpatialSystem::SpatialSystem(EntityManager& entityManager, TimeService& timeServ
 void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "player_activate") {
     EPlayerActivateEntity e(*sg.player);
-    m_entityManager.fireEvent(e, entitiesInRadius(sg.player->pos(), sg.player->activationRadius));
+    const CZone& zone = getCurrentZone();
+    const CVRect& body = dynamic_cast<const CVRect&>(getComponent(sg.player->body));
+
+    double y = sg.player->feetHeight() - zone.floorHeight + 0.5 * body.size.y;
+
+    m_entityManager.fireEvent(e, entitiesInRadius(zone, sg.player->pos(),
+      sg.player->activationRadius, y));
   }
 }
 
@@ -791,11 +821,12 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 void SpatialSystem::movePlayer(const Vec2f& v) {
   Player& player = *sg.player;
   const CVRect& body = dynamic_cast<const CVRect&>(getComponent(player.body));
+  const CZone& zone =  getCurrentZone();
 
   Vec2f dv(cos(body.angle) * v.x - sin(body.angle) * v.y,
     sin(body.angle) * v.x + cos(body.angle) * v.y);
 
-  moveEntity(player.body, dv, player.feetHeight() - getCurrentZone().floorHeight);
+  moveEntity(player.body, dv, player.feetHeight() - zone.floorHeight);
 
   playerBounce(*this, m_timeService, m_frameRate);
 
@@ -806,7 +837,8 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
     m_playerCell = cell;
 
     EPlayerMove e(player);
-    m_entityManager.fireEvent(e, entitiesInRadius(player.pos(), player.collectionRadius));
+    m_entityManager.fireEvent(e, entitiesInRadius(zone, player.pos(), player.collectionRadius,
+      player.feetHeight() - zone.floorHeight));
   }
 }
 
@@ -1154,16 +1186,14 @@ list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
 //===========================================
 // SpatialSystem::entitiesInRadius
 //===========================================
-set<entityId_t> SpatialSystem::entitiesInRadius(const Point& pos, double radius) const {
+set<entityId_t> SpatialSystem::entitiesInRadius(const CZone& zone, const Point& pos, double radius,
+  double heightAboveFloor) const {
+
   set<entityId_t> entities;
   Circle circle{pos, radius};
-  const CZone& zone = getCurrentZone();
 
-  assert(zone.parent != nullptr);
-
-  forEachConstZone(nthConstAncestor(zone, MAX_ANCESTOR_SEARCH), [&](const CZone& z) {
-    entitiesInRadius_r(z, circle, entities);
-  });
+  entitiesInRadius_r(nthConstAncestor(getCurrentZone(), MAX_ANCESTOR_SEARCH), zone, circle,
+    heightAboveFloor, entities);
 
   return entities;
 }

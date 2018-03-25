@@ -214,6 +214,11 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
     CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target, message,
       initialState, toggleable, toggleDelay);
 
+    string requiredItem = getValue(obj.dict, "required_item", "");
+    if (requiredItem != "") {
+      behaviour->requiredItem = requiredItem;
+    }
+
     behaviourSystem.addComponent(pComponent_t(behaviour));
 
     return true;

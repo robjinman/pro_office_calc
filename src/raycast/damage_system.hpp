@@ -64,7 +64,7 @@ class DamageSystem : public System {
 
     void damageEntity(entityId_t id, double damage);
 
-    void damageWithinRadius(const Point& pos, double radius, int damage,
+    void damageWithinRadius(const CZone& zone, const Point& pos, double radius, int damage,
       AttenuationCurve attenuation = AttenuationCurve::LINEAR);
 
     void damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage);
