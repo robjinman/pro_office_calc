@@ -57,7 +57,7 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
     const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
 
     if (e.name == "procalcSetup") {
-      commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_OFFICE_ASSISTANT, true)));
+      commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS, true)));
     }
   }, m_dialogClosedIdx);
 }

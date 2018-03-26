@@ -193,6 +193,12 @@ static inline QRgb blend(const QRgb& A, const QRgb& B, double alphaB) {
 // pixel
 //===========================================
 static inline QRgb pixel(const QImage& img, int x, int y) {
+  if (!isBetween(x, 0, img.width()) || !isBetween(y, 0, img.height())) {
+    DBG_PRINT("Warning: Image coords (" << x << ", " << y << ") outside of range " << img.width()
+      << "x" << img.height() << "\n")
+
+    return 0;
+  }
   return reinterpret_cast<const QRgb*>(img.constScanLine(y))[x];
 }
 
@@ -420,7 +426,6 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
       const CRegion& nextRegion =
         dynamic_cast<const CRegion&>(renderSystem.getComponent(nextZone->entityId()));
 
-
       double floorDiff = nextZone->floorHeight - zone->floorHeight;
       double ceilingDiff = zone->ceilingHeight - nextZone->ceilingHeight;
       double nextZoneSpan = nextZone->ceilingHeight - nextZone->floorHeight;
@@ -442,6 +447,10 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
           slice1Visible = false;
         }
       }
+
+      // Top and bottom walls cannot overlap
+      topWallA = largest(topWallA, bottomWallB);
+      bottomWallB = smallest(bottomWallB, topWallA);
 
       const Point& pt = joinX.X->point_rel;
 

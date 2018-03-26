@@ -137,7 +137,7 @@ void FProcalcSetup::setupPage1() {
   QVBoxLayout* vbox = new QVBoxLayout;
   page.widget->setLayout(vbox);
 
-  QPixmap icon("data/warning.png");
+  QPixmap icon("data/common/images/warning.png");
 
   QLabel* wgtIcon = new QLabel;
   wgtIcon->setPixmap(icon);
@@ -186,7 +186,7 @@ void FProcalcSetup::setupPage2() {
   page.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
   vbox->addWidget(page.wgtRaycast.get());
 
-  page.wgtRaycast->initialise("data/maps/procalc_setup.svg");
+  page.wgtRaycast->initialise("data/making_progress/map.svg");
 
   QDialog& dialog = parentFrag<QDialog>();
 

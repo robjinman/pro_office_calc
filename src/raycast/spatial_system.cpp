@@ -250,7 +250,7 @@ static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
 static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const Circle& circle,
   double heightAboveFloor, set<entityId_t>& entities) {
 
-  const double MAX_VERTICAL_DISTANCE = 10.0;
+  const double MAX_VERTICAL_DISTANCE = 20.0;
 
   for (auto it = searchZone.edges.begin(); it != searchZone.edges.end(); ++it) {
     const CEdge& edge = **it;
@@ -997,7 +997,7 @@ void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& mat
       X->zoneA = zone.entityId();
 
       if (edge.kind == CSpatialKind::HARD_EDGE) {
-        X->zoneB = zone.parent->entityId();
+        X->zoneB = zone.parent != nullptr ? zone.parent->entityId() : X->zoneA;
         intersections.push_back(pIntersection_t(X));
       }
       else if (edge.kind == CSpatialKind::SOFT_EDGE) {

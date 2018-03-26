@@ -6,7 +6,7 @@
 #include "states/st_shuffled_keys.hpp"
 #include "states/st_are_you_sure.hpp"
 #include "states/st_its_raining_tetrominos.hpp"
-#include "states/st_office_assistant.hpp"
+#include "states/st_making_progress.hpp"
 #include "states/st_youve_got_mail.hpp"
 #include "states/st_suicide_mission.hpp"
 #include "states/st_limbo.hpp"
@@ -39,8 +39,8 @@ FMainSpec* makeFMainSpec(int stateId) {
       return st_are_you_sure::makeFMainSpec(stateId);
     case ST_ITS_RAINING_TETROMINOS:
       return st_its_raining_tetrominos::makeFMainSpec(stateId);
-    case ST_OFFICE_ASSISTANT:
-      return st_office_assistant::makeFMainSpec(stateId);
+    case ST_MAKING_PROGRESS:
+      return st_making_progress::makeFMainSpec(stateId);
     case ST_YOUVE_GOT_MAIL:
       return st_youve_got_mail::makeFMainSpec(stateId);
     case ST_SUICIDE_MISSION:

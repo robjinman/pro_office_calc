@@ -47,7 +47,7 @@ void GameLogic::onRaycastEvent(const GameEvent& event) {
     if (e.state == SwitchState::ON) {
       // TODO: Cool transition
 
-      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_OFFICE_ASSISTANT)));
+      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS)));
     }
     else {
       m_entityManager.broadcastEvent(GameEvent("machine_deactivated"));

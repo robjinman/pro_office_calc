@@ -13,7 +13,7 @@
    height="1105.1533mm"
    width="1479.396mm"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="maze.svg">
+   sodipodi:docname="map.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -24,17 +24,17 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
-     inkscape:window-height="999"
+     inkscape:window-height="975"
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.28"
-     inkscape:cx="220.75607"
-     inkscape:cy="3526.7209"
-     inkscape:window-x="1280"
+     inkscape:zoom="0.22627417"
+     inkscape:cx="838.62329"
+     inkscape:cy="3633.0303"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g5746"
+     inkscape:current-layer="g4741"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -2984,7 +2984,7 @@
              y="351.72943"
              x="175.16014"
              id="tspan5260-9-0-3-5-2"
-             sodipodi:role="line">pistol_shoot=data/pistol_shoot.wav</tspan></text>
+             sodipodi:role="line">pistol_shoot=data/common/sfx/pistol_shoot.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-2"
@@ -2996,7 +2996,7 @@
              y="369.44183"
              x="174.76396"
              id="tspan5260-9-0-3-5-2-8"
-             sodipodi:role="line">shotgun_shoot=data/shotgun_shoot.wav</tspan></text>
+             sodipodi:role="line">shotgun_shoot=data/common/sfx/shotgun_shoot.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9"
@@ -3008,7 +3008,7 @@
              y="387.11951"
              x="175.31639"
              id="tspan5260-9-0-3-5-2-7"
-             sodipodi:role="line">monster_hurt=data/monster_hurt.wav</tspan></text>
+             sodipodi:role="line">monster_hurt=data/common/sfx/monster_hurt.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9-3"
@@ -3020,7 +3020,7 @@
              y="403.10513"
              x="175.01991"
              id="tspan5260-9-0-3-5-2-7-6"
-             sodipodi:role="line">monster_death=data/monster_death.wav</tspan></text>
+             sodipodi:role="line">monster_death=data/common/sfx/monster_death.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9-3-1"
@@ -3032,7 +3032,7 @@
              y="420.78281"
              x="175.52097"
              id="tspan5260-9-0-3-5-2-7-6-2"
-             sodipodi:role="line">ammo_collect=data/ammo_collect.wav</tspan></text>
+             sodipodi:role="line">ammo_collect=data/common/sfx/ammo_collect.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9-3-1-6"
@@ -3044,7 +3044,7 @@
              y="436.80222"
              x="175.79576"
              id="tspan5260-9-0-3-5-2-7-6-2-1"
-             sodipodi:role="line">click=data/click.wav</tspan></text>
+             sodipodi:role="line">click=data/common/sfx/click.wav</tspan></text>
       </g>
       <text
          xml:space="preserve"
@@ -3082,7 +3082,7 @@
            sodipodi:role="line"
            id="tspan5256"
            x="133.78275"
-           y="116.14069">bricks_and_metal=data/bricks_and_metal.png</tspan></text>
+           y="116.14069">bricks_and_metal=data/common/images/bricks_and_metal.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3094,7 +3094,7 @@
            id="tspan5260"
            x="134.03926"
            y="133.5849"
-           style="font-size:12.94190121px">slimy_bricks=data/slimy_bricks.png</tspan></text>
+           style="font-size:12.94190121px">slimy_bricks=data/common/images/slimy_bricks.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3106,7 +3106,7 @@
            id="tspan5260-6"
            x="134.35382"
            y="149.70592"
-           style="font-size:12.94190121px">machine=data/machine.png</tspan></text>
+           style="font-size:12.94190121px">machine=data/its_raining_tetrominos/machine.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3118,7 +3118,7 @@
            id="tspan5260-8"
            x="134.90625"
            y="165.17389"
-           style="font-size:12.94190121px">grey_stone=data/grey_stone.png</tspan></text>
+           style="font-size:12.94190121px">grey_stone=data/common/images/grey_stone.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3130,7 +3130,7 @@
            id="tspan5260-9"
            x="134.90625"
            y="182.85155"
-           style="font-size:12.94190121px">dark_bricks=data/dark_bricks.png</tspan></text>
+           style="font-size:12.94190121px">dark_bricks=data/common/images/dark_bricks.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3142,7 +3142,7 @@
            id="tspan5260-9-4"
            x="135.0209"
            y="199.8544"
-           style="font-size:12.94190121px">sky=data/sky.png</tspan></text>
+           style="font-size:12.94190121px">sky=data/common/images/sky.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3154,7 +3154,7 @@
            id="tspan5260-9-4-0"
            x="135.30067"
            y="217.17776"
-           style="font-size:12.94190121px">crosshair=data/crosshair.png</tspan></text>
+           style="font-size:12.94190121px">crosshair=data/common/images/crosshair.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3166,7 +3166,7 @@
            id="tspan5260-9-4-0-6"
            x="133.95789"
            y="233.58401"
-           style="font-size:12.94190121px">gun=data/gun.png</tspan></text>
+           style="font-size:12.94190121px">gun=data/common/images/gun.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3178,7 +3178,7 @@
            id="tspan5260-9-4-0-6-0"
            x="133.48802"
            y="252.10945"
-           style="font-size:12.94190121px">default=data/default.png</tspan></text>
+           style="font-size:12.94190121px">default=data/common/images/default.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3190,7 +3190,7 @@
            id="tspan5260-9-4-0-6-0-3"
            x="132.73006"
            y="268.16461"
-           style="font-size:12.94190121px">metal_floor=data/metal_floor.png</tspan></text>
+           style="font-size:12.94190121px">metal_floor=data/common/images/metal_floor.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3202,7 +3202,7 @@
            id="tspan5260-9-4-0-6-0-3-0"
            x="132.56877"
            y="285.70639"
-           style="font-size:12.94190121px">metal_ceiling=data/metal_ceiling.png</tspan></text>
+           style="font-size:12.94190121px">metal_ceiling=data/common/images/metal_ceiling.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3214,7 +3214,7 @@
            id="tspan5260-9-4-0-6-0-3-0-3"
            x="133.01843"
            y="302.07828"
-           style="font-size:12.94190121px">switch=data/switch.png</tspan></text>
+           style="font-size:12.94190121px">switch=data/common/images/switch.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3226,7 +3226,7 @@
            id="tspan5260-9-4-0-6-0-3-0-3-3"
            x="132.49707"
            y="316.54245"
-           style="font-size:12.94190121px">door=data/door.png,80,100</tspan></text>
+           style="font-size:12.94190121px">door=data/common/images/door.png,80,100</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3238,7 +3238,7 @@
            id="tspan5260-4"
            x="132.74123"
            y="331.9093"
-           style="font-size:12.94190121px">light_bricks=data/light_bricks.png</tspan></text>
+           style="font-size:12.94190121px">light_bricks=data/common/images/light_bricks.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3250,7 +3250,7 @@
            id="tspan5260-4-4"
            x="132.90868"
            y="348.48209"
-           style="font-size:12.94190121px">cracked_mud=data/cracked_mud.png</tspan></text>
+           style="font-size:12.94190121px">cracked_mud=data/common/images/cracked_mud.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3262,7 +3262,7 @@
            id="tspan5260-4-4-7"
            x="133.95433"
            y="364.46774"
-           style="font-size:12.94190121px">bad_guy=data/bad_guy.png,70,70</tspan></text>
+           style="font-size:12.94190121px">bad_guy=data/common/images/bad_guy.png,70,70</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3274,7 +3274,7 @@
            id="tspan5260-4-4-7-6"
            x="133.71608"
            y="381.83658"
-           style="font-size:12.94190121px">ammo=data/ammo.png,25,15</tspan></text>
+           style="font-size:12.94190121px">ammo=data/common/images/ammo.png,25,15</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -3286,7 +3286,7 @@
            id="tspan5260-4-4-7-6-4"
            x="134.70346"
            y="397.59744"
-           style="font-size:12.94190121px">crate=data/crate.png,30,30</tspan></text>
+           style="font-size:12.94190121px">crate=data/common/images/crate.png,30,30</tspan></text>
     </g>
   </g>
 </svg>

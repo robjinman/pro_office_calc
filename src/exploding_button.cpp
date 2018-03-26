@@ -13,7 +13,7 @@ ExplodingButton::ExplodingButton(QWidget* parent, const QString& caption, Update
   : QPushButton(caption, parent),
     m_updateLoop(updateLoop) {
 
-  m_spriteSheet.reset(new QImage("data/explosion.png"));
+  m_spriteSheet.reset(new QImage("data/common/images/explosion.png"));
 
   m_wgtLabel = makeQtObjPtr<QLabel>(parent);
   m_wgtLabel->setFixedSize(100, 100);
