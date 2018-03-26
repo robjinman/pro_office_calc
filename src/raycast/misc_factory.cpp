@@ -124,6 +124,21 @@ bool MiscFactory::constructPlayerInventory() {
   CCounterBucket* ammoBucket = new CCounterBucket(ammoId, "ammo", 50);
   inventorySystem.addComponent(pComponent_t(ammoBucket));
 
+  double itemsDisplayH_wd = viewport.y * 0.1;
+  double itemsDisplayW_wd = viewport.x * 0.5;
+  double itemsDisplayAspectRatio = itemsDisplayW_wd / itemsDisplayH_wd;
+  double itemsDisplayH_px = 50;
+  double itemsDisplayW_px = itemsDisplayH_px * itemsDisplayAspectRatio;
+
+  QImage imgItems(itemsDisplayW_px, itemsDisplayH_px, QImage::Format_ARGB32);
+  imgItems.fill(Qt::GlobalColor::transparent);
+
+  renderSystem.rg.textures["items_display"] = Texture{imgItems, Size(0, 0)};
+
+  CImageOverlay* itemsDisplay = new CImageOverlay(itemsId, "items_display",
+    Point(0, 0), Size(itemsDisplayW_wd, itemsDisplayH_wd), 1);
+  renderSystem.addComponent(pComponent_t(itemsDisplay));
+
   CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, viewport.y - 0.5),
     0.5, Qt::green, 2);
   renderSystem.addComponent(pComponent_t(ammoCounter));
@@ -150,15 +165,54 @@ bool MiscFactory::constructPlayerInventory() {
     }
   }});
 
-  syncItems->handlers.push_back(EventHandler{"bucket_items_change", [=](const GameEvent& e_) {
+  syncItems->handlers.push_back(EventHandler{"bucket_items_change",
+    [=, &renderSystem](const GameEvent& e_) {
+
     const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
 
     if (e.entityId == itemsId) {
-      std::cout << "items bucket contains: ";
+      QImage& target = renderSystem.rg.textures["items_display"].image;
+      target.fill(Qt::GlobalColor::transparent);
+
+      QPainter painter;
+      painter.begin(&target);
+
+      int i = 0;
       for (auto it = e.items.begin(); it != e.items.end(); ++it) {
-        std::cout << it->first << "(" << it->second << "), ";
+        entityId_t id = it->second;
+        const CRender& c = dynamic_cast<const CRender&>(renderSystem.getComponent(id));
+
+        if (c.kind == CRenderKind::SPRITE) {
+          const CSprite& sprite = dynamic_cast<const CSprite&>(c);
+          const QImage& img = renderSystem.rg.textures.at(sprite.texture).image;
+
+          double slotH = itemsDisplayH_px;
+          double slotW = itemsDisplayW_px / itemsBucket->capacity;
+          double slotX = slotW * i;
+          double slotY = 0;
+          double margin = slotH * 0.2;
+          double aspectRatio = static_cast<double>(img.width()) / img.height();
+          double maxH = slotH - margin * 2;
+          double maxW = slotW - margin * 2;
+          double h = maxH;
+          double w = h * aspectRatio;
+          double s = maxW / w;
+          h *= s;
+          w *= s;
+
+          QRect srcRect(0, 0, img.width(), img.height());
+          QRect trgRect(slotX + margin, slotY + margin, w, h);
+
+          painter.setBrush(QColor(0, 0, 0, 100));
+          painter.setPen(Qt::NoPen);
+          painter.drawRect(slotX, slotY, slotW, slotH);
+          painter.drawImage(trgRect, img, srcRect);
+        }
+
+        ++i;
       }
-      std::cout << "\n";
+
+      painter.end();
 
       if (e.currentCount > e.prevCount) {
         m_audioService.playSound("item_collect");
