@@ -269,6 +269,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     CAgent* agent = new CAgent(entityId);
 
+    agent->isHostile = true;
     agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
     agent->stChasingTrigger = getValue(obj.dict, "st_chasing_trigger", "");
 

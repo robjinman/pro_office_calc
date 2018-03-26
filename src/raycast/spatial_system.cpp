@@ -1068,7 +1068,7 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
 
   std::list<pIntersection_t> Xs;
   std::list<pIntersection_t> excluded;
-  entityId_t currentZone = sg.player->region();
+  entityId_t currentZone = zone.entityId();
 
   while (!intersections.empty()) {
     const auto& X = intersections.front();
@@ -1090,6 +1090,11 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
       excluded.push_back(std::move(intersections.front()));
       intersections.pop_front();
     }
+  }
+
+  if (excluded.size() > 0) {
+    // TODO: Find out why this happens
+    //DBG_PRINT("Warning: Bad intersections omitted\n");
   }
 
   auto it = find_if(Xs.begin(), Xs.end(), [](const pIntersection_t& i) {
