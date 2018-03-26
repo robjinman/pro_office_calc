@@ -1,14 +1,22 @@
 #include <cassert>
 #include "raycast/inventory_system.hpp"
 #include "raycast/spatial_system.hpp"
+#include "raycast/render_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "utils.hpp"
+#include "exception.hpp"
 
 
 using std::make_pair;
 using std::string;
 using std::set;
+using std::map;
 
+
+//===========================================
+// CBucket::~CBucket
+//===========================================
+CBucket::~CBucket() {}
 
 //===========================================
 // InventorySystem::update
@@ -102,27 +110,114 @@ void InventorySystem::removeEntity(entityId_t id) {
 
 //===========================================
 // InventorySystem::addToBucket
+//
+// Countable entities (e.g. ammo) are deleted completely on collection, but items are only removed
+// from the spatial system and the render system. Use the event handler system to listen for
+// bucket_items_change events to remove from other systems.
 //===========================================
 void InventorySystem::addToBucket(const CCollectable& item) {
   auto it = m_bucketAssignment.find(item.collectableType);
 
-  if (it != m_bucketAssignment.end()) {
-    entityId_t id = it->second;
+  if (it == m_bucketAssignment.end()) {
+    EXCEPTION("No such bucket for collectable of type '" << item.collectableType << "'");
+  }
 
-    CBucket& bucket = *m_buckets.at(id);
+  entityId_t id = it->second;
 
-    if (bucket.count < bucket.capacity) {
-      int prev = bucket.count;
-      bucket.count += item.value;
+  CBucket& b = *m_buckets.at(id);
 
-      if (bucket.count > bucket.capacity) {
-        bucket.count = bucket.capacity;
+  switch (b.bucketKind) {
+    case CBucketKind::COUNTER_BUCKET: {
+      CCounterBucket& bucket = dynamic_cast<CCounterBucket&>(b);
+
+      if (bucket.count < bucket.capacity) {
+        int prev = bucket.count;
+        bucket.count += item.value;
+
+        if (bucket.count > bucket.capacity) {
+          bucket.count = bucket.capacity;
+        }
+
+        m_entityManager.broadcastEvent(EBucketCountChange(id, prev, bucket.count));
+        m_entityManager.deleteEntity(item.entityId());
       }
 
-      m_entityManager.broadcastEvent(EBucketCountChange(id, prev, bucket.count));
-      m_entityManager.deleteEntity(item.entityId());
+      break;
+    }
+    case CBucketKind::ITEM_BUCKET: {
+      CItemBucket& bucket = dynamic_cast<CItemBucket&>(b);
+
+      if (static_cast<int>(bucket.items.size()) < bucket.capacity) {
+        if (contains(bucket.items, item.name)) {
+          EXCEPTION("Bucket already contains item with name '" << item.name << "'");
+        }
+
+        int prevCount = bucket.items.size();
+        bucket.items[item.name] = item.entityId();
+
+        m_entityManager.broadcastEvent(EBucketItemsChange(id, bucket.items, prevCount,
+          bucket.items.size()));
+
+        auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+        auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+        spatialSystem.removeEntity(item.entityId());
+        renderSystem.removeEntity(item.entityId());
+      }
+
+      break;
     }
   }
+}
+
+//===========================================
+// InventorySystem::getBucketItems
+//===========================================
+const map<string, entityId_t>& InventorySystem::getBucketItems(const string& collectableType)
+  const {
+
+  auto it = m_bucketAssignment.find(collectableType);
+
+  if (it == m_bucketAssignment.end()) {
+    EXCEPTION("No such bucket for collectable of type '" << collectableType << "'");
+  }
+
+  entityId_t id = it->second;
+  CBucket& b = *m_buckets.at(id);
+
+  if (b.bucketKind != CBucketKind::ITEM_BUCKET) {
+    EXCEPTION("Cannot retrieve items from bucket; Bucket is not of type CItemBucket");
+  }
+
+  const CItemBucket& bucket = dynamic_cast<CItemBucket&>(b);
+
+  return bucket.items;
+}
+
+//===========================================
+// InventorySystem::removeFromBucket
+//===========================================
+void InventorySystem::removeFromBucket(const string& collectableType, const string& name) {
+  auto it = m_bucketAssignment.find(collectableType);
+
+  if (it == m_bucketAssignment.end()) {
+    EXCEPTION("No such bucket for collectable of type '" << collectableType << "'");
+  }
+
+  entityId_t id = it->second;
+  CBucket& b = *m_buckets.at(id);
+
+  if (b.bucketKind != CBucketKind::ITEM_BUCKET) {
+    EXCEPTION("Cannot remove item from bucket; Bucket is not of type CItemBucket");
+  }
+
+  CItemBucket& bucket = dynamic_cast<CItemBucket&>(b);
+
+  int prevCount = bucket.items.size();
+  bucket.items.erase(name);
+
+  m_entityManager.broadcastEvent(EBucketItemsChange(id, bucket.items, prevCount,
+    bucket.items.size()));
 }
 
 //===========================================
@@ -130,21 +225,28 @@ void InventorySystem::addToBucket(const CCollectable& item) {
 //===========================================
 int InventorySystem::subtractFromBucket(const string& collectableType, int value) {
   auto it = m_bucketAssignment.find(collectableType);
-  if (it != m_bucketAssignment.end()) {
-    entityId_t id = it->second;
-    CBucket& bucket = *m_buckets.at(id);
-    int prev = bucket.count;
 
-    if (bucket.count >= value) {
-      bucket.count -= value;
-    }
-
-    m_entityManager.broadcastEvent(EBucketCountChange(id, prev, bucket.count));
-
-    return bucket.count;
+  if (it == m_bucketAssignment.end()) {
+    EXCEPTION("No such bucket for collectable of type '" << collectableType << "'");
   }
 
-  return 0;
+  entityId_t id = it->second;
+  CBucket& b = *m_buckets.at(id);
+
+  if (b.bucketKind != CBucketKind::COUNTER_BUCKET) {
+    EXCEPTION("Cannot subtract value from bucket; Bucket is not of type CCounterBucket");
+  }
+
+  CCounterBucket& bucket = dynamic_cast<CCounterBucket&>(b);
+  int prev = bucket.count;
+
+  if (bucket.count >= value) {
+    bucket.count -= value;
+  }
+
+  m_entityManager.broadcastEvent(EBucketCountChange(id, prev, bucket.count));
+
+  return bucket.count;
 }
 
 //===========================================
@@ -152,5 +254,12 @@ int InventorySystem::subtractFromBucket(const string& collectableType, int value
 //===========================================
 int InventorySystem::getBucketValue(const string& collectableType) const {
   entityId_t id = m_bucketAssignment.at(collectableType);
-  return m_buckets.at(id)->count;
+  const CBucket& b = *m_buckets.at(id);
+
+  if (b.bucketKind != CBucketKind::COUNTER_BUCKET) {
+    EXCEPTION("Cannot retrieve value from bucket; Bucket is not of type CCounterBucket");
+  }
+
+  const CCounterBucket& bucket = dynamic_cast<const CCounterBucket&>(b);
+  return bucket.count;
 }

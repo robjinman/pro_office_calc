@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <map>
+#include <set>
 #include "raycast/system.hpp"
 #include "raycast/component.hpp"
 
@@ -12,6 +13,11 @@
 enum class CInventoryKind {
   BUCKET,
   COLLECTABLE
+};
+
+enum class CBucketKind {
+  COUNTER_BUCKET,
+  ITEM_BUCKET
 };
 
 struct CInventory : public Component {
@@ -25,26 +31,54 @@ struct CInventory : public Component {
 typedef std::unique_ptr<CInventory> pCInventory_t;
 
 struct CBucket : public CInventory {
-  CBucket(entityId_t entityId, const std::string& collectableType, int capacity)
+  CBucket(entityId_t entityId, CBucketKind kind, const std::string& collectableType)
     : CInventory(CInventoryKind::BUCKET, entityId),
-      collectableType(collectableType),
-      capacity(capacity) {}
+      bucketKind(kind),
+      collectableType(collectableType) {}
 
+  CBucketKind bucketKind;
   std::string collectableType;
-  int capacity;
-  int count = 0;
+
+  virtual ~CBucket() = 0;
 };
 
 typedef std::unique_ptr<CBucket> pCBucket_t;
 
+struct CCounterBucket : public CBucket {
+  CCounterBucket(entityId_t entityId, const std::string& collectableType, int capacity)
+    : CBucket(entityId, CBucketKind::COUNTER_BUCKET, collectableType),
+      capacity(capacity) {}
+
+  int capacity;
+  int count = 0;
+};
+
+typedef std::unique_ptr<CCounterBucket> pCCounterBucket_t;
+
+struct CItemBucket : public CBucket {
+  friend class InventorySystem;
+
+  public:
+    CItemBucket(entityId_t entityId, const std::string& collectableType, int capacity)
+      : CBucket(entityId, CBucketKind::ITEM_BUCKET, collectableType),
+        capacity(capacity) {}
+
+    int capacity;
+
+  private:
+    std::map<std::string, entityId_t> items;
+};
+
+typedef std::unique_ptr<CItemBucket> pCItemBucket_t;
+
 struct CCollectable : public CInventory {
-  CCollectable(entityId_t entityId, const std::string& collectableType, int value)
+  CCollectable(entityId_t entityId, const std::string& collectableType)
     : CInventory(CInventoryKind::COLLECTABLE, entityId),
-      collectableType(collectableType),
-      value(value) {}
+      collectableType(collectableType) {}
 
   std::string collectableType;
-  int value;
+  int value = 1;
+  std::string name;
 };
 
 typedef std::unique_ptr<CCollectable> pCCollectable_t;
@@ -57,6 +91,21 @@ struct EBucketCountChange : public GameEvent {
       currentCount(currentCount) {}
 
   entityId_t entityId;
+  int prevCount;
+  int currentCount;
+};
+
+struct EBucketItemsChange : public GameEvent {
+  EBucketItemsChange(entityId_t entityId, const std::map<std::string, entityId_t>& items,
+    int prevCount, int currentCount)
+    : GameEvent("bucket_items_change"),
+      entityId(entityId),
+      items(items),
+      prevCount(prevCount),
+      currentCount(currentCount) {}
+
+  entityId_t entityId;
+  const std::map<std::string, entityId_t>& items;
   int prevCount;
   int currentCount;
 };
@@ -78,8 +127,15 @@ class InventorySystem : public System {
     void removeEntity(entityId_t id) override;
 
     void addToBucket(const CCollectable& item);
+
+    // Counter buckets only
     int getBucketValue(const std::string& collectableType) const;
     int subtractFromBucket(const std::string& collectableType, int value);
+
+    // Item buckets only
+    const std::map<std::string, entityId_t>& getBucketItems(const std::string& collectableType)
+      const;
+    void removeFromBucket(const std::string& collectableType, const std::string& name);
 
   private:
     EntityManager& m_entityManager;

@@ -58,8 +58,45 @@ MiscFactory::MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
 // MiscFactory::types
 //===========================================
 const set<string>& MiscFactory::types() const {
-  static const set<string> types{"player_inventory", "door", "switch", "elevator", "spawn_point"};
+  static const set<string> types{
+    "player_inventory",
+    "door",
+    "switch",
+    "elevator",
+    "spawn_point",
+    "collectable_item"
+  };
   return types;
+}
+
+//===========================================
+// MiscFactory::constructCollectableItem
+//===========================================
+bool MiscFactory::constructCollectableItem(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
+    InventorySystem& inventorySystem =
+      m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+
+    CCollectable* collectable = new CCollectable(entityId, "item");
+
+    if (!contains<string>(obj.dict, "name")) {
+      EXCEPTION("collectable_item is missing 'name' property");
+    }
+
+    collectable->name = obj.dict.at("name");
+
+    inventorySystem.addComponent(pComponent_t(collectable));
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================
@@ -79,8 +116,12 @@ bool MiscFactory::constructPlayerInventory() {
 
   entityId_t ammoId = Component::getNextId();
   entityId_t healthId = Component::getNextId();
+  entityId_t itemsId = Component::getNextId();
 
-  CBucket* ammoBucket = new CBucket(ammoId, "ammo", 50);
+  CItemBucket* itemsBucket = new CItemBucket(itemsId, "item", 5);
+  inventorySystem.addComponent(pComponent_t(itemsBucket));
+
+  CCounterBucket* ammoBucket = new CCounterBucket(ammoId, "ammo", 50);
   inventorySystem.addComponent(pComponent_t(ammoBucket));
 
   CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, viewport.y - 0.5),
@@ -91,29 +132,57 @@ bool MiscFactory::constructPlayerInventory() {
     Point(9.5, viewport.y - 0.5), 0.5, Qt::red, 2);
   renderSystem.addComponent(pComponent_t(healthCounter));
 
-  CEventHandler* syncCounters = new CEventHandler(ammoId);
-  syncCounters->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
+  CEventHandler* syncAmmo = new CEventHandler(ammoId);
+  CEventHandler* syncHealth = new CEventHandler(healthId);
+  CEventHandler* syncItems = new CEventHandler(itemsId);
+
+  syncAmmo->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
 
-    stringstream ss;
-    ss << "AMMO " << ammoBucket->count << "/" << ammoBucket->capacity;
-    ammoCounter->text = ss.str();
+    if (e.entityId == ammoId) {
+      stringstream ss;
+      ss << "AMMO " << ammoBucket->count << "/" << ammoBucket->capacity;
+      ammoCounter->text = ss.str();
 
-    if (e.currentCount > e.prevCount) {
-      m_audioService.playSound("ammo_collect");
+      if (e.currentCount > e.prevCount) {
+        m_audioService.playSound("ammo_collect");
+      }
     }
   }});
-  syncCounters->handlers.push_back(EventHandler{"entity_damaged",
-    [=, &damageSystem, &player](const GameEvent&) {
 
-    const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(player.body));
+  syncItems->handlers.push_back(EventHandler{"bucket_items_change", [=](const GameEvent& e_) {
+    const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
 
-    stringstream ss;
-    ss << "HEALTH " << damage.health << "/" << damage.maxHealth;
-    healthCounter->text = ss.str();
+    if (e.entityId == itemsId) {
+      std::cout << "items bucket contains: ";
+      for (auto it = e.items.begin(); it != e.items.end(); ++it) {
+        std::cout << it->first << "(" << it->second << "), ";
+      }
+      std::cout << "\n";
+
+      if (e.currentCount > e.prevCount) {
+        m_audioService.playSound("item_collect");
+      }
+    }
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(syncCounters));
+  syncHealth->handlers.push_back(EventHandler{"entity_damaged",
+    [=, &damageSystem, &player](const GameEvent& e_) {
+
+    const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(e_);
+
+    if (e.entityId == player.body) {
+      const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(player.body));
+
+      stringstream ss;
+      ss << "HEALTH " << damage.health << "/" << damage.maxHealth;
+      healthCounter->text = ss.str();
+    }
+  }});
+
+  eventHandlerSystem.addComponent(pComponent_t(syncAmmo));
+  eventHandlerSystem.addComponent(pComponent_t(syncHealth));
+  eventHandlerSystem.addComponent(pComponent_t(syncItems));
 
   entityId_t bgId = Component::getNextId();
 
@@ -214,10 +283,8 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
     CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target, message,
       initialState, toggleable, toggleDelay);
 
-    string requiredItem = getValue(obj.dict, "required_item", "");
-    if (requiredItem != "") {
-      behaviour->requiredItem = requiredItem;
-    }
+    behaviour->requiredItemType = getValue(obj.dict, "required_item_type", "");
+    behaviour->requiredItemName = getValue(obj.dict, "required_item_name", "");
 
     behaviourSystem.addComponent(pComponent_t(behaviour));
 
@@ -283,6 +350,9 @@ bool MiscFactory::constructObject(const string& type, entityId_t entityId, parse
   }
   else if (type == "spawn_point") {
     return constructSpawnPoint(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "collectable_item") {
+    return constructCollectableItem(entityId, obj, parentId, parentTransform);
   }
 
   return false;

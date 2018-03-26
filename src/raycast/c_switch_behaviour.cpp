@@ -3,11 +3,13 @@
 #include "raycast/render_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
+#include "raycast/inventory_system.hpp"
 #include "event.hpp"
 
 
 using std::string;
 using std::set;
+using std::map;
 
 
 //===========================================
@@ -60,8 +62,16 @@ void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e) {
   if (e.name == "player_activate_entity") {
     if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {
-        // TODO: if required item is present in player inventory
-        
+        const auto& inventorySystem = m_entityManager
+          .system<InventorySystem>(ComponentKind::C_INVENTORY);
+
+        if (requiredItemType != "") {
+          const map<string, entityId_t>& items = inventorySystem.getBucketItems(requiredItemType);
+          if (!contains(items, requiredItemName)) {
+            return;
+          }
+        }
+
         switch (m_state) {
           case SwitchState::OFF:
             m_state = SwitchState::ON;

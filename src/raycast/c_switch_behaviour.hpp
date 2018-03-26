@@ -31,7 +31,8 @@ class CSwitchBehaviour : public CBehaviour {
     CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, entityId_t target,
       const std::string& message, SwitchState initialState, bool toggleable, double toggleDelay);
 
-    std::string requiredItem;
+    std::string requiredItemType;
+    std::string requiredItemName;
 
     void update() override;
     void handleBroadcastedEvent(const GameEvent& event) override {}
