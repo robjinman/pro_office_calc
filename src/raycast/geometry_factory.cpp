@@ -108,6 +108,8 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
   double y = std::stod(getValue(obj.dict, "y"));
   Point pos(a, y);
 
+  int zIndex = std::stoi(getValue(obj.dict, "z_index", "1"));
+
   string texture = getValue(obj.dict, "texture", "default");
 
   if (entityId == -1) {
@@ -122,6 +124,7 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
 
   CWallDecal* decal = new CWallDecal(entityId, parentId);
   decal->texture = texture;
+  decal->zIndex = zIndex;
 
   renderSystem.addComponent(pComponent_t(decal));
 

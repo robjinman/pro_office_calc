@@ -965,10 +965,13 @@ Renderer::Renderer(EntityManager& entityManager, QImage& target)
 }
 
 //===========================================
-// Renderer::getWallDecal
+// Renderer::getWallDecals
 //===========================================
-static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CBoundary& wall,
+static vector<CWallDecal*> getWallDecals(const SpatialSystem& spatialSystem, const CBoundary& wall,
   double x) {
+
+  vector<CWallDecal*> decals;
+  decals.reserve(wall.decals.size());
 
   for (auto it = wall.decals.begin(); it != wall.decals.end(); ++it) {
     CWallDecal* decal = it->get();
@@ -978,11 +981,15 @@ static CWallDecal* getWallDecal(const SpatialSystem& spatialSystem, const CBound
     double x1 = vRect.pos.x + vRect.size.x;
 
     if (isBetween(x, x0, x1)) {
-      return decal;
+      decals.push_back(decal);
     }
   }
 
-  return nullptr;
+  std::sort(decals.begin(), decals.end(), [](const CWallDecal* a, const CWallDecal* b) {
+    return a->zIndex < b->zIndex;
+  });
+
+  return decals;
 }
 
 //===========================================
@@ -1038,8 +1045,10 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
         ScreenSlice slice = drawSlice(m_target, rg, cam, *wallX.X, wallX.slice, wallX.wall->texture,
           screenX_px, viewport_px);
 
-        CWallDecal* decal = getWallDecal(spatialSystem, *wallX.wall, wallX.X->distanceAlongTarget);
-        if (decal != nullptr) {
+        vector<CWallDecal*> decals = getWallDecals(spatialSystem, *wallX.wall,
+          wallX.X->distanceAlongTarget);
+
+        for (auto decal : decals) {
           drawWallDecal(m_target, spatialSystem, rg, *decal, *wallX.X, wallX.slice, zone,
             screenX_px, viewport_px, cam.height, vWorldUnit_px);
         }
@@ -1084,8 +1093,10 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           }
         }
 
-        CWallDecal* decal = getWallDecal(spatialSystem, *joinX.join, joinX.X->distanceAlongTarget);
-        if (decal != nullptr) {
+        vector<CWallDecal*> decals = getWallDecals(spatialSystem, *joinX.join,
+          joinX.X->distanceAlongTarget);
+
+        for (auto decal : decals) {
           Slice slice = joinX.slice0;
 
           if (joinX.slice1.visible) {

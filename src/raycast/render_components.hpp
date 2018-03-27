@@ -144,6 +144,7 @@ struct CWallDecal : public CRender {
 
   std::string texture;
   QRectF texRect = QRectF(0, 0, 1, 1);
+  int zIndex = 0;
 };
 
 typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
