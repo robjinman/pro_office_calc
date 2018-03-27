@@ -43,11 +43,10 @@ void FNormalCalcTrigger::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FNormalCalcTrigger::reload\n");
 
   auto& parentData = parentFragData<FCalculatorData>();
-  auto& parent = parentFrag<FCalculator>();
 
-  disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
-    SLOT(onButtonClick(int)));
-  connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
+  disconnect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)),
+    parentData.wgtCalculator.get(), SLOT(onButtonClick(int)));
+  connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
 
   auto& spec = dynamic_cast<const FNormalCalcTriggerSpec&>(spec_);
@@ -64,12 +63,11 @@ void FNormalCalcTrigger::cleanUp() {
   DBG_PRINT("FNormalCalcTrigger::cleanUp\n");
 
   auto& parentData = parentFragData<FCalculatorData>();
-  auto& parent = parentFrag<FCalculator>();
 
-  disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
+  disconnect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
-  connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
-    SLOT(onButtonClick(int)));
+  connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)),
+    parentData.wgtCalculator.get(), SLOT(onButtonClick(int)));
 }
 
 //===========================================
@@ -82,15 +80,15 @@ void FNormalCalcTrigger::onButtonClick(int id) {
   assert(window != nullptr);
 
   if (id == BTN_EQUALS) {
-    double result = data.calculator.equals();
-    data.wgtDigitDisplay->setText(data.calculator.display().c_str());
+    double result = data.wgtCalculator->calculator.equals();
+    data.wgtCalculator->wgtDigitDisplay->setText(data.wgtCalculator->calculator.display().c_str());
 
     if (std::isinf(result)) {
       QColor origCol = window->palette().color(QPalette::Window);
       int i = 0;
 
       commonData.updateLoop.add([=,&data]() mutable {
-        auto& buttons = data.wgtButtonGrid->buttons;
+        auto& buttons = data.wgtCalculator->wgtButtonGrid->buttons;
         ++i;
 
         int j = 0;
@@ -120,13 +118,13 @@ void FNormalCalcTrigger::onButtonClick(int id) {
           commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_SHUFFLED_KEYS)));
         });
 
-        transitionColour(commonData.updateLoop, *data.wgtDigitDisplay, m_targetDisplayColour,
-          QPalette::Base, 0.5);
+        transitionColour(commonData.updateLoop, *data.wgtCalculator->wgtDigitDisplay,
+          m_targetDisplayColour, QPalette::Base, 0.5);
       });
     }
   }
   else {
-    parentFrag<FCalculator>().onButtonClick(id);
+    data.wgtCalculator->onButtonClick(id);
   }
 }
 

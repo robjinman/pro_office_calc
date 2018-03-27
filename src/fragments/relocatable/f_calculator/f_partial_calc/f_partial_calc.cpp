@@ -67,18 +67,20 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 void FPartialCalc::toggleFeatures(const std::set<buttonId_t>& features) {
   auto& parentData = parentFragData<FCalculatorData>();
-  auto& group = *parentData.wgtButtonGrid->buttonGroup;
+  auto& group = *parentData.wgtCalculator->wgtButtonGrid->buttonGroup;
 
   for (auto it = EVASIVE_BTNS.begin(); it != EVASIVE_BTNS.end(); ++it) {
     int idx = it->second.idx;
 
-    EvasiveButton& btn = dynamic_cast<EvasiveButton&>(*parentData.wgtButtonGrid->buttons[idx]);
+    EvasiveButton& btn =
+      dynamic_cast<EvasiveButton&>(*parentData.wgtCalculator->wgtButtonGrid->buttons[idx]);
+
     btn.reset();
   }
 
-  parentData.wgtButtonGrid->grid->update();
+  parentData.wgtCalculator->wgtButtonGrid->grid->update();
 
-  for (auto& button : parentData.wgtButtonGrid->buttons) {
+  for (auto& button : parentData.wgtCalculator->wgtButtonGrid->buttons) {
     buttonId_t id = static_cast<buttonId_t>(group.id(button.get()));
 
     if (features.count(id) > 0) {
@@ -89,7 +91,7 @@ void FPartialCalc::toggleFeatures(const std::set<buttonId_t>& features) {
     }
   }
 
-  parentData.wgtDigitDisplay->clear();
+  parentData.wgtCalculator->wgtDigitDisplay->clear();
 }
 
 //===========================================
@@ -113,9 +115,8 @@ void FPartialCalc::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FPartialCalc::reload\n");
 
   auto& parentData = parentFragData<FCalculatorData>();
-  auto& parent = parentFrag<FCalculator>();
 
-  auto& wgtButtonGrid = *parentData.wgtButtonGrid;
+  auto& wgtButtonGrid = *parentData.wgtCalculator->wgtButtonGrid;
 
   for (auto it = EXPLODING_BTNS.begin(); it != EXPLODING_BTNS.end(); ++it) {
     addButton(new ExplodingButton(&wgtButtonGrid, it->second.text, commonData.updateLoop),
@@ -126,11 +127,11 @@ void FPartialCalc::reload(const FragmentSpec& spec_) {
     addButton(new EvasiveButton(it->second.text), wgtButtonGrid, it->first, it->second);
   }
 
-  disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
+  disconnect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)),
+    parentData.wgtCalculator.get(), SLOT(onButtonClick(int)));
+  connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
-  connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
-    SLOT(onButtonClick(int)));
-  connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
+  connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
     SLOT(onButtonPress(int)));
 }
 
@@ -141,18 +142,17 @@ void FPartialCalc::cleanUp() {
   DBG_PRINT("FPartialCalc::cleanUp\n");
 
   auto& parentData = parentFragData<FCalculatorData>();
-  auto& parent = parentFrag<FCalculator>();
 
-  for (auto& button : parentData.wgtButtonGrid->buttons) {
+  for (auto& button : parentData.wgtCalculator->wgtButtonGrid->buttons) {
     button->show();
   }
 
-  disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
+  disconnect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
     SLOT(onButtonPress(int)));
-  disconnect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
+  disconnect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this,
     SLOT(onButtonClick(int)));
-  connect(parentData.wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), &parent,
-    SLOT(onButtonClick(int)));
+  connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)),
+    parentData.wgtCalculator.get(), SLOT(onButtonClick(int)));
 
   commonData.eventSystem.forget(m_setupCompleteIdx);
   commonData.eventSystem.forget(m_dialogClosedIdx);
@@ -166,9 +166,11 @@ void FPartialCalc::onButtonClick(int id) {
     return;
   }
 
-  parentFrag<FCalculator>().onButtonClick(id);
+  auto& parentData = parentFragData<FCalculatorData>();
 
-  string display = parentFragData<FCalculatorData>().wgtDigitDisplay->text().toStdString();
+  parentData.wgtCalculator->onButtonClick(id);
+
+  string display = parentData.wgtCalculator->wgtDigitDisplay->text().toStdString();
   commonData.eventSystem.fire(pEvent_t(new making_progress::ButtonPressEvent(display)));
 }
 
@@ -180,9 +182,11 @@ void FPartialCalc::onButtonPress(int id) {
     return;
   }
 
-  parentFrag<FCalculator>().onButtonClick(id);
+  auto& parentData = parentFragData<FCalculatorData>();
 
-  string display = parentFragData<FCalculatorData>().wgtDigitDisplay->text().toStdString();
+  parentData.wgtCalculator->onButtonClick(id);
+
+  string display = parentData.wgtCalculator->wgtDigitDisplay->text().toStdString();
   commonData.eventSystem.fire(pEvent_t(new making_progress::ButtonPressEvent(display)));
 }
 

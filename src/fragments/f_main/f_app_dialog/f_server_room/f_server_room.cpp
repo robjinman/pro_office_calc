@@ -2,6 +2,7 @@
 #include "fragments/f_main/f_app_dialog/f_server_room/f_server_room.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/f_server_room_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/object_factory.hpp"
+#include "raycast/render_system.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
 
@@ -63,8 +64,36 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
 
     m_data.wgtRaycast->initialise("data/youve_got_mail/map.svg");
 
+    m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>();
+    m_data.wgtCalculator->show();
+    m_data.wgtCalculator->hide();
+    int W = m_data.wgtCalculator->width();
+    int H = m_data.wgtCalculator->height();
+
+    RenderSystem& renderSystem = entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    renderSystem.rg.textures["calculator"] = Texture{QImage(W, H, QImage::Format_ARGB32),
+      Size(0, 0)};
+
+    QImage& calcImg = renderSystem.rg.textures["calculator"].image;
+
+    calcImg.fill(QColor(255, 0, 0));
+
+    QImage buf(W, H, QImage::Format_ARGB32);
+    m_data.wgtCalculator->render(&buf);
+
+    QPainter painter;
+    painter.begin(&calcImg);
+
+    QTransform t = painter.transform();
+    t.scale(-1, 1);
+    painter.setTransform(t);
+
+    painter.drawImage(QPoint(-W, 0), buf);
+
+    painter.end();
+
     // TODO
-    commonData.eventSystem.fire(pEvent_t(new Event("youveGotMail/divByZero")));
+    //commonData.eventSystem.fire(pEvent_t(new Event("youveGotMail/divByZero")));
   }, m_launchEventId);
 }
 

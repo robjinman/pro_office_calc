@@ -2,28 +2,19 @@
 #define __PROCALC_FRAGMENTS_F_CALCULATOR_HPP__
 
 
-#include <QVBoxLayout>
-#include <QWidget>
-#include <QLineEdit>
 #include <QMargins>
 #include "fragment.hpp"
-#include "button_grid.hpp"
-#include "calculator.hpp"
+#include "calculator_widget.hpp"
 #include "qt_obj_ptr.hpp"
 
 
 class QMainWindow;
 
 struct FCalculatorData : public FragmentData {
-  Calculator calculator;
-  QtObjPtr<QVBoxLayout> vbox;
-  QtObjPtr<QLineEdit> wgtDigitDisplay;
-  QtObjPtr<ButtonGrid> wgtButtonGrid;
+  QtObjPtr<CalculatorWidget> wgtCalculator;
 };
 
-class FCalculator : public QWidget, public Fragment {
-  Q_OBJECT
-
+class FCalculator : public Fragment {
   public:
     FCalculator(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
@@ -31,9 +22,6 @@ class FCalculator : public QWidget, public Fragment {
     virtual void cleanUp() override;
 
     virtual ~FCalculator() override;
-
-  public slots:
-    void onButtonClick(int id);
 
   private:
     FCalculatorData m_data;

@@ -8,12 +8,14 @@
 #include "raycast/raycast_widget.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
+#include "calculator_widget.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/game_logic.hpp"
 
 
 struct FServerRoomData : public FragmentData {
   QtObjPtr<QVBoxLayout> vbox;
   QtObjPtr<RaycastWidget> wgtRaycast;
+  QtObjPtr<CalculatorWidget> wgtCalculator;
   std::unique_ptr<youve_got_mail::GameLogic> gameLogic;
 };
 
