@@ -1,8 +1,5 @@
 #include <algorithm>
 #include "raycast/root_factory.hpp"
-#include "raycast/misc_factory.hpp"
-#include "raycast/sprite_factory.hpp"
-#include "raycast/geometry_factory.hpp"
 #include "utils.hpp"
 
 
@@ -13,25 +10,19 @@ using std::set;
 //===========================================
 // RootFactory::RootFactory
 //===========================================
-RootFactory::RootFactory(EntityManager& entityManager, AudioService& audioService,
-  TimeService& timeService) {
+RootFactory::RootFactory() {}
 
-  m_factories.push_back(pGameObjectFactory_t(new MiscFactory(*this, entityManager, audioService,
-    timeService)));
-  m_factories.push_back(pGameObjectFactory_t(new SpriteFactory(*this, entityManager, audioService,
-    timeService)));
-  m_factories.push_back(pGameObjectFactory_t(new GeometryFactory(*this, entityManager, audioService,
-    timeService)));
-
-  for (auto it = m_factories.begin(); it != m_factories.end(); ++it) {
-    const GameObjectFactory& factory = **it;
-
-    const set<string>& types = factory.types();
-    for (auto jt = types.begin(); jt != types.end(); ++jt) {
-      m_factoriesByType[*jt] = it->get();
-      m_types.insert(*jt);
-    }
+//===========================================
+// RootFactory::addFactory
+//===========================================
+void RootFactory::addFactory(pGameObjectFactory_t factory) {
+  const set<string>& types = factory->types();
+  for (auto jt = types.begin(); jt != types.end(); ++jt) {
+    m_factoriesByType[*jt] = factory.get();
+    m_types.insert(*jt);
   }
+
+  m_factories.push_back(std::move(factory));
 }
 
 //===========================================

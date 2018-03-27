@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="1857.9841"
-     inkscape:cy="821.19905"
+     inkscape:zoom="16"
+     inkscape:cx="1666.9425"
+     inkscape:cy="125.51184"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g11480"
+     inkscape:current-layer="g10197"
      showguides="false"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -3594,12 +3594,6 @@
         </g>
         <g
            id="g15720">
-          <path
-             id="path15633"
-             d="m 2060.2568,2992.6222 241.5654,-25.8012"
-             style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00ff00;stroke-width:0.91278261;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-             inkscape:connector-curvature="0"
-             sodipodi:nodetypes="cc" />
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -3622,6 +3616,70 @@
                id="tspan4215-5-6-9-8-0-5-6-7-6"
                x="1864.2238"
                y="3373.301">texture=grey_stone</tspan></text>
+          <path
+             id="path15633"
+             d="m 2301.8222,2966.821 -241.5654,25.8012"
+             style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00ff00;stroke-width:0.91278261;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cc" />
+          <g
+             id="g5459">
+            <path
+               inkscape:connector-curvature="0"
+               id="path5345"
+               d="m 2060.2157,2992.5726 241.4564,-25.7375"
+               style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00000c;stroke-width:0.91278261;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+               sodipodi:nodetypes="cc" />
+            <text
+               transform="matrix(1.1791385,-0.12290376,0.08634642,0.83907676,0,0)"
+               sodipodi:linespacing="125%"
+               id="text189650-3-3-2"
+               y="3785.1106"
+               x="1551.3486"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:66.78900909px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.85525024px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono'"
+                 y="3785.1106"
+                 x="1551.3486"
+                 id="tspan189652-5-6-3"
+                 sodipodi:role="line">type=big_screen</tspan></text>
+            <text
+               transform="matrix(1.1791385,-0.12290376,0.08634642,0.83907676,0,0)"
+               sodipodi:linespacing="125%"
+               id="text189654-6-0-7"
+               y="3787.0276"
+               x="1551.4963"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.85525024px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="3787.0276"
+                 x="1551.4963"
+                 id="tspan189656-2-6-5"
+                 sodipodi:role="line">aspect_ratio=1.5625</tspan></text>
+            <text
+               transform="matrix(1.1791385,-0.12290376,0.08634642,0.83907676,0,0)"
+               sodipodi:linespacing="125%"
+               id="text189658-9-2-9"
+               y="3789.1021"
+               x="1551.4963"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.85525024px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="3789.1021"
+                 x="1551.4963"
+                 id="tspan189660-1-6-2"
+                 sodipodi:role="line">y=0</tspan></text>
+            <text
+               transform="matrix(1.1791385,-0.12290376,0.08634642,0.83907676,0,0)"
+               sodipodi:linespacing="125%"
+               id="text189662-2-1-2"
+               y="3791.2666"
+               x="1551.4963"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.85525024px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+               xml:space="preserve"><tspan
+                 y="3791.2666"
+                 x="1551.4963"
+                 id="tspan189664-7-8-8"
+                 sodipodi:role="line">texture=big_screen</tspan></text>
+          </g>
         </g>
         <g
            transform="matrix(0.86359439,-0.09226974,0.09111416,0.85277884,36.373383,577.63716)"
@@ -3647,7 +3705,7 @@
              sodipodi:linespacing="125%"><tspan
                y="3189.2925"
                x="2018.8152"
-               id="tspan4215-5-6-9-8-0-2">floor_offset=20</tspan></text>
+               id="tspan4215-5-6-9-8-0-2">floor_offset=10</tspan></text>
           <text
              transform="matrix(1.0536926,0.00338454,-0.00297249,0.94903384,0,0)"
              id="text4213-3-0-7-4-3-7-9"
@@ -3658,7 +3716,7 @@
              sodipodi:linespacing="125%"><tspan
                y="3189.8926"
                x="2018.8212"
-               id="tspan4215-5-6-9-8-0-2-9">ceiling_offset=-20</tspan></text>
+               id="tspan4215-5-6-9-8-0-2-9">ceiling_offset=-10</tspan></text>
           <g
              id="g15458">
             <path
@@ -5488,6 +5546,17 @@
            y="444.58481"
            x="134.31271"
            id="tspan5260-6-9-5-9-3-6-0">server_room_a_door_sign=data/youve_got_mail/server_room_a_door_sign.png</tspan></text>
+      <text
+         id="text5258-2-7-7-8-0-3-2-9"
+         y="458.06985"
+         x="132.67943"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.00001144px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"
+         sodipodi:linespacing="125%"><tspan
+           style="font-size:12.94190121px"
+           y="458.06985"
+           x="132.67943"
+           id="tspan5260-6-9-5-9-3-6-0-7">big_screen=data/youve_got_mail/big_screen.png</tspan></text>
     </g>
   </g>
 </svg>

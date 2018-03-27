@@ -1,6 +1,7 @@
 #include "fragments/relocatable/widget_frag_data.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/f_server_room.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/f_server_room_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_server_room/object_factory.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
 
@@ -46,8 +47,17 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     parentData.box->addWidget(this);
 
     m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
-    m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem,
-      m_data.wgtRaycast->entityManager()));
+
+    auto& rootFactory = m_data.wgtRaycast->rootFactory();
+    auto& timeService = m_data.wgtRaycast->timeService();
+    auto& audioService = m_data.wgtRaycast->audioService();
+    auto& entityManager = m_data.wgtRaycast->entityManager();
+
+    GameObjectFactory* factory = new youve_got_mail::ObjectFactory(rootFactory, entityManager,
+      audioService, timeService);
+
+    m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
+    m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem, entityManager));
 
     m_data.vbox->addWidget(m_data.wgtRaycast.get());
 

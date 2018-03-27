@@ -112,6 +112,10 @@ void AnimationSystem::update() {
           imgOverlay.texRect = anim->currentFrame().texViews[0];
         }
       }
+      else if (c.kind == CRenderKind::WALL_DECAL) {
+        CWallDecal& decal = dynamic_cast<CWallDecal&>(c);
+        decal.texRect = anim->currentFrame().texViews[0];
+      }
 
       if (anim->state() == AnimState::STOPPED) {
         it->second->active = nullptr;

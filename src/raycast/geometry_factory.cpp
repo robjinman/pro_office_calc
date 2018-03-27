@@ -88,11 +88,6 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
   if (distanceFromLine(wall.line(), A) > SNAP_DISTANCE
     || distanceFromLine(wall.line(), B) > SNAP_DISTANCE) {
 
-    DBG_PRINT_VAR(wall);
-    DBG_PRINT_VAR(A);
-    DBG_PRINT_VAR(B);
-    DBG_PRINT_VAR(SNAP_DISTANCE);
-
     return false;
   }
 
@@ -101,10 +96,6 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
     && isBetween(A.y, wall.A.y, wall.B.y, delta)
     && isBetween(B.x, wall.A.x, wall.B.x, delta)
     && isBetween(B.y, wall.A.y, wall.B.y, delta))) {
-
-    DBG_PRINT_VAR(A);
-    DBG_PRINT_VAR(B);
-    DBG_PRINT_VAR(wall);
 
     return false;
   }

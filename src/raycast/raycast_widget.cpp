@@ -17,6 +17,9 @@
 #include "raycast/spawn_system.hpp"
 #include "raycast/agent_system.hpp"
 #include "raycast/map_parser.hpp"
+#include "raycast/misc_factory.hpp"
+#include "raycast/sprite_factory.hpp"
+#include "raycast/geometry_factory.hpp"
 
 
 #ifdef DEBUG
@@ -150,17 +153,22 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
 
   configure(rg, m_audioService, config);
 
-  m_rootFactory->constructObject("region", -1, rootRegion, -1, Matrix());
+  m_rootFactory.constructObject("region", -1, rootRegion, -1, Matrix());
 
   parser::Object tmp;
-  m_rootFactory->constructObject("player_inventory", -1, tmp, -1, Matrix());
+  m_rootFactory.constructObject("player_inventory", -1, tmp, -1, Matrix());
 }
 
 //===========================================
 // RaycastWidget::initialise
 //===========================================
 void RaycastWidget::initialise(const string& mapFile) {
-  m_rootFactory.reset(new RootFactory(m_entityManager, m_audioService, m_timeService));
+  m_rootFactory.addFactory(pGameObjectFactory_t(new MiscFactory(m_rootFactory, m_entityManager,
+    m_audioService, m_timeService)));
+  m_rootFactory.addFactory(pGameObjectFactory_t(new SpriteFactory(m_rootFactory, m_entityManager,
+    m_audioService, m_timeService)));
+  m_rootFactory.addFactory(pGameObjectFactory_t(new GeometryFactory(m_rootFactory,
+    m_entityManager, m_audioService, m_timeService)));
 
   setMouseTracking(true);
 
@@ -193,7 +201,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   DamageSystem* damageSystem = new DamageSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_DAMAGE, pSystem_t(damageSystem));
 
-  SpawnSystem* spawnSystem = new SpawnSystem(m_entityManager, *m_rootFactory, m_timeService);
+  SpawnSystem* spawnSystem = new SpawnSystem(m_entityManager, m_rootFactory, m_timeService);
   m_entityManager.addSystem(ComponentKind::C_SPAWN, pSystem_t(spawnSystem));
 
   AgentSystem* agentSystem = new AgentSystem(m_entityManager, m_timeService, m_audioService);

@@ -33,6 +33,18 @@ class RaycastWidget : public QWidget {
       return m_entityManager;
     }
 
+    RootFactory& rootFactory() {
+      return m_rootFactory;
+    }
+
+    TimeService& timeService() {
+      return m_timeService;
+    }
+
+    AudioService& audioService() {
+      return m_audioService;
+    }
+
     ~RaycastWidget() override;
 
   protected:
@@ -52,7 +64,7 @@ class RaycastWidget : public QWidget {
     EntityManager m_entityManager;
     TimeService m_timeService;
     AudioService m_audioService;
-    std::unique_ptr<RootFactory> m_rootFactory;
+    RootFactory m_rootFactory;
     QtObjPtr<QTimer> m_timer;
     QImage m_buffer;
     std::map<int, bool> m_keyStates;
