@@ -266,8 +266,15 @@ static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const
           if (overlapsCircle(circle, edge.lseg, vRect)) {
             assert(vRect.zone != nullptr);
 
+            double vRectFloorH = vRect.zone->floorHeight;
+
+            if (edge.kind == CSpatialKind::SOFT_EDGE) {
+              const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+              vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
+            }
+
             double y1 = zone.floorHeight + heightAboveFloor;
-            double y2 = vRect.zone->floorHeight + vRect.pos.y + 0.5 * vRect.size.y;
+            double y2 = vRectFloorH + vRect.pos.y + 0.5 * vRect.size.y;
 
             if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
               entities.insert(vRect.entityId());
