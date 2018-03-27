@@ -71,7 +71,7 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
     double y = player.feetHeight();
     double h = player.getTallness();
 
-    player.setFeetHeight(y + 0.9 * h);
-    player.changeTallness(-0.9 * h);
+    player.setFeetHeight(y + 0.6 * h);
+    player.changeTallness(-0.6 * h);
   }
 }

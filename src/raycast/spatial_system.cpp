@@ -543,6 +543,23 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 }
 
 //===========================================
+// SpatialSystem::zone
+//===========================================
+CZone& SpatialSystem::zone(entityId_t entityId) {
+  while (entityId != -1) {
+    CSpatial& c = *m_components.at(entityId);
+
+    if (c.kind == CSpatialKind::ZONE) {
+      return dynamic_cast<CZone&>(c);
+    }
+
+    entityId = c.parentId;
+  }
+
+  EXCEPTION("Entity with id " << entityId << " is not inside a zone");
+}
+
+//===========================================
 // SpatialSystem::isAncestor
 //===========================================
 bool SpatialSystem::isAncestor(entityId_t a, entityId_t b) const {

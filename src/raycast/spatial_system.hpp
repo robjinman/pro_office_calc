@@ -106,6 +106,8 @@ class SpatialSystem : public System {
     // TODO: Move this
     void jump();
 
+    CZone& zone(entityId_t entity);
+
   private:
     EntityManager& m_entityManager;
     TimeService& m_timeService;

@@ -180,13 +180,13 @@ void Player::shoot() {
     AnimationSystem& animationSystem = m_entityManager
       .system<AnimationSystem>(ComponentKind::C_ANIMATION);
 
-    if (inventorySystem.getBucketValue("ammo") > 0) {
+    if (inventorySystem.getBucketValue(body, "ammo") > 0) {
       DamageSystem& damageSystem = m_entityManager
         .system<DamageSystem>(ComponentKind::C_DAMAGE);
 
       animationSystem.playAnimation(sprite, "shoot", false);
       m_audioService.playSound("pistol_shoot");
-      inventorySystem.subtractFromBucket("ammo", 1);
+      inventorySystem.subtractFromBucket(body, "ammo", 1);
       damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
     }
     else {

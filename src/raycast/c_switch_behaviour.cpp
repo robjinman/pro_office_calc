@@ -58,15 +58,19 @@ void CSwitchBehaviour::setDecal() {
 //===========================================
 // CSwitchBehaviour::handleTargetedEvent
 //===========================================
-void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e) {
-  if (e.name == "player_activate_entity") {
+void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e_) {
+  if (e_.name == "player_activate_entity") {
+    const EPlayerActivateEntity& e = dynamic_cast<const EPlayerActivateEntity&>(e_);
+
     if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {
         const auto& inventorySystem = m_entityManager
           .system<InventorySystem>(ComponentKind::C_INVENTORY);
 
         if (requiredItemType != "") {
-          const map<string, entityId_t>& items = inventorySystem.getBucketItems(requiredItemType);
+          const map<string, entityId_t>& items =
+            inventorySystem.getBucketItems(e.player.body, requiredItemType);
+
           if (!contains(items, requiredItemName)) {
             return;
           }

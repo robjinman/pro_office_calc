@@ -114,15 +114,10 @@ bool MiscFactory::constructPlayerInventory() {
   const Player& player = *spatialSystem.sg.player;
   const Size& viewport = renderSystem.rg.viewport;
 
-  entityId_t ammoId = Component::getNextId();
-  entityId_t healthId = Component::getNextId();
-  entityId_t itemsId = Component::getNextId();
-
-  CItemBucket* itemsBucket = new CItemBucket(itemsId, "item", 5);
-  inventorySystem.addComponent(pComponent_t(itemsBucket));
-
-  CCounterBucket* ammoBucket = new CCounterBucket(ammoId, "ammo", 50);
-  inventorySystem.addComponent(pComponent_t(ammoBucket));
+  CCollector* inventory = new CCollector(player.body);
+  inventory->buckets["ammo"] = pBucket_t(new CounterBucket(50));
+  inventory->buckets["item"] = pBucket_t(new ItemBucket(5));
+  inventorySystem.addComponent(pComponent_t(inventory));
 
   double itemsDisplayH_wd = viewport.y * 0.1;
   double itemsDisplayW_wd = viewport.x * 0.5;
@@ -134,6 +129,10 @@ bool MiscFactory::constructPlayerInventory() {
   imgItems.fill(Qt::GlobalColor::transparent);
 
   renderSystem.rg.textures["items_display"] = Texture{imgItems, Size(0, 0)};
+
+  entityId_t ammoId = Component::getNextId();
+  entityId_t healthId = Component::getNextId();
+  entityId_t itemsId = Component::getNextId();
 
   CImageOverlay* itemsDisplay = new CImageOverlay(itemsId, "items_display",
     Point(0, 0), Size(itemsDisplayW_wd, itemsDisplayH_wd), 1);
@@ -147,30 +146,28 @@ bool MiscFactory::constructPlayerInventory() {
     Point(9.5, viewport.y - 0.5), 0.5, Qt::red, 2);
   renderSystem.addComponent(pComponent_t(healthCounter));
 
-  CEventHandler* syncAmmo = new CEventHandler(ammoId);
-  CEventHandler* syncHealth = new CEventHandler(healthId);
-  CEventHandler* syncItems = new CEventHandler(itemsId);
+  CEventHandler* syncDisplay = new CEventHandler(player.body);
 
-  syncAmmo->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
+  syncDisplay->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
 
-    if (e.entityId == ammoId) {
+    if (e.collectableType == "ammo") {
       stringstream ss;
-      ss << "AMMO " << ammoBucket->count << "/" << ammoBucket->capacity;
+      ss << "AMMO " << e.bucket.count << "/" << e.bucket.capacity;
       ammoCounter->text = ss.str();
 
-      if (e.currentCount > e.prevCount) {
+      if (e.bucket.count > e.prevCount) {
         m_audioService.playSound("ammo_collect");
       }
     }
   }});
 
-  syncItems->handlers.push_back(EventHandler{"bucket_items_change",
+  syncDisplay->handlers.push_back(EventHandler{"bucket_items_change",
     [=, &renderSystem](const GameEvent& e_) {
 
     const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
 
-    if (e.entityId == itemsId) {
+    if (e.collectableType == "item") {
       QImage& target = renderSystem.rg.textures["items_display"].image;
       target.fill(Qt::GlobalColor::transparent);
 
@@ -178,7 +175,7 @@ bool MiscFactory::constructPlayerInventory() {
       painter.begin(&target);
 
       int i = 0;
-      for (auto it = e.items.begin(); it != e.items.end(); ++it) {
+      for (auto it = e.bucket.items.begin(); it != e.bucket.items.end(); ++it) {
         entityId_t id = it->second;
         const CRender& c = dynamic_cast<const CRender&>(renderSystem.getComponent(id));
 
@@ -187,7 +184,7 @@ bool MiscFactory::constructPlayerInventory() {
           const QImage& img = renderSystem.rg.textures.at(sprite.texture).image;
 
           double slotH = itemsDisplayH_px;
-          double slotW = itemsDisplayW_px / itemsBucket->capacity;
+          double slotW = itemsDisplayW_px / e.bucket.capacity;
           double slotX = slotW * i;
           double slotY = 0;
           double margin = slotH * 0.2;
@@ -214,13 +211,13 @@ bool MiscFactory::constructPlayerInventory() {
 
       painter.end();
 
-      if (e.currentCount > e.prevCount) {
+      if (static_cast<int>(e.bucket.items.size()) > e.prevCount) {
         m_audioService.playSound("item_collect");
       }
     }
   }});
 
-  syncHealth->handlers.push_back(EventHandler{"entity_damaged",
+  syncDisplay->handlers.push_back(EventHandler{"entity_damaged",
     [=, &damageSystem, &player](const GameEvent& e_) {
 
     const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(e_);
@@ -234,9 +231,7 @@ bool MiscFactory::constructPlayerInventory() {
     }
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(syncAmmo));
-  eventHandlerSystem.addComponent(pComponent_t(syncHealth));
-  eventHandlerSystem.addComponent(pComponent_t(syncItems));
+  eventHandlerSystem.addComponent(pComponent_t(syncDisplay));
 
   entityId_t bgId = Component::getNextId();
 

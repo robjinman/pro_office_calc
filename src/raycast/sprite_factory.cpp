@@ -31,7 +31,7 @@ bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, en
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+  CZone& zone = spatialSystem.zone(parentId);
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -123,6 +123,13 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     EventHandlerSystem& eventHandlerSystem =
       m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
     AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
+    InventorySystem& inventorySystem =
+      m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+    CCollector* inventory = new CCollector(entityId);
+    inventory->buckets["item"] = pBucket_t(new ItemBucket(1));
+    inventorySystem.addComponent(pComponent_t(inventory));
 
     // Number of frames in sprite sheet
     const int W = 8;
@@ -149,7 +156,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
     CEventHandler* takeDamage = new CEventHandler(entityId);
     takeDamage->handlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &vRect](const GameEvent& e) {
+      [=, &animationSystem, &spatialSystem, &vRect](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
 
@@ -159,6 +166,14 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
         if (damage->health == 0) {
           m_audioService.playSoundAtPos("monster_death", vRect.pos);
+          auto& bucket = dynamic_cast<ItemBucket&>(*inventory->buckets["item"]);
+
+          for (auto it = bucket.items.begin(); it != bucket.items.end(); ++it) {
+            entityId_t itemId = it->second;
+            const CVRect& body = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId));
+            spatialSystem.relocateEntity(itemId, *body.zone, body.pos);
+          }
+
           m_entityManager.deleteEntity(entityId);
         }
         else {
@@ -178,6 +193,20 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     }
 
     agentSystem.addComponent(pComponent_t(agent));
+
+    Matrix m = parentTransform * obj.transform;
+
+    for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
+      parser::Object& ch = **it;
+      entityId_t invItemId = makeIdForObj(ch);
+
+      if (m_rootFactory.constructObject(ch.type, invItemId, ch, entityId, m)) {
+        const CCollectable& item =
+          dynamic_cast<const CCollectable&>(inventorySystem.getComponent(invItemId));
+
+        inventorySystem.addToBucket(entityId, item);
+      }
+    }
 
     return true;
   }
