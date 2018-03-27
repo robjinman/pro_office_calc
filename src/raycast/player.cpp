@@ -8,6 +8,7 @@
 #include "raycast/damage_system.hpp"
 
 
+const double FOREHEAD_SIZE = 15.0;
 const double COLLISION_RADIUS = 10.0;
 
 
@@ -18,7 +19,6 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, double 
   CZone& zone, const Matrix& transform)
   : m_entityManager(entityManager),
     m_audioService(audioService),
-    m_tallness(tallness),
     m_shootTimer(0.5) {
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -35,7 +35,7 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, double 
   spatialSystem.addComponent(pCSpatial_t(b));
 
   m_camera.reset(new Camera(renderSystem.rg.viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), body,
-    tallness + zone.floorHeight, spatialSystem));
+    tallness - FOREHEAD_SIZE + zone.floorHeight, spatialSystem));
 }
 
 //===========================================
@@ -63,14 +63,14 @@ bool Player::belowGround(const CZone& zone) const {
 // Player::feetHeight
 //===========================================
 double Player::feetHeight() const {
-  return m_camera->height - m_tallness;
+  return eyeHeight() + FOREHEAD_SIZE - getTallness();
 }
 
 //===========================================
 // Player::headHeight
 //===========================================
 double Player::headHeight() const {
-  return m_camera->height + FOREHEAD_SIZE;
+  return eyeHeight() + FOREHEAD_SIZE;
 }
 
 //===========================================
@@ -84,14 +84,14 @@ double Player::eyeHeight() const {
 // Player::getTallness
 //===========================================
 double Player::getTallness() const {
-  return m_tallness;
+  return getBody().size.y;
 }
 
 //===========================================
 // Player::changeTallness
 //===========================================
 void Player::changeTallness(double delta) {
-  m_tallness += delta;
+  getBody().size.y += delta;
   m_camera->height += delta;
 }
 
@@ -99,7 +99,7 @@ void Player::changeTallness(double delta) {
 // Player::setFeetHeight
 //===========================================
 void Player::setFeetHeight(double h) {
-  m_camera->height = h + m_tallness;
+  m_camera->height = h + getTallness() - FOREHEAD_SIZE;
 }
 
 //===========================================

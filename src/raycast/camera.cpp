@@ -10,9 +10,9 @@ Camera::Camera(double vpW, double hFov, double vFov, entityId_t body, double hei
   : hFov(hFov),
     vFov(vFov),
     F(vpW / (2.0 * tan(0.5 * hFov))),
-    body(body),
     height(height),
-    m_spatialSystem(spatialSystem) {}
+    m_spatialSystem(spatialSystem),
+    body(body) {}
 
 //===========================================
 // Camera::setTransform

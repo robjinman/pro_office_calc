@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1"
-     inkscape:cx="1413.7446"
-     inkscape:cy="587.4826"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="1156.1398"
+     inkscape:cy="717.92484"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -221,7 +221,7 @@
            sodipodi:linespacing="125%"><tspan
              y="616.71179"
              x="580.75781"
-             id="tspan4219-2-6-03-8-1-7-2-7">floor_offset=50</tspan></text>
+             id="tspan4219-2-6-03-8-1-7-2-7">floor_offset=40</tspan></text>
         <text
            transform="scale(0.82582173,1.2109151)"
            sodipodi:linespacing="125%"
@@ -291,7 +291,7 @@
              y="586.42468"
              x="616.46082"
              id="tspan4510-6-4-1-0-3-6-9-6-5"
-             sodipodi:role="line">ceiling_height=50</tspan></text>
+             sodipodi:role="line">ceiling_height=65</tspan></text>
       </g>
       <g
          id="g3694-3"
@@ -430,6 +430,102 @@
            id="tspan4510-5-8"
            x="1452.4834"
            y="3088.854">ceiling_texture=white_paint</tspan></text>
+      <g
+         id="g3694-7"
+         transform="matrix(1.9445364,-0.20148188,0.20298475,1.9581922,812.4025,543.64062)">
+        <text
+           transform="scale(0.87566725,1.1419863)"
+           id="text4213-3-0-78-8-4-5-1-1-9"
+           y="612.3869"
+           x="580.54865"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.98019743px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="612.3869"
+             x="580.54865"
+             id="tspan4215-5-6-4-6-1-7-9-3-2">type=region</tspan></text>
+        <text
+           transform="scale(0.87566725,1.1419863)"
+           id="text4217-6-2-5-8-3-7-9-2-0"
+           y="616.71179"
+           x="580.75781"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.98019743px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"
+           sodipodi:linespacing="125%"><tspan
+             y="616.71179"
+             x="580.75781"
+             id="tspan4219-2-6-03-8-1-7-2-7-2">floor_offset=50</tspan></text>
+        <text
+           transform="scale(0.82582173,1.2109151)"
+           sodipodi:linespacing="125%"
+           id="text4508-0-1-1-8-7-9-3"
+           y="590.90619"
+           x="616.92291"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.96057558px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="590.90619"
+             x="616.92291"
+             id="tspan4510-6-4-1-0-3-6-7"
+             sodipodi:role="line">floor_texture=light_wood</tspan></text>
+        <g
+           transform="translate(0,-11)"
+           id="g3687-5">
+          <path
+             inkscape:connector-curvature="0"
+             id="rect191257-4-4-92"
+             d="M 586.71378,640.48642 586.89649,747.58817 406.93571,746.92388 406.753,639.82213 Z"
+             style="opacity:1;fill:none;fill-opacity:1;stroke:#08ff00;stroke-width:0.50973499;stroke-miterlimit:4;stroke-dasharray:2.03893993, 0.50973499;stroke-dashoffset:0;stroke-opacity:1" />
+          <text
+             transform="scale(0.98508221,1.0151437)"
+             sodipodi:linespacing="125%"
+             id="text191259-93-1-2"
+             y="727.7002"
+             x="474.05081"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.59826589px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             xml:space="preserve"><tspan
+               style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0"
+               y="727.7002"
+               x="474.05081"
+               id="tspan191261-3-7-8"
+               sodipodi:role="line">type=joining_edge</tspan></text>
+          <text
+             transform="scale(0.98508221,1.0151437)"
+             sodipodi:linespacing="125%"
+             id="text191263-8-9-9"
+             y="730.60815"
+             x="474.5051"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.59826589px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             xml:space="preserve"><tspan
+               y="730.60815"
+               x="474.5051"
+               id="tspan191265-0-0-7"
+               sodipodi:role="line">bottom_texture=dark_bricks</tspan></text>
+          <text
+             transform="scale(0.98508221,1.0151437)"
+             sodipodi:linespacing="125%"
+             id="text191263-8-9-6-3"
+             y="734.17719"
+             x="474.5098"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.59826589px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             xml:space="preserve"><tspan
+               y="734.17719"
+               x="474.5098"
+               id="tspan191265-0-0-06-6"
+               sodipodi:role="line">top_texture=dark_bricks</tspan></text>
+        </g>
+        <text
+           transform="scale(0.82582173,1.2109151)"
+           sodipodi:linespacing="125%"
+           id="text4508-0-1-1-8-7-9-2-3-7-1"
+           y="586.42468"
+           x="616.46082"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.96057558px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="586.42468"
+             x="616.46082"
+             id="tspan4510-6-4-1-0-3-6-9-6-5-2"
+             sodipodi:role="line">ceiling_height=80</tspan></text>
+      </g>
     </g>
   </g>
   <g

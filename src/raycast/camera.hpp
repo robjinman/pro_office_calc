@@ -20,8 +20,6 @@ class Camera {
     double vFov = DEG_TO_RAD(50.0);
 
     const double F;
-
-    entityId_t body;
     double height;
 
     void setTransform(const Matrix& m);
@@ -32,6 +30,7 @@ class Camera {
 
   private:
     SpatialSystem& m_spatialSystem;
+    entityId_t body;
 
     CVRect& getBody() const;
 };

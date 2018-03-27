@@ -26,7 +26,6 @@ class Player {
     double vVelocity = 0;
     double activationRadius = 100.0;
     double collectionRadius = 50.0;
-    const double FOREHEAD_SIZE = 10.0;
 
     entityId_t crosshair = -1;
     entityId_t sprite = -1;
@@ -65,7 +64,6 @@ class Player {
     EntityManager& m_entityManager;
     AudioService& m_audioService;
     std::unique_ptr<Camera> m_camera;
-    double m_tallness = 50;
     Debouncer m_shootTimer;
 };
 
