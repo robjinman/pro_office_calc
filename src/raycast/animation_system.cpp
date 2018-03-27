@@ -3,8 +3,30 @@
 #include "raycast/entity_manager.hpp"
 
 
+using std::vector;
 using std::set;
 
+
+//===========================================
+// constructFrames
+//===========================================
+vector<AnimationFrame> constructFrames(int W, int H, const vector<int>& rows) {
+  double w = 1.0 / W;
+  double h = 1.0 / H;
+
+  vector<AnimationFrame> frames;
+  for (int f : rows) {
+    AnimationFrame frame;
+
+    for (int v = 0; v < W; ++v) {
+      frame.texViews.push_back(QRectF(w * v, h * f, w, h));
+    }
+
+    frames.push_back(frame);
+  }
+
+  return frames;
+}
 
 //===========================================
 // Animation::start

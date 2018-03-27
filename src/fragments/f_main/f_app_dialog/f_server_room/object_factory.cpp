@@ -37,7 +37,22 @@ bool ObjectFactory::constructBigScreen(entityId_t entityId, parser::Object& obj,
   }
 
   if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
-    DBG_PRINT("Constructing big screen!\n");
+    AnimationSystem& animationSystem =
+      m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+
+    // Number of frames in sprite sheet
+    const int W = 1;
+    const int H = 3;
+
+    CAnimation* anim = new CAnimation(entityId);
+
+    vector<AnimationFrame> frames = constructFrames(W, H,
+      { 0, 1, 2 });
+    anim->animations.insert(std::make_pair("idle",
+      Animation(m_timeService.frameRate, 1.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+    animationSystem.playAnimation(entityId, "idle", true);
 
     return true;
   }

@@ -85,4 +85,7 @@ class AnimationSystem : public System {
 };
 
 
+std::vector<AnimationFrame> constructFrames(int W, int H, const std::vector<int>& rows);
+
+
 #endif
