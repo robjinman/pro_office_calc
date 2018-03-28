@@ -10,6 +10,7 @@ class AudioService;
 class TimeService;
 class Matrix;
 class RootFactory;
+class CalculatorWidget;
 namespace parser { class Object; }
 
 
@@ -19,7 +20,7 @@ namespace youve_got_mail {
 class ObjectFactory : public GameObjectFactory {
   public:
     ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-      AudioService& audioService, TimeService& timeService);
+      AudioService& audioService, TimeService& timeService, CalculatorWidget& wgtCalculator);
 
     const std::set<std::string>& types() const override;
 
@@ -31,11 +32,14 @@ class ObjectFactory : public GameObjectFactory {
     EntityManager& m_entityManager;
     AudioService& m_audioService;
     TimeService& m_timeService;
+    CalculatorWidget& m_wgtCalculator;
 
     bool constructBigScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructCalculator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+
+    void renderCalc() const;
 };
 
 

@@ -1,3 +1,5 @@
+#include <QMouseEvent>
+#include <QApplication>
 #include "fragments/f_main/f_app_dialog/f_server_room/object_factory.hpp"
 #include "raycast/sprite_factory.hpp"
 #include "raycast/geometry.hpp"
@@ -14,6 +16,7 @@
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
 #include "raycast/root_factory.hpp"
+#include "calculator_widget.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 
@@ -61,10 +64,40 @@ bool ObjectFactory::constructBigScreen(entityId_t entityId, parser::Object& obj,
 }
 
 //===========================================
+// ObjectFactory::renderCalc
+//===========================================
+void ObjectFactory::renderCalc() const {
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  int W = m_wgtCalculator.width();
+  int H = m_wgtCalculator.height();
+
+  renderSystem.rg.textures["calculator"] = Texture{QImage(W, H, QImage::Format_ARGB32),
+    Size(0, 0)};
+
+  QImage& calcImg = renderSystem.rg.textures["calculator"].image;
+  calcImg.fill(QColor(255, 0, 0));
+
+  QImage buf(W, H, QImage::Format_ARGB32);
+  m_wgtCalculator.render(&buf);
+
+  QPainter painter;
+  painter.begin(&calcImg);
+
+  QTransform t = painter.transform();
+  t.scale(-1, 1);
+  painter.setTransform(t);
+
+  painter.drawImage(QPoint(-W, 0), buf);
+
+  painter.end();
+}
+
+//===========================================
 // ObjectFactory::constructCalculator
 //===========================================
-bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
-  const Matrix& parentTransform) {
+bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -75,6 +108,8 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
     EventHandlerSystem& eventHandlerSystem =
       m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
+    renderCalc();
+
     CDamage* damage = new CDamage(entityId, 1000, 1000);
     damageSystem.addComponent(pComponent_t(damage));
 
@@ -83,10 +118,42 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
       [=](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
+      DBG_PRINT("Calculator hit at " << event.point_rel << "\n");
 
-      if (event.entityId == entityId) {
-        DBG_PRINT("Calculator hit at " << event.point_rel << "\n");
+      const Point& pt = event.point_rel;
 
+      const CVRect& vRect = m_entityManager.getComponent<CVRect>(event.entityId,
+        ComponentKind::C_SPATIAL);
+
+      double W = m_wgtCalculator.width();
+      double H = m_wgtCalculator.height();
+
+      double x_norm = pt.x / vRect.size.x;
+      double y_norm = pt.y / vRect.size.y;
+
+      DBG_PRINT(x_norm << ", " << y_norm << "\n");
+
+      double x = W - x_norm * W;
+      double y = H - y_norm * H;
+
+      DBG_PRINT(x << ", " << y << "\n");
+
+      QWidget* child = m_wgtCalculator.childAt(x, y);
+      if (child != nullptr) {
+        QMouseEvent mousePressEvent(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton,
+          Qt::LeftButton, Qt::NoModifier);
+
+        QMouseEvent mouseReleaseEvent(QEvent::MouseButtonRelease, QPointF(0, 0), Qt::LeftButton,
+          Qt::NoButton, Qt::NoModifier);
+
+        QApplication::sendEvent(child, &mousePressEvent);
+        QApplication::sendEvent(child, &mouseReleaseEvent);
+      }
+
+      renderCalc();
+
+      if (m_wgtCalculator.wgtDigitDisplay->text() == "inf") {
+        m_entityManager.broadcastEvent(GameEvent("div_by_zero"));
       }
     }});
     eventHandlerSystem.addComponent(pComponent_t(takeDamage));
@@ -101,11 +168,12 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
 // ObjectFactory::ObjectFactory
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-  AudioService& audioService, TimeService& timeService)
+  AudioService& audioService, TimeService& timeService, CalculatorWidget& wgtCalculator)
   : m_rootFactory(rootFactory),
     m_entityManager(entityManager),
     m_audioService(audioService),
-    m_timeService(timeService) {}
+    m_timeService(timeService),
+    m_wgtCalculator(wgtCalculator) {}
 
 //===========================================
 // ObjectFactory::types

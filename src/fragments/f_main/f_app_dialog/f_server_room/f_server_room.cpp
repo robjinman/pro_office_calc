@@ -54,8 +54,12 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     auto& audioService = m_data.wgtRaycast->audioService();
     auto& entityManager = m_data.wgtRaycast->entityManager();
 
+    m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>();
+    m_data.wgtCalculator->show();
+    m_data.wgtCalculator->hide();
+
     GameObjectFactory* factory = new youve_got_mail::ObjectFactory(rootFactory, entityManager,
-      audioService, timeService);
+      audioService, timeService, *m_data.wgtCalculator);
 
     m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
     m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem, entityManager));
@@ -63,34 +67,6 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
     m_data.wgtRaycast->initialise("data/youve_got_mail/map.svg");
-
-    m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>();
-    m_data.wgtCalculator->show();
-    m_data.wgtCalculator->hide();
-    int W = m_data.wgtCalculator->width();
-    int H = m_data.wgtCalculator->height();
-
-    RenderSystem& renderSystem = entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-    renderSystem.rg.textures["calculator"] = Texture{QImage(W, H, QImage::Format_ARGB32),
-      Size(0, 0)};
-
-    QImage& calcImg = renderSystem.rg.textures["calculator"].image;
-
-    calcImg.fill(QColor(255, 0, 0));
-
-    QImage buf(W, H, QImage::Format_ARGB32);
-    m_data.wgtCalculator->render(&buf);
-
-    QPainter painter;
-    painter.begin(&calcImg);
-
-    QTransform t = painter.transform();
-    t.scale(-1, 1);
-    painter.setTransform(t);
-
-    painter.drawImage(QPoint(-W, 0), buf);
-
-    painter.end();
 
     // TODO
     //commonData.eventSystem.fire(pEvent_t(new Event("youveGotMail/divByZero")));
