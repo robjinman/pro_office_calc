@@ -134,7 +134,7 @@ class SpatialSystem : public System {
     bool isAncestor(entityId_t a, entityId_t b) const;
     void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
       entityId_t parentId, std::list<pIntersection_t>& intersections,
-      std::set<entityId_t>& visitedZones, std::set<entityId_t>& visitedJoins,
+      std::set<entityId_t>& visited,
       double cullNearerThan = 0) const;
     void addChildToComponent(CSpatial& parent, pCSpatial_t child);
     bool removeChildFromComponent(CSpatial& parent, const CSpatial& child, bool keepAlive = false);

@@ -886,15 +886,15 @@ void SpatialSystem::connectZones() {
 // SpatialSystem::findIntersections_r
 //===========================================
 void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  entityId_t parentId, list<pIntersection_t>& intersections, set<entityId_t>& visitedZones,
-  set<entityId_t>& visitedJoins, double cullNearerThan) const {
+  entityId_t parentId, list<pIntersection_t>& intersections, set<entityId_t>& visited,
+  double cullNearerThan) const {
 
   const CZone& zone = constZone(parentId);
   const CSpatial& parent = *m_components.at(parentId);
   Matrix invMatrix = matrix.inverse();
 
   LineSegment ray(point, 10000.0 * dir);
-  visitedZones.insert(zone.entityId());
+  visited.insert(parentId);
 
   auto& children = m_entityChildren.at(parentId);
   for (entityId_t childId : children) {
@@ -902,8 +902,8 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
     switch (c.kind) {
       case CSpatialKind::ZONE: {
-        if (visitedZones.count(childId) == 0) {
-          findIntersections_r(point, dir, matrix, childId, intersections, visitedZones, visitedJoins,
+        if (visited.count(childId) == 0) {
+          findIntersections_r(point, dir, matrix, childId, intersections, visited,
             cullNearerThan);
         }
         break;
@@ -988,8 +988,9 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             continue;
           }
 
-          findIntersections_r(point, dir, matrix, childId, intersections, visitedZones,
-            visitedJoins, cullNearerThan);
+          if (visited.count(childId) == 0) {
+            findIntersections_r(point, dir, matrix, childId, intersections, visited, cullNearerThan);
+          }
 
           Intersection* X = new Intersection(edge.kind, parent.kind);
           X->entityId = edge.entityId();
@@ -1009,6 +1010,12 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
             const CZone& next = se.zoneA == &zone ? *se.zoneB : *se.zoneA;
 
+            if (visited.count(se.joinId) > 0) {
+              continue;
+            }
+
+            visited.insert(se.joinId);
+
             X->zoneB = next.entityId();
             X->heightRanges = make_pair(Range(se.zoneA->floorHeight, se.zoneB->floorHeight),
               Range(se.zoneA->ceilingHeight, se.zoneB->ceilingHeight));
@@ -1021,15 +1028,10 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
               cullNearerThan_ = X->distanceFromOrigin;
             }
 
-            pIntersection_t pX(X);
-            if (visitedJoins.find(se.joinId) == visitedJoins.end()) {
-              intersections.push_back(std::move(pX));
-              visitedJoins.insert(se.joinId);
-            }
+            intersections.push_back(pIntersection_t(X));
 
-            if (visitedZones.find(next.entityId()) == visitedZones.end()) {
-              findIntersections_r(point, dir, mat, next.entityId(), intersections, visitedZones,
-                visitedJoins, cullNearerThan_);
+            if (visited.count(next.entityId()) == 0) {
+              findIntersections_r(point, dir, mat, next.entityId(), intersections, visited, cullNearerThan_);
             }
           }
           else {
@@ -1069,9 +1071,8 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
   const Vec2f& dir, const Matrix& matrix) const {
 
   list<pIntersection_t> intersections;
-  set<entityId_t> visitedZones;
-  set<entityId_t> visitedJoins;
-  findIntersections_r(pos, dir, matrix, zone.entityId(), intersections, visitedZones, visitedJoins);
+  set<entityId_t> visited;
+  findIntersections_r(pos, dir, matrix, zone.entityId(), intersections, visited);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromOrigin < b->distanceFromOrigin;
@@ -1092,8 +1093,8 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
 
       currentZone = other;
 
-      for (auto& excl : excluded) {
-        intersections.push_front(std::move(excl));
+      for (auto ex = excluded.rbegin(); ex != excluded.rend(); ++ex) {
+        intersections.push_front(std::move(*ex));
       }
       excluded.clear();
     }
