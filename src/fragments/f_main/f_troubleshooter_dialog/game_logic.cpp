@@ -27,8 +27,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   pCEventHandler_t forwardEvent(new CEventHandler(m_entityId));
 
-  forwardEvent->handlers.push_back(EventHandler{"*", std::bind(&GameLogic::onRaycastEvent,
-    this, std::placeholders::_1)});
+  forwardEvent->broadcastedEventHandlers.push_back(EventHandler{"*",
+    std::bind(&GameLogic::onRaycastEvent, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(std::move(forwardEvent));
 

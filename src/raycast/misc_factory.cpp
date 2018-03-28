@@ -148,7 +148,9 @@ bool MiscFactory::constructPlayerInventory() {
 
   CEventHandler* syncDisplay = new CEventHandler(player.body);
 
-  syncDisplay->handlers.push_back(EventHandler{"bucket_count_change", [=](const GameEvent& e_) {
+  syncDisplay->targetedEventHandlers.push_back(EventHandler{"bucket_count_change",
+    [=](const GameEvent& e_) {
+
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
 
     if (e.collectableType == "ammo") {
@@ -162,7 +164,7 @@ bool MiscFactory::constructPlayerInventory() {
     }
   }});
 
-  syncDisplay->handlers.push_back(EventHandler{"bucket_items_change",
+  syncDisplay->targetedEventHandlers.push_back(EventHandler{"bucket_items_change",
     [=, &renderSystem](const GameEvent& e_) {
 
     const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
@@ -217,7 +219,7 @@ bool MiscFactory::constructPlayerInventory() {
     }
   }});
 
-  syncDisplay->handlers.push_back(EventHandler{"entity_damaged",
+  syncDisplay->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
     [=, &damageSystem, &player](const GameEvent& e_) {
 
     const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(e_);

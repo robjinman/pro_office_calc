@@ -79,7 +79,7 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
     damageSystem.addComponent(pComponent_t(damage));
 
     CEventHandler* takeDamage = new CEventHandler(entityId);
-    takeDamage->handlers.push_back(EventHandler{"entity_damaged",
+    takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
       [=](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);

@@ -43,7 +43,7 @@ GameLogic::GameLogic(QDialog& dialog, EventSystem& eventSystem, EntityManager& e
 
   pCEventHandler_t forwardEvent(new CEventHandler(m_entityId));
 
-  forwardEvent->handlers.push_back(EventHandler{"entity_changed_zone",
+  forwardEvent->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(std::move(forwardEvent));

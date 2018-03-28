@@ -134,7 +134,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
 
     CEventHandler* takeDamage = new CEventHandler(entityId);
-    takeDamage->handlers.push_back(EventHandler{"entity_damaged",
+    takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
       [=, &animationSystem, &spatialSystem, &vRect](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
@@ -255,7 +255,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
     CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
 
     CEventHandler* takeDamage = new CEventHandler(entityId);
-    takeDamage->handlers.push_back(EventHandler{"entity_damaged",
+    takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
       [=, &animationSystem, &vRect](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);

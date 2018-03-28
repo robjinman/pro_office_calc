@@ -7,8 +7,10 @@ using std::set;
 //===========================================
 // sendEventToComponent
 //===========================================
-static void sendEventToComponent(CEventHandler& c, const GameEvent& e) {
-  for (auto it = c.handlers.begin(); it != c.handlers.end(); ++it) {
+static void sendEventToComponent(CEventHandler& c, const GameEvent& e, bool targeted) {
+  auto& handlers = targeted ? c.targetedEventHandlers : c.broadcastedEventHandlers;
+
+  for (auto it = handlers.begin(); it != handlers.end(); ++it) {
     EventHandler handler = *it;
 
     if (handler.name == e.name || handler.name == "*") {
@@ -51,7 +53,7 @@ void EventHandlerSystem::removeEntity(entityId_t id) {
 //===========================================
 void EventHandlerSystem::handleEvent(const GameEvent& event) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    sendEventToComponent(*it->second, event);
+    sendEventToComponent(*it->second, event, false);
   }
 }
 
@@ -61,7 +63,7 @@ void EventHandlerSystem::handleEvent(const GameEvent& event) {
 void EventHandlerSystem::handleEvent(const GameEvent& event, const set<entityId_t>& entities) {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
     if (entities.count(it->first)) {
-      sendEventToComponent(*it->second, event);
+      sendEventToComponent(*it->second, event, true);
     }
   }
 }

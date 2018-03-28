@@ -19,7 +19,8 @@ struct CEventHandler : public Component {
   explicit CEventHandler(entityId_t entityId)
     : Component(entityId, ComponentKind::C_EVENT_HANDLER) {}
 
-  std::list<EventHandler> handlers;
+  std::list<EventHandler> broadcastedEventHandlers;
+  std::list<EventHandler> targetedEventHandlers;
 
   virtual ~CEventHandler() {}
 };
