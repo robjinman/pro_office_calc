@@ -8,6 +8,9 @@ using std::set;
 using std::make_pair;
 
 
+const double PENETRATION_DISTANCE = 0.01;
+
+
 //===========================================
 // DamageSystem::addComponent
 //===========================================
@@ -79,6 +82,40 @@ void DamageSystem::damageWithinRadius(const CZone& zone, const Point& pos, doubl
 }
 
 //===========================================
+// DamageSystem::damageAtIntersection_
+//===========================================
+void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
+  entityId_t id = X.entityId;
+
+  auto it = m_components.find(id);
+  if (it != m_components.end()) {
+    CDamage& component = *it->second;
+
+    if (component.health > 0) {
+      component.health -= damage;
+
+      EEntityDamaged damagedEvent(id);
+      damagedEvent.point_wld = X.point_wld;
+      damagedEvent.point_rel = Point(X.distanceAlongTarget, X.height);
+
+      m_entityManager.fireEvent(damagedEvent, {id});
+      m_entityManager.broadcastEvent(damagedEvent);
+
+      if (component.health <= 0) {
+        component.health = 0;
+
+        EEntityDestroyed destroyedEvent(id);
+        destroyedEvent.point_wld = X.point_wld;
+        destroyedEvent.point_rel = Point(X.distanceAlongTarget, X.height);
+
+        m_entityManager.fireEvent(destroyedEvent, {id});
+        m_entityManager.broadcastEvent(destroyedEvent);
+      }
+    }
+  }
+}
+
+//===========================================
 // DamageSystem::damageAtIntersection
 //===========================================
 void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage) {
@@ -86,7 +123,16 @@ void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle,
   list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(ray, camSpaceVAngle);
 
   if (intersections.size() > 0) {
-    damageEntity(intersections.front()->entityId, damage);
+    double dist = intersections.front()->distanceFromOrigin;
+
+    for (auto& i : intersections) {
+      if (i->distanceFromOrigin <= dist + PENETRATION_DISTANCE) {
+        damageAtIntersection_(*i, damage);
+      }
+      else {
+        break;
+      }
+    }
   }
 }
 
@@ -101,6 +147,15 @@ void DamageSystem::damageAtIntersection(const CZone& zone, const Point& pos, dou
     vAngle, matrix);
 
   if (intersections.size() > 0) {
-    damageEntity(intersections.front()->entityId, damage);
+    double dist = intersections.front()->distanceFromOrigin;
+
+    for (auto& i : intersections) {
+      if (i->distanceFromOrigin <= dist + PENETRATION_DISTANCE) {
+        damageAtIntersection_(*i, damage);
+      }
+      else {
+        break;
+      }
+    }
   }
 }

@@ -16,6 +16,9 @@ struct EEntityDestroyed : public GameEvent {
       entityId(id) {}
 
   entityId_t entityId;
+
+  Point point_wld;
+  Point point_rel;
 };
 
 struct EEntityDamaged : public GameEvent {
@@ -24,6 +27,9 @@ struct EEntityDamaged : public GameEvent {
       entityId(id) {}
 
   entityId_t entityId;
+
+  Point point_wld;
+  Point point_rel;
 };
 
 struct CDamage : public Component {
@@ -47,6 +53,7 @@ enum class AttenuationCurve {
 
 class EntityManager;
 class CZone;
+class Intersection;
 
 class DamageSystem : public System {
   public:
@@ -75,6 +82,8 @@ class DamageSystem : public System {
   private:
     EntityManager& m_entityManager;
     std::map<entityId_t, pCDamage_t> m_components;
+
+    void damageAtIntersection_(const Intersection& X, int damage);
 };
 
 

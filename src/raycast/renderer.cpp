@@ -292,13 +292,14 @@ static XWrapper* constructXWrapper(const SpatialSystem& spatialSystem,
       return wrapper;
     }
     case CSpatialKind::V_RECT: {
-      SpriteX* wrapper = new SpriteX(std::move(X));
-      wrapper->vRect = dynamic_cast<const CVRect*>(&spatialSystem.getComponent(pX->entityId));
-      wrapper->sprite = dynamic_cast<const CSprite*>(&renderSystem.getComponent(pX->entityId));
-      return wrapper;
+      if (pX->parentKind == CSpatialKind::ZONE) {
+        SpriteX* wrapper = new SpriteX(std::move(X));
+        wrapper->vRect = dynamic_cast<const CVRect*>(&spatialSystem.getComponent(pX->entityId));
+        wrapper->sprite = dynamic_cast<const CSprite*>(&renderSystem.getComponent(pX->entityId));
+        return wrapper;
+      }
     }
-    default:
-      EXCEPTION("Error constructing XWrapper for Intersection of unknown type");
+    default: break;
   }
 
   return nullptr;
@@ -387,6 +388,9 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 
     ++last;
     XWrapper* X = constructXWrapper(spatialSystem, renderSystem, std::move(*it));
+    if (X == nullptr) {
+      continue;
+    }
     result.intersections.push_back(pXWrapper_t(X));
 
     if (X->kind == XWrapperKind::WALL) {

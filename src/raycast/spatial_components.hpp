@@ -58,6 +58,7 @@ struct CVRect : public CSpatial {
   Vec2f pos;
   double angle;
   Size size;
+  // TODO: height
 };
 
 typedef std::unique_ptr<CVRect> pCVRect_t;

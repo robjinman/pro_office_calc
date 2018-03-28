@@ -24,7 +24,7 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, double 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  body = Component::getNextId();
+  body = Component::getIdFromString("player");
 
   CVRect* b = new CVRect(body, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
   b->setTransform(transform);

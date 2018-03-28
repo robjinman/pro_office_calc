@@ -245,75 +245,6 @@ static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
 }
 
 //===========================================
-// entitiesInRadius
-//===========================================
-static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const Circle& circle,
-  double heightAboveFloor, set<entityId_t>& entities) {
-
-  const double MAX_VERTICAL_DISTANCE = 20.0;
-
-  for (auto it = searchZone.edges.begin(); it != searchZone.edges.end(); ++it) {
-    const CEdge& edge = **it;
-
-    if (overlapsCircle(circle, edge)) {
-      entities.insert(edge.entityId());
-      entities.insert(searchZone.entityId());
-
-      if (edge.kind == CSpatialKind::HARD_EDGE || edge.kind == CSpatialKind::SOFT_EDGE) {
-        for (auto jt = edge.vRects.begin(); jt != edge.vRects.end(); ++jt) {
-          const CVRect& vRect = **jt;
-
-          if (overlapsCircle(circle, edge.lseg, vRect)) {
-            assert(vRect.zone != nullptr);
-
-            double vRectFloorH = vRect.zone->floorHeight;
-
-            if (edge.kind == CSpatialKind::SOFT_EDGE) {
-              const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
-              vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
-            }
-
-            double y1 = zone.floorHeight + heightAboveFloor;
-            double y2 = vRectFloorH + vRect.pos.y + 0.5 * vRect.size.y;
-
-            if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
-              entities.insert(vRect.entityId());
-            }
-          }
-        }
-      }
-    }
-  }
-
-  for (auto it = searchZone.vRects.begin(); it != searchZone.vRects.end(); ++it) {
-    const CVRect& vRect = **it;
-
-    if (overlapsCircle(circle, vRect)) {
-      assert(vRect.zone != nullptr);
-
-      double y1 = zone.floorHeight + heightAboveFloor;
-      // TODO: Currently CVRects that are direct children of zones don't have a vertical position.
-      // Their y coord corresponds to the x-y coords of the map.
-      double y2 = vRect.zone->floorHeight + 0.5 * vRect.size.y;
-
-      if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
-        entities.insert(vRect.entityId());
-      }
-    }
-  }
-
-  for (auto it = searchZone.hRects.begin(); it != searchZone.hRects.end(); ++it) {
-    if (overlapsCircle(circle, **it)) {
-      entities.insert((*it)->entityId());
-    }
-  }
-
-  for (auto it = searchZone.children.begin(); it != searchZone.children.end(); ++it) {
-    entitiesInRadius_r(**it, zone, circle, heightAboveFloor, entities);
-  }
-}
-
-//===========================================
 // addToZone
 //===========================================
 static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
@@ -385,9 +316,11 @@ static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
 }
 
 //===========================================
-// addChildToComponent
+// SpatialSystem::addChildToComponent
 //===========================================
-static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t child) {
+void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
+  const CSpatial* ptr = child.get();
+
   switch (parent.kind) {
     case CSpatialKind::ZONE:
       addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
@@ -402,6 +335,8 @@ static void addChildToComponent(SceneGraph& sg, CSpatial& parent, pCSpatial_t ch
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
         << parent.kind);
   };
+
+  m_entityChildren[parent.entityId()].insert(ptr->entityId());
 }
 
 //===========================================
@@ -518,23 +453,6 @@ static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keep
 }
 
 //===========================================
-// removeChildFromComponent
-//===========================================
-static bool removeChildFromComponent(SceneGraph& sg, CSpatial& parent, const CSpatial& child,
-  bool keepAlive = false) {
-
-  switch (parent.kind) {
-    case CSpatialKind::ZONE:
-      return removeFromZone(sg, dynamic_cast<CZone&>(parent), child, keepAlive);
-    case CSpatialKind::HARD_EDGE:
-      return removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child, keepAlive);
-    default:
-      EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
-        << parent.kind);
-  };
-}
-
-//===========================================
 // similar
 //===========================================
 static bool similar(const LineSegment& l1, const LineSegment& l2) {
@@ -546,6 +464,13 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 // SpatialSystem::zone
 //===========================================
 CZone& SpatialSystem::zone(entityId_t entityId) {
+  return const_cast<CZone&>(constZone(entityId));
+}
+
+//===========================================
+// SpatialSystem::constZone
+//===========================================
+const CZone& SpatialSystem::constZone(entityId_t entityId) const {
   while (entityId != -1) {
     CSpatial& c = *m_components.at(entityId);
 
@@ -723,8 +648,8 @@ void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entity
     CZone& oldZone = dynamic_cast<CZone&>(getComponent(oldZoneId));
     CZone& newZone = dynamic_cast<CZone&>(getComponent(newZoneId));
 
-    if (removeFromZone(sg, oldZone, c, true)) {
-      addChildToComponent(sg, newZone, pCSpatial_t(&c));
+    if (removeChildFromComponent(oldZone, c, true)) {
+      addChildToComponent(newZone, pCSpatial_t(&c));
 
       m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId));
     }
@@ -958,100 +883,162 @@ void SpatialSystem::connectZones() {
 }
 
 //===========================================
-// findIntersections_r
+// SpatialSystem::findIntersections_r
 //===========================================
-void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  const CZone& zone, list<pIntersection_t>& intersections, set<const CZone*>& visitedZones,
-  set<entityId_t>& visitedJoins, double cullNearerThan) {
+void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
+  entityId_t parentId, list<pIntersection_t>& intersections, set<entityId_t>& visitedZones,
+  set<entityId_t>& visitedJoins, double cullNearerThan) const {
 
+  const CZone& zone = constZone(parentId);
+  const CSpatial& parent = *m_components.at(parentId);
   Matrix invMatrix = matrix.inverse();
 
   LineSegment ray(point, 10000.0 * dir);
-  visitedZones.insert(&zone);
+  visitedZones.insert(zone.entityId());
 
-  for (auto it = zone.children.begin(); it != zone.children.end(); ++it) {
-    if (visitedZones.find(it->get()) == visitedZones.end()) {
-      findIntersections_r(point, dir, matrix, **it, intersections, visitedZones, visitedJoins,
-        cullNearerThan);
-    }
-  }
+  auto& children = m_entityChildren.at(parentId);
+  for (entityId_t childId : children) {
+    const CSpatial& c = *m_components.at(childId);
 
-  for (auto it = zone.vRects.begin(); it != zone.vRects.end(); ++it) {
-    CVRect& vRect = **it;
-
-    Point pos = matrix * vRect.pos;
-    double w = vRect.size.x;
-    LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x, pos.y + 0.5 * w));
-
-    Point pt;
-    if (lineSegmentIntersect(ray, lseg, pt)) {
-      if (pt.x < cullNearerThan) {
-        continue;
-      }
-
-      Intersection* X = new Intersection(CSpatialKind::V_RECT);
-      intersections.push_back(pIntersection_t(X));
-      X->entityId = vRect.entityId();
-      X->point_rel = pt;
-      X->point_wld = invMatrix * pt;
-      X->viewPoint = invMatrix * point;
-      X->distanceFromOrigin = pt.x;
-      X->distanceAlongTarget = distance(lseg.A, pt);
-      X->zoneA = X->zoneB = zone.entityId();
-    }
-  }
-
-  for (auto it = zone.edges.begin(); it != zone.edges.end(); ++it) {
-    CEdge& edge = **it;
-    LineSegment lseg = transform(edge.lseg, matrix);
-
-    Point pt;
-    if (lineSegmentIntersect(ray, lseg, pt)) {
-      if (pt.x < cullNearerThan) {
-        continue;
-      }
-
-      Intersection* X = new Intersection(edge.kind);
-      X->entityId = edge.entityId();
-      X->point_rel = pt;
-      X->point_wld = invMatrix * pt;
-      X->viewPoint = invMatrix * point;
-      X->distanceFromOrigin = pt.x;
-      X->distanceAlongTarget = distance(lseg.A, pt);
-      X->zoneA = zone.entityId();
-
-      if (edge.kind == CSpatialKind::HARD_EDGE) {
-        X->zoneB = zone.parent != nullptr ? zone.parent->entityId() : X->zoneA;
-        intersections.push_back(pIntersection_t(X));
-      }
-      else if (edge.kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge& softEdge = dynamic_cast<CSoftEdge&>(edge);
-        const CZone& next = softEdge.zoneA == &zone ? *softEdge.zoneB : *softEdge.zoneA;
-
-        X->zoneB = next.entityId();
-
-        Matrix mat = matrix;
-        double cullNearerThan_ = cullNearerThan;
-
-        if (softEdge.isPortal) {
-          mat = (softEdge.toTwin * invMatrix).inverse();
-          cullNearerThan_ = X->distanceFromOrigin;
+    switch (c.kind) {
+      case CSpatialKind::ZONE: {
+        if (visitedZones.count(childId) == 0) {
+          findIntersections_r(point, dir, matrix, childId, intersections, visitedZones, visitedJoins,
+            cullNearerThan);
         }
-
-        pIntersection_t pX(X);
-        if (visitedJoins.find(softEdge.joinId) == visitedJoins.end()) {
-          intersections.push_back(std::move(pX));
-          visitedJoins.insert(softEdge.joinId);
-        }
-
-        if (visitedZones.find(&next) == visitedZones.end()) {
-          findIntersections_r(point, dir, mat, next, intersections, visitedZones, visitedJoins,
-            cullNearerThan_);
-        }
+        break;
       }
-      else {
-        EXCEPTION("Unexpected intersection type");
+      case CSpatialKind::V_RECT: {
+        const CVRect& vRect = dynamic_cast<const CVRect&>(c);
+
+        if (parent.kind == CSpatialKind::ZONE) {
+          Point pos = matrix * vRect.pos;
+          double w = vRect.size.x;
+          LineSegment lseg(Point(pos.x, pos.y - 0.5 * w), Point(pos.x, pos.y + 0.5 * w));
+
+          Point pt;
+          if (lineSegmentIntersect(ray, lseg, pt)) {
+            if (pt.x < cullNearerThan) {
+              continue;
+            }
+
+            Intersection* X = new Intersection(CSpatialKind::V_RECT, parent.kind);
+            intersections.push_back(pIntersection_t(X));
+            X->entityId = vRect.entityId();
+            X->point_rel = pt;
+            X->point_wld = invMatrix * pt;
+            X->viewPoint = invMatrix * point;
+            X->distanceFromOrigin = pt.x;
+            X->distanceAlongTarget = distance(lseg.A, pt);
+            X->zoneA = X->zoneB = zone.entityId();
+            X->heightRanges = make_pair(Range(vRect.zone->floorHeight,
+              vRect.zone->floorHeight + vRect.size.y), Range(0, 0));
+          }
+        }
+        else if (parent.kind == CSpatialKind::HARD_EDGE || parent.kind == CSpatialKind::SOFT_EDGE) {
+          const CEdge& edge = dynamic_cast<const CEdge&>(parent);
+          LineSegment wallLseg = transform(edge.lseg, matrix);
+
+          Vec2f v = normalise(wallLseg.B - wallLseg.A);
+
+          Point pos = wallLseg.A + v * vRect.pos.x;
+          double w = vRect.size.x;
+          LineSegment lseg(pos, pos + w * v);
+
+          Point pt;
+          if (lineSegmentIntersect(ray, lseg, pt)) {
+            if (pt.x < cullNearerThan) {
+              continue;
+            }
+
+            assert(parent.parentId == zone.entityId());
+
+            pt.x -= 0.01;
+
+            double vRectFloorH = vRect.zone->floorHeight;
+            if (edge.kind == CSpatialKind::SOFT_EDGE) {
+              const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+              vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
+            }
+            double y0 = vRectFloorH + vRect.pos.y;
+            double y1 = y0 + vRect.size.y;
+
+            Intersection* X = new Intersection(CSpatialKind::V_RECT, parent.kind);
+            intersections.push_back(pIntersection_t(X));
+            X->entityId = vRect.entityId();
+            X->point_rel = pt;
+            X->point_wld = invMatrix * pt;
+            X->viewPoint = invMatrix * point;
+            X->distanceFromOrigin = pt.x;
+            X->distanceAlongTarget = distance(lseg.A, pt);
+            X->zoneA = X->zoneB = zone.entityId();
+            X->heightRanges = make_pair(Range(y0, y1), Range(0, 0));
+          }
+        }
+        break;
       }
+      case CSpatialKind::HARD_EDGE:
+      case CSpatialKind::SOFT_EDGE: {
+        const CEdge& edge = dynamic_cast<const CEdge&>(c);
+        LineSegment lseg = transform(edge.lseg, matrix);
+
+        Point pt;
+        if (lineSegmentIntersect(ray, lseg, pt)) {
+          if (pt.x < cullNearerThan) {
+            continue;
+          }
+
+          findIntersections_r(point, dir, matrix, childId, intersections, visitedZones,
+            visitedJoins, cullNearerThan);
+
+          Intersection* X = new Intersection(edge.kind, parent.kind);
+          X->entityId = edge.entityId();
+          X->point_rel = pt;
+          X->point_wld = invMatrix * pt;
+          X->viewPoint = invMatrix * point;
+          X->distanceFromOrigin = pt.x;
+          X->distanceAlongTarget = distance(lseg.A, pt);
+          X->zoneA = zone.entityId();
+
+          if (edge.kind == CSpatialKind::HARD_EDGE) {
+            X->zoneB = zone.parent != nullptr ? zone.parent->entityId() : X->zoneA;
+            X->heightRanges = make_pair(Range(-10000, 10000), Range(0, 0)); // TODO
+            intersections.push_back(pIntersection_t(X));
+          }
+          else if (edge.kind == CSpatialKind::SOFT_EDGE) {
+            const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+            const CZone& next = se.zoneA == &zone ? *se.zoneB : *se.zoneA;
+
+            X->zoneB = next.entityId();
+            X->heightRanges = make_pair(Range(se.zoneA->floorHeight, se.zoneB->floorHeight),
+              Range(se.zoneA->ceilingHeight, se.zoneB->ceilingHeight));
+
+            Matrix mat = matrix;
+            double cullNearerThan_ = cullNearerThan;
+
+            if (se.isPortal) {
+              mat = (se.toTwin * invMatrix).inverse();
+              cullNearerThan_ = X->distanceFromOrigin;
+            }
+
+            pIntersection_t pX(X);
+            if (visitedJoins.find(se.joinId) == visitedJoins.end()) {
+              intersections.push_back(std::move(pX));
+              visitedJoins.insert(se.joinId);
+            }
+
+            if (visitedZones.find(next.entityId()) == visitedZones.end()) {
+              findIntersections_r(point, dir, mat, next.entityId(), intersections, visitedZones,
+                visitedJoins, cullNearerThan_);
+            }
+          }
+          else {
+            EXCEPTION("Unexpected intersection type");
+          }
+        }
+        break;
+      }
+      default: break;
     }
   }
 }
@@ -1082,9 +1069,9 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
   const Vec2f& dir, const Matrix& matrix) const {
 
   list<pIntersection_t> intersections;
-  set<const CZone*> visitedZones;
+  set<entityId_t> visitedZones;
   set<entityId_t> visitedJoins;
-  findIntersections_r(pos, dir, matrix, zone, intersections, visitedZones, visitedJoins);
+  findIntersections_r(pos, dir, matrix, zone.entityId(), intersections, visitedZones, visitedJoins);
 
   intersections.sort([](const pIntersection_t& a, const pIntersection_t& b) {
     return a->distanceFromOrigin < b->distanceFromOrigin;
@@ -1133,36 +1120,6 @@ list<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const P
 }
 
 //===========================================
-// SpatialSystem::getHeightRangeForEntity
-//===========================================
-pair<Range, Range> SpatialSystem::getHeightRangeForEntity(entityId_t id) const {
-  auto it = m_components.find(id);
-  if (it != m_components.end()) {
-    const CSpatial& c = *it->second;
-
-    switch (c.kind) {
-      case CSpatialKind::V_RECT: {
-        const CVRect& vRect = dynamic_cast<const CVRect&>(c);
-        return make_pair(Range(vRect.zone->floorHeight, vRect.zone->floorHeight + vRect.size.y),
-          Range(0, 0));
-      }
-      case CSpatialKind::SOFT_EDGE: {
-        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(c);
-        return make_pair(Range(se.zoneA->floorHeight, se.zoneB->floorHeight),
-          Range(se.zoneA->ceilingHeight, se.zoneB->ceilingHeight));
-      }
-      // ...
-      default: {
-        return make_pair(Range(-10000, 10000), Range(0, 0));
-      }
-    }
-  }
-  else {
-    return make_pair(Range(-10000, 10000), Range(0, 0));
-  }
-}
-
-//===========================================
 // SpatialSystem::entitiesAlong3dRay
 //===========================================
 list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const CZone& zone, const Point& pos,
@@ -1171,17 +1128,17 @@ list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const CZone& zone, const
   list<pIntersection_t> intersections = entitiesAlongRay(zone, pos, dir, matrix);
 
   for (auto it = intersections.begin(); it != intersections.end();) {
-    const Intersection& X = **it;
+    Intersection& X = **it;
 
     double y = height + X.distanceFromOrigin * tan(vAngle);
-    auto ranges = getHeightRangeForEntity(X.entityId);
 
-    if (!isBetween(y, ranges.first.a, ranges.first.b)
-      && !isBetween(y, ranges.second.a, ranges.second.b)) {
+    if (!isBetween(y, X.heightRanges.first.a, X.heightRanges.first.b)
+      && !isBetween(y, X.heightRanges.second.a, X.heightRanges.second.b)) {
 
       intersections.erase(it++);
     }
     else {
+      X.height = y - X.heightRanges.first.a;
       ++it;
     }
   }
@@ -1210,6 +1167,75 @@ list<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
   erase(intersections, it);
 
   return intersections;
+}
+
+//===========================================
+// entitiesInRadius
+//===========================================
+static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const Circle& circle,
+  double heightAboveFloor, set<entityId_t>& entities) {
+
+  const double MAX_VERTICAL_DISTANCE = 20.0;
+
+  for (auto it = searchZone.edges.begin(); it != searchZone.edges.end(); ++it) {
+    const CEdge& edge = **it;
+
+    if (overlapsCircle(circle, edge)) {
+      entities.insert(edge.entityId());
+      entities.insert(searchZone.entityId());
+
+      if (edge.kind == CSpatialKind::HARD_EDGE || edge.kind == CSpatialKind::SOFT_EDGE) {
+        for (auto jt = edge.vRects.begin(); jt != edge.vRects.end(); ++jt) {
+          const CVRect& vRect = **jt;
+
+          if (overlapsCircle(circle, edge.lseg, vRect)) {
+            assert(vRect.zone != nullptr);
+
+            double vRectFloorH = vRect.zone->floorHeight;
+
+            if (edge.kind == CSpatialKind::SOFT_EDGE) {
+              const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+              vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
+            }
+
+            double y1 = zone.floorHeight + heightAboveFloor;
+            double y2 = vRectFloorH + vRect.pos.y + 0.5 * vRect.size.y;
+
+            if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
+              entities.insert(vRect.entityId());
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (auto it = searchZone.vRects.begin(); it != searchZone.vRects.end(); ++it) {
+    const CVRect& vRect = **it;
+
+    if (overlapsCircle(circle, vRect)) {
+      assert(vRect.zone != nullptr);
+
+      double y1 = zone.floorHeight + heightAboveFloor;
+      // TODO: Currently CVRects that are direct children of zones don't have a vertical position.
+      // Their y coord corresponds to the x-y coords of the map.
+      double y2 = vRect.zone->floorHeight + 0.5 * vRect.size.y;
+
+      if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
+        entities.insert(vRect.entityId());
+      }
+    }
+  }
+
+  for (auto it = searchZone.hRects.begin(); it != searchZone.hRects.end(); ++it) {
+    if (overlapsCircle(circle, **it)) {
+      entities.insert((*it)->entityId());
+    }
+  }
+
+  for (auto it = searchZone.children.begin(); it != searchZone.children.end(); ++it) {
+    entitiesInRadius_r(**it, zone, circle, heightAboveFloor, entities);
+  }
 }
 
 //===========================================
@@ -1283,10 +1309,10 @@ void SpatialSystem::addComponent(pComponent_t component) {
     CSpatial* parent = it->second;
     assert(parent->entityId() == c->parentId);
 
-    m_entityChildren[c->parentId].insert(c->entityId());
-    addChildToComponent(sg, *parent, std::move(c));
+    addChildToComponent(*parent, std::move(c));
   }
 
+  m_entityChildren[ptr->entityId()];
   m_components.insert(make_pair(ptr->entityId(), ptr));
 }
 
@@ -1305,6 +1331,25 @@ bool SpatialSystem::isRoot(const CSpatial& c) const {
 }
 
 //===========================================
+// SpatialSystem::removeChildFromComponent
+//===========================================
+bool SpatialSystem::removeChildFromComponent(CSpatial& parent, const CSpatial& child,
+  bool keepAlive) {
+
+  m_entityChildren.at(parent.entityId()).erase(child.entityId());
+
+  switch (parent.kind) {
+    case CSpatialKind::ZONE:
+      return removeFromZone(sg, dynamic_cast<CZone&>(parent), child, keepAlive);
+    case CSpatialKind::HARD_EDGE:
+      return removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child, keepAlive);
+    default:
+      EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
+        << parent.kind);
+  };
+}
+
+//===========================================
 // SpatialSystem::removeEntity_r
 //===========================================
 void SpatialSystem::removeEntity_r(entityId_t id) {
@@ -1314,8 +1359,8 @@ void SpatialSystem::removeEntity_r(entityId_t id) {
   if (it != m_entityChildren.end()) {
     set<entityId_t>& children = it->second;
 
-    for (auto jt = children.begin(); jt != children.end(); ++jt) {
-      removeEntity_r(*jt);
+    for (entityId_t child : children) {
+      removeEntity_r(child);
     }
   }
 
@@ -1336,7 +1381,7 @@ void SpatialSystem::removeEntity(entityId_t id) {
 
   if (jt != m_components.end()) {
     CSpatial& parent = *jt->second;
-    removeChildFromComponent(sg, parent, c);
+    removeChildFromComponent(parent, c);
   }
 
   removeEntity_r(id);

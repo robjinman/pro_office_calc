@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <ostream>
 #include <set>
 #include <memory>
 #include <QImage>
@@ -18,10 +19,12 @@ namespace parser { class Object; }
 
 
 struct Intersection {
-  Intersection(CSpatialKind kind)
-    : kind(kind) {}
+  Intersection(CSpatialKind kind, CSpatialKind parentKind)
+    : kind(kind),
+      parentKind(parentKind) {}
 
   CSpatialKind kind;
+  CSpatialKind parentKind;
   entityId_t entityId;
   Point point_rel;
   Point point_wld;
@@ -30,6 +33,9 @@ struct Intersection {
   double distanceAlongTarget;
   entityId_t zoneB;
   entityId_t zoneA;
+
+  double height = 0;
+  std::pair<Range, Range> heightRanges;
 };
 
 typedef std::unique_ptr<Intersection> pIntersection_t;
@@ -107,6 +113,7 @@ class SpatialSystem : public System {
     void jump();
 
     CZone& zone(entityId_t entity);
+    const CZone& constZone(entityId_t entity) const;
 
   private:
     EntityManager& m_entityManager;
@@ -125,7 +132,12 @@ class SpatialSystem : public System {
     void connectSubzones(CZone& zone);
     bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) const;
     bool isAncestor(entityId_t a, entityId_t b) const;
-    std::pair<Range, Range> getHeightRangeForEntity(entityId_t id) const;
+    void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
+      entityId_t parentId, std::list<pIntersection_t>& intersections,
+      std::set<entityId_t>& visitedZones, std::set<entityId_t>& visitedJoins,
+      double cullNearerThan = 0) const;
+    void addChildToComponent(CSpatial& parent, pCSpatial_t child);
+    bool removeChildFromComponent(CSpatial& parent, const CSpatial& child, bool keepAlive = false);
 
     inline CZone& getCurrentZone() const {
       return dynamic_cast<CZone&>(getComponent(sg.player->region()));
@@ -135,10 +147,7 @@ class SpatialSystem : public System {
     void gravity();
 };
 
-void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  const CZone& zone, std::list<pIntersection_t>& intersections,
-  std::set<const CZone*>& visitedZones, std::set<entityId_t>& visitedJoins,
-  double cullNearerThan = 0);
+std::ostream& operator<<(std::ostream& os, CSpatialKind kind);
 
 
 #endif

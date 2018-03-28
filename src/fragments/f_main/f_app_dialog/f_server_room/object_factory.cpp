@@ -61,6 +61,43 @@ bool ObjectFactory::constructBigScreen(entityId_t entityId, parser::Object& obj,
 }
 
 //===========================================
+// ObjectFactory::constructCalculator
+//===========================================
+bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
+    DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+    EventHandlerSystem& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CDamage* damage = new CDamage(entityId, 1000, 1000);
+    damageSystem.addComponent(pComponent_t(damage));
+
+    CEventHandler* takeDamage = new CEventHandler(entityId);
+    takeDamage->handlers.push_back(EventHandler{"entity_damaged",
+      [=](const GameEvent& e) {
+
+      const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
+
+      if (event.entityId == entityId) {
+        DBG_PRINT("Calculator hit at " << event.point_rel << "\n");
+
+      }
+    }});
+    eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::ObjectFactory
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
@@ -74,7 +111,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"big_screen"};
+  static const set<string> types{"big_screen", "calculator"};
   return types;
 }
 
@@ -86,6 +123,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
 
   if (type == "big_screen") {
     return constructBigScreen(entityId, obj, region, parentTransform);
+  }
+  else if (type == "calculator") {
+    return constructCalculator(entityId, obj, region, parentTransform);
   }
 
   return false;
