@@ -118,12 +118,10 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
     vector<AnimationFrame> frames = constructFrames(W, H,
       { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
-    anim->animations.insert(std::make_pair("run",
-      Animation(m_timeService.frameRate, 1.0, frames)));
+    anim->addAnimation(pAnimation_t(new Animation("run", m_timeService.frameRate, 1.0, frames)));
 
     frames = constructFrames(W, H, { 0 });
-    anim->animations.insert(std::make_pair("idle",
-      Animation(m_timeService.frameRate, 1.0, frames)));
+    anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0, frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
     animationSystem.playAnimation(entityId, "idle", true);
@@ -222,16 +220,13 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     vector<AnimationFrame> frames = constructFrames(W, H,
       { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 });
-    anim->animations.insert(std::make_pair("run",
-      Animation(m_timeService.frameRate, 1.0, frames)));
+    anim->addAnimation(pAnimation_t(new Animation("run", m_timeService.frameRate, 1.0, frames)));
 
     frames = constructFrames(W, H, { 1, 0 });
-    anim->animations.insert(std::make_pair("shoot",
-      Animation(m_timeService.frameRate, 1.0, frames)));
+    anim->addAnimation(pAnimation_t(new Animation("shoot", m_timeService.frameRate, 1.0, frames)));
 
     frames = constructFrames(W, H, { 0 });
-    anim->animations.insert(std::make_pair("idle",
-      Animation(m_timeService.frameRate, 1.0, frames)));
+    anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0, frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
     animationSystem.playAnimation(entityId, "idle", true);

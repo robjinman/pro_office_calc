@@ -274,7 +274,7 @@ bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
   renderSystem.addComponent(pCRender_t(sprite));
 
   CAnimation* shoot = new CAnimation(player->sprite);
-  shoot->animations.insert(std::make_pair("shoot", Animation(m_timeService.frameRate, 0.4, {
+  shoot->addAnimation(pAnimation_t(new Animation("shoot", m_timeService.frameRate, 0.4, {
     AnimationFrame{{
       QRectF(0.75, 0, 0.25, 1)
     }},
@@ -288,7 +288,7 @@ bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
       QRectF(0, 0, 0.25, 1)
     }}
   })));
-  shoot->animations.insert(std::make_pair("shoot_no_ammo", Animation(m_timeService.frameRate, 0.2, {
+  shoot->addAnimation(pAnimation_t(new Animation("shoot_no_ammo", m_timeService.frameRate, 0.2, {
     AnimationFrame{{
       QRectF(0.25, 0, 0.25, 1)
     }},

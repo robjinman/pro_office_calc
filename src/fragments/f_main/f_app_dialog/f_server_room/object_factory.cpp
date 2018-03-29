@@ -35,27 +35,60 @@ namespace youve_got_mail {
 bool ObjectFactory::constructBigScreen(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  if (entityId == -1) {
-    entityId = makeIdForObj(obj);
-  }
+  assert(entityId == -1);
+  entityId = Component::getIdFromString("big_screen");
+  entityId_t calculatorId = Component::getIdFromString("calculator");
 
   if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
     AnimationSystem& animationSystem =
       m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    EventHandlerSystem& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
     // Number of frames in sprite sheet
     const int W = 1;
-    const int H = 3;
+    const int H = 13;
 
     CAnimation* anim = new CAnimation(entityId);
 
     vector<AnimationFrame> frames = constructFrames(W, H,
-      { 0, 1, 2 });
-    anim->animations.insert(std::make_pair("idle",
-      Animation(m_timeService.frameRate, 1.0, frames)));
+      { 0, 1, 2, 1 });
+    anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 2.0, frames)));
+
+    frames = constructFrames(W, H,
+      { 3, 4, 5, 4 });
+    anim->addAnimation(pAnimation_t(new Animation("panic", m_timeService.frameRate, 2.0, frames)));
+
+    frames = constructFrames(W, H,
+      { 6, 7, 8, 9, 10, 11, 12 });
+    anim->addAnimation(pAnimation_t(new Animation("escape", m_timeService.frameRate, 3.5, frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
     animationSystem.playAnimation(entityId, "idle", true);
+
+    CEventHandler* handlers = new CEventHandler(entityId);
+    handlers->targetedEventHandlers.push_back(EventHandler{"animation_finished",
+      [=, &animationSystem](const GameEvent& e) {
+
+      const EAnimationFinished& event = dynamic_cast<const EAnimationFinished&>(e);
+
+      if (event.animName == "panic") {
+        m_entityManager.deleteEntity(calculatorId);
+        animationSystem.playAnimation(entityId, "escape", false);
+      }
+      else if (event.animName == "escape") {
+        m_timeService.onTimeout([=]() {
+          m_entityManager.broadcastEvent(GameEvent("enter_larry"));
+        }, 2.0);
+      }
+    }});
+    handlers->broadcastedEventHandlers.push_back(EventHandler{"div_by_zero",
+      [=, &animationSystem](const GameEvent&) {
+
+      animationSystem.stopAnimation(entityId);
+      animationSystem.playAnimation(entityId, "panic", false);
+    }});
+    eventHandlerSystem.addComponent(pComponent_t(handlers));
 
     return true;
   }
@@ -99,9 +132,8 @@ void ObjectFactory::renderCalc() const {
 bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  if (entityId == -1) {
-    entityId = makeIdForObj(obj);
-  }
+  assert(entityId == -1);
+  entityId = Component::getIdFromString("calculator");
 
   if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
     DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
@@ -113,13 +145,11 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
     CDamage* damage = new CDamage(entityId, 1000, 1000);
     damageSystem.addComponent(pComponent_t(damage));
 
-    CEventHandler* takeDamage = new CEventHandler(entityId);
-    takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
+    CEventHandler* handlers = new CEventHandler(entityId);
+    handlers->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
       [=](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
-      DBG_PRINT("Calculator hit at " << event.point_rel << "\n");
-
       const Point& pt = event.point_rel;
 
       const CVRect& vRect = m_entityManager.getComponent<CVRect>(event.entityId,
@@ -131,12 +161,8 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
       double x_norm = pt.x / vRect.size.x;
       double y_norm = pt.y / vRect.size.y;
 
-      DBG_PRINT(x_norm << ", " << y_norm << "\n");
-
       double x = W - x_norm * W;
       double y = H - y_norm * H;
-
-      DBG_PRINT(x << ", " << y << "\n");
 
       QWidget* child = m_wgtCalculator.childAt(x, y);
       if (child != nullptr) {
@@ -156,7 +182,7 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
         m_entityManager.broadcastEvent(GameEvent("div_by_zero"));
       }
     }});
-    eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+    eventHandlerSystem.addComponent(pComponent_t(handlers));
 
     return true;
   }

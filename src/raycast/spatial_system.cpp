@@ -844,12 +844,14 @@ void SpatialSystem::gravity() {
   double diff = (player.feetHeight() - 0.1) - currentZone.floorHeight;
 
   if (fabs(player.vVelocity) > 0.001 || diff > 0.0) {
+    const double TERMINAL_VELOCITY = -1557.0;
     double a = -600.0;
     double dt = 1.0 / m_frameRate;
     double dv = dt * a;
-    player.vVelocity += dv;
+    if (player.vVelocity > TERMINAL_VELOCITY) {
+      player.vVelocity += dv;
+    }
     double dy = player.vVelocity * dt;
-
     double dy_ = dy > 0.0 ? dy : smallest<double>(diff, dy);
 
     player.changeHeight(currentZone, dy_);

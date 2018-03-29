@@ -49,10 +49,12 @@ void Animation::stop() {
 
 //===========================================
 // Animation::update
+//
+// Returns true when the animation finishes
 //===========================================
-void Animation::update() {
+bool Animation::update() {
   if (frames.empty()) {
-    return;
+    return false;
   }
 
   if (m_state == AnimState::RUNNING) {
@@ -71,12 +73,15 @@ void Animation::update() {
       }
       else {
         m_state = AnimState::STOPPED;
+        return true;
       }
     }
     else {
       m_currentFrameIdx = next;
     }
   }
+
+  return false;
 }
 
 //===========================================
@@ -87,11 +92,11 @@ void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name
   if (it != m_components.end()) {
     CAnimation& component = *it->second;
 
-    auto jt = component.animations.find(name);
-    if (jt != component.animations.end()) {
-      Animation& anim = jt->second;
+    auto jt = component.m_animations.find(name);
+    if (jt != component.m_animations.end()) {
+      Animation& anim = *jt->second;
       anim.start(loop);
-      component.active = &anim;
+      component.m_active = &anim;
     }
   }
 }
@@ -104,8 +109,8 @@ void AnimationSystem::stopAnimation(entityId_t entityId) {
   if (it != m_components.end()) {
     CAnimation& component = *it->second;
 
-    if (component.active != nullptr) {
-      component.active->stop();
+    if (component.m_active != nullptr) {
+      component.m_active->stop();
     }
   }
 }
@@ -115,12 +120,14 @@ void AnimationSystem::stopAnimation(entityId_t entityId) {
 //===========================================
 void AnimationSystem::update() {
   for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-    Animation* anim = it->second->active;
+    entityId_t entityId = it->first;
+    Animation* anim = it->second->m_active;
+
     if (anim != nullptr) {
-      anim->update();
+      bool justFinished = anim->update();
 
       RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-      CRender& c = dynamic_cast<CRender&>(renderSystem.getComponent(it->first));
+      CRender& c = dynamic_cast<CRender&>(renderSystem.getComponent(entityId));
 
       if (c.kind == CRenderKind::SPRITE) {
         CSprite& sprite = dynamic_cast<CSprite&>(c);
@@ -140,7 +147,11 @@ void AnimationSystem::update() {
       }
 
       if (anim->state() == AnimState::STOPPED) {
-        it->second->active = nullptr;
+        it->second->m_active = nullptr;
+      }
+
+      if (justFinished) {
+        m_entityManager.fireEvent(EAnimationFinished(entityId, anim->name), { entityId });
       }
     }
   }

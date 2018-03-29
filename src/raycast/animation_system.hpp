@@ -19,16 +19,19 @@ enum class AnimState {
 
 class Animation {
   public:
-    Animation(double gameFrameRate, double duration, const std::vector<AnimationFrame>& frames)
-      : frames(frames),
+    Animation(const std::string& name, double gameFrameRate, double duration,
+      const std::vector<AnimationFrame>& frames)
+      : name(name),
+        frames(frames),
         m_gameFrameRate(gameFrameRate),
         m_duration(duration) {}
 
+    std::string name;
     std::vector<AnimationFrame> frames;
 
     void start(bool loop);
     void stop();
-    void update();
+    bool update();
 
     const AnimationFrame& currentFrame() const {
       return frames[m_currentFrameIdx];
@@ -48,12 +51,34 @@ class Animation {
     bool m_loop = false;
 };
 
-struct CAnimation : public Component {
-  CAnimation(entityId_t entityId)
-    : Component(entityId, ComponentKind::C_ANIMATION) {}
+typedef std::unique_ptr<Animation> pAnimation_t;
 
-  Animation* active = nullptr;
-  std::map<std::string, Animation> animations;
+struct EAnimationFinished : public GameEvent {
+  explicit EAnimationFinished(entityId_t entityId, const std::string& animName)
+    : GameEvent("animation_finished"),
+      entityId(entityId),
+      animName(animName) {}
+
+  entityId_t entityId;
+  std::string animName;
+
+  virtual ~EAnimationFinished() override {}
+};
+
+class CAnimation : public Component {
+  friend class AnimationSystem;
+
+  public:
+    CAnimation(entityId_t entityId)
+      : Component(entityId, ComponentKind::C_ANIMATION) {}
+
+    void addAnimation(pAnimation_t animation) {
+      m_animations[animation->name] = std::move(animation);
+    }
+
+  private:
+    Animation* m_active = nullptr;
+    std::map<std::string, pAnimation_t> m_animations;
 };
 
 typedef std::unique_ptr<CAnimation> pCAnimation_t;
