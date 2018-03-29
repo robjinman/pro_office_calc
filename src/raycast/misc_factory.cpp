@@ -288,7 +288,7 @@ bool MiscFactory::constructDoor(entityId_t entityId, parser::Object& obj, entity
       m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 
     CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, m_entityManager,
-      m_timeService.frameRate);
+      m_timeService.frameRate, m_audioService);
 
     string s = getValue(obj.dict, "player_activated", "");
     setBoolean(behaviour->isPlayerActivated, s);

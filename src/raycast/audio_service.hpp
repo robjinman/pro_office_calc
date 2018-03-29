@@ -27,8 +27,10 @@ class AudioService {
     void addSound(const std::string& name, const std::string& resourcePath);
     void addMusicTrack(const std::string& name, const std::string& resourcePath);
 
-    void playSound(const std::string& name);
-    void playSoundAtPos(const std::string& name, const Point& pos);
+    void playSound(const std::string& name, bool loop = false);
+    void playSoundAtPos(const std::string& name, const Point& pos, bool loop = false);
+    void stopSound(const std::string& name);
+    bool soundIsPlaying(const std::string& name) const;
 
     void playMusic(const std::string& name);
     void stopMusic();

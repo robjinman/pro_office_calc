@@ -35,6 +35,20 @@ void AudioService::addSound(const string& name, const string& resourcePath) {
 }
 
 //===========================================
+// AudioService::soundIsPlaying
+//===========================================
+bool AudioService::soundIsPlaying(const string& name) const {
+  auto it = m_sounds.find(name);
+  if (it != m_sounds.end()) {
+    SoundEffect& sound = *it->second;
+
+    return sound.sound.isPlaying();
+  }
+
+  return false;
+}
+
+//===========================================
 // AudioService::addMusicTrack
 //===========================================
 void AudioService::addMusicTrack(const string& name, const string& resourcePath) {
@@ -45,20 +59,33 @@ void AudioService::addMusicTrack(const string& name, const string& resourcePath)
 //===========================================
 // AudioService::playSound
 //===========================================
-void AudioService::playSound(const string& name) {
+void AudioService::playSound(const string& name, bool loop) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
     sound.sound.setVolume(m_masterVolume * sound.volume);
+    sound.sound.setLoopCount(loop ? QSoundEffect::Infinite : 0);
     sound.sound.play();
+  }
+}
+
+//===========================================
+// AudioService::stopSound
+//===========================================
+void AudioService::stopSound(const string& name) {
+  auto it = m_sounds.find(name);
+  if (it != m_sounds.end()) {
+    SoundEffect& sound = *it->second;
+
+    sound.sound.stop();
   }
 }
 
 //===========================================
 // AudioService::playSoundAtPos
 //===========================================
-void AudioService::playSoundAtPos(const string& name, const Point& pos) {
+void AudioService::playSoundAtPos(const string& name, const Point& pos, bool loop) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
@@ -70,6 +97,7 @@ void AudioService::playSoundAtPos(const string& name, const Point& pos) {
     double v = 1.0 - clipNumber(d, Range(0, 2000)) / 2000;
 
     sound.sound.setVolume(m_masterVolume * sound.volume * v);
+    sound.sound.setLoopCount(loop ? QSoundEffect::Infinite : 0);
     sound.sound.play();
   }
 }

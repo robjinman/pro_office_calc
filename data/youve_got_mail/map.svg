@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="45.254832"
-     inkscape:cx="1866.9535"
-     inkscape:cy="259.41982"
+     inkscape:zoom="1.9999999"
+     inkscape:cx="854.27426"
+     inkscape:cy="891.99573"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g7054"
+     inkscape:current-layer="g5484"
      showguides="true"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -6229,6 +6229,17 @@
              x="174.71204"
              y="451.72565"
              style="font-size:12.94190121px">item_collect=data/common/sfx/beep.wav</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.00000763px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="174.8511"
+           y="467.0798"
+           id="text5258-7-2-2-7-9-9-3-1-6-3-6"
+           sodipodi:linespacing="125%"><tspan
+             id="tspan5260-9-0-3-5-2-7-6-2-1-6-8"
+             x="174.8511"
+             y="467.0798"
+             style="font-size:12.94190121px">door=data/common/sfx/door.wav</tspan></text>
       </g>
       <text
          id="text5258-7-2-2-9"

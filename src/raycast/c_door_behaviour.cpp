@@ -2,16 +2,19 @@
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_components.hpp"
 #include "raycast/entity_manager.hpp"
+#include "raycast/audio_service.hpp"
 #include "event.hpp"
 
 
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate,
+  AudioService& audioService)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
     m_frameRate(frameRate),
+    m_audioService(audioService),
     m_timer(5.0) {
 
   CZone& zone = entityManager.getComponent<CZone>(entityId, ComponentKind::C_SPATIAL);
@@ -20,6 +23,23 @@ CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager
   m_y1 = zone.ceilingHeight;
 
   zone.ceilingHeight = zone.floorHeight + 0.1;
+}
+
+//===========================================
+// CDoorBehaviour::playSound
+//===========================================
+void CDoorBehaviour::playSound() const {
+  CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
+  const Point& pos = zone.edges.front()->lseg.A;
+
+  m_audioService.playSoundAtPos("door", pos, true);
+}
+
+//===========================================
+// CDoorBehaviour::stopSound
+//===========================================
+void CDoorBehaviour::stopSound() const {
+  m_audioService.stopSound("door");
 }
 
 //===========================================
@@ -38,6 +58,7 @@ void CDoorBehaviour::update() {
     case ST_OPEN:
       if (closeAutomatically && m_timer.ready()) {
         m_state = ST_CLOSING;
+        playSound();
       }
       return;
     case ST_OPENING:
@@ -45,6 +66,7 @@ void CDoorBehaviour::update() {
 
       if (zone.ceilingHeight + dy >= m_y1) {
         m_state = ST_OPEN;
+        stopSound();
       }
       else {
         m_timer.reset();
@@ -61,6 +83,7 @@ void CDoorBehaviour::update() {
       }
       else if (zone.ceilingHeight - dy <= m_y0) {
         m_state = ST_CLOSED;
+        stopSound();
       }
 
       break;
@@ -74,6 +97,7 @@ void CDoorBehaviour::handleBroadcastedEvent(const GameEvent& e) {
   if (e.name == openOnEvent) {
     if (m_state != ST_OPEN) {
       m_state = ST_OPENING;
+      playSound();
     }
   }
 }
@@ -93,6 +117,8 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
   }
 
   if (EVENT_NAMES.count(e.name)) {
+    playSound();
+
     switch (m_state) {
       case ST_CLOSED:
         m_state = ST_OPENING;

@@ -54,7 +54,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec2.showOnEvent = "y2kThreatLaunch";
   mainSpec->appDialogSpec2.textEditorSpec.setEnabled(true);
   mainSpec->appDialogSpec2.textEditorSpec.content = "<h2>The Y2K threat</h2>"
-    "There is growing concern amongst a minority of academics and industry experts whether the "
+    "There is a growing concern amongst a minority of academics and industry experts whether the "
     "various systems in use today can cope with their clocks transitioning from this century into "
     "the next - that is, from 11:59:59 PM on 31st December 1999 to 12:00:00 AM on 1st January "
     "2000. Whilst there's little consensus on what if any deleterious effects may result, "

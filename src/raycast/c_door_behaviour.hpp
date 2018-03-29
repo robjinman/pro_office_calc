@@ -7,10 +7,12 @@
 
 
 class EntityManager;
+class AudioService;
 
 class CDoorBehaviour : public CBehaviour {
   public:
-    CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate);
+    CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate,
+      AudioService& audioService);
 
     virtual void update() override;
     virtual void handleBroadcastedEvent(const GameEvent& e) override;
@@ -30,10 +32,14 @@ class CDoorBehaviour : public CBehaviour {
 
     EntityManager& m_entityManager;
     double m_frameRate;
+    AudioService& m_audioService;
     state_t m_state = ST_CLOSED;
     double m_y0;
     double m_y1;
     Debouncer m_timer;
+
+    void playSound() const;
+    void stopSound() const;
 };
 
 
