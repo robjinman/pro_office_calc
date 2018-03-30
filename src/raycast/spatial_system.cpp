@@ -863,20 +863,20 @@ void SpatialSystem::gravity() {
 
     if (!player.aboveGround(currentZone)) {
       if (player.vVelocity <= -ONE_PT_DAMAGE_SPEED) {
-        double speed = -player.vVelocity;
-        double range = TEN_PT_DAMAGE_SPEED - ONE_PT_DAMAGE_SPEED;
-        double norm = (speed - ONE_PT_DAMAGE_SPEED) / range;
-        int damage = 1 + floor(norm * 9);
+        const double m = ONE_PT_DAMAGE_SPEED;
+        const double n = TEN_PT_DAMAGE_SPEED;
+        const double k = 2.0;
+        double v = -player.vVelocity;
+
+        double damage = 1.0 + 9.0 * (pow(pow(v, 2) - pow(m, 2), k)) / pow(pow(n, 2) - pow(m, 2), k);
 
         DBG_PRINT_VAR(player.vVelocity);
-        DBG_PRINT_VAR(speed);
-        DBG_PRINT_VAR(range);
         DBG_PRINT_VAR(damage);
 
         DamageSystem& damageSystem =
           m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
 
-        damageSystem.damageEntity(player.body, damage);
+        damageSystem.damageEntity(player.body, floor(damage));
       }
 
       player.vVelocity = 0;
