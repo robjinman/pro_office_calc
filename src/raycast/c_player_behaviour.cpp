@@ -73,5 +73,8 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
 
     player.setFeetHeight(y + 0.6 * h);
     player.changeTallness(-0.6 * h);
+
+    m_entityManager.deleteEntity(player.sprite);
+    m_entityManager.deleteEntity(player.crosshair);
   }
 }

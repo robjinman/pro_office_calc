@@ -52,12 +52,15 @@ void DamageSystem::damageEntity(entityId_t id, double damage) {
 
     if (component.health > 0) {
       component.health -= damage;
+
+      if (component.health < 0) {
+        component.health = 0;
+      }
+
       m_entityManager.fireEvent(EEntityDamaged(id), {id});
       m_entityManager.broadcastEvent(EEntityDamaged(id));
 
-      if (component.health <= 0) {
-        component.health = 0;
-
+      if (component.health == 0) {
         m_entityManager.fireEvent(EEntityDestroyed(id), {id});
         m_entityManager.broadcastEvent(EEntityDestroyed(id));
       }
@@ -94,6 +97,10 @@ void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
     if (component.health > 0) {
       component.health -= damage;
 
+      if (component.health < 0) {
+        component.health = 0;
+      }
+
       EEntityDamaged damagedEvent(id);
       damagedEvent.point_wld = X.point_wld;
       damagedEvent.point_rel = Point(X.distanceAlongTarget, X.height);
@@ -101,9 +108,7 @@ void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
       m_entityManager.fireEvent(damagedEvent, {id});
       m_entityManager.broadcastEvent(damagedEvent);
 
-      if (component.health <= 0) {
-        component.health = 0;
-
+      if (component.health == 0) {
         EEntityDestroyed destroyedEvent(id);
         destroyedEvent.point_wld = X.point_wld;
         destroyedEvent.point_rel = Point(X.distanceAlongTarget, X.height);

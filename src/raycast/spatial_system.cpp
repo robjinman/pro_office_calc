@@ -6,6 +6,7 @@
 #include <iterator>
 #include <deque>
 #include "raycast/spatial_system.hpp"
+#include "raycast/damage_system.hpp"
 #include "raycast/geometry.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/tween_curves.hpp"
@@ -838,13 +839,16 @@ void SpatialSystem::jump() {
 // SpatialSystem::gravity
 //===========================================
 void SpatialSystem::gravity() {
+  const double TERMINAL_VELOCITY = -2000.0;
+  const double ONE_PT_DAMAGE_SPEED = 600.0;
+  const double TEN_PT_DAMAGE_SPEED = 2000.0;
+
   CZone& currentZone = getCurrentZone();
   Player& player = *sg.player;
 
   double diff = (player.feetHeight() - 0.1) - currentZone.floorHeight;
 
   if (fabs(player.vVelocity) > 0.001 || diff > 0.0) {
-    const double TERMINAL_VELOCITY = -1557.0;
     double a = -600.0;
     double dt = 1.0 / m_frameRate;
     double dv = dt * a;
@@ -858,6 +862,23 @@ void SpatialSystem::gravity() {
     moveEntity(player.body, Vec2f(0, 0), player.feetHeight() - currentZone.floorHeight);
 
     if (!player.aboveGround(currentZone)) {
+      if (player.vVelocity <= -ONE_PT_DAMAGE_SPEED) {
+        double speed = -player.vVelocity;
+        double range = TEN_PT_DAMAGE_SPEED - ONE_PT_DAMAGE_SPEED;
+        double norm = (speed - ONE_PT_DAMAGE_SPEED) / range;
+        int damage = 1 + floor(norm * 9);
+
+        DBG_PRINT_VAR(player.vVelocity);
+        DBG_PRINT_VAR(speed);
+        DBG_PRINT_VAR(range);
+        DBG_PRINT_VAR(damage);
+
+        DamageSystem& damageSystem =
+          m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+
+        damageSystem.damageEntity(player.body, damage);
+      }
+
       player.vVelocity = 0;
     }
   }
