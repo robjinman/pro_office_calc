@@ -92,7 +92,7 @@ class AgentSystem : public System {
 
     void addComponent(pComponent_t component) override;
     bool hasComponent(entityId_t entityId) const override;
-    Component& getComponent(entityId_t entityId) const override;
+    CAgent& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
     void navigateTo(entityId_t entityId, const Point& point);

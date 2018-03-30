@@ -110,9 +110,9 @@ void RenderSystem::connectRegions() {
 //===========================================
 void RenderSystem::render() {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  const Player& player = *spatialSystem.sg.player;
+  const Camera& cam = spatialSystem.sg.player->camera();
 
-  m_renderer.renderScene(rg, player);
+  m_renderer.renderScene(rg, cam);
 }
 
 //===========================================
@@ -360,7 +360,7 @@ bool RenderSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // RenderSystem::getComponent
 //===========================================
-Component& RenderSystem::getComponent(entityId_t entityId) const {
+CRender& RenderSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

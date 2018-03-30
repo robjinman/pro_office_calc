@@ -17,7 +17,7 @@ typedef std::array<double, 10000> tanMap_t;
 typedef std::array<double, 10000> atanMap_t;
 
 class EntityManager;
-class Player;
+class Camera;
 class SpatialSystem;
 class SpriteX;
 
@@ -25,7 +25,7 @@ class Renderer {
   public:
     Renderer(EntityManager& entityManager, QImage& target);
 
-    void renderScene(const RenderGraph& rg, const Player& player);
+    void renderScene(const RenderGraph& rg, const Camera& cam);
 
   private:
     EntityManager& m_entityManager;
@@ -34,6 +34,14 @@ class Renderer {
 
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
+
+    double m_vWorldUnit_px;
+    double m_hWorldUnit_px;
+
+    Size m_viewport_px;
+
+    void drawSprite(const SpriteX& X, const RenderGraph& rg, const Camera& camera,
+      double screenX_px) const;
 };
 
 

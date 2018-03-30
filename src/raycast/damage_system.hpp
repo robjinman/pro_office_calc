@@ -66,7 +66,7 @@ class DamageSystem : public System {
 
     void addComponent(pComponent_t component) override;
     bool hasComponent(entityId_t entityId) const override;
-    Component& getComponent(entityId_t entityId) const override;
+    CDamage& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
     void damageEntity(entityId_t id, double damage);

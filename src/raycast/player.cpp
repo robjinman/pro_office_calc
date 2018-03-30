@@ -1,4 +1,5 @@
 #include "raycast/player.hpp"
+#include "raycast/camera.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/entity_manager.hpp"
@@ -34,8 +35,8 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, double 
 
   spatialSystem.addComponent(pCSpatial_t(b));
 
-  m_camera.reset(new Camera(renderSystem.rg.viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), body,
-    tallness - FOREHEAD_SIZE + zone.floorHeight, spatialSystem));
+  m_camera.reset(new Camera(renderSystem.rg.viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), *b,
+    tallness - FOREHEAD_SIZE + zone.floorHeight));
 }
 
 //===========================================

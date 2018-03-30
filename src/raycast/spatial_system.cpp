@@ -797,12 +797,12 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
 vector<Point> SpatialSystem::shortestPath(entityId_t entityA, entityId_t entityB,
   double radius) const {
 
-  const CSpatial& compA = dynamic_cast<const CSpatial&>(getComponent(entityA));
+  const CSpatial& compA = getComponent(entityA);
   if (compA.kind != CSpatialKind::V_RECT) {
     EXCEPTION("Component not of type V_RECT");
   }
 
-  const CSpatial& compB = dynamic_cast<const CSpatial&>(getComponent(entityB));
+  const CSpatial& compB = getComponent(entityB);
   if (compB.kind != CSpatialKind::V_RECT) {
     EXCEPTION("Component not of type V_RECT");
   }
@@ -1272,7 +1272,7 @@ bool SpatialSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // SpatialSystem::getComponent
 //===========================================
-Component& SpatialSystem::getComponent(entityId_t entityId) const {
+CSpatial& SpatialSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

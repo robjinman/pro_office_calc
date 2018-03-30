@@ -3,9 +3,10 @@
 
 
 #include <memory>
-#include "raycast/camera.hpp"
 #include "raycast/component.hpp"
 #include "raycast/timing.hpp"
+#include "raycast/geometry.hpp"
+#include "raycast/camera.hpp"
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
@@ -13,7 +14,6 @@ const double PLAYER_STEP_HEIGHT = 16.0;
 
 class CZone;
 class CVRect;
-class Camera;
 class EntityManager;
 class AudioService;
 

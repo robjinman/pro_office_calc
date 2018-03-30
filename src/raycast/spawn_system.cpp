@@ -30,7 +30,7 @@ void SpawnSystem::handleEvent(const GameEvent& event) {
         SpatialSystem& spatialSystem =
           m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-        const CSpatial& spatial = dynamic_cast<const CSpatial&>(spatialSystem.getComponent(entityId));
+        const CSpatial& spatial = spatialSystem.getComponent(entityId);
 
         // Only deal with V_RECTs for now
         if (spatial.kind == CSpatialKind::V_RECT) {
@@ -84,7 +84,7 @@ bool SpawnSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // SpawnSystem::getComponent
 //===========================================
-Component& SpawnSystem::getComponent(entityId_t entityId) const {
+CSpawn& SpawnSystem::getComponent(entityId_t entityId) const {
   auto it = m_spawnPoints.find(entityId);
   if (it != m_spawnPoints.end()) {
     return *it->second;

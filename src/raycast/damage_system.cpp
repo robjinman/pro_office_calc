@@ -29,7 +29,7 @@ bool DamageSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // DamageSystem::getComponent
 //===========================================
-Component& DamageSystem::getComponent(entityId_t entityId) const {
+CDamage& DamageSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

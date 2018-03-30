@@ -5,15 +5,17 @@
 #include "utils.hpp"
 #include "raycast/geometry.hpp"
 #include "raycast/component.hpp"
+#include "raycast/spatial_components.hpp"
 
-
-class CVRect;
-class SpatialSystem;
 
 class Camera {
   public:
-    Camera(double vpW, double hFov, double vFov, entityId_t body, double height,
-      SpatialSystem& spatialSystem);
+    Camera(double vpW, double hFov, double vFov, CVRect& body, double height)
+      : hFov(hFov),
+        vFov(vFov),
+        F(vpW / (2.0 * tan(0.5 * hFov))),
+        height(height),
+        m_body(body) {}
 
     double vAngle = 0.001;
     double hFov = DEG_TO_RAD(60.0);
@@ -22,17 +24,34 @@ class Camera {
     const double F;
     double height;
 
-    void setTransform(const Matrix& m);
-    Matrix matrix() const;
+    const CZone& zone() const {
+      return *m_body.zone;
+    }
 
-    double angle() const;
-    const Point& pos() const;
+    entityId_t zoneId() const {
+      return zone().entityId();
+    }
+
+    void setTransform(const Matrix& m) {
+      m_body.pos.x = m.tx();
+      m_body.pos.y = m.ty();
+      m_body.angle = m.a();
+    }
+
+    Matrix matrix() const {
+      return Matrix(m_body.angle, Vec2f(m_body.pos.x, m_body.pos.y));
+    }
+
+    double angle() const {
+      return m_body.angle;
+    }
+
+    const Point& pos() const {
+      return m_body.pos;
+    }
 
   private:
-    SpatialSystem& m_spatialSystem;
-    entityId_t body;
-
-    CVRect& getBody() const;
+    CVRect& m_body;
 };
 
 

@@ -48,7 +48,7 @@ bool BehaviourSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // BehaviourSystem::getComponent
 //===========================================
-Component& BehaviourSystem::getComponent(entityId_t entityId) const {
+CBehaviour& BehaviourSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

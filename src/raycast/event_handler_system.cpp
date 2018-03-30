@@ -37,7 +37,7 @@ bool EventHandlerSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // EventHandlerSystem::getComponent
 //===========================================
-Component& EventHandlerSystem::getComponent(entityId_t entityId) const {
+CEventHandler& EventHandlerSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

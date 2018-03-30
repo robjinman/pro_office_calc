@@ -127,7 +127,7 @@ void AnimationSystem::update() {
       bool justFinished = anim->update();
 
       RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-      CRender& c = dynamic_cast<CRender&>(renderSystem.getComponent(entityId));
+      CRender& c = renderSystem.getComponent(entityId);
 
       if (c.kind == CRenderKind::SPRITE) {
         CSprite& sprite = dynamic_cast<CSprite&>(c);
@@ -175,7 +175,7 @@ bool AnimationSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // AnimationSystem::getComponent
 //===========================================
-Component& AnimationSystem::getComponent(entityId_t entityId) const {
+CAnimation& AnimationSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

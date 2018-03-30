@@ -25,7 +25,7 @@ class RenderSystem : public System {
 
     void addComponent(pComponent_t component) override;
     bool hasComponent(entityId_t entityId) const override;
-    Component& getComponent(entityId_t entityId) const override;
+    CRender& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
   private:

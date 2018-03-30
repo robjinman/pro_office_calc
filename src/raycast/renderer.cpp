@@ -367,9 +367,8 @@ static Slice computeSlice(const LineSegment& rotProjPlane, const LineSegment& wa
 // castRay
 //===========================================
 static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
-  const Vec2f& dir, const RenderGraph& rg, const Player& player, CastResult& result) {
+  const Vec2f& dir, const RenderGraph& rg, const Camera& cam, CastResult& result) {
 
-  const Camera& cam = player.camera();
   LineSegment rotProjPlane = projectionPlane(cam, rg);
 
   list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(dir);
@@ -379,7 +378,7 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
   double subview0 = 0;
   double subview1 = rg.viewport.y;
 
-  const CZone* zone = &dynamic_cast<CZone&>(spatialSystem.getComponent(player.region()));
+  const CZone* zone = &cam.zone();
   int last = -1;
   for (auto it = intersections.begin(); it != intersections.end(); ++it) {
     if (!renderSystem.hasComponent((*it)->entityId)) {
@@ -507,10 +506,8 @@ static void castRay(const SpatialSystem& spatialSystem, const RenderSystem& rend
 //===========================================
 // drawSkySlice
 //===========================================
-static void drawSkySlice(QImage& target, const RenderGraph& rg, const Player& player,
+static void drawSkySlice(QImage& target, const RenderGraph& rg, const Camera& cam,
   const ScreenSlice& slice, int screenX_px) {
-
-  const Camera& cam = player.camera();
 
   const Texture& skyTex = rg.textures.at("sky");
   Size texSz_px(skyTex.image.rect().width(), skyTex.image.rect().height());
@@ -815,14 +812,12 @@ static ScreenSlice drawSlice(QImage& target, const RenderGraph& rg, const Camera
 }
 
 //===========================================
-// drawSprite
+// Renderer::drawSprite
 //===========================================
-void drawSprite(QImage& target, const CSprite& sprite, const SpatialSystem& spatialSystem,
-  const RenderGraph& rg, const Camera& camera, const Size& viewport_px, const SpriteX& X,
-  double screenX_px) {
+void Renderer::drawSprite(const SpriteX& X, const RenderGraph& rg, const Camera& camera,
+  double screenX_px) const {
 
-  double vWorldUnit_px = viewport_px.y / rg.viewport.y;
-
+  const CSprite& sprite = *X.sprite;
   const CVRect& vRect = *X.vRect;
   const Slice& slice = X.slice;
 
@@ -832,8 +827,8 @@ void drawSprite(QImage& target, const CSprite& sprite, const SpatialSystem& spat
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());
 
-  int screenSliceBottom_px = viewport_px.y - slice.projSliceBottom_wd * vWorldUnit_px;
-  int screenSliceTop_px = viewport_px.y - slice.projSliceTop_wd * vWorldUnit_px;
+  int screenSliceBottom_px = m_viewport_px.y - slice.projSliceBottom_wd * m_vWorldUnit_px;
+  int screenSliceTop_px = m_viewport_px.y - slice.projSliceTop_wd * m_vWorldUnit_px;
 
   const CZone& zone = *vRect.zone;
 
@@ -841,7 +836,7 @@ void drawSprite(QImage& target, const CSprite& sprite, const SpatialSystem& spat
     zone.floorHeight + vRect.height);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
-  drawImage(target, trgRect, tex.image, srcRect, X.X->distanceFromOrigin);
+  drawImage(m_target, trgRect, tex.image, srcRect, X.X->distanceFromOrigin);
 }
 
 //===========================================
@@ -999,7 +994,7 @@ static vector<CWallDecal*> getWallDecals(const SpatialSystem& spatialSystem, con
 //===========================================
 // Renderer::renderScene
 //===========================================
-void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
+void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
   const SpatialSystem& spatialSystem = m_entityManager
     .system<SpatialSystem>(ComponentKind::C_SPATIAL);
   const RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -1007,16 +1002,17 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   QPainter painter;
   painter.begin(&m_target);
 
-  Size viewport_px(m_target.width(), m_target.height());
-  const Camera& cam = player.camera();
+  // TODO: initialise this stuff outside of this function
+  //
+  m_viewport_px = Size(m_target.width(), m_target.height());
 
-  double hWorldUnit_px = viewport_px.x / rg.viewport.x;
-  double vWorldUnit_px = viewport_px.y / rg.viewport.y;
+  m_hWorldUnit_px = m_viewport_px.x / rg.viewport.x;
+  m_vWorldUnit_px = m_viewport_px.y / rg.viewport.y;
 
-  QRect rect(QPoint(), QSize(viewport_px.x, viewport_px.y));
+  QRect rect(QPoint(), QSize(m_viewport_px.x, m_viewport_px.y));
   painter.fillRect(rect, QBrush(QColor(255, 0, 0)));
 
-  const int W = viewport_px.x;
+  const int W = m_viewport_px.x;
   CastResult prev;
 
 #pragma omp parallel for \
@@ -1024,12 +1020,12 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
   private(prev)
 
   for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
-    double projX_wd = static_cast<double>(screenX_px - viewport_px.x / 2) / hWorldUnit_px;
+    double projX_wd = static_cast<double>(screenX_px - m_viewport_px.x / 2) / m_hWorldUnit_px;
 
     Vec2f ray(cam.F, projX_wd);
 
     CastResult result;
-    castRay(spatialSystem, renderSystem, ray, rg, player, result);
+    castRay(spatialSystem, renderSystem, ray, rg, cam, result);
 
     // Hack to fill gaps where regions don't connect properly
     if (result.intersections.size() == 0) {
@@ -1047,53 +1043,53 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           .getComponent(wallX.nearZone->entityId()));
 
         ScreenSlice slice = drawSlice(m_target, rg, cam, *wallX.X, wallX.slice, wallX.wall->texture,
-          screenX_px, viewport_px);
+          screenX_px, m_viewport_px);
 
         vector<CWallDecal*> decals = getWallDecals(spatialSystem, *wallX.wall,
           wallX.X->distanceAlongTarget);
 
         for (auto decal : decals) {
           drawWallDecal(m_target, spatialSystem, rg, *decal, *wallX.X, wallX.slice, zone,
-            screenX_px, viewport_px, cam.height, vWorldUnit_px);
+            screenX_px, m_viewport_px, cam.height, m_vWorldUnit_px);
         }
 
         drawFloorSlice(m_target, spatialSystem, rg, cam, wallX.X->viewPoint, &region,
-          zone.floorHeight, wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px,
+          zone.floorHeight, wallX.X->point_wld, slice, screenX_px, projX_wd, m_vWorldUnit_px,
           m_tanMap_rp, m_atanMap);
 
         if (region.hasCeiling) {
           drawCeilingSlice(m_target, rg, cam, wallX.X->viewPoint, &region, zone.ceilingHeight,
-            wallX.X->point_wld, slice, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp, m_atanMap);
+            wallX.X->point_wld, slice, screenX_px, projX_wd, m_vWorldUnit_px, m_tanMap_rp, m_atanMap);
         }
         else {
-          drawSkySlice(m_target, rg, player, slice, screenX_px);
+          drawSkySlice(m_target, rg, cam, slice, screenX_px);
         }
       }
       else if (X.kind == XWrapperKind::JOIN) {
         const JoinX& joinX = dynamic_cast<const JoinX&>(X);
 
         ScreenSlice slice0 = drawSlice(m_target, rg, cam, *joinX.X, joinX.slice0,
-          joinX.join->bottomTexture, screenX_px, viewport_px, joinX.farZone->floorHeight);
+          joinX.join->bottomTexture, screenX_px, m_viewport_px, joinX.farZone->floorHeight);
 
         const CZone& zone = *joinX.nearZone;
         const CRegion& region = dynamic_cast<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
 
         drawFloorSlice(m_target, spatialSystem, rg, cam, joinX.X->viewPoint, &region,
-          zone.floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd, vWorldUnit_px,
+          zone.floorHeight, joinX.X->point_wld, slice0, screenX_px, projX_wd, m_vWorldUnit_px,
           m_tanMap_rp, m_atanMap);
 
         if (joinX.slice1.visible) {
           ScreenSlice slice1 = drawSlice(m_target, rg, cam, *joinX.X, joinX.slice1,
-            joinX.join->topTexture, screenX_px, viewport_px, joinX.farZone->ceilingHeight);
+            joinX.join->topTexture, screenX_px, m_viewport_px, joinX.farZone->ceilingHeight);
 
           if (region.hasCeiling) {
             drawCeilingSlice(m_target, rg, cam, joinX.X->viewPoint, &region, zone.ceilingHeight,
-              joinX.X->point_wld, slice1, screenX_px, projX_wd, vWorldUnit_px, m_tanMap_rp,
+              joinX.X->point_wld, slice1, screenX_px, projX_wd, m_vWorldUnit_px, m_tanMap_rp,
               m_atanMap);
           }
           else {
-            drawSkySlice(m_target, rg, player, slice1, screenX_px);
+            drawSkySlice(m_target, rg, cam, slice1, screenX_px);
           }
         }
 
@@ -1110,13 +1106,12 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
           }
 
           drawWallDecal(m_target, spatialSystem, rg, *decal, *joinX.X, slice, *joinX.nearZone,
-            screenX_px, viewport_px, cam.height, vWorldUnit_px);
+            screenX_px, m_viewport_px, cam.height, m_vWorldUnit_px);
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {
         const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
-        drawSprite(m_target, *spriteX.sprite, spatialSystem, rg, player.camera(), viewport_px,
-          spriteX, screenX_px);
+        drawSprite(spriteX, rg, cam, screenX_px);
       }
     }
 
@@ -1128,13 +1123,13 @@ void Renderer::renderScene(const RenderGraph& rg, const Player& player) {
 
     switch (overlay.kind) {
       case COverlayKind::IMAGE:
-        drawImageOverlay(painter, dynamic_cast<const CImageOverlay&>(overlay), rg, viewport_px);
+        drawImageOverlay(painter, dynamic_cast<const CImageOverlay&>(overlay), rg, m_viewport_px);
         break;
       case COverlayKind::TEXT:
-        drawTextOverlay(painter, dynamic_cast<const CTextOverlay&>(overlay), rg, viewport_px);
+        drawTextOverlay(painter, dynamic_cast<const CTextOverlay&>(overlay), rg, m_viewport_px);
         break;
       case COverlayKind::COLOUR:
-        drawColourOverlay(painter, dynamic_cast<const CColourOverlay&>(overlay), rg, viewport_px);
+        drawColourOverlay(painter, dynamic_cast<const CColourOverlay&>(overlay), rg, m_viewport_px);
         break;
     }
   }

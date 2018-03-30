@@ -352,7 +352,7 @@ bool AgentSystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // AgentSystem::getComponent
 //===========================================
-Component& AgentSystem::getComponent(entityId_t entityId) const {
+CAgent& AgentSystem::getComponent(entityId_t entityId) const {
   return *m_components.at(entityId);
 }
 

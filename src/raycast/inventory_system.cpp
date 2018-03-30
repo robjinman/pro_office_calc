@@ -87,7 +87,7 @@ bool InventorySystem::hasComponent(entityId_t entityId) const {
 //===========================================
 // InventorySystem::getComponent
 //===========================================
-Component& InventorySystem::getComponent(entityId_t entityId) const {
+CInventory& InventorySystem::getComponent(entityId_t entityId) const {
   auto it = m_collectables.find(entityId);
   if (it != m_collectables.end()) {
     return *it->second;
