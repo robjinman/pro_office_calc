@@ -40,10 +40,13 @@ bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, en
   string texName = getValue(obj.dict, "texture", "default");
   const Texture& texture = renderSystem.rg.textures.at(texName);
 
+  double height = std::stod(getValue(obj.dict, "height", "0.0"));
+
   CVRect* vRect = new CVRect(entityId, zone.entityId(), texture.size_wd);
   Matrix m = transformFromTriangle(obj.path);
   vRect->setTransform(parentTransform * obj.transform * m);
   vRect->zone = &zone;
+  vRect->height = height;
 
   spatialSystem.addComponent(pComponent_t(vRect));
 
