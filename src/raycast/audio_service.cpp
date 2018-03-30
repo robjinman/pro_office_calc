@@ -105,13 +105,13 @@ void AudioService::playSoundAtPos(const string& name, const Point& pos, bool loo
 //===========================================
 // AudioService::playMusic
 //===========================================
-void AudioService::playMusic(const string& name) {
+void AudioService::playMusic(const string& name, bool loop) {
   auto it = m_musicTracks.find(name);
 
   if (it != m_musicTracks.end()) {
     m_playlist.clear();
     m_playlist.addMedia(it->second);
-    m_playlist.setPlaybackMode(QMediaPlaylist::Loop);
+    m_playlist.setPlaybackMode(loop ? QMediaPlaylist::Loop : QMediaPlaylist::CurrentItemOnce);
 
     m_mediaPlayer.play();
   }

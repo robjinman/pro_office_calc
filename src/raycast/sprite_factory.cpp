@@ -74,7 +74,7 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, parser::Object& obj, enti
       m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
 
     CCollectable* collectable = new CCollectable(entityId, "ammo");
-    collectable->value = 50;
+    collectable->value = 5;
     inventorySystem.addComponent(pComponent_t(collectable));
 
     return true;

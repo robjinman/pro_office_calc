@@ -32,7 +32,7 @@ class AudioService {
     void stopSound(const std::string& name);
     bool soundIsPlaying(const std::string& name) const;
 
-    void playMusic(const std::string& name);
+    void playMusic(const std::string& name, bool loop = true);
     void stopMusic();
     void setMusicVolume(double volume);
 

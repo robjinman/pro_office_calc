@@ -114,8 +114,10 @@ static void configureAudioService(AudioService& audioService, const parser::Obje
   string strMusicVolume = getValue(obj.dict, "music_volume", "1.0");
   double musicVolume = std::stod(strMusicVolume);
 
+  bool loop = getValue(obj.dict, "loop", "true") == "true";
+
   if (musicTrack.length() > 0) {
-    audioService.playMusic(musicTrack);
+    audioService.playMusic(musicTrack, loop);
     audioService.setMusicVolume(musicVolume);
   }
 }
