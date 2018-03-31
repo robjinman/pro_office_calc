@@ -102,6 +102,8 @@ class SpatialSystem : public System {
       double height, const Vec2f& dir, double vAngle, const Matrix& matrix) const;
     std::list<pIntersection_t> entitiesAlong3dRay(const Vec2f& dir, double camSpaceVAngle) const;
 
+    std::set<entityId_t> getAncestors(entityId_t entityId) const;
+
     std::vector<Point> shortestPath(entityId_t entityA, entityId_t entityB, double radius) const;
     std::vector<Point> shortestPath(const Point& A, const Point& B, double radius) const;
 

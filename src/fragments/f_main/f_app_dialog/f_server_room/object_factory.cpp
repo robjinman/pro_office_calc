@@ -97,6 +97,38 @@ bool ObjectFactory::constructBigScreen(entityId_t entityId, parser::Object& obj,
 }
 
 //===========================================
+// ObjectFactory::constructServerRack
+//===========================================
+bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
+    EventHandlerSystem& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+    DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+
+    CDamage* damage = new CDamage(entityId, 3, 3);
+    damageSystem.addComponent(pComponent_t(damage));
+
+    CEventHandler* handlers = new CEventHandler(entityId);
+    handlers->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
+      [=](const GameEvent& e) {
+
+      DBG_PRINT("Server rack damaged! health = " << damage->health << "\n");
+    }});
+    eventHandlerSystem.addComponent(pComponent_t(handlers));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::renderCalc
 //===========================================
 void ObjectFactory::renderCalc() const {
@@ -205,7 +237,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"big_screen", "calculator"};
+  static const set<string> types{"big_screen", "calculator", "server_rack"};
   return types;
 }
 
@@ -220,6 +252,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "calculator") {
     return constructCalculator(entityId, obj, region, parentTransform);
+  }
+  else if (type == "server_rack") {
+    return constructServerRack(entityId, obj, region, parentTransform);
   }
 
   return false;

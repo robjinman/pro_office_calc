@@ -41,28 +41,73 @@ void DamageSystem::removeEntity(entityId_t id) {
 }
 
 //===========================================
+// fireDamagedEvents
+//===========================================
+static void fireDamagedEvents(const EntityManager& entityManager, entityId_t id,
+  const Point* pt_rel = nullptr, const Point* pt_wld = nullptr) {
+
+  EEntityDamaged damaged(id);
+
+  if (pt_rel != nullptr) {
+    damaged.point_rel = *pt_rel;
+  }
+
+  if (pt_wld != nullptr) {
+    damaged.point_wld = *pt_wld;
+  }
+
+  entityManager.fireEvent(damaged, {id});
+  entityManager.broadcastEvent(EEntityDamaged(id));
+}
+
+//===========================================
+// fireDestroyedEvents
+//===========================================
+static void fireDestroyedEvents(const EntityManager& entityManager, entityId_t id,
+  const Point* pt_rel = nullptr, const Point* pt_wld = nullptr) {
+
+  EEntityDestroyed destroyed(id);
+
+  if (pt_rel != nullptr) {
+    destroyed.point_rel = *pt_rel;
+  }
+
+  if (pt_wld != nullptr) {
+    destroyed.point_wld = *pt_wld;
+  }
+
+  entityManager.fireEvent(destroyed, {id});
+  entityManager.broadcastEvent(EEntityDestroyed(id));
+}
+
+//===========================================
 // DamageSystem::damageEntity
 //===========================================
-void DamageSystem::damageEntity(entityId_t id, double damage) {
-  auto it = m_components.find(id);
+void DamageSystem::damageEntity(entityId_t entityId, double damage) {
+  const SpatialSystem& spatialSystem =
+    m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  if (it != m_components.end()) {
-    DBG_PRINT("Damaging entity " << id << "\n");
-    CDamage& component = *it->second;
+  set<entityId_t> entities = spatialSystem.getAncestors(entityId);
+  entities.insert(entityId);
 
-    if (component.health > 0) {
-      component.health -= damage;
+  for (entityId_t id : entities) {
+    auto it = m_components.find(id);
+    if (it != m_components.end()) {
+      DBG_PRINT("Damaging entity " << id << "\n");
+      CDamage& component = *it->second;
 
-      if (component.health < 0) {
-        component.health = 0;
-      }
+      if (component.health > 0) {
+        component.health -= damage;
 
-      m_entityManager.fireEvent(EEntityDamaged(id), {id});
-      m_entityManager.broadcastEvent(EEntityDamaged(id));
+        if (component.health < 0) {
+          component.health = 0;
+        }
 
-      if (component.health == 0) {
-        m_entityManager.fireEvent(EEntityDestroyed(id), {id});
-        m_entityManager.broadcastEvent(EEntityDestroyed(id));
+        fireDamagedEvents(m_entityManager, id);
+
+        if (component.health == 0) {
+          fireDestroyedEvents(m_entityManager, id);
+        }
       }
     }
   }
@@ -88,33 +133,31 @@ void DamageSystem::damageWithinRadius(const CZone& zone, const Point& pos, doubl
 // DamageSystem::damageAtIntersection_
 //===========================================
 void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
-  entityId_t id = X.entityId;
+  const SpatialSystem& spatialSystem =
+    m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  auto it = m_components.find(id);
-  if (it != m_components.end()) {
-    CDamage& component = *it->second;
+  set<entityId_t> entities = spatialSystem.getAncestors(X.entityId);
+  entities.insert(X.entityId);
 
-    if (component.health > 0) {
-      component.health -= damage;
+  for (entityId_t id : entities) {
+    auto it = m_components.find(id);
+    if (it != m_components.end()) {
+      CDamage& component = *it->second;
 
-      if (component.health < 0) {
-        component.health = 0;
-      }
+      if (component.health > 0) {
+        component.health -= damage;
 
-      EEntityDamaged damagedEvent(id);
-      damagedEvent.point_wld = X.point_wld;
-      damagedEvent.point_rel = Point(X.distanceAlongTarget, X.height);
+        if (component.health < 0) {
+          component.health = 0;
+        }
 
-      m_entityManager.fireEvent(damagedEvent, {id});
-      m_entityManager.broadcastEvent(damagedEvent);
+        Point pt_rel(X.distanceAlongTarget, X.height);
+        fireDamagedEvents(m_entityManager, id, &pt_rel, &X.point_wld);
 
-      if (component.health == 0) {
-        EEntityDestroyed destroyedEvent(id);
-        destroyedEvent.point_wld = X.point_wld;
-        destroyedEvent.point_rel = Point(X.distanceAlongTarget, X.height);
-
-        m_entityManager.fireEvent(destroyedEvent, {id});
-        m_entityManager.broadcastEvent(destroyedEvent);
+        if (component.health == 0) {
+          Point pt_rel(X.distanceAlongTarget, X.height);
+          fireDestroyedEvents(m_entityManager, id, &pt_rel, &X.point_wld);
+        }
       }
     }
   }

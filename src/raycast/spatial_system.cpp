@@ -462,6 +462,23 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 }
 
 //===========================================
+// SpatialSystem::getAncestors
+//===========================================
+set<entityId_t> SpatialSystem::getAncestors(entityId_t entityId) const {
+  set<entityId_t> ancestors;
+  const CSpatial* c = &getComponent(entityId);
+
+  entityId_t parent = c->parentId;
+  while (parent != -1) {
+    ancestors.insert(parent);
+    c = &getComponent(parent);
+    parent = c->parentId;
+  }
+
+  return ancestors;
+}
+
+//===========================================
 // SpatialSystem::zone
 //===========================================
 CZone& SpatialSystem::zone(entityId_t entityId) {

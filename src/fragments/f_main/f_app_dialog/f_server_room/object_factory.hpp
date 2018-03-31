@@ -38,6 +38,8 @@ class ObjectFactory : public GameObjectFactory {
       const Matrix& parentTransform);
     bool constructCalculator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+    bool constructServerRack(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
 
     void renderCalc() const;
 };
