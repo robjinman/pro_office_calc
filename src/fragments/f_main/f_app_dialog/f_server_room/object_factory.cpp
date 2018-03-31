@@ -110,15 +110,42 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
     EventHandlerSystem& eventHandlerSystem =
       m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
     DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+    AnimationSystem& animationSystem =
+      m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+    // Number of frames in sprite sheet
+    const int W = 1;
+    const int H = 2;
+
+    vector<AnimationFrame> frames = constructFrames(W, H, { 1, 0 });
+
+    CAnimation* anim = new CAnimation(entityId);
+    anim->addAnimation(pAnimation_t(new Animation("damage", m_timeService.frameRate, 0.5,
+      frames)));
+    animationSystem.addComponent(pComponent_t(anim));
+
+    auto& children = renderSystem.children(entityId);
+    for (entityId_t childId : children) {
+      CAnimation* anim = new CAnimation(childId);
+      anim->addAnimation(pAnimation_t(new Animation("damage", m_timeService.frameRate, 0.5,
+        frames)));
+      animationSystem.addComponent(pComponent_t(anim));
+    }
+
+    // Play once just to setup the initial texRect
+    animationSystem.playAnimation(entityId, "damage", false);
 
     CDamage* damage = new CDamage(entityId, 3, 3);
     damageSystem.addComponent(pComponent_t(damage));
 
     CEventHandler* handlers = new CEventHandler(entityId);
     handlers->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=](const GameEvent& e) {
+      [=, &animationSystem](const GameEvent& e) {
 
       DBG_PRINT("Server rack damaged! health = " << damage->health << "\n");
+
+      animationSystem.playAnimation(entityId, "damage", false);
     }});
     eventHandlerSystem.addComponent(pComponent_t(handlers));
 

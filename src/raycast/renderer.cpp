@@ -144,26 +144,6 @@ void Renderer::drawImage(const QRect& trgRect, const QImage& tex, const QRect& s
 }
 
 //===========================================
-// worldPointToFloorTexel
-//===========================================
-inline static Point worldPointToFloorTexel(const Point& p, const Size& tileSz_wd_rp,
-  const Size& tileSz_px) {
-
-  double nx = p.x * tileSz_wd_rp.x;
-  double ny = p.y * tileSz_wd_rp.y;
-
-  if (nx < 0 || std::isinf(nx) || std::isnan(nx)) {
-    nx = 0;
-  }
-  if (ny < 0 || std::isinf(ny) || std::isnan(ny)) {
-    ny = 0;
-  }
-
-  return Point((nx - static_cast<int>(nx)) * tileSz_px.x,
-    (ny - static_cast<int>(ny)) * tileSz_px.y);
-}
-
-//===========================================
 // Renderer::constructXWrapper
 //===========================================
 Renderer::XWrapper* Renderer::constructXWrapper(const SpatialSystem& spatialSystem,
@@ -437,6 +417,26 @@ void Renderer::drawSkySlice(const RenderGraph& rg, const Camera& cam, const Scre
 }
 
 //===========================================
+// worldPointToFloorTexel
+//===========================================
+inline static Point worldPointToFloorTexel(const Point& p, const Size& tileSz_wd_rp,
+  const QRectF& frameRect_tx) {
+
+  double nx = p.x * tileSz_wd_rp.x;
+  double ny = p.y * tileSz_wd_rp.y;
+
+  if (nx < 0 || std::isinf(nx) || std::isnan(nx)) {
+    nx = 0;
+  }
+  if (ny < 0 || std::isinf(ny) || std::isnan(ny)) {
+    ny = 0;
+  }
+
+  return Point(frameRect_tx.x() + (nx - static_cast<int>(nx)) * frameRect_tx.width(),
+    frameRect_tx.y() + (ny - static_cast<int>(ny)) * frameRect_tx.height());
+}
+
+//===========================================
 // Renderer::drawCeilingSlice
 //===========================================
 void Renderer::drawCeilingSlice(const RenderGraph& rg, const Camera& cam, const Intersection& X,
@@ -445,11 +445,14 @@ void Renderer::drawCeilingSlice(const RenderGraph& rg, const Camera& cam, const 
 
   double screenH_px = rg.viewport.y * m_vWorldUnit_px; // TODO: Pre-compute this
   const Texture& ceilingTex = rg.textures.at(region.ceilingTexture);
+  Size texSz_tx(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
+  const QRectF& frameRect = region.ceilingTexRect;
+  QRectF frameRect_tx(frameRect.x() * texSz_tx.x, frameRect.y() * texSz_tx.y,
+    frameRect.width() * texSz_tx.x, frameRect.height() * texSz_tx.y);
 
   double hAngle = fastATan(projX_wd / cam.F);
   LineSegment ray(X.viewPoint, X.point_wld);
 
-  Size tileSz_px(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
   Size tileSz_wd_rp(1.0 / ceilingTex.size_wd.x, 1.0 / ceilingTex.size_wd.y);
 
   double vWorldUnit_px_rp = 1.0 / m_vWorldUnit_px;
@@ -474,7 +477,7 @@ void Renderer::drawCeilingSlice(const RenderGraph& rg, const Camera& cam, const 
     double s = d * rayLen_rp;
     Point p(ray.A.x + (ray.B.x - ray.A.x) * s, ray.A.y + (ray.B.y - ray.A.y) * s);
 
-    Point texel = worldPointToFloorTexel(p, tileSz_wd_rp, tileSz_px);
+    Point texel = worldPointToFloorTexel(p, tileSz_wd_rp, frameRect_tx);
     pixels[screenX_px] = applyShade(pixel(ceilingTex.image, texel.x, texel.y), d);
   }
 }
@@ -510,12 +513,15 @@ void Renderer::drawFloorSlice(const RenderGraph& rg, const Camera& cam,
 
   double screenH_px = rg.viewport.y * m_vWorldUnit_px;
   const Texture& floorTex = rg.textures.at(region.floorTexture);
+  Size texSz_tx(floorTex.image.rect().width(), floorTex.image.rect().height());
+  const QRectF& frameRect = region.floorTexRect;
+  QRectF frameRect_tx(frameRect.x() * texSz_tx.x, frameRect.y() * texSz_tx.y,
+    frameRect.width() * texSz_tx.x, frameRect.height() * texSz_tx.y);
+
+  Size tileSz_wd_rp(1.0 / floorTex.size_wd.x, 1.0 / floorTex.size_wd.y);
 
   double hAngle = fastATan(projX_wd / cam.F);
   LineSegment ray(X.viewPoint, X.point_wld);
-
-  Size tileSz_px(floorTex.image.rect().width(), floorTex.image.rect().height());
-  Size tileSz_wd_rp(1.0 / floorTex.size_wd.x, 1.0 / floorTex.size_wd.y);
 
   double vWorldUnit_px_rp = 1.0 / m_vWorldUnit_px; // TODO: Store in Renderer instance?
   double F_rp = 1.0 / cam.F;
@@ -546,14 +552,15 @@ void Renderer::drawFloorSlice(const RenderGraph& rg, const Camera& cam,
     if (decal != nullptr) {
       const CHRect& hRect = getHRect(spatialSystem, *decal);
 
+      // TODO: Use frameRect
       const Texture& decalTex = rg.textures.at(decal->texture);
-      Size texSz_px(decalTex.image.rect().width(), decalTex.image.rect().height());
+      Size texSz_tx(decalTex.image.rect().width(), decalTex.image.rect().height());
 
-      Point texel(texSz_px.x * decalPt.x / hRect.size.x, texSz_px.y * decalPt.y / hRect.size.y);
+      Point texel(texSz_tx.x * decalPt.x / hRect.size.x, texSz_tx.y * decalPt.y / hRect.size.y);
       pixels[screenX_px] = pixel(decalTex.image, texel.x, texel.y);
     }
     else {
-      Point texel = worldPointToFloorTexel(p, tileSz_wd_rp, tileSz_px);
+      Point texel = worldPointToFloorTexel(p, tileSz_wd_rp, frameRect_tx);
       pixels[screenX_px] = applyShade(pixel(floorTex.image, texel.x, texel.y), d);
     }
   }

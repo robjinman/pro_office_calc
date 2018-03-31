@@ -6,6 +6,7 @@
 #include <vector>
 #include <QRectF>
 #include "raycast/system.hpp"
+#include "exception.hpp"
 
 
 struct AnimationFrame {
@@ -72,13 +73,23 @@ class CAnimation : public Component {
     CAnimation(entityId_t entityId)
       : Component(entityId, ComponentKind::C_ANIMATION) {}
 
-    void addAnimation(pAnimation_t animation) {
-      m_animations[animation->name] = std::move(animation);
+    // For CRegions, anim1 and anim2 are for floors and ceilings, respectively.
+    // For CJoins, anim1 and anim2 are for the bottom wall and the top wall, respectively.
+    void addAnimation(pAnimation_t anim1, pAnimation_t anim2 = nullptr) {
+      m_animations[anim1->name].first = std::move(anim1);
+
+      if (anim2) {
+        if (anim2->name != anim1->name) {
+          EXCEPTION("Pair of animations '" << anim1->name << "' and '" << anim2->name
+            << "' do not have same name");
+        }
+        m_animations[anim2->name].second = std::move(anim2);
+      }
     }
 
   private:
-    Animation* m_active = nullptr;
-    std::map<std::string, pAnimation_t> m_animations;
+    std::string m_active;
+    std::map<std::string, std::pair<pAnimation_t, pAnimation_t>> m_animations;
 };
 
 typedef std::unique_ptr<CAnimation> pCAnimation_t;
@@ -107,6 +118,8 @@ class AnimationSystem : public System {
     EntityManager& m_entityManager;
     double m_frameRate;
     std::map<entityId_t, pCAnimation_t> m_components;
+
+    void updateAnimation(CAnimation& c, int which);
 };
 
 

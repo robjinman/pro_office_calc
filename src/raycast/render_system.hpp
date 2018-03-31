@@ -28,6 +28,8 @@ class RenderSystem : public System {
     CRender& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
+    inline const std::set<entityId_t>& children(entityId_t entityId) const;
+
   private:
     EntityManager& m_entityManager;
     QImage& m_target;
@@ -40,6 +42,13 @@ class RenderSystem : public System {
     void removeEntity_r(entityId_t id);
     void crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t oldZone, entityId_t newZone);
 };
+
+inline const std::set<entityId_t>& RenderSystem::children(entityId_t entityId) const {
+  static const std::set<entityId_t> emptySet;
+
+  auto it = m_entityChildren.find(entityId);
+  return it != m_entityChildren.end() ? it->second : emptySet;
+}
 
 
 #endif

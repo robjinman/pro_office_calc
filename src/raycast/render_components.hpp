@@ -176,7 +176,9 @@ struct CRegion : public CRender {
 
   bool hasCeiling = true; // TODO: Remove
   std::string floorTexture;
+  QRectF floorTexRect = QRectF(0, 0, 1, 1);
   std::string ceilingTexture;
+  QRectF ceilingTexRect = QRectF(0, 0, 1, 1);
   std::list<pCRegion_t> children;
   std::list<CBoundary*> boundaries;
   std::list<pCSprite_t> sprites;
