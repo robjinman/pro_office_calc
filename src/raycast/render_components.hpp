@@ -191,6 +191,7 @@ struct CWall : public CBoundary {
     : CBoundary(CRenderKind::WALL, entityId, parentId) {}
 
   std::string texture;
+  QRectF texRect = QRectF(0, 0, 1, 1);
   CRegion* region;
 };
 
@@ -212,6 +213,9 @@ struct CJoin : public CBoundary {
 
   std::string topTexture = "default";
   std::string bottomTexture = "default";
+
+  QRectF topTexRect = QRectF(0, 0, 1, 1);
+  QRectF bottomTexRect = QRectF(0, 0, 1, 1);
 
   CRegion* regionA = nullptr;
   CRegion* regionB = nullptr;
