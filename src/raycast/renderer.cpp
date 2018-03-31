@@ -159,7 +159,8 @@ inline static Point worldPointToFloorTexel(const Point& p, const Size& tileSz_wd
     ny = 0;
   }
 
-  return Point((nx - static_cast<int>(nx)) * tileSz_px.x, (ny - static_cast<int>(ny)) * tileSz_px.y);
+  return Point((nx - static_cast<int>(nx)) * tileSz_px.x,
+    (ny - static_cast<int>(ny)) * tileSz_px.y);
 }
 
 //===========================================
@@ -427,7 +428,8 @@ void Renderer::drawSkySlice(const RenderGraph& rg, const Camera& cam, const Scre
     double s = 1.0 - normaliseAngle(vAngle - minVAngle) / vAngleRange;
     assert(isBetween(s, 0.0, 1.0));
 
-    assert(isBetween(screenX_px, 0, m_target.width() - 1) && isBetween(j, 0, m_target.height() - 1));
+    assert(isBetween(screenX_px, 0, m_target.width() - 1) && isBetween(j, 0,
+      m_target.height() - 1));
 
     QRgb* pixels = reinterpret_cast<QRgb*>(m_target.scanLine(j));
     pixels[screenX_px] = pixel(skyTex.image, x, s * tileSz_px.y);
