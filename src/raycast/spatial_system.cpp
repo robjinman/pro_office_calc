@@ -962,8 +962,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
               continue;
             }
 
-            Intersection* X = new Intersection(CSpatialKind::V_RECT, parent.kind);
-            intersections.push_back(pIntersection_t(X));
+            pIntersection_t X(new Intersection(CSpatialKind::V_RECT, parent.kind));
             X->entityId = vRect.entityId();
             X->point_rel = pt;
             X->point_wld = invMatrix * pt;
@@ -973,6 +972,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             X->zoneA = X->zoneB = zone.entityId();
             X->heightRanges = make_pair(Range(vRect.zone->floorHeight + vRect.height,
               vRect.zone->floorHeight + vRect.height + vRect.size.y), Range(0, 0));
+            intersections.push_back(std::move(X));
           }
         }
         else if (parent.kind == CSpatialKind::HARD_EDGE || parent.kind == CSpatialKind::SOFT_EDGE) {
@@ -1003,8 +1003,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             double y0 = vRectFloorH + vRect.pos.y;
             double y1 = y0 + vRect.size.y;
 
-            Intersection* X = new Intersection(CSpatialKind::V_RECT, parent.kind);
-            intersections.push_back(pIntersection_t(X));
+            pIntersection_t X(new Intersection(CSpatialKind::V_RECT, parent.kind));
             X->entityId = vRect.entityId();
             X->point_rel = pt;
             X->point_wld = invMatrix * pt;
@@ -1013,6 +1012,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             X->distanceAlongTarget = distance(lseg.A, pt);
             X->zoneA = X->zoneB = zone.entityId();
             X->heightRanges = make_pair(Range(y0, y1), Range(0, 0));
+            intersections.push_back(std::move(X));
           }
         }
         break;
@@ -1029,10 +1029,11 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
           }
 
           if (visited.count(childId) == 0) {
-            findIntersections_r(point, dir, matrix, childId, intersections, visited, cullNearerThan);
+            findIntersections_r(point, dir, matrix, childId, intersections, visited,
+              cullNearerThan);
           }
 
-          Intersection* X = new Intersection(edge.kind, parent.kind);
+          pIntersection_t X(new Intersection(edge.kind, parent.kind));
           X->entityId = edge.entityId();
           X->point_rel = pt;
           X->point_wld = invMatrix * pt;
@@ -1044,7 +1045,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
           if (edge.kind == CSpatialKind::HARD_EDGE) {
             X->zoneB = zone.parent != nullptr ? zone.parent->entityId() : X->zoneA;
             X->heightRanges = make_pair(Range(-10000, 10000), Range(0, 0)); // TODO
-            intersections.push_back(pIntersection_t(X));
+            intersections.push_back(std::move(X));
           }
           else if (edge.kind == CSpatialKind::SOFT_EDGE) {
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
@@ -1068,10 +1069,11 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
               cullNearerThan_ = X->distanceFromOrigin;
             }
 
-            intersections.push_back(pIntersection_t(X));
+            intersections.push_back(std::move(X));
 
             if (visited.count(next.entityId()) == 0) {
-              findIntersections_r(point, dir, mat, next.entityId(), intersections, visited, cullNearerThan_);
+              findIntersections_r(point, dir, mat, next.entityId(), intersections, visited,
+                cullNearerThan_);
             }
           }
           else {
