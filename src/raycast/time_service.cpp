@@ -7,6 +7,9 @@ using std::stringstream;
 using std::function;
 
 
+static long nextId = 0;
+
+
 //===========================================
 // TimeService::addTween
 //===========================================
@@ -27,9 +30,22 @@ void TimeService::addTween(const Tween& tween, const char* name) {
 }
 
 //===========================================
+// TimeService::deletePendingTimeouts
+//===========================================
+void TimeService::deletePendingTimeouts() {
+  for (long id : m_timeoutsPendingDeletion) {
+    m_timeouts.erase(id);
+  }
+
+  m_timeoutsPendingDeletion.clear();
+}
+
+//===========================================
 // TimeService::update
 //===========================================
 void TimeService::update() {
+  deletePendingTimeouts();
+
   double elapsed = m_frame / frameRate;
 
   for (auto it = m_tweens.begin(); it != m_tweens.end();) {
@@ -47,7 +63,7 @@ void TimeService::update() {
   }
 
   for (auto it = m_timeouts.begin(); it != m_timeouts.end();) {
-    const Timeout& timeout = *it;
+    const Timeout& timeout = it->second;
 
     long frames = m_frame - timeout.start;
     double elapsed = frames / frameRate;
@@ -67,6 +83,14 @@ void TimeService::update() {
 //===========================================
 // TimeService::onTimeout
 //===========================================
-void TimeService::onTimeout(function<void()> fn, double seconds) {
-  m_timeouts.push_back(Timeout{fn, seconds, m_frame});
+long TimeService::onTimeout(function<void()> fn, double seconds) {
+  m_timeouts[nextId] = Timeout{fn, seconds, m_frame};
+  return nextId++;
+}
+
+//===========================================
+// TimeService::cancelTimeout
+//===========================================
+void TimeService::cancelTimeout(long id) {
+  m_timeoutsPendingDeletion.insert(id);
 }

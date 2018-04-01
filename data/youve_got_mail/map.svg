@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="0.088388344"
-     inkscape:cx="1241.8005"
-     inkscape:cy="1869.8989"
+     inkscape:zoom="1.4142135"
+     inkscape:cx="717.99013"
+     inkscape:cy="1277.1016"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -2031,6 +2031,35 @@
                x="2191.2468"
                id="tspan4174-0-0-1-8-0-0-3-0-1"
                sodipodi:role="line">floor_texture=filing_cabinet_side</tspan></text>
+        </g>
+        <g
+           id="g5519-3"
+           transform="matrix(0.68229027,-0.07071042,0.07071045,0.68229032,1157.9002,2225.5737)">
+          <path
+             inkscape:connector-curvature="0"
+             id="path4611-6"
+             d="m 715.96101,117.72831 -11.20343,-5.49433 4.92481,-4.18245 z"
+             style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.33069432px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text4613-7"
+             y="96.66452"
+             x="703.06683"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             xml:space="preserve"><tspan
+               y="96.66452"
+               x="703.06683"
+               id="tspan4615-5">type=player</tspan></text>
+          <text
+             sodipodi:linespacing="125%"
+             id="text5515-3"
+             y="103.67754"
+             x="703.44342"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             xml:space="preserve"><tspan
+               y="103.67754"
+               x="703.44342"
+               id="tspan4507-5">tallness=50</tspan></text>
         </g>
       </g>
       <text
@@ -5677,35 +5706,6 @@
         </g>
       </g>
       <g
-         id="g5519-3"
-         transform="matrix(0.78979105,0.00253688,-0.00250508,0.7998078,2654.0329,2280.9768)">
-        <path
-           inkscape:connector-curvature="0"
-           id="path4611-6"
-           d="m 715.96101,117.72831 -11.20343,-5.49433 4.92481,-4.18245 z"
-           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.33069432px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <text
-           sodipodi:linespacing="125%"
-           id="text4613-7"
-           y="96.66452"
-           x="703.06683"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="96.66452"
-             x="703.06683"
-             id="tspan4615-5">type=player</tspan></text>
-        <text
-           sodipodi:linespacing="125%"
-           id="text5515-3"
-           y="103.67754"
-           x="703.44342"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="103.67754"
-             x="703.44342"
-             id="tspan4507-5">tallness=50</tspan></text>
-      </g>
-      <g
          id="g7627-2"
          transform="translate(177.317,-27.565804)">
         <text
@@ -7193,7 +7193,7 @@
            style="font-size:12.94190121px"
            y="132.50537"
            x="542.35602"
-           id="tspan5260-9-0-3-7">music_volume=0.0</tspan></text>
+           id="tspan5260-9-0-3-7">music_volume=0.6</tspan></text>
       <text
          id="text5258-7-2-2-4-0"
          y="148.98761"

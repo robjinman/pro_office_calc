@@ -1,19 +1,23 @@
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/spatial_system.hpp"
-#include "raycast/render_components.hpp"
+#include "raycast/render_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/audio_service.hpp"
+#include "raycast/time_service.hpp"
 #include "event.hpp"
+
+
+using std::string;
 
 
 //===========================================
 // CDoorBehaviour::CDoorBehaviour
 //===========================================
-CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate,
-  AudioService& audioService)
+CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager,
+  TimeService& timeService, AudioService& audioService)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
-    m_frameRate(frameRate),
+    m_timeService(timeService),
     m_audioService(audioService),
     m_timer(5.0) {
 
@@ -50,7 +54,7 @@ void CDoorBehaviour::update() {
   Player& player = *spatialSystem.sg.player;
   CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
 
-  double dy = 60.0 / m_frameRate;
+  double dy = 60.0 / m_timeService.frameRate;
 
   switch (m_state) {
     case ST_CLOSED:
@@ -103,6 +107,55 @@ void CDoorBehaviour::handleBroadcastedEvent(const GameEvent& e) {
 }
 
 //===========================================
+// CDoorBehaviour::deleteCaption
+//===========================================
+void CDoorBehaviour::deleteCaption() {
+  m_timeService.cancelTimeout(m_captionTimeoutId);
+  m_entityManager.deleteEntity(m_captionBgId);
+  m_entityManager.deleteEntity(m_captionTextId);
+
+  m_captionBgId = -1;
+  m_captionTextId = -1;
+  m_captionTimeoutId = -1;
+}
+
+//===========================================
+// CDoorBehaviour::showCaption
+//===========================================
+void CDoorBehaviour::showCaption() {
+  deleteCaption();
+
+  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  const Size& vp = renderSystem.rg.viewport;
+
+  string caption = "The door is locked";
+
+  double margin = 0.2;
+  double chH = 0.8;
+  double chW = 0.4;
+  Size sz(2.0 * margin + chW * caption.length(), 2.0 * margin + chH);
+  Point bgPos(0.5 * (vp.x - sz.x), 0.75 * (vp.y - sz.y));
+  Point textPos = bgPos + Vec2f(margin, margin);
+
+  QColor bgColour(0, 0, 0, 100);
+  QColor textColour(200, 200, 0);
+
+  m_captionBgId = Component::getNextId();
+  m_captionTextId = Component::getNextId();
+
+  CColourOverlay* bgOverlay = new CColourOverlay(m_captionBgId, bgColour, bgPos, sz, 8);
+  CTextOverlay* textOverlay = new CTextOverlay(m_captionTextId, caption, textPos, chH, textColour,
+    9);
+
+  renderSystem.addComponent(pComponent_t(bgOverlay));
+  renderSystem.addComponent(pComponent_t(textOverlay));
+
+  m_captionTimeoutId = m_timeService.onTimeout([this]() {
+    deleteCaption();
+  }, 3.0);
+}
+
+//===========================================
 // CDoorBehaviour::handleTargetedEvent
 //===========================================
 void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
@@ -113,6 +166,7 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
   };
 
   if (!isPlayerActivated && e.name == "player_activate_entity") {
+    showCaption();
     return;
   }
 

@@ -51,11 +51,13 @@ void EntityManager::deleteEntity(entityId_t entityId) {
 // EntityManager::purgeEntities
 //===========================================
 void EntityManager::purgeEntities() {
-  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
-    for (auto jt = m_pendingDelete.begin(); jt != m_pendingDelete.end(); ++jt) {
-      it->second->removeEntity(*jt);
+  for (entityId_t id : m_pendingDelete) {
+    for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+      it->second->removeEntity(id);
     }
   }
+
+  m_pendingDelete.clear();
 }
 
 //===========================================

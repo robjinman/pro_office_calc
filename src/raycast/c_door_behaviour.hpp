@@ -8,10 +8,11 @@
 
 class EntityManager;
 class AudioService;
+class TimeService;
 
 class CDoorBehaviour : public CBehaviour {
   public:
-    CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate,
+    CDoorBehaviour(entityId_t entityId, EntityManager& entityManager, TimeService& timeService,
       AudioService& audioService);
 
     virtual void update() override;
@@ -31,15 +32,22 @@ class CDoorBehaviour : public CBehaviour {
     };
 
     EntityManager& m_entityManager;
-    double m_frameRate;
+    TimeService& m_timeService;
     AudioService& m_audioService;
     state_t m_state = ST_CLOSED;
     double m_y0;
     double m_y1;
     Debouncer m_timer;
 
+    entityId_t m_captionBgId = -1;
+    entityId_t m_captionTextId = -1;
+    long m_captionTimeoutId = -1;
+
     void playSound() const;
     void stopSound() const;
+
+    void showCaption();
+    void deleteCaption();
 };
 
 

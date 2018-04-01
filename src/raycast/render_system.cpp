@@ -388,7 +388,14 @@ void RenderSystem::addComponent(pComponent_t component) {
     }
     else if (c->kind == CRenderKind::OVERLAY) {
       pCOverlay_t z(dynamic_cast<COverlay*>(c.release()));
-      rg.overlays.insert(std::move(z));
+
+      auto it = find_if(rg.overlays.begin(), rg.overlays.end(), [&](const pCOverlay_t& o) {
+        return o->entityId() == z->entityId();
+      });
+
+      if (it == rg.overlays.end()) {
+        rg.overlays.insert(std::move(z));
+      }
     }
     else {
       EXCEPTION("Component has no parent and is not of type REGION or OVERLAY");
@@ -464,7 +471,7 @@ void RenderSystem::removeEntity(entityId_t id) {
     }
     else if (c.kind == CRenderKind::OVERLAY) {
       auto it = find_if(rg.overlays.begin(), rg.overlays.end(), [&](const pCOverlay_t& o) {
-        return o.get() == &c;
+        return o->entityId() == id;
       });
       erase(rg.overlays, it);
     }

@@ -4,8 +4,8 @@
 
 #include <functional>
 #include <map>
+#include <set>
 #include <string>
-#include <list>
 
 
 struct Tween {
@@ -20,7 +20,8 @@ class TimeService {
       : frameRate(frameRate) {}
 
     void addTween(const Tween& tween, const char* name = nullptr);
-    void onTimeout(std::function<void()> fn, double seconds);
+    long onTimeout(std::function<void()> fn, double seconds);
+    void cancelTimeout(long id);
     void update();
 
     const double frameRate;
@@ -39,7 +40,10 @@ class TimeService {
 
     long long m_frame = 0;
     std::map<std::string, TweenWrap> m_tweens;
-    std::list<Timeout> m_timeouts;
+    std::map<long, Timeout> m_timeouts;
+    std::set<long> m_timeoutsPendingDeletion;
+
+    void deletePendingTimeouts();
 };
 
 
