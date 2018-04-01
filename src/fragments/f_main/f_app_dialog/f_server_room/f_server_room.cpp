@@ -62,14 +62,11 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
       audioService, timeService, *m_data.wgtCalculator);
 
     m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
+    m_data.wgtRaycast->initialise("data/youve_got_mail/map.svg");
+
     m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem, entityManager));
 
     m_data.vbox->addWidget(m_data.wgtRaycast.get());
-
-    m_data.wgtRaycast->initialise("data/youve_got_mail/map.svg");
-
-    // TODO
-    //commonData.eventSystem.fire(pEvent_t(new Event("youveGotMail/divByZero")));
   }, m_launchEventId);
 }
 

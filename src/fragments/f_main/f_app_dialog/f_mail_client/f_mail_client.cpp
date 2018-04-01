@@ -259,10 +259,6 @@ void FMailClient::onCellDoubleClick(int row, int col) {
   auto& tab = m_data.emailTab;
   auto& inbox = m_data.inboxTab;
 
-  // TODO
-  m_serverRoomLaunched = true;
-  commonData.eventSystem.fire(pEvent_t(new Event("launchServerRoom")));
-
   if (inbox.wgtTable->item(row, col)->flags() & Qt::ItemIsEnabled) {
     m_data.wgtTabs->setCurrentIndex(1);
 

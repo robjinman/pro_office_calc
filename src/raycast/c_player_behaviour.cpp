@@ -63,7 +63,9 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
   else if (e.name == "entity_destroyed") {
     player.alive = false;
 
-    CColourOverlay* overlay = new CColourOverlay(player.red, QColor(200, 0, 0, 80), Point(0, 0),
+    entityId_t entityId = Component::getNextId();
+
+    CColourOverlay* overlay = new CColourOverlay(entityId, QColor(200, 0, 0, 80), Point(0, 0),
       renderSystem.rg.viewport);
 
     renderSystem.addComponent(pCRender_t(overlay));
