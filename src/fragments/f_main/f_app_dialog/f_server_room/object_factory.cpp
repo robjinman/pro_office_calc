@@ -116,20 +116,26 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
 
     // Number of frames in sprite sheet
     const int W = 1;
-    const int H = 2;
+    const int H = 8;
 
-    vector<AnimationFrame> frames = constructFrames(W, H, { 1, 0 });
-
+    vector<AnimationFrame> damageFrames = constructFrames(W, H, { 1, 0 });
     CAnimation* anim = new CAnimation(entityId);
-    anim->addAnimation(pAnimation_t(new Animation("damage", m_timeService.frameRate, 0.5,
-      frames)));
+    anim->addAnimation(pAnimation_t(new Animation("damage", m_timeService.frameRate, 0.3,
+      damageFrames)));
+
+    vector<AnimationFrame> explodeFrames = constructFrames(W, H, { 2, 3, 4, 5, 6, 7 });
+    anim->addAnimation(pAnimation_t(new Animation("explode", m_timeService.frameRate, 0.6,
+      explodeFrames)));
+
     animationSystem.addComponent(pComponent_t(anim));
 
     auto& children = renderSystem.children(entityId);
     for (entityId_t childId : children) {
       CAnimation* anim = new CAnimation(childId);
-      anim->addAnimation(pAnimation_t(new Animation("damage", m_timeService.frameRate, 0.5,
-        frames)));
+      anim->addAnimation(pAnimation_t(new Animation("damage", m_timeService.frameRate, 0.3,
+        damageFrames)));
+      anim->addAnimation(pAnimation_t(new Animation("explode", m_timeService.frameRate, 0.6,
+        explodeFrames)));
       animationSystem.addComponent(pComponent_t(anim));
     }
 
@@ -143,9 +149,12 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
     handlers->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
       [=, &animationSystem](const GameEvent& e) {
 
-      DBG_PRINT("Server rack damaged! health = " << damage->health << "\n");
-
       animationSystem.playAnimation(entityId, "damage", false);
+    }});
+    handlers->targetedEventHandlers.push_back(EventHandler{"entity_destroyed",
+      [=, &animationSystem](const GameEvent& e) {
+
+      animationSystem.playAnimation(entityId, "explode", false);
     }});
     eventHandlerSystem.addComponent(pComponent_t(handlers));
 
