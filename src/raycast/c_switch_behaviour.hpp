@@ -8,6 +8,7 @@
 
 
 class EntityManager;
+class TimeService;
 class CWallDecal;
 
 
@@ -28,11 +29,13 @@ struct ESwitchActivate : public GameEvent {
 
 class CSwitchBehaviour : public CBehaviour {
   public:
-    CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, entityId_t target,
-      const std::string& message, SwitchState initialState, bool toggleable, double toggleDelay);
+    CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, TimeService& TimeService,
+      entityId_t target, const std::string& message, SwitchState initialState, bool toggleable,
+      double toggleDelay);
 
     std::string requiredItemType;
     std::string requiredItemName;
+    std::string caption;
 
     void update() override;
     void handleBroadcastedEvent(const GameEvent& event) override {}
@@ -41,16 +44,24 @@ class CSwitchBehaviour : public CBehaviour {
     ~CSwitchBehaviour() override {}
 
   private:
-    CWallDecal* getDecal() const;
-    void setDecal();
-
     EntityManager& m_entityManager;
+    TimeService& m_timeService;
     entityId_t m_target = -1;
     std::string m_message;
     SwitchState m_state;
     bool m_toggleable;
     double m_toggleDelay;
     Debouncer m_timer;
+
+    entityId_t m_captionBgId = -1;
+    entityId_t m_captionTextId = -1;
+    long m_captionTimeoutId = -1;
+
+    CWallDecal* getDecal() const;
+    void setDecal();
+
+    void showCaption();
+    void deleteCaption();
 };
 
 

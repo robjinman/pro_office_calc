@@ -39,15 +39,8 @@ class CDoorBehaviour : public CBehaviour {
     double m_y1;
     Debouncer m_timer;
 
-    entityId_t m_captionBgId = -1;
-    entityId_t m_captionTextId = -1;
-    long m_captionTimeoutId = -1;
-
     void playSound() const;
     void stopSound() const;
-
-    void showCaption();
-    void deleteCaption();
 };
 
 

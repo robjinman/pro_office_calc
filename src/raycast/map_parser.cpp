@@ -146,10 +146,10 @@ void constructPathFromRect(const XMLElement& e, Path& path) {
 //===========================================
 pair<string, string> parseKvpString(const string& s) {
   stringstream ss(s);
-  string key;
+  string key, val;
+
   std::getline(ss, key, '=');
-  string val;
-  ss >> val;
+  std::getline(ss, val, '=');
 
   return std::make_pair(key, val);
 }

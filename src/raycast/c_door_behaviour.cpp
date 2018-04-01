@@ -107,55 +107,6 @@ void CDoorBehaviour::handleBroadcastedEvent(const GameEvent& e) {
 }
 
 //===========================================
-// CDoorBehaviour::deleteCaption
-//===========================================
-void CDoorBehaviour::deleteCaption() {
-  m_timeService.cancelTimeout(m_captionTimeoutId);
-  m_entityManager.deleteEntity(m_captionBgId);
-  m_entityManager.deleteEntity(m_captionTextId);
-
-  m_captionBgId = -1;
-  m_captionTextId = -1;
-  m_captionTimeoutId = -1;
-}
-
-//===========================================
-// CDoorBehaviour::showCaption
-//===========================================
-void CDoorBehaviour::showCaption() {
-  deleteCaption();
-
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  const Size& vp = renderSystem.rg.viewport;
-
-  string caption = "The door is locked";
-
-  double margin = 0.2;
-  double chH = 0.8;
-  double chW = 0.4;
-  Size sz(2.0 * margin + chW * caption.length(), 2.0 * margin + chH);
-  Point bgPos(0.5 * (vp.x - sz.x), 0.75 * (vp.y - sz.y));
-  Point textPos = bgPos + Vec2f(margin, margin);
-
-  QColor bgColour(0, 0, 0, 100);
-  QColor textColour(200, 200, 0);
-
-  m_captionBgId = Component::getNextId();
-  m_captionTextId = Component::getNextId();
-
-  CColourOverlay* bgOverlay = new CColourOverlay(m_captionBgId, bgColour, bgPos, sz, 8);
-  CTextOverlay* textOverlay = new CTextOverlay(m_captionTextId, caption, textPos, chH, textColour,
-    9);
-
-  renderSystem.addComponent(pComponent_t(bgOverlay));
-  renderSystem.addComponent(pComponent_t(textOverlay));
-
-  m_captionTimeoutId = m_timeService.onTimeout([this]() {
-    deleteCaption();
-  }, 3.0);
-}
-
-//===========================================
 // CDoorBehaviour::handleTargetedEvent
 //===========================================
 void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
@@ -166,7 +117,6 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
   };
 
   if (!isPlayerActivated && e.name == "player_activate_entity") {
-    showCaption();
     return;
   }
 

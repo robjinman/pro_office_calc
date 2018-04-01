@@ -25,6 +25,11 @@ TEST_F(MapParserTest, parseKvpString) {
   ASSERT_EQ(kvp, parseKvpString("one=two"));
 }
 
+TEST_F(MapParserTest, parseKvpStringWithSpaces) {
+  pair<string, string> kvp("one", "two three");
+  ASSERT_EQ(kvp, parseKvpString("one=two three"));
+}
+
 TEST_F(MapParserTest, constructPath) {
   string d = "m 31.918905,67.183142 0,265.352498 L 293.18213,485.34829 325.2006,654.68072 "
     "109.36999,735.217 55.666713,913.83597 178.55975,979.92443 685.60906,978.88845 "

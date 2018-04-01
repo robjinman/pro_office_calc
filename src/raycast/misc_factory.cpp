@@ -331,9 +331,10 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
 
     string message = getValue(obj.dict, "message", "");
 
-    CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, target, message,
-      initialState, toggleable, toggleDelay);
+    CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, m_timeService,
+      target, message, initialState, toggleable, toggleDelay);
 
+    behaviour->caption = getValue(obj.dict, "caption", "");
     behaviour->requiredItemType = getValue(obj.dict, "required_item_type", "");
     behaviour->requiredItemName = getValue(obj.dict, "required_item_name", "");
 
