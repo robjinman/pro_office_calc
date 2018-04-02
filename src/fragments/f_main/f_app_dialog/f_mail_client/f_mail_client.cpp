@@ -27,17 +27,59 @@ struct Email {
   QString attachment;
 };
 
-const std::array<Email, 7> EMAILS = {{
+const std::array<Email, 8> EMAILS = {{
   // 0
+  {
+    "Meeting to discuss y2k issue",
+    "Brian Williams",
+    "devteam",
+    "11/03/95 12:55:36",
+
+    "M̨e̴eti͟ng ҉to d͜i̵sc̛u̕ss̀ y2ḱ i̛ssúe̸",
+    "B̡r̸i̶a͘n ̨W̢iļl̸i̕a͠m҉s",
+    "11͟/̧03̧/̛95̷ ͠1̢2:͝5̷5̀:͏3͏6҉",
+
+    // Message body
+    //
+    "I've arranged a meeting on Tuesday afternoon to discuss the y2k or \"millenium bug\" issue. "
+    "See the attached document for a brief overview.\n\n"
+
+    "Brian Williams,\n"
+    "Lead Kernel Developer,\n"
+    "Apex Systems\n",
+
+    "y2k_threat.doc"
+  },
+  // 1
+  {
+    "Larry?",
+    "Daniel Bright",
+    "Me",
+    "12/03/95 17:48:25",
+
+    "L͝a͡rry̢?̛",
+    "Dani̴el̨ B̀r̴ig̸h̸t̡",
+    "12/03́/͢9͡5҉ 1̛7:̀4̴8͜:̕25̶",
+
+    // Message body
+    //
+    "You weren't in the meeting earlier. Did you forget? Dave was trying to get hold of you this "
+    "afternoon also. In future could you let someone know before disappearing like that?\n\n"
+
+    "Daniel Bright,\n"
+    "Application Development Manager,\n"
+    "Apex Systems\n"
+  },
+  // 2
   {
     "Potentially dangerous app - remove ASAP",
     "Alan Shand",
     "devteam",
     "13/03/95 13:06:44",
 
-    "Potentially dangerous app - remove ASAP",
-    "Alan Shand",
-    "13/03/95 13:06:44",
+    "Pǫt̡entia҉l̵ly̕ ̢dangero͢u̵s̴ ͏app̡ ̕-͝ re̛m̴o͜vę A̕SAP",
+    "Al̛a̕n S̵han̡ḑ",
+    "1̵3͜/͞0͜3̸/̛95͡ ́13:͘0͠6:4͜4",
 
     // Message body
     //
@@ -51,16 +93,16 @@ const std::array<Email, 7> EMAILS = {{
     "Chief QA Officer,\n"
     "Apex Systems\n"
   },
-  // 1
+  // 3
   {
     "Quick question",
     "Alan Shand",
     "devteam",
     "13/03/95 13:08:17",
 
-    "Q̴̡̐̉u̵̻͑į̵̌̀c̸͍̆̒ḵ̶̛͊ ̸̲̽q̷̱̹͋ú̴̞ë̶̢̛̯́ŝ̷͘ͅt̷̢̅i̶̧̿o̵͓͋̈́n̵͖̄͂͜",
-    "A̴̫͘l̴̲̊a̵͈̽͊n̴̨̥̂͐ ̵̛̱̓S̷̱̾h̷̼̩͐a̶̗̯̅͑n̴̨͈͗̈d̵͎̂̒",
-    "1̴̙̽͊3̵̬͕̉/̷̪̉0̸̝͛̕3̷̖͔̄͝/̶̲̒͊9̵̮̗͐5̴̟̕ ̶̺̠̓1̷͎͍͊3̷̭̔̚:̶͓͗0̸͈͇̾̉8̵̧̦̂͠:̷͎̺̋1̷̲͊7̶͉̫̔͌",
+    "Q͏uic͟k̢ q̷u͝e̛sţio͝ņ",
+    "Àl͞a̴n̨ Sha̕nd",
+    "13/̀03͞/͞9̀5̨ ͘1͟3:͢08:1̀7",
 
     // Message body
     //
@@ -70,31 +112,16 @@ const std::array<Email, 7> EMAILS = {{
     "Chief QA Officer,\n"
     "Apex Systems\n"
   },
-  // 2
-  {
-    "The Subject",
-    "Joe Bloggs",
-    "Recipient",
-    "Time and date",
-
-    "The Subject",
-    "Joe Bloggs",
-    "Time and date",
-
-    // Message body
-    //
-    "Message body"
-  },
-  // 3
+  // 4
   {
     "Re: Quick question",
     "Paul Gresham",
     "devteam",
     "13/03/95 13:06:44",
 
-    "R̴̩̄̚e̵͖̽͜:̵̒͜ ̵̢̺͌Q̵̦̲̑͌u̸̡̫͂ī̵̬̖̕c̶͇̍k̸̲̳̔͘ ̶͓̳̚q̶͕̺̈́́u̷͔̓̚ȩ̷̟̃̚s̵̫̪͛t̸̨̞́i̵̬͓͌ȯ̷̦͓̃ṇ̸̟̚",
-    "Ṕ̶̱ạ̸̘̕u̴̫̻͐͝l̸̻̈́́ ̷̆̆ͅG̵̙̼̈̋r̸͔̉e̶͊̍ͅs̴̙͑h̵͕̗̿͋a̸̞͐m̴̘̚",
-    "1̷̙̍̕3̷͈̥̓̋/̸͎̤͠0̴̬̪͑̀3̴͍̰̎/̷͙̔̄͜9̴̰̘̇̊5̸̗̯̎̕ ̵̖̊̉1̸̼̾͆3̸̥̳̚:̸̢̭͛͠0̷͓̗͒̚6̷̩̀͜:̴͔̐͛4̸̙̳̊̌4̷͚̈",
+    "Ŗe: ̨Q͟uick ̴q̛u̸esti͝ón̨",
+    "Paul͢ ̨Gr͘es̵ham̷",
+    "1̀3/̡0̶3/95͟ 13:0̷6:͟4͘4",
 
     // Message body
     //
@@ -107,16 +134,16 @@ const std::array<Email, 7> EMAILS = {{
     "Systems Architect,\n"
     "Apex Systems\n"
   },
-  // 4
+  // 5
   {
     "Latest regarding Pro Office Calc",
     "Brian Williams",
     "devteam",
     "15/03/95 11:20:09",
 
-    "Ḽ̶̓͘à̷̬͜ṫ̶̙̑e̶͓̅s̷̙̈́̉t̸̲͉̓̚ ̸̨̜̏̈́r̵̥͂͝ë̸̡͕́g̸̮͋ã̶̟͇͒r̶̢̉̚d̷̹͌i̷̠̬͒̾n̶̛̗̎g̶̺͐ ̶̼͎̈̓P̶̡͕̂͌ṟ̷̺͂̕ȏ̷͚̔ ̷̗̎Ō̶͙̹f̵̮̫̿̐f̵͙͂͝î̴̗͗c̸̲̽̀e̸̮͓̒ ̷̳̮̋̾C̷̩̯̏ä̶̛͎͈́l̸̠̑͝c̶̛͎̔",
-    "B̶̧̋̎ŗ̷͝ị̷̻̈́͝ā̵͖̲n̵̛̖͋ ̶̙̺̓͌W̵̝̚̚i̵̻͛l̸̛̙̑͜l̶͕̈̒i̷̖͇̅a̷̾̈ͅm̷͕̘̕ș̵̒",
-    "1̷̻̪̈͛5̷̻͇̏/̸̭̊0̷̩̊3̵̤̂̂/̷̥͕͋̿9̵͍̎͒5̸̼͍̽ ̸̧̈́̕1̵̲̎1̶̘͐̉:̸̳̘͘2̴̧̳̐̏0̷̦̂:̸̳͚̍̒0̵̯͋̾9̷̨̧͂͝",
+    "La̧tes҉t r͟eg̴ard͢iǹg Pr̡o ͏Of̕fíc͏e ͞Cal̛ç",
+    "B̀ri̧a͘n̢ ̷W̷i̢l̕l̨i͞a̕ms̢",
+    "15͜/̧0҉3͢/̡9̶5 ̶1́1͝:̧2̨0͟:0̧9",
 
     // Message body
     //
@@ -129,16 +156,16 @@ const std::array<Email, 7> EMAILS = {{
 
     "syscalls.txt"
   },
-  // 5
+  // 6
   {
     "re: Latest regarding Pro Office Calc",
     "Michael Considine",
     "devteam",
     "15/03/95 11:55:12",
 
-    "ŕ̶̰̍ę̸̩̕:̵̯̣͌͂ ̵̯̖̈͛L̷̥͎͑a̴͇̭̕t̸͍̟͝͠e̴̛̤̒s̶͙̝͋t̵̼̐ ̸̖̪̓r̸̫͒̃e̶̦̅͠g̶͔͛͜â̶͇̑r̶̬̈́ḓ̵̃i̷̬͇̍̐ṋ̶͋g̶̣͇̃̑ ̷̱̓̐P̶͚̐̈r̴̙̼̎ȯ̶̥ ̷̹̽̿Õ̶̬͖͘ḟ̷̖͔̾f̴͍̘̌͊ī̵̧̉c̴̩̜͋̑ẻ̸̳ ̸̧̀C̷͍̈â̶̡̗͝l̶̠̞̈́̅c̷̻͑͝",
-    "M̴̲̺͒̾i̶̻̜͑c̷͇͐́h̸̪͔̍́a̷̺͠ȅ̷̲̗̆l̵͙̅͠ ̷͙̩͆̕C̸̨̭̿͘o̵̮̖͌n̶͙͂s̶̘̈́̚͜ī̷̪̺ḏ̷͕́̂į̷̆n̶̡̓͋ë̵̫",
-    "1̴͚͑͝5̸̢͕́/̵̹̒0̶̭̎3̶̹͍͊͐/̷̡̌́9̴̰̼͑͠5̸͉̀ ̴̡̝̋̆1̶̣̓1̷̱͉͒:̷͉́̄5̴̱̝͋͋5̵͓̍͜:̵͎͔̽̈1̷̪̜̑2̵̯̃́",
+    "r͟e͏: ҉Latest r͏e͞ga͢r͞dińg ͝P̛ro͠ O͡f̴fic͏e̴ ͝C͟a͝l͠c̀",
+    "M̀i̧çha͜e͟l͡ ̵Con͢s͡id͜i҉n͡e",
+    "15/͡0͏3̧/95͘ ͠11͘:55͠:̀12",
 
     // Message body
     //
@@ -148,16 +175,16 @@ const std::array<Email, 7> EMAILS = {{
     "Senior Kernel Developer,\n"
     "Apex Systems\n"
   },
-  // 6
+  // 7
   {
     "re: re: Latest regarding Pro Office Calc",
     "Brian Williams",
     "devteam",
     "15/03/95 12:01:19",
 
-    "r̶̘͐e̸̱͙͌̌:̴͍̭̎ ̴̬̋r̷̪͆ê̴̡͕:̶͉̍ ̶͇̈́L̷̛̳ą̵̪͋ť̶̮̯ḙ̵͑̄s̵̗̈́́t̴̰͖̓́ ̶͈̜̂r̶̫̖͒e̶̛͔g̵̰̠̈ả̸̩̣̕r̴̛̩̟̀d̶̖̚i̷̝̒̊n̸̥̈̂ğ̷̻ ̵͉̊̏P̷͈̅r̸̩̝̓o̸͇̞̊͌ ̵̩̅͝O̴͚̔͋f̷̱̪͛̈́f̷̯̈́͆i̸̠̋ͅc̷̫̫̿ę̶͝ ̸̭̒̉C̴̻͊̊á̴̟͈͝l̷̰̐͆c̶̛̰̑ͅ",
-    "B̸̀ͅr̵̦̫͌i̵̫̟͌̊á̵͎̪̚n̴̝̟̈́ ̸̨͊̚W̸͚̰͐ǐ̵̘̆ĺ̸̞̍l̵̺̖̔̚i̵͇̯͂̄a̷͓̜̿m̴͇̗͂̊s̵̘̹͗̒",
-    "1̶̗̱̒5̸̙̈́͛/̶͎̋͠0̷̹̮̚3̵̧̞̌̐/̸͍̋̇9̷̨͊͠5̴̝̘̉͆ ̶͈̳̄1̷̦̱̃̉2̵̖̰̈́:̴̗̍̽0̴̤̠͐1̵͕͆:̸̯̜̂͘1̶̡͚̐9̸̘̒͘",
+    "re: re:͘ ̡Ļate̡s̢t ̴r̴e̶gar̴d͝ing̛ ͞P͠r͏ó O̴f҉f͜ice̴ Ca̵lc",
+    "Br̨i̵an W̛i̴l͜l̴i̕am̷s͢",
+    "1̴5/0̀3/͡95̀ ́1҉2:0͏1͝:19",
 
     // Message body
     //
@@ -170,8 +197,8 @@ const std::array<Email, 7> EMAILS = {{
 }};
 
 const vector<vector<int>> INBOX_STATES = {
-  { 0, 1, 3, 4, 5, 6 },   // ST_INITIAL
-  { 0, 1, 2, 3, 4, 5, 6 } // ST_LARRY_DEAD
+  { 0, 2, 3, 4, 5, 6, 7 },   // ST_INITIAL
+  { 0, 1, 2, 3, 4, 5, 6, 7 } // ST_LARRY_DEAD
 };
 
 //===========================================
@@ -408,6 +435,8 @@ void FMailClient::populateInbox() {
 
     ++i;
   }
+
+  table.resizeColumnToContents(3);
 }
 
 //===========================================
