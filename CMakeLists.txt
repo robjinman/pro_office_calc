@@ -4,9 +4,34 @@ set(projectName procalc)
 
 project(${projectName})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+add_subdirectory(dependencies)
+add_subdirectory(tools)
+add_subdirectory(tests)
 
-add_compile_options(-std=c++14 -Wall)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Multimedia REQUIRED)
+find_package(OpenMP REQUIRED)
+if (PROFILING_ON)
+  find_package(GooglePerfTools REQUIRED)
+endif()
+
+file(GLOB_RECURSE srcs src/*.cpp)
+list(REMOVE_ITEM srcs "src/main.cpp")
+
+include_directories(src)
+include_directories(${CMAKE_BINARY_DIR}/dependencies/tinyxml2/include)
+
+link_directories(${CMAKE_BINARY_DIR}/dependencies/tinyxml2/lib)
+
+add_compile_options(-std=c++14 -Wall ${OpenMP_CXX_FLAGS})
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
   add_compile_options(-O3)
@@ -22,49 +47,20 @@ else()
   endif()
 endif()
 
-add_subdirectory(tools)
-add_subdirectory(tests)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Multimedia REQUIRED)
-find_package(TinyXML2 REQUIRED)
-find_package(OpenMP REQUIRED)
-if (PROFILING_ON)
-  find_package(GooglePerfTools REQUIRED)
-endif()
-
-file(GLOB_RECURSE srcs src/*.cpp)
-list(REMOVE_ITEM srcs "src/main.cpp")
-
-add_compile_options(${OpenMP_CXX_FLAGS})
-
 add_library(procalclib ${srcs})
-add_executable(procalc "src/main.cpp")
 
-target_link_libraries(procalc procalclib)
-
-include_directories(src)
-include_directories(${TINYXML2_INCLUDE_DIR})
-
-target_link_libraries(procalc "${OpenMP_CXX_FLAGS}")
-target_link_libraries(procalc Qt5::Core)
-target_link_libraries(procalc Qt5::Widgets)
-target_link_libraries(procalc Qt5::Gui)
-target_link_libraries(procalc Qt5::Multimedia)
-target_link_libraries(procalc ${TINYXML2_LIBRARIES})
+add_dependencies(procalclib libTinyXml2)
 
 target_link_libraries(procalclib "${OpenMP_CXX_FLAGS}")
 target_link_libraries(procalclib Qt5::Core)
 target_link_libraries(procalclib Qt5::Widgets)
 target_link_libraries(procalclib Qt5::Gui)
 target_link_libraries(procalclib Qt5::Multimedia)
-target_link_libraries(procalclib ${TINYXML2_LIBRARIES})
+target_link_libraries(procalclib tinyxml2)
+
+add_executable(procalc "src/main.cpp")
+
+target_link_libraries(procalc procalclib)
 
 file(COPY "data" DESTINATION "${CMAKE_BINARY_DIR}")
 file(COPY "VERSION" DESTINATION "${CMAKE_BINARY_DIR}/data")
