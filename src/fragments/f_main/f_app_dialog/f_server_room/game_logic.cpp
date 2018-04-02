@@ -2,6 +2,7 @@
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
+#include "raycast/damage_system.hpp"
 #include "event_system.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
@@ -40,9 +41,17 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   handlers->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     [=, &player](const GameEvent& e_) {
 
-    const EChangedZone& e = dynamic_cast<const EChangedZone&>(e_);
+    auto& e = dynamic_cast<const EChangedZone&>(e_);
     if (e.entityId == player.body && e.newZone == Component::getIdFromString("level_exit")) {
       m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_SUICIDE_MISSION, true)));
+    }
+  }});
+  handlers->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
+    [this](const GameEvent& e_) {
+
+    auto& e = dynamic_cast<const EEntityDestroyed&>(e_);
+    if (e.entityId == Component::getIdFromString("larry")) {
+      m_eventSystem.fire(pEvent_t(new Event("youveGotMail/larryKilled")));
     }
   }});
 

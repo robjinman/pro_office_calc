@@ -1,3 +1,4 @@
+#include <vector>
 #include <QPushButton>
 #include <QHeaderView>
 #include "fragments/relocatable/widget_frag_data.hpp"
@@ -6,6 +7,9 @@
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
+
+
+using std::vector;
 
 
 struct Email {
@@ -23,7 +27,8 @@ struct Email {
   QString attachment;
 };
 
-const std::array<Email, 6> EMAILS = {{
+const std::array<Email, 7> EMAILS = {{
+  // 0
   {
     "Potentially dangerous app - remove ASAP",
     "Alan Shand",
@@ -46,6 +51,7 @@ const std::array<Email, 6> EMAILS = {{
     "Chief QA Officer,\n"
     "Apex Systems\n"
   },
+  // 1
   {
     "Quick question",
     "Alan Shand",
@@ -64,6 +70,22 @@ const std::array<Email, 6> EMAILS = {{
     "Chief QA Officer,\n"
     "Apex Systems\n"
   },
+  // 2
+  {
+    "The Subject",
+    "Joe Bloggs",
+    "Recipient",
+    "Time and date",
+
+    "The Subject",
+    "Joe Bloggs",
+    "Time and date",
+
+    // Message body
+    //
+    "Message body"
+  },
+  // 3
   {
     "Re: Quick question",
     "Paul Gresham",
@@ -85,6 +107,7 @@ const std::array<Email, 6> EMAILS = {{
     "Systems Architect,\n"
     "Apex Systems\n"
   },
+  // 4
   {
     "Latest regarding Pro Office Calc",
     "Brian Williams",
@@ -106,6 +129,7 @@ const std::array<Email, 6> EMAILS = {{
 
     "syscalls.txt"
   },
+  // 5
   {
     "re: Latest regarding Pro Office Calc",
     "Michael Considine",
@@ -124,6 +148,7 @@ const std::array<Email, 6> EMAILS = {{
     "Senior Kernel Developer,\n"
     "Apex Systems\n"
   },
+  // 6
   {
     "re: re: Latest regarding Pro Office Calc",
     "Brian Williams",
@@ -143,6 +168,22 @@ const std::array<Email, 6> EMAILS = {{
     "Apex Systems\n"
   }
 }};
+
+const vector<vector<int>> INBOX_STATES = {
+  { 0, 1, 3, 4, 5, 6 },   // ST_INITIAL
+  { 0, 1, 2, 3, 4, 5, 6 } // ST_LARRY_DEAD
+};
+
+//===========================================
+// getEmails
+//===========================================
+static vector<const Email*> getEmails(int state) {
+  vector<const Email*> emails;
+  for (int idx : INBOX_STATES[state]) {
+    emails.push_back(&EMAILS[idx]);
+  }
+  return emails;
+}
 
 //===========================================
 // FMailClient::FMailClient
@@ -181,6 +222,12 @@ void FMailClient::reload(const FragmentSpec& spec_) {
   setupEmailTab();
 
   connect(m_data.wgtTabs.get(), SIGNAL(tabCloseRequested(int)), this, SLOT(onTabClose(int)));
+
+  commonData.eventSystem.listen("youveGotMail/larryKilled", [this](const Event&) {
+    m_inboxState = ST_LARRY_DEAD;
+    populateInbox();
+    enableEmails(0, -1);
+  }, m_larryKilledId);
 }
 
 //===========================================
@@ -236,26 +283,42 @@ static void enableRow(QTableWidget& table, int row) {
 }
 
 //===========================================
-// FMailClient::enableEmail
+// FMailClient::enableEmails
+//
+// If num is -1, all emails will be enabled
 //===========================================
-void FMailClient::enableEmail(int idx) {
-  auto& email = EMAILS[idx];
+void FMailClient::enableEmails(int startIdx, int num) {
+  vector<const Email*> emails = getEmails(m_inboxState);
   auto& inbox = m_data.inboxTab;
 
-  enableRow(*inbox.wgtTable, idx);
-  inbox.wgtTable->item(idx, 0)->setText(email.subject);
-  if (email.attachment != "") {
-    inbox.wgtTable->item(idx, 1)->setText("✓");
+  if (num == -1) {
+    num = emails.size();
   }
-  inbox.wgtTable->item(idx, 2)->setText(email.from);
-  inbox.wgtTable->item(idx, 3)->setText(email.date);
+
+  for (int idx = startIdx; idx < startIdx + num; ++idx) {
+    if (idx >= static_cast<int>(emails.size())) {
+      break;
+    }
+
+    auto& email = *emails[idx];
+
+    enableRow(*inbox.wgtTable, idx);
+    inbox.wgtTable->item(idx, 0)->setText(email.subject);
+    if (email.attachment != "") {
+      inbox.wgtTable->item(idx, 1)->setText("✓");
+    }
+    inbox.wgtTable->item(idx, 2)->setText(email.from);
+    inbox.wgtTable->item(idx, 3)->setText(email.date);
+  }
 }
 
 //===========================================
 // FMailClient::onCellDoubleClick
 //===========================================
 void FMailClient::onCellDoubleClick(int row, int col) {
-  auto& email = EMAILS[row];
+  vector<const Email*> emails = getEmails(m_inboxState);
+
+  auto& email = *emails[row];
   auto& tab = m_data.emailTab;
   auto& inbox = m_data.inboxTab;
 
@@ -270,8 +333,8 @@ void FMailClient::onCellDoubleClick(int row, int col) {
 
     m_data.wgtTabs->addTab(tab.page.get(), email.subject);
 
-    if (row + 1 < static_cast<int>(EMAILS.size())) {
-      enableEmail(row + 1);
+    if (row + 1 < static_cast<int>(emails.size())) {
+      enableEmails(row + 1, 1);
     }
     else {
       if (!m_serverRoomLaunched) {
@@ -329,6 +392,25 @@ void FMailClient::setupEmailTab() {
 }
 
 //===========================================
+// FMailClient::populateInbox
+//===========================================
+void FMailClient::populateInbox() {
+  vector<const Email*> emails = getEmails(m_inboxState);
+  QTableWidget& table = *m_data.inboxTab.wgtTable;
+
+  table.clearContents();
+  table.setRowCount(emails.size());
+
+  int i = 0;
+  for (auto email : emails) {
+    constructInboxEntry(table, i, email->subjectGarbled, email->attachment != "",
+      email->fromGarbled, email->dateGarbled);
+
+    ++i;
+  }
+}
+
+//===========================================
 // FMailClient::setupInboxTab
 //===========================================
 void FMailClient::setupInboxTab() {
@@ -337,7 +419,7 @@ void FMailClient::setupInboxTab() {
   tab.page = makeQtObjPtr<QWidget>();
   tab.vbox = makeQtObjPtr<QVBoxLayout>(tab.page.get());
 
-  tab.wgtTable = makeQtObjPtr<QTableWidget>(6, 4);
+  tab.wgtTable = makeQtObjPtr<QTableWidget>(0, 4);
   tab.wgtTable->setShowGrid(false);
   tab.wgtTable->setContextMenuPolicy(Qt::NoContextMenu);
   tab.wgtTable->setHorizontalHeaderLabels({"Subject", "", "From", "Date"});
@@ -348,15 +430,8 @@ void FMailClient::setupInboxTab() {
   connect(tab.wgtTable.get(), SIGNAL(cellDoubleClicked(int, int)), this,
     SLOT(onCellDoubleClick(int, int)));
 
-  int i = 0;
-  for (auto& email : EMAILS) {
-    constructInboxEntry(*tab.wgtTable, i, email.subjectGarbled, email.attachment != "",
-      email.fromGarbled, email.dateGarbled);
-
-    ++i;
-  }
-
-  enableEmail(0);
+  populateInbox();
+  enableEmails(0, 1);
 
   tab.vbox->addWidget(tab.wgtTable.get());
 
@@ -374,6 +449,8 @@ void FMailClient::cleanUp() {
   parentData.box->setSpacing(m_origParentState.spacing);
   parentData.box->setContentsMargins(m_origParentState.margins);
   parentData.box->removeWidget(this);
+
+  commonData.eventSystem.forget(m_larryKilledId);
 }
 
 //===========================================

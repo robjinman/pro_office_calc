@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="false"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.4142135"
-     inkscape:cx="1335.8743"
-     inkscape:cy="1214.1295"
+     inkscape:zoom="11.313708"
+     inkscape:cx="1947.5471"
+     inkscape:cy="642.5225"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g5760"
+     inkscape:current-layer="g5519-3-3"
      showguides="true"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -3081,13 +3081,13 @@
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             x="700.80225"
-             y="97.660667"
+             x="700.78381"
+             y="91.849884"
              id="text4613-7-7"
              sodipodi:linespacing="125%"><tspan
                id="tspan4615-5-5"
-               x="700.80225"
-               y="97.660667">type=civilian</tspan></text>
+               x="700.78381"
+               y="91.849884">type=civilian</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3151,6 +3151,16 @@
                  x="1762.8094"
                  y="3113.168">texture=keycard</tspan></text>
           </g>
+          <text
+             xml:space="preserve"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             x="701.14172"
+             y="97.529617"
+             id="text4613-7-7-90"
+             sodipodi:linespacing="125%"><tspan
+               id="tspan4615-5-5-20"
+               x="701.14172"
+               y="97.529617">name=larry</tspan></text>
         </g>
         <g
            transform="translate(210.0944,-159.98964)"

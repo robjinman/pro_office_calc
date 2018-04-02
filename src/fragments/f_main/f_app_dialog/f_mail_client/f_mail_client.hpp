@@ -59,11 +59,17 @@ class FMailClient : public QWidget, public Fragment {
     } m_origParentState;
 
     bool m_serverRoomLaunched = false;
+    int m_larryKilledId = -1;
+
+    const int ST_INITIAL = 0;
+    const int ST_LARRY_DEAD = 1;
+
+    int m_inboxState = 0;
 
     void setupInboxTab();
     void setupEmailTab();
-
-    void enableEmail(int idx);
+    void populateInbox();
+    void enableEmails(int startIdx, int num);
 };
 
 
