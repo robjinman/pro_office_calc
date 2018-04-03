@@ -601,7 +601,7 @@ const set<string>& GeometryFactory::types() const {
   static const set<string> types{
     "player",
     "region",
-    "joining_edge",
+    "join",
     "portal",
     "wall",
     "wall_decal",
@@ -624,7 +624,7 @@ bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
   else if (type == "region") {
     return constructRegion(entityId, obj, parentId, parentTransform);
   }
-  else if (type == "joining_edge") {
+  else if (type == "join") {
     return constructBoundaries(obj, parentId, parentTransform);
   }
   else if (type == "portal") {

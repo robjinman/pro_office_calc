@@ -1,8 +1,5 @@
-- Player death
 - Multiple guns
 - Advanced lighting
 - Ceiling decals
-- Sprites at different heights (possibly attached to wall/ceiling)
-- Animated wall/floor/ceiling textures/decals
 - Translucent walls & walls with holes
 - Sprite projectiles, e.g. fire balls

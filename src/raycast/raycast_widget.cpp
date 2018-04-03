@@ -20,6 +20,7 @@
 #include "raycast/misc_factory.hpp"
 #include "raycast/sprite_factory.hpp"
 #include "raycast/geometry_factory.hpp"
+#include "app_config.hpp"
 
 
 #ifdef DEBUG
@@ -73,7 +74,7 @@ static void loadTextures(RenderGraph& rg, const parser::Object& obj) {
       sz.y = std::stod(m.str(3));
     }
 
-    rg.textures[name] = Texture{QImage(path.c_str()), sz};
+    rg.textures[name] = Texture{QImage(config::dataPath(path).c_str()), sz};
   }
 }
 
@@ -82,7 +83,7 @@ static void loadTextures(RenderGraph& rg, const parser::Object& obj) {
 //===========================================
 static void loadMusicAssets(AudioService& audioService, const parser::Object& obj) {
   for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
-    audioService.addMusicTrack(it->first, it->second);
+    audioService.addMusicTrack(it->first, config::dataPath(it->second));
   }
 }
 
@@ -91,7 +92,7 @@ static void loadMusicAssets(AudioService& audioService, const parser::Object& ob
 //===========================================
 static void loadSoundAssets(AudioService& audioService, const parser::Object& obj) {
   for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
-    audioService.addSound(it->first, it->second);
+    audioService.addSound(it->first, config::dataPath(it->second));
   }
 }
 

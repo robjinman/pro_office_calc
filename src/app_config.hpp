@@ -5,9 +5,13 @@
 #include <string>
 
 
-struct AppConfig {
-  std::string userDataDir = ".";
-};
+namespace config {
+
+
+std::string dataPath(const std::string& relPath);
+
+
+}
 
 
 #endif

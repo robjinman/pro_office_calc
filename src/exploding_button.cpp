@@ -4,6 +4,7 @@
 #include "exploding_button.hpp"
 #include "utils.hpp"
 #include "update_loop.hpp"
+#include "app_config.hpp"
 
 
 //===========================================
@@ -13,7 +14,7 @@ ExplodingButton::ExplodingButton(QWidget* parent, const QString& caption, Update
   : QPushButton(caption, parent),
     m_updateLoop(updateLoop) {
 
-  m_spriteSheet.reset(new QImage("data/common/images/explosion.png"));
+  m_spriteSheet.reset(new QImage(config::dataPath("common/images/explosion.png").c_str()));
 
   m_wgtLabel = makeQtObjPtr<QLabel>(parent);
   m_wgtLabel->setFixedSize(100, 100);

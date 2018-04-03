@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
+#include "app_config.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 
 
@@ -34,9 +35,9 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->helpLabel = "H͠e͘l͢p";
   mainSpec->aboutLabel = "A͡b҉ou͞t̵";
   mainSpec->aboutDialogTitle = "A͞b̶out";
-  mainSpec->aboutDialogText =
+  mainSpec->aboutDialogText = QString() +
     "<div>"
-    "  <img src='data/apex.png'>"
+    "  <img src='" + config::dataPath("common/images/apex.png").c_str() + "'>"
     "  <p align='center'><big>P̸ro͡ ͏Office͟ ̀Ca͘l̶cu҉l̴at͘or̛</big>"
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>" + targetValue + "</p>"
@@ -45,7 +46,8 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.width = 400;
   mainSpec->settingsDialogSpec.height = 300;
-  mainSpec->settingsDialogSpec.backgroundImage = "data/loading.png";
+  mainSpec->settingsDialogSpec.backgroundImage =
+    config::dataPath("shuffled_keys/loading.png").c_str();
   mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loadingScreenSpec.setEnabled(true);
 

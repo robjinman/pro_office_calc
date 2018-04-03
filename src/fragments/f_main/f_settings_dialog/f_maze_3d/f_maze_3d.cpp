@@ -2,6 +2,7 @@
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d.hpp"
 #include "fragments/f_main/f_settings_dialog/f_maze_3d/f_maze_3d_spec.hpp"
 #include "utils.hpp"
+#include "app_config.hpp"
 
 
 //===========================================
@@ -39,7 +40,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
-  m_data.wgtRaycast->initialise("data/common/maps/house.svg");
+  m_data.wgtRaycast->initialise(config::dataPath("common/maps/house.svg"));
 }
 
 //===========================================

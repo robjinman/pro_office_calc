@@ -4,6 +4,7 @@
 #include "fragments/f_main/f_desktop/f_server_room_init/f_server_room_init_spec.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
+#include "app_config.hpp"
 
 
 //===========================================
@@ -25,7 +26,7 @@ void FServerRoomInit::reload(const FragmentSpec& spec_) {
   commonData.eventSystem.listen("launchServerRoom", [this, &spec_](const Event&) {
     auto& parentData = parentFragData<FDesktopData>();
 
-    QPixmap pix("data/youve_got_mail/procalc_dark.png");
+    QPixmap pix(config::dataPath("youve_got_mail/procalc_dark.png").c_str());
     parentData.icons[0]->wgtButton->setIcon(pix);
   }, m_launchEventId);
 }

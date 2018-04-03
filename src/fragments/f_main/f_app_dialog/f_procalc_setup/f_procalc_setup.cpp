@@ -7,6 +7,7 @@
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
+#include "app_config.hpp"
 
 
 using std::set;
@@ -137,7 +138,7 @@ void FProcalcSetup::setupPage1() {
   QVBoxLayout* vbox = new QVBoxLayout;
   page.widget->setLayout(vbox);
 
-  QPixmap icon("data/common/images/warning.png");
+  QPixmap icon(config::dataPath("common/images/warning.png").c_str());
 
   QLabel* wgtIcon = new QLabel;
   wgtIcon->setPixmap(icon);
@@ -186,7 +187,7 @@ void FProcalcSetup::setupPage2() {
   page.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
   vbox->addWidget(page.wgtRaycast.get());
 
-  page.wgtRaycast->initialise("data/making_progress/map.svg");
+  page.wgtRaycast->initialise(config::dataPath("making_progress/map.svg"));
 
   QDialog& dialog = parentFrag<QDialog>();
 

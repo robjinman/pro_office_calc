@@ -107,7 +107,7 @@
              y="351.72943"
              x="175.16014"
              id="tspan5260-9-0-3-5-2"
-             sodipodi:role="line">pistol_shoot=data/common/sfx/pistol_shoot.wav</tspan></text>
+             sodipodi:role="line">pistol_shoot=common/sfx/pistol_shoot.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-2"
@@ -119,7 +119,7 @@
              y="369.44183"
              x="174.76396"
              id="tspan5260-9-0-3-5-2-8"
-             sodipodi:role="line">shotgun_shoot=data/common/sfx/shotgun_shoot.wav</tspan></text>
+             sodipodi:role="line">shotgun_shoot=common/sfx/shotgun_shoot.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9"
@@ -131,7 +131,7 @@
              y="387.11951"
              x="175.31639"
              id="tspan5260-9-0-3-5-2-7"
-             sodipodi:role="line">monster_hurt=data/common/sfx/monster_hurt.wav</tspan></text>
+             sodipodi:role="line">monster_hurt=common/sfx/monster_hurt.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9-3"
@@ -143,7 +143,7 @@
              y="403.10513"
              x="175.01991"
              id="tspan5260-9-0-3-5-2-7-6"
-             sodipodi:role="line">monster_death=data/common/sfx/monster_death.wav</tspan></text>
+             sodipodi:role="line">monster_death=common/sfx/monster_death.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9-3-1"
@@ -155,7 +155,7 @@
              y="420.78281"
              x="175.52097"
              id="tspan5260-9-0-3-5-2-7-6-2"
-             sodipodi:role="line">ammo_collect=data/common/sfx/ammo_collect.wav</tspan></text>
+             sodipodi:role="line">ammo_collect=common/sfx/ammo_collect.wav</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7-9-9-3-1-6"
@@ -167,7 +167,7 @@
              y="436.80222"
              x="175.79576"
              id="tspan5260-9-0-3-5-2-7-6-2-1"
-             sodipodi:role="line">click=data/common/sfx/click.wav</tspan></text>
+             sodipodi:role="line">click=common/sfx/click.wav</tspan></text>
       </g>
       <text
          xml:space="preserve"
@@ -217,7 +217,7 @@
            sodipodi:role="line"
            id="tspan5256"
            x="133.78275"
-           y="106.03917">white_paint=data/common/images/grey_bricks.png</tspan></text>
+           y="106.03917">white_paint=common/images/grey_bricks.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -229,7 +229,7 @@
            id="tspan5260"
            x="134.03926"
            y="123.48338"
-           style="font-size:12.94190121px">white_tiles=data/common/images/white_tiles.png</tspan></text>
+           style="font-size:12.94190121px">white_tiles=common/images/white_tiles.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -241,7 +241,7 @@
            id="tspan5260-6"
            x="134.35382"
            y="139.60439"
-           style="font-size:12.94190121px">white_lino=data/common/images/marble_tiles.png</tspan></text>
+           style="font-size:12.94190121px">white_lino=common/images/marble_tiles.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -253,7 +253,7 @@
            id="tspan5260-9-4-0"
            x="135.30067"
            y="158.58891"
-           style="font-size:12.94190121px">crosshair=data/common/images/crosshair.png</tspan></text>
+           style="font-size:12.94190121px">crosshair=common/images/crosshair.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -265,7 +265,7 @@
            id="tspan5260-9-4-0-6"
            x="133.95789"
            y="174.99516"
-           style="font-size:12.94190121px">gun=data/common/images/gun.png</tspan></text>
+           style="font-size:12.94190121px">gun=common/images/gun.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -277,7 +277,7 @@
            id="tspan5260-9-4-0-6-0"
            x="133.48802"
            y="193.5206"
-           style="font-size:12.94190121px">default=data/common/images/default.png</tspan></text>
+           style="font-size:12.94190121px">default=common/images/default.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -289,7 +289,7 @@
            id="tspan5260-9-4-0-6-0-5"
            x="134.23935"
            y="209.89345"
-           style="font-size:12.94190121px">progress=data/making_progress/progress.png</tspan></text>
+           style="font-size:12.94190121px">progress=making_progress/progress.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -301,7 +301,7 @@
            id="tspan5260-9-4-0-6-0-5-1"
            x="134.34322"
            y="241.67148"
-           style="font-size:12.94190121px">progress_bar=data/making_progress/progress_bar.png</tspan></text>
+           style="font-size:12.94190121px">progress_bar=making_progress/progress_bar.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -313,7 +313,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7"
            x="133.9917"
            y="259.22031"
-           style="font-size:12.94190121px">switch=data/common/images/switch.png</tspan></text>
+           style="font-size:12.94190121px">switch=common/images/switch.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -325,7 +325,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1"
            x="133.65912"
            y="275.51862"
-           style="font-size:12.94190121px">ammo=data/common/images/ammo.png,25,15</tspan></text>
+           style="font-size:12.94190121px">ammo=common/images/ammo.png,25,15</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -337,7 +337,7 @@
            id="tspan5260-9-4-0-6-0-5-2"
            x="136.34381"
            y="225.51605"
-           style="font-size:12.94190121px">caption=data/making_progress/caption.png</tspan></text>
+           style="font-size:12.94190121px">caption=making_progress/caption.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -349,7 +349,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4"
            x="133.32018"
            y="292.18613"
-           style="font-size:12.94190121px">bricks=data/common/images/slimy_bricks.png</tspan></text>
+           style="font-size:12.94190121px">bricks=common/images/slimy_bricks.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -361,7 +361,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7"
            x="134.40553"
            y="308.97934"
-           style="font-size:12.94190121px">metal_floor=data/common/images/metal_floor.png</tspan></text>
+           style="font-size:12.94190121px">metal_floor=common/images/metal_floor.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -373,7 +373,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9"
            x="134.8145"
            y="328.97934"
-           style="font-size:12.94190121px">metal_ceiling=data/common/images/metal_ceiling.png</tspan></text>
+           style="font-size:12.94190121px">metal_ceiling=common/images/metal_ceiling.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -385,7 +385,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3"
            x="134.5435"
            y="347.64343"
-           style="font-size:12.94190121px">dark_bricks=data/common/images/dark_bricks.png</tspan></text>
+           style="font-size:12.94190121px">dark_bricks=common/images/dark_bricks.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -397,7 +397,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0"
            x="134.72821"
            y="364.62912"
-           style="font-size:12.94190121px">bad_guy=data/common/images/bad_guy.png,70,70</tspan></text>
+           style="font-size:12.94190121px">bad_guy=common/images/bad_guy.png,70,70</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -409,7 +409,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8"
            x="135.69054"
            y="384.65887"
-           style="font-size:12.94190121px">white_marble=data/common/images/white_marble.png</tspan></text>
+           style="font-size:12.94190121px">white_marble=common/images/white_marble.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -421,7 +421,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8"
            x="134.59204"
            y="403.70688"
-           style="font-size:12.94190121px">granite=data/common/images/granite.png</tspan></text>
+           style="font-size:12.94190121px">granite=common/images/granite.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -433,7 +433,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2"
            x="135.55255"
            y="422.09174"
-           style="font-size:12.94190121px">door=data/common/images/door.png,64,80</tspan></text>
+           style="font-size:12.94190121px">door=common/images/door.png,64,80</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -445,7 +445,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8"
            x="136.28122"
            y="439.06232"
-           style="font-size:12.94190121px">sky=data/common/images/sky.png</tspan></text>
+           style="font-size:12.94190121px">sky=common/images/sky.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -457,7 +457,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8"
            x="133.7688"
            y="456.36618"
-           style="font-size:12.94190121px">number=data/making_progress/digits.png</tspan></text>
+           style="font-size:12.94190121px">number=making_progress/digits.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -469,7 +469,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8-3"
            x="135.33223"
            y="472.29633"
-           style="font-size:12.94190121px">keypresses_remaining=data/making_progress/remaining.png</tspan></text>
+           style="font-size:12.94190121px">keypresses_remaining=making_progress/remaining.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -481,7 +481,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8-3-7"
            x="135.38156"
            y="487.73032"
-           style="font-size:12.94190121px">filing_cabinet_front=data/common/images/filing_cabinet_front.png,20,50</tspan></text>
+           style="font-size:12.94190121px">filing_cabinet_front=common/images/filing_cabinet_front.png,20,50</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -493,7 +493,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8-3-7-1"
            x="135.88121"
            y="505.42923"
-           style="font-size:12.94190121px">filing_cabinet_side=data/common/images/filing_cabinet_side.png,20,20</tspan></text>
+           style="font-size:12.94190121px">filing_cabinet_side=common/images/filing_cabinet_side.png,20,20</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -505,7 +505,7 @@
            id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8-3-7-1-0"
            x="135.68358"
            y="523.81403"
-           style="font-size:12.94190121px">plant=data/common/images/office_plant.png,21,25</tspan></text>
+           style="font-size:12.94190121px">plant=common/images/office_plant.png,21,25</tspan></text>
     </g>
   </g>
   <g
@@ -731,7 +731,7 @@
                y="1970.3505"
                x="3034.9316"
                id="tspan11743-2-6-9-9"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
         </g>
         <g
            id="g8892">
@@ -751,7 +751,7 @@
                y="1989.3732"
                x="3014.6494"
                id="tspan11743-2-6-9-9-1"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              id="text11741-9-3-0-3-7-9"
@@ -817,7 +817,7 @@
            sodipodi:linespacing="125%"><tspan
              y="1960.9698"
              x="1960.9449"
-             id="tspan4215-3-9-9-2">type=joining_edge</tspan></text>
+             id="tspan4215-3-9-9-2">type=join</tspan></text>
       </g>
       <g
          id="g5076">
@@ -870,7 +870,7 @@
              y="2169.1648"
              x="2081.0322"
              id="tspan4507"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
       </g>
       <g
          id="g4583">
@@ -1012,7 +1012,7 @@
              transform="matrix(0.01233746,0.731942,-1.3658449,0.02275574,0,0)"><tspan
                id="tspan4215-3-1-7-0-7-6-9"
                x="3445.7786"
-               y="-1610.6698">type=joining_edge</tspan></text>
+               y="-1610.6698">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -1069,7 +1069,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-7-6-5"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -1148,7 +1148,7 @@
              transform="matrix(0.01233746,0.731942,-1.3658449,0.02275574,0,0)"><tspan
                id="tspan4215-3-1-7-0-7-6-9-6"
                x="3445.7786"
-               y="-1610.6698">type=joining_edge</tspan></text>
+               y="-1610.6698">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -1205,7 +1205,7 @@
              transform="matrix(0.01233746,0.731942,-1.3658449,0.02275574,0,0)"><tspan
                id="tspan4215-3-1-7-0-7-6-9-2"
                x="3445.7786"
-               y="-1610.6698">type=joining_edge</tspan></text>
+               y="-1610.6698">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -1262,7 +1262,7 @@
              transform="matrix(0.01233746,0.731942,-1.3658449,0.02275574,0,0)"><tspan
                id="tspan4215-3-1-7-0-7-6-9-9"
                x="3445.7786"
-               y="-1610.6698">type=joining_edge</tspan></text>
+               y="-1610.6698">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -1493,7 +1493,7 @@
              sodipodi:role="line"
              id="tspan4174-0-37-6-6"
              x="2236.6655"
-             y="2440.5183">type=joining_edge</tspan></text>
+             y="2440.5183">type=join</tspan></text>
       </g>
       <g
          transform="translate(4.3394453e-6,2.4518847e-6)"
@@ -1547,7 +1547,7 @@
              y="1346.1945"
              x="1935.3292"
              id="tspan4174-0-90-0"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4172-1-68-9-3"
@@ -1787,7 +1787,7 @@
              sodipodi:linespacing="125%"><tspan
                y="1353.6335"
                x="2364.8574"
-               id="tspan4215-3-6-5">type=joining_edge</tspan></text>
+               id="tspan4215-3-6-5">type=join</tspan></text>
           <text
              transform="scale(1.0603588,0.94307701)"
              id="text4213-9-34-0-8-5"
@@ -1935,7 +1935,7 @@
              sodipodi:linespacing="125%"><tspan
                y="1353.6335"
                x="2364.8574"
-               id="tspan4215-3-6-5-3">type=joining_edge</tspan></text>
+               id="tspan4215-3-6-5-3">type=join</tspan></text>
           <text
              transform="scale(1.0603588,0.94307701)"
              id="text4213-9-34-0-8-5-4"
@@ -2124,7 +2124,7 @@
              sodipodi:role="line"
              id="tspan4174-0-9"
              x="2837.1338"
-             y="1337.3107">type=joining_edge</tspan></text>
+             y="1337.3107">type=join</tspan></text>
       </g>
     </g>
     <g
@@ -2272,7 +2272,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-9-9-2-6"
                x="1942.631"
-               y="2011.5786">type=joining_edge</tspan></text>
+               y="2011.5786">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2405,7 +2405,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-9-9-2-6-8"
                x="1942.631"
-               y="2011.5786">type=joining_edge</tspan></text>
+               y="2011.5786">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2514,7 +2514,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2570,7 +2570,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-4"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2626,7 +2626,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-7"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2682,7 +2682,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-4-3"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2738,7 +2738,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-8"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2794,7 +2794,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-4-30"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2851,7 +2851,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-1-7-0-7-6"
                x="2111.7378"
-               y="2645.6831">type=joining_edge</tspan></text>
+               y="2645.6831">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -2994,7 +2994,7 @@
              sodipodi:linespacing="125%"><tspan
                y="2605.7456"
                x="2569.1504"
-               id="tspan4215-3-19-8-3-4">type=joining_edge</tspan></text>
+               id="tspan4215-3-19-8-3-4">type=join</tspan></text>
           <text
              transform="scale(1.0603588,0.94307701)"
              id="text4213-9-93-1-4-9-8"
@@ -3041,7 +3041,7 @@
                y="1891.9677"
                x="2191.8743"
                id="tspan4174-0-0-1-8"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              id="text4172-1-2-9-9-0"
@@ -3073,7 +3073,7 @@
                y="1935.1866"
                x="2194.8547"
                id="tspan4174-0-0-1-8-9"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              id="text4172-1-2-9-9-0-0"
@@ -3302,7 +3302,7 @@
              y="1372.2659"
              x="2324.3447"
              id="tspan4174-0-90-0-4"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
       </g>
       <g
          id="g8451">
@@ -3354,7 +3354,7 @@
            sodipodi:linespacing="125%"><tspan
              y="1448.5725"
              x="1836.6266"
-             id="tspan4215-3-7-1">type=joining_edge</tspan></text>
+             id="tspan4215-3-7-1">type=join</tspan></text>
       </g>
       <g
          transform="translate(3.138049e-5,3.6235773e-6)"
@@ -3609,7 +3609,7 @@
              y="1420.307"
              x="2950.4382"
              id="tspan11743-2-6-9-9-4"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text11741-9-3-0-3-7"
@@ -3796,7 +3796,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-4-7-6"
                x="1394.5145"
-               y="1476.1023">type=joining_edge</tspan></text>
+               y="1476.1023">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -3907,7 +3907,7 @@
              sodipodi:role="line"
              id="tspan4174-0-0-8-60"
              x="1928.0275"
-             y="1932.78">type=joining_edge</tspan></text>
+             y="1932.78">type=join</tspan></text>
       </g>
     </g>
     <g
@@ -4029,7 +4029,7 @@
              sodipodi:role="line"
              id="tspan4174-0-0-8"
              x="1947.2992"
-             y="1764.9596">type=joining_edge</tspan></text>
+             y="1764.9596">type=join</tspan></text>
         <text
            transform="scale(1.0116731,0.98846159)"
            xml:space="preserve"
@@ -4074,7 +4074,7 @@
              y="2043.1803"
              x="1917.3107"
              id="tspan4174-0-0-8-5"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4172-1-2-7-8-3"
@@ -4251,7 +4251,7 @@
              y="2837.1404"
              x="1737.5696"
              id="tspan4174-0-0-8-5-1-8-4-7-1"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
       </g>
       <text
          sodipodi:linespacing="125%"
@@ -4339,7 +4339,7 @@
                sodipodi:role="line"
                id="tspan4174-0-0-8-5-1"
                x="1882.3394"
-               y="2778.0864">type=joining_edge</tspan></text>
+               y="2778.0864">type=join</tspan></text>
           <text
              transform="scale(1.0116731,0.98846159)"
              xml:space="preserve"
@@ -4429,7 +4429,7 @@
                sodipodi:role="line"
                id="tspan4174-0-0-8-5-1-8"
                x="1882.3394"
-               y="2778.0864">type=joining_edge</tspan></text>
+               y="2778.0864">type=join</tspan></text>
           <text
              transform="scale(1.0116731,0.98846159)"
              xml:space="preserve"
@@ -4519,7 +4519,7 @@
                sodipodi:role="line"
                id="tspan4174-0-0-8-5-1-8-8"
                x="1882.3394"
-               y="2778.0864">type=joining_edge</tspan></text>
+               y="2778.0864">type=join</tspan></text>
           <text
              transform="scale(1.0116731,0.98846159)"
              xml:space="preserve"
@@ -4827,7 +4827,7 @@
            sodipodi:linespacing="125%"><tspan
              y="3784.4556"
              x="1858.8118"
-             id="tspan4215-3-4-2-8-6-6-4-5-9">type=joining_edge</tspan></text>
+             id="tspan4215-3-4-2-8-6-6-4-5-9">type=join</tspan></text>
         <text
            transform="scale(1.0603588,0.94307701)"
            id="text4213-9-7-5-9-7-1-1-0-1-9"
@@ -4918,7 +4918,7 @@
              sodipodi:role="line"
              id="tspan4174-0-0-8-5-7"
              x="1851.5197"
-             y="2058.0405">type=joining_edge</tspan></text>
+             y="2058.0405">type=join</tspan></text>
       </g>
       <g
          id="g10043">
@@ -5036,7 +5036,7 @@
              y="2826.7346"
              x="1737.5696"
              id="tspan4174-0-0-8-5-1-8-4-7"
-             sodipodi:role="line">type=joining_edge</tspan></text>
+             sodipodi:role="line">type=join</tspan></text>
         <text
            sodipodi:linespacing="125%"
            id="text4172-1-2-7-8-3-7-0-9-6"
@@ -5191,7 +5191,7 @@
            sodipodi:linespacing="125%"><tspan
              y="3842.0256"
              x="1837.9644"
-             id="tspan4215-3-4-70-1-1-3-3">type=joining_edge</tspan></text>
+             id="tspan4215-3-4-70-1-1-3-3">type=join</tspan></text>
       </g>
       <text
          transform="scale(1.0603588,0.94307701)"
@@ -5306,7 +5306,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-3-4-2-8-6-6-4"
                x="1849.0913"
-               y="3794.6533">type=joining_edge</tspan></text>
+               y="3794.6533">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -5382,7 +5382,7 @@
            sodipodi:linespacing="125%"><tspan
              y="3832.5093"
              x="1850.3511"
-             id="tspan4215-3-4-2-8-6-6-4-5-4">type=joining_edge</tspan></text>
+             id="tspan4215-3-4-2-8-6-6-4-5-4">type=join</tspan></text>
         <text
            transform="scale(1.0603588,0.94307701)"
            id="text4213-9-7-5-9-7-1-1-0-1-5"
@@ -5414,7 +5414,7 @@
            transform="scale(1.0603588,0.94307701)"><tspan
              id="tspan4215-3-4-2-8-6-6-4-5-9-8"
              x="1845.4756"
-             y="3800.686">type=joining_edge</tspan></text>
+             y="3800.686">type=join</tspan></text>
       </g>
       <g
          id="g13975">
@@ -5586,7 +5586,7 @@
              sodipodi:role="line"
              id="tspan4174-0-9-5"
              x="2873.1992"
-             y="1260.1782">type=joining_edge</tspan></text>
+             y="1260.1782">type=join</tspan></text>
         <text
            transform="scale(0.9999985,1.0000015)"
            xml:space="preserve"

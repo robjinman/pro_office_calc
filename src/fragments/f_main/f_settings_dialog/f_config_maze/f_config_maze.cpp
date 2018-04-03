@@ -8,6 +8,7 @@
 #include "utils.hpp"
 #include "event_system.hpp"
 #include "strings.hpp"
+#include "app_config.hpp"
 
 
 using std::string;
@@ -166,7 +167,7 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
   m_data.pages[15] = makeQtObjPtr<ConfigPage>(symbols[15], vector<int>{ 11, 100 });
 
   m_data.wgtMap = makeQtObjPtr<QLabel>();
-  m_data.wgtMap->setPixmap(QPixmap("data/config_maze.png"));
+  m_data.wgtMap->setPixmap(QPixmap(config::dataPath("are_you_sure/config_maze.png").c_str()));
 
   m_data.pages[1]->grid->addWidget(m_data.wgtMap.get(), 0, 1);
 

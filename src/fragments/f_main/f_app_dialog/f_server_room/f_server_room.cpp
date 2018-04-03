@@ -5,6 +5,7 @@
 #include "raycast/render_system.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
+#include "app_config.hpp"
 
 
 //===========================================
@@ -62,7 +63,7 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
       audioService, timeService, *m_data.wgtCalculator);
 
     m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
-    m_data.wgtRaycast->initialise("data/youve_got_mail/map.svg");
+    m_data.wgtRaycast->initialise(config::dataPath("youve_got_mail/map.svg"));
 
     m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem, entityManager));
 

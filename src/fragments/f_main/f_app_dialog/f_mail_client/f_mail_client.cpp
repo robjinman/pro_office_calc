@@ -7,6 +7,7 @@
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
+#include "app_config.hpp"
 
 
 using std::vector;
@@ -452,7 +453,8 @@ void FMailClient::setupInboxTab() {
   tab.wgtTable->setShowGrid(false);
   tab.wgtTable->setContextMenuPolicy(Qt::NoContextMenu);
   tab.wgtTable->setHorizontalHeaderLabels({"Subject", "", "From", "Date"});
-  tab.wgtTable->horizontalHeaderItem(1)->setIcon(QIcon("data/youve_got_mail/attachment.png"));
+  tab.wgtTable->horizontalHeaderItem(1)
+    ->setIcon(QIcon(config::dataPath("youve_got_mail/attachment.png").c_str()));
   tab.wgtTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
   tab.wgtTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
   tab.wgtTable->verticalHeader()->setVisible(false);

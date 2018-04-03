@@ -384,7 +384,7 @@
                  sodipodi:role="line"
                  id="tspan190917"
                  x="794.49994"
-                 y="300.4617">type=joining_edge</tspan></text>
+                 y="300.4617">type=join</tspan></text>
             <text
                xml:space="preserve"
                style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:4, 1;stroke-dashoffset:0;stroke-opacity:1"
@@ -486,7 +486,7 @@
                  transform="scale(0.98033161,1.020063)"><tspan
                    id="tspan4215-5-6-4-2-4-2-1"
                    x="828.17035"
-                   y="185.77356">type=joining_edge</tspan></text>
+                   y="185.77356">type=join</tspan></text>
               <text
                  sodipodi:linespacing="125%"
                  xml:space="preserve"
@@ -594,7 +594,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="152.61674"
                  x="395.78378"
-                 id="tspan4215-5-6-4-2-6-2">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-6-2">type=join</tspan></text>
             <text
                transform="scale(1.025495,0.97513884)"
                id="text4213-3-0-78-89-3-9-2"
@@ -694,7 +694,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="153.78697"
                  x="396.16989"
-                 id="tspan4215-5-6-4-2-6-2-89">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-6-2-89">type=join</tspan></text>
           </g>
           <g
              id="g7070">
@@ -713,7 +713,7 @@
                transform="scale(1.025495,0.97513883)"><tspan
                  id="tspan4215-5-6-4-2-6-2-89-0"
                  x="393.32852"
-                 y="146.61719">type=joining_edge</tspan></text>
+                 y="146.61719">type=join</tspan></text>
             <text
                sodipodi:linespacing="125%"
                xml:space="preserve"
@@ -772,7 +772,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="415.64456"
                  x="-141.36273"
-                 id="tspan4215-5-6-4-2-6-2-2">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-6-2-2">type=join</tspan></text>
             <text
                transform="matrix(0.02536636,-1.0070504,0.99239692,0.02390006,0,0)"
                id="text4213-3-0-78-89-3-9-2-0"
@@ -839,7 +839,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41"
@@ -869,7 +869,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7"
@@ -899,7 +899,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0"
@@ -929,7 +929,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0"
@@ -985,7 +985,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-6">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-6">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-5"
@@ -1015,7 +1015,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-4"
@@ -1046,7 +1046,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-08"
@@ -1077,7 +1077,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3"
@@ -1133,7 +1133,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-1">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-1">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-54"
@@ -1163,7 +1163,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-4">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-4">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-9"
@@ -1193,7 +1193,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-3">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-3">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-5"
@@ -1224,7 +1224,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-99">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-99">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-7"
@@ -1280,7 +1280,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-6-1">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-6-1">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-5-9"
@@ -1310,7 +1310,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-4-7"
@@ -1341,7 +1341,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-08-5"
@@ -1372,7 +1372,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3-6"
@@ -1428,7 +1428,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-5">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-5">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-8"
@@ -1458,7 +1458,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-3">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-3">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-8"
@@ -1488,7 +1488,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-32">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-32">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-4"
@@ -1518,7 +1518,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-0">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-0">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-2"
@@ -1574,7 +1574,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-6-7">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-6-7">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-5-0"
@@ -1604,7 +1604,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-1">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-1">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-4-6"
@@ -1634,7 +1634,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-4">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-4">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-08-8"
@@ -1665,7 +1665,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-2">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-2">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3-2"
@@ -1721,7 +1721,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-1-7">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-1-7">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-54-4"
@@ -1752,7 +1752,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-4-6">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-4-6">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-9-0"
@@ -1783,7 +1783,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-3-4">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-3-4">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-5-1"
@@ -1813,7 +1813,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-99-5">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-99-5">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-7-4"
@@ -1869,7 +1869,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="81.154213"
                  x="528.47504"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-6-1-0">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-6-1-0">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-5-9-3"
@@ -1899,7 +1899,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-4-7-3"
@@ -1929,7 +1929,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-08-5-2"
@@ -1959,7 +1959,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3-6-4"
@@ -2046,7 +2046,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="82.514832"
                  x="501.1615"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3-3">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3-3">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-7-4-7-3-5"
@@ -2077,7 +2077,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="43.37019"
                  x="511.62997"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7-1">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7-1">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-08-5-2-1"
@@ -2108,7 +2108,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="128.40625"
                  x="511.38507"
-                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2-4">type=joining_edge</tspan></text>
+                 id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2-4">type=join</tspan></text>
             <text
                transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
                id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3-6-4-1"
@@ -2202,7 +2202,7 @@
                sodipodi:role="line"
                id="tspan5109"
                x="256.94672"
-               y="678.67786">type=joining_edge</tspan></text>
+               y="678.67786">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.78897429px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -2385,7 +2385,7 @@
                y="627.64325"
                x="441.23459"
                id="tspan191244"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              sodipodi:linespacing="125%"
              id="text191246"
@@ -2418,7 +2418,7 @@
                y="2251.3218"
                x="1784.8777"
                id="tspan5109-2-9"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              transform="scale(0.95425985,1.0479326)"
              sodipodi:linespacing="125%"
@@ -2522,7 +2522,7 @@
                y="730.82751"
                x="474.06104"
                id="tspan191261-3-7"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              transform="scale(0.98508221,1.0151437)"
              sodipodi:linespacing="125%"
@@ -2606,7 +2606,7 @@
                y="730.82751"
                x="474.06104"
                id="tspan191261-3-7-3"
-               sodipodi:role="line">type=joining_edge</tspan></text>
+               sodipodi:role="line">type=join</tspan></text>
           <text
              transform="scale(0.98508221,1.0151437)"
              sodipodi:linespacing="125%"
@@ -2934,7 +2934,7 @@
                sodipodi:role="line"
                id="tspan9196-6-8"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3039,7 +3039,7 @@
                sodipodi:role="line"
                id="tspan9196-9"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3144,7 +3144,7 @@
                sodipodi:role="line"
                id="tspan9196-36-8"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3249,7 +3249,7 @@
                sodipodi:role="line"
                id="tspan9196-6-8-2"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3354,7 +3354,7 @@
                sodipodi:role="line"
                id="tspan9196-9-9"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3459,7 +3459,7 @@
                sodipodi:role="line"
                id="tspan9196-36-8-4"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -3532,7 +3532,7 @@
              sodipodi:linespacing="125%"><tspan
                y="81.154213"
                x="528.47504"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-6-1-0-0">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-6-1-0-0">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-5-9-3-7"
@@ -3563,7 +3563,7 @@
              sodipodi:linespacing="125%"><tspan
                y="82.514832"
                x="501.1615"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3-5">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3-5">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-7-4-7-3-0"
@@ -3605,7 +3605,7 @@
              sodipodi:linespacing="125%"><tspan
                y="43.37019"
                x="511.62997"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7-2">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7-2">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-0-08-5-2-2"
@@ -3636,7 +3636,7 @@
              sodipodi:linespacing="125%"><tspan
                y="128.40625"
                x="511.38507"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2-42">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2-42">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3-6-4-7"
@@ -3703,7 +3703,7 @@
              sodipodi:linespacing="125%"><tspan
                y="81.154213"
                x="528.47504"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-6-1-0-0-4">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-6-1-0-0-4">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-5-9-3-7-9"
@@ -3733,7 +3733,7 @@
              sodipodi:linespacing="125%"><tspan
                y="82.514832"
                x="501.1615"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3-5-5">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-4-0-0-3-5-5">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-7-4-7-3-0-2"
@@ -3763,7 +3763,7 @@
              sodipodi:linespacing="125%"><tspan
                y="43.37019"
                x="511.62997"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7-2-6">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-9-7-0-7-2-6">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-0-08-5-2-2-0"
@@ -3793,7 +3793,7 @@
              sodipodi:linespacing="125%"><tspan
                y="128.40625"
                x="511.38507"
-               id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2-42-3">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-26-9-9-9-0-2-42-3">type=join</tspan></text>
           <text
              transform="matrix(1.2223107,-0.00117584,-0.00112961,0.81812367,0,0)"
              id="text4213-3-0-78-89-9-6-0-7-2-41-0-0-3-6-4-7-1"
@@ -3995,7 +3995,7 @@
                sodipodi:role="line"
                id="tspan9196-6-8-8"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4100,7 +4100,7 @@
                sodipodi:role="line"
                id="tspan9196-9-5"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4205,7 +4205,7 @@
                sodipodi:role="line"
                id="tspan9196-36-8-0"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4310,7 +4310,7 @@
                sodipodi:role="line"
                id="tspan9196-6-8-29"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4415,7 +4415,7 @@
                sodipodi:role="line"
                id="tspan9196-9-3"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4520,7 +4520,7 @@
                sodipodi:role="line"
                id="tspan9196-36-8-5"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4625,7 +4625,7 @@
                sodipodi:role="line"
                id="tspan9196-6-8-4"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4730,7 +4730,7 @@
                sodipodi:role="line"
                id="tspan9196-9-8"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4835,7 +4835,7 @@
                sodipodi:role="line"
                id="tspan9196-36-8-2"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -4940,7 +4940,7 @@
                sodipodi:role="line"
                id="tspan9196-6-8-9"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -5045,7 +5045,7 @@
                sodipodi:role="line"
                id="tspan9196-9-2"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -5150,7 +5150,7 @@
                sodipodi:role="line"
                id="tspan9196-36-8-8"
                x="737.37549"
-               y="701.72357">type=joining_edge</tspan></text>
+               y="701.72357">type=join</tspan></text>
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.82676435px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -5214,7 +5214,7 @@
              sodipodi:linespacing="125%"><tspan
                y="31.223997"
                x="826.96649"
-               id="tspan4215-5-6-4-2-7-1-8-1-2-8">type=joining_edge</tspan></text>
+               id="tspan4215-5-6-4-2-7-1-8-1-2-8">type=join</tspan></text>
           <text
              transform="scale(1.0202553,0.98014683)"
              id="text4213-3-0-78-89-9-6-0-7-2-4-3"
@@ -5291,7 +5291,7 @@
              id="tspan5260-9-0"
              x="175.50415"
              y="306.16229"
-             style="font-size:12.94190121px">birds=data/common/music/birds.mp3</tspan></text>
+             style="font-size:12.94190121px">birds=common/music/birds.mp3</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -5328,7 +5328,7 @@
              id="tspan5260-9-0-3-5-2"
              x="175.16014"
              y="351.72943"
-             style="font-size:12.94190121px">pistol_shoot=data/common/sfx/pistol_shoot.wav</tspan></text>
+             style="font-size:12.94190121px">pistol_shoot=common/sfx/pistol_shoot.wav</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -5339,7 +5339,7 @@
              id="tspan5260-9-0-3-5-2-8"
              x="174.76396"
              y="369.44183"
-             style="font-size:12.94190121px">shotgun_shoot=data/common/sfx/shotgun_shoot.wav</tspan></text>
+             style="font-size:12.94190121px">shotgun_shoot=common/sfx/shotgun_shoot.wav</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -5350,7 +5350,7 @@
              id="tspan5260-9-0-3-5-2-7"
              x="175.31639"
              y="387.11951"
-             style="font-size:12.94190121px">monster_hurt=data/common/sfx/monster_hurt.wav</tspan></text>
+             style="font-size:12.94190121px">monster_hurt=common/sfx/monster_hurt.wav</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -5361,7 +5361,7 @@
              id="tspan5260-9-0-3-5-2-7-6"
              x="175.01991"
              y="403.10513"
-             style="font-size:12.94190121px">monster_death=data/common/sfx/monster_death.wav</tspan></text>
+             style="font-size:12.94190121px">monster_death=common/sfx/monster_death.wav</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -5372,7 +5372,7 @@
              id="tspan5260-9-0-3-5-2-7-6-2"
              x="175.52097"
              y="420.78281"
-             style="font-size:12.94190121px">ammo_collect=data/common/sfx/ammo_collect.wav</tspan></text>
+             style="font-size:12.94190121px">ammo_collect=common/sfx/ammo_collect.wav</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -5383,7 +5383,7 @@
              id="tspan5260-9-0-3-5-2-7-6-2-1"
              x="175.79576"
              y="436.80222"
-             style="font-size:12.94190121px">click=data/common/sfx/click.wav</tspan></text>
+             style="font-size:12.94190121px">click=common/sfx/click.wav</tspan></text>
       </g>
       <text
          id="text5258-7-2-2-9"
@@ -5440,7 +5440,7 @@
          sodipodi:linespacing="125%"><tspan
            y="116.14069"
            x="133.78275"
-           id="tspan5256">light_bricks=data/common/images/light_bricks.png</tspan></text>
+           id="tspan5256">light_bricks=common/images/light_bricks.png</tspan></text>
       <text
          id="text5258"
          y="133.5849"
@@ -5451,7 +5451,7 @@
            style="font-size:12.94190121px"
            y="133.5849"
            x="134.03926"
-           id="tspan5260">dark_bricks=data/common/images/dark_bricks.png</tspan></text>
+           id="tspan5260">dark_bricks=common/images/dark_bricks.png</tspan></text>
       <text
          id="text5258-2"
          y="149.70592"
@@ -5462,7 +5462,7 @@
            style="font-size:12.94190121px"
            y="149.70592"
            x="134.35382"
-           id="tspan5260-6">bed=data/common/images/bed.png</tspan></text>
+           id="tspan5260-6">bed=common/images/bed.png</tspan></text>
       <text
          id="text5258-1"
          y="165.17389"
@@ -5473,7 +5473,7 @@
            style="font-size:12.94190121px"
            y="165.17389"
            x="134.90625"
-           id="tspan5260-8">white_pillow=data/common/images/white_pillow.png</tspan></text>
+           id="tspan5260-8">white_pillow=common/images/white_pillow.png</tspan></text>
       <text
          id="text5258-7"
          y="182.85155"
@@ -5484,7 +5484,7 @@
            style="font-size:12.94190121px"
            y="182.85155"
            x="134.90625"
-           id="tspan5260-9">hedge=data/common/images/hedge.png,120,120</tspan></text>
+           id="tspan5260-9">hedge=common/images/hedge.png,120,120</tspan></text>
       <text
          id="text5258-7-8"
          y="199.8544"
@@ -5495,7 +5495,7 @@
            style="font-size:12.94190121px"
            y="199.8544"
            x="135.0209"
-           id="tspan5260-9-4">sky=data/common/images/sky.png</tspan></text>
+           id="tspan5260-9-4">sky=common/images/sky.png</tspan></text>
       <text
          id="text5258-7-8-5"
          y="217.17776"
@@ -5506,7 +5506,7 @@
            style="font-size:12.94190121px"
            y="217.17776"
            x="135.30067"
-           id="tspan5260-9-4-0">crosshair=data/common/images/crosshair.png</tspan></text>
+           id="tspan5260-9-4-0">crosshair=common/images/crosshair.png</tspan></text>
       <text
          id="text5258-7-8-5-3"
          y="233.58401"
@@ -5517,7 +5517,7 @@
            style="font-size:12.94190121px"
            y="233.58401"
            x="133.95789"
-           id="tspan5260-9-4-0-6">gun=data/common/images/gun.png</tspan></text>
+           id="tspan5260-9-4-0-6">gun=common/images/gun.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1"
          y="252.10945"
@@ -5528,7 +5528,7 @@
            style="font-size:12.94190121px"
            y="252.10945"
            x="133.48802"
-           id="tspan5260-9-4-0-6-0">default=data/common/images/default.png</tspan></text>
+           id="tspan5260-9-4-0-6-0">default=common/images/default.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6"
          y="268.16461"
@@ -5539,7 +5539,7 @@
            style="font-size:12.94190121px"
            y="268.16461"
            x="132.73006"
-           id="tspan5260-9-4-0-6-0-3">dark_wood=data/common/images/dark_wood.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3">dark_wood=common/images/dark_wood.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2"
          y="285.70639"
@@ -5550,7 +5550,7 @@
            style="font-size:12.94190121px"
            y="285.70639"
            x="132.56877"
-           id="tspan5260-9-4-0-6-0-3-0">light_wood=data/common/images/light_wood.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0">light_wood=common/images/light_wood.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3"
          y="302.68341"
@@ -5561,7 +5561,7 @@
            style="font-size:12.94190025px"
            y="302.68341"
            x="133.47711"
-           id="tspan5260-9-4-0-6-0-3-0-6">white_paint=data/common/images/white_paint.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6">white_paint=common/images/white_paint.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3"
          y="321.65991"
@@ -5572,7 +5572,7 @@
            style="font-size:12.9418993px"
            y="321.65991"
            x="134.97476"
-           id="tspan5260-9-4-0-6-0-3-0-6-6">grass=data/common/images/grass.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6">grass=common/images/grass.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7"
          y="340.04498"
@@ -5583,7 +5583,7 @@
            style="font-size:12.94189835px"
            y="340.04498"
            x="136.66211"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5">inside_window=data/common/images/inside_window.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5">inside_window=common/images/inside_window.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3"
          y="356.01132"
@@ -5594,7 +5594,7 @@
            style="font-size:12.94189835px"
            y="356.01132"
            x="135.17194"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5">outside_window=data/common/images/outside_window.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5">outside_window=common/images/outside_window.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1"
          y="374.57211"
@@ -5605,7 +5605,7 @@
            style="font-size:12.9418993px"
            y="374.57211"
            x="135.97549"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1">ammo=data/common/images/ammo.png,25,15</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1">ammo=common/images/ammo.png,25,15</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-9"
          y="388.61642"
@@ -5616,7 +5616,7 @@
            style="font-size:12.9418993px"
            y="388.61642"
            x="136.23653"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4">bad_guy=data/common/images/bad_guy.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4">bad_guy=common/images/bad_guy.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-9-6"
          y="404.61899"
@@ -5627,7 +5627,7 @@
            style="font-size:12.9418993px"
            y="404.61899"
            x="137.12657"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4-9">stone_slabs=data/common/images/stone_slabs.png</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4-9">stone_slabs=common/images/stone_slabs.png</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-9-6-0"
          y="421.09793"
@@ -5638,7 +5638,7 @@
            style="font-size:12.9418993px"
            y="421.09793"
            x="134.74109"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4-9-9">crate=data/common/images/crate.png,30,30</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4-9-9">crate=common/images/crate.png,30,30</tspan></text>
       <text
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-9-6-0-5"
          y="435.55002"
@@ -5649,7 +5649,7 @@
            style="font-size:12.9418993px"
            y="435.55002"
            x="135.18411"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4-9-9-7">grey_stone=data/common/images/grey_stone.png,30,30</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-4-9-9-7">grey_stone=common/images/grey_stone.png,30,30</tspan></text>
     </g>
   </g>
 </svg>

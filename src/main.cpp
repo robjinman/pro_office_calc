@@ -46,9 +46,9 @@ using std::unique_ptr;
 //===========================================
 // loadStateId
 //===========================================
-int loadStateId(const AppConfig& conf) {
+int loadStateId() {
   int id = 0;
-  ifstream fin(conf.userDataDir + sep + "procalc.dat", ifstream::binary);
+  ifstream fin(config::dataPath("procalc.dat"), ifstream::binary);
 
   if (fin.good()) {
     fin.read(reinterpret_cast<char*>(&id), sizeof(id));
@@ -60,10 +60,10 @@ int loadStateId(const AppConfig& conf) {
 //===========================================
 // persistStateId
 //===========================================
-void persistStateId(const AppConfig& conf, int id) {
+void persistStateId(int id) {
   DBG_PRINT("Persisting state id " << id << "\n");
 
-  ofstream fout(conf.userDataDir + sep + "procalc.dat", ofstream::binary | ofstream::trunc);
+  ofstream fout(config::dataPath("procalc.dat"), ofstream::binary | ofstream::trunc);
   fout.write(reinterpret_cast<const char*>(&id), sizeof(id));
 }
 
@@ -77,15 +77,13 @@ int main(int argc, char** argv) {
 #endif
 
   try {
-    AppConfig appConfig;
-
     int stateId = 0;
 
     if (argc > 1) {
       stateId = std::stoi(argv[1]);
     }
     else {
-      stateId = loadStateId(appConfig);
+      stateId = loadStateId();
     }
 
     DBG_PRINT("Loading app state " << stateId << "\n");
@@ -119,7 +117,7 @@ int main(int argc, char** argv) {
     }, requestStateChangeEventId);
 
     int code = app.exec();
-    persistStateId(appConfig, stateId);
+    persistStateId(stateId);
 
     return code;
   }

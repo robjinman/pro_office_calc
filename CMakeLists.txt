@@ -27,9 +27,9 @@ file(GLOB_RECURSE srcs src/*.cpp)
 list(REMOVE_ITEM srcs "src/main.cpp")
 
 include_directories(src)
-include_directories(${CMAKE_BINARY_DIR}/dependencies/tinyxml2/include)
+include_directories(${CMAKE_BINARY_DIR}/out/usr/local/include)
 
-link_directories(${CMAKE_BINARY_DIR}/dependencies/tinyxml2/lib)
+link_directories(${CMAKE_BINARY_DIR}/out/usr/local/lib)
 
 add_compile_options(-std=c++14 -Wall ${OpenMP_CXX_FLAGS})
 

@@ -2,11 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 include_directories(include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
-include_directories(${CMAKE_BINARY_DIR}/dependencies/tinyxml2/include)
-include_directories(${CMAKE_BINARY_DIR}/dependencies/googleTest/include)
+include_directories(${CMAKE_BINARY_DIR}/out/usr/local/include)
 
-link_directories(${CMAKE_BINARY_DIR}/dependencies/tinyxml2/lib)
-link_directories(${CMAKE_BINARY_DIR}/dependencies/googleTest/lib)
+link_directories(${CMAKE_BINARY_DIR}/out/usr/local/lib)
 
 add_compile_options(-std=c++14 -Wall -g)
 

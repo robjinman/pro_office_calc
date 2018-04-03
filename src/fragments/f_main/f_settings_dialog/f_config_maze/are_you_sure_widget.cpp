@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/are_you_sure_widget.hpp"
 #include "utils.hpp"
+#include "app_config.hpp"
 
 
 using std::string;
@@ -136,7 +137,7 @@ AreYouSureWidget::AreYouSureWidget()
 
   m_page1.wgtWarning = makeQtObjPtr<QLabel>();
   m_page1.wgtWarning->setMouseTracking(true);
-  m_page1.wgtWarning->setPixmap(QPixmap("data/warning.png"));
+  m_page1.wgtWarning->setPixmap(QPixmap(config::dataPath("common/images/warning.png").c_str()));
 
   m_page1.wgtPrompt = makeQtObjPtr<QLabel>();
   m_page1.wgtPrompt->setWordWrap(true);
@@ -167,7 +168,7 @@ AreYouSureWidget::AreYouSureWidget()
 
   m_page2.wgtConsole = makeQtObjPtr<QLabel>();
   m_page2.wgtConsole->setMouseTracking(true);
-  m_page2.wgtConsole->setPixmap(QPixmap("data/console.png"));
+  m_page2.wgtConsole->setPixmap(QPixmap(config::dataPath("common/images/console.png").c_str()));
 
   m_page2.wgtPrompt = makeQtObjPtr<QLabel>("The admin console is for advanced users only. "
     "Enter at your own risk.");
