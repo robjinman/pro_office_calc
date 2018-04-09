@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -86,19 +87,20 @@ typedef std::unique_ptr<CHRect> pCHRect_t;
 
 typedef std::unique_ptr<CZone> pCZone_t;
 
-struct CZone : public CSpatial {
-  CZone(entityId_t entityId, entityId_t parentId)
-    : CSpatial(CSpatialKind::ZONE, entityId, parentId) {}
+class CZone : public CSpatial {
+  public:
+    CZone(entityId_t entityId, entityId_t parentId)
+      : CSpatial(CSpatialKind::ZONE, entityId, parentId) {}
 
-  double floorHeight = 0;
-  double ceilingHeight = 100;
-  bool hasCeiling = true;
-  std::list<pCZone_t> children;
-  std::list<CEdge*> edges;
-  std::list<pCVRect_t> vRects;
-  std::list<pCHRect_t> hRects;
-  std::list<pCPath_t> paths;
-  CZone* parent = nullptr;
+    double floorHeight = 0;
+    double ceilingHeight = 100;
+    bool hasCeiling = true;
+    std::list<pCZone_t> children;
+    std::list<CEdge*> edges;
+    std::list<pCVRect_t> vRects;
+    std::list<pCHRect_t> hRects;
+    std::list<pCPath_t> paths;
+    CZone* parent = nullptr;
 };
 
 void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);

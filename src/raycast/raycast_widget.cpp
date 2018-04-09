@@ -1,5 +1,6 @@
 #include <list>
 #include <regex>
+#include <cassert>
 #include <QMessageBox>
 #include <QMenuBar>
 #include <QPainter>

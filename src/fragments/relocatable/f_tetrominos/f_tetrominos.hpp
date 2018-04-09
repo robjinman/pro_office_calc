@@ -3,6 +3,7 @@
 
 
 #include <list>
+#include <array>
 #include <QLabel>
 #include <QTimer>
 #include <QImage>

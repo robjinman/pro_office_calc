@@ -14,6 +14,7 @@
 #  define DBG_PRINT_VAR(var) std::cout << #var" = " << var << "\n";
 #else
 #  define DBG_PRINT(msg)
+#  define DBG_PRINT_VAR(var)
 #endif
 #include "platform.hpp"
 

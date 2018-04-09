@@ -1,3 +1,4 @@
+#include <cassert>
 #include <QMouseEvent>
 #include <QApplication>
 #include "fragments/f_main/f_app_dialog/f_server_room/object_factory.hpp"

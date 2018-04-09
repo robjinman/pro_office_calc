@@ -7,17 +7,19 @@
 #include <memory>
 
 
-struct FragmentData {
-  virtual ~FragmentData() = 0;
+class FragmentData {
+  public:
+    virtual ~FragmentData() = 0;
 };
 
 
 class EventSystem;
 class UpdateLoop;
 
-struct CommonFragData {
-  EventSystem& eventSystem;
-  UpdateLoop& updateLoop;
+class CommonFragData {
+  public:
+    EventSystem& eventSystem;
+    UpdateLoop& updateLoop;
 };
 
 

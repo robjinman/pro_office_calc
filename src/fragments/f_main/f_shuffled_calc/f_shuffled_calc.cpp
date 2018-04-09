@@ -17,7 +17,10 @@
 #include "fragments/f_main/f_main.hpp"
 
 
-using std::random_shuffle;
+using std::shuffle;
+
+
+static std::mt19937 randEngine(randomSeed());
 
 
 //===========================================
@@ -87,7 +90,7 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   m_targetValue = spec.targetValue;
 
   ucs4string_t symbols_ = utf8ToUcs4(spec.symbols.toStdString());
-  random_shuffle(symbols_.begin(), symbols_.end());
+  shuffle(symbols_.begin(), symbols_.end(), randEngine);
   QString symbols(ucs4ToUtf8(symbols_).c_str());
 
   auto& buttons = m_wgtButtonGrid->buttons;
@@ -116,7 +119,7 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   });
 
   std::vector<int> newIds = ids;
-  random_shuffle(newIds.begin(), newIds.end());
+  shuffle(newIds.begin(), newIds.end(), randEngine);
 
   for (int i = 0; i < symbols.length(); ++i) {
     group->setId(buttons[i].get(), newIds[i]);

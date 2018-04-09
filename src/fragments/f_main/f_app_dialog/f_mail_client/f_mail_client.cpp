@@ -1,4 +1,5 @@
 #include <vector>
+#include <array>
 #include <QPushButton>
 #include <QHeaderView>
 #include "fragments/relocatable/widget_frag_data.hpp"

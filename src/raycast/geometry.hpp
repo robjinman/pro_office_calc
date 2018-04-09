@@ -126,38 +126,39 @@ inline double angle(const Vec2f& A, const Vec2f& B) {
     return acos(dotProduct(A, B) / (length(A) * length(B)));
 }
 
-struct Matrix {
-  Matrix();
-  Matrix(double a, Vec2f t);
+class Matrix {
+  public:
+    Matrix();
+    Matrix(double a, Vec2f t);
 
-  std::array<std::array<double, 3>, 3> data;
+    std::array<std::array<double, 3>, 3> data;
 
-  double tx() const {
-    return data[0][2];
-  }
+    double tx() const {
+      return data[0][2];
+    }
 
-  double ty() const {
-    return data[1][2];
-  }
+    double ty() const {
+      return data[1][2];
+    }
 
-  double a() const {
-    return atan2(data[1][0], data[1][1]);
-  }
+    double a() const {
+      return atan2(data[1][0], data[1][1]);
+    }
 
-  std::array<double, 3>& operator[](int idx) {
-    return data[idx];
-  }
+    std::array<double, 3>& operator[](int idx) {
+      return data[idx];
+    }
 
-  const std::array<double, 3>& operator[](int idx) const {
-    return data[idx];
-  }
+    const std::array<double, 3>& operator[](int idx) const {
+      return data[idx];
+    }
 
-  Matrix& operator=(const Matrix& rhs) {
-    data = rhs.data;
-    return *this;
-  }
+    Matrix& operator=(const Matrix& rhs) {
+      data = rhs.data;
+      return *this;
+    }
 
-  Matrix inverse() const;
+    Matrix inverse() const;
 };
 
 Point operator*(const Matrix& lhs, const Point& rhs);

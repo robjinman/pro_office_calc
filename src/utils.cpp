@@ -45,10 +45,10 @@ string readString(istream& is) {
   int nBytes = 0;
   is.read(reinterpret_cast<char*>(&nBytes), sizeof(nBytes));
 
-  char buf[nBytes];
-  is.read(buf, nBytes);
+  vector<char> buf(nBytes);
+  is.read(buf.data(), nBytes);
 
-  return string(buf, nBytes);
+  return string(buf.data(), nBytes);
 }
 
 void writeString(ostream& os, const string& s) {

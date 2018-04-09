@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <string>
 #include "raycast/component_kinds.hpp"
 
 

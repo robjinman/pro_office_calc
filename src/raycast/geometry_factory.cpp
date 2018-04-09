@@ -1,4 +1,5 @@
 #include <list>
+#include <cassert>
 #include "raycast/geometry_factory.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/spatial_system.hpp"
