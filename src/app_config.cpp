@@ -16,8 +16,7 @@ string dataPath(const string& relPath) {
     return string("./usr/local/share/procalc/data/") + relPath;
   #endif
 #else
-  return string("./data/") + relPath;
-  //return QStandardPaths::locate(QStandardPaths::AppDataLocation, relPath.c_str()).toStdString();
+  return QStandardPaths::locate(QStandardPaths::AppDataLocation, relPath.c_str()).toStdString();
 #endif
 }
 

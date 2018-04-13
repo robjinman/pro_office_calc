@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="dataFolder">
+            <Directory Id="dir619C03FBE77C7441750158809D2F0310" Name="youve_got_mail">
+                <Component Id="cmpC385B5F22C5B678E342128EFA9A41BB9" Guid="PUT-GUID-HERE">
+                    <File Id="filB967F0DB02F42F7E2494C998BED67582" KeyPath="yes" Source="SourceDir\youve_got_mail\server_rack_side.png" />
+                </Component>
+                <Component Id="cmpB2497055CB3804F7C512E0B530453C55" Guid="PUT-GUID-HERE">
+                    <File Id="filC95CF16077F741B8B64E1C6B89B22494" KeyPath="yes" Source="SourceDir\youve_got_mail\tetrisweeper.png" />
+                </Component>
+                <Component Id="cmp0E417F7604E3B9B01251FB2471EDC4CC" Guid="PUT-GUID-HERE">
+                    <File Id="fil5045CEA99AA67E8C5648C491FAA8FA06" KeyPath="yes" Source="SourceDir\youve_got_mail\attachment.png" />
+                </Component>
+                <Component Id="cmpD54B7B72DA94B99F217B683DBF78C3D7" Guid="PUT-GUID-HERE">
+                    <File Id="filB8AB16B388B967FCD3A0375B991769BD" KeyPath="yes" Source="SourceDir\youve_got_mail\shaft_diagram.png" />
+                </Component>
+                <Component Id="cmp39E07BC63712E9F9B7BB6AD6FF7C5880" Guid="PUT-GUID-HERE">
+                    <File Id="fil3C7523AF4F306E13C5F9EEC9EA9B69B5" KeyPath="yes" Source="SourceDir\youve_got_mail\arrow.png" />
+                </Component>
+                <Component Id="cmpCF09387469748A220639B6A85A98ABF6" Guid="PUT-GUID-HERE">
+                    <File Id="filF0C3AC385CF9D234F50FF0869F9D8A6F" KeyPath="yes" Source="SourceDir\youve_got_mail\server_room_a_door_sign.png" />
+                </Component>
+                <Component Id="cmpB6DAB0B3D33F03A8BAE7A6EA4E7C155D" Guid="PUT-GUID-HERE">
+                    <File Id="fil870633DBB2397F5B6F803B39ED596015" KeyPath="yes" Source="SourceDir\youve_got_mail\map.svg" />
+                </Component>
+                <Component Id="cmpC99954292A2CB07E066EE8A99F2DC3D6" Guid="PUT-GUID-HERE">
+                    <File Id="filF641F9BCAFC21AD0D85EF8B4621CBD93" KeyPath="yes" Source="SourceDir\youve_got_mail\server_rack_top.png" />
+                </Component>
+                <Component Id="cmp66A87983C1CCACB742BFD94994AC2C67" Guid="PUT-GUID-HERE">
+                    <File Id="filC5426272E3A2C54CF74A0AE9A5BC953E" KeyPath="yes" Source="SourceDir\youve_got_mail\text_file.png" />
+                </Component>
+                <Component Id="cmp4C4E1ACC779ACF9C5D80F4C594189A7A" Guid="PUT-GUID-HERE">
+                    <File Id="fil99EBFFE0752BBD3AB1FAA8C43E59E2B1" KeyPath="yes" Source="SourceDir\youve_got_mail\big_screen.png" />
+                </Component>
+                <Component Id="cmp6350D5BEA22F46F46CCCEC7A797D4D08" Guid="PUT-GUID-HERE">
+                    <File Id="fil8F39F736F73351A08E743170B44D7E04" KeyPath="yes" Source="SourceDir\youve_got_mail\ether_oar.mp3" />
+                </Component>
+                <Component Id="cmpDC3D20FE4DD50C243F3473E76F9C74E8" Guid="PUT-GUID-HERE">
+                    <File Id="filA434273F0352EA2F87C2962229A10AF5" KeyPath="yes" Source="SourceDir\youve_got_mail\server_room_a_sign2.png" />
+                </Component>
+                <Component Id="cmpE93DAE10D06BD5EB7AAEC30B958FF44F" Guid="PUT-GUID-HERE">
+                    <File Id="fil2787478162B2719656ADAA10DA3B6D54" KeyPath="yes" Source="SourceDir\youve_got_mail\procalc_dark.png" />
+                </Component>
+                <Component Id="cmp0E84E4498B4E1BEBC4AE3C61C8036382" Guid="PUT-GUID-HERE">
+                    <File Id="fil17729345B83B25FF8B9AD34193C016DA" KeyPath="yes" Source="SourceDir\youve_got_mail\server_room_a_sign1.png" />
+                </Component>
+                <Component Id="cmp113E62B3DF56761E08CAFD041D4D9E41" Guid="PUT-GUID-HERE">
+                    <File Id="fil3C3AA7CE5478A993F53C8AA45B48DD98" KeyPath="yes" Source="SourceDir\youve_got_mail\mail.png" />
+                </Component>
+            </Directory>
+            <Directory Id="dir8BD22143BB1B2FAEFA83EF3BB3A0C4C1" Name="common">
+                <Directory Id="dir08AE857155C988E60958F3E527E8A3F0" Name="maps">
+                    <Component Id="cmpF1C8586CAC10715BB2F40AC0696C7C44" Guid="PUT-GUID-HERE">
+                        <File Id="fil3B52F0B1092E949C660D3827BBB64DBF" KeyPath="yes" Source="SourceDir\common\maps\house.svg" />
+                    </Component>
+                    <Component Id="cmp2FD7CD6BA59DB3452FCBB4604BE1BD14" Guid="PUT-GUID-HERE">
+                        <File Id="fil92ABC857FF9EAFBE10BCABAB6573EA6F" KeyPath="yes" Source="SourceDir\common\maps\test.svg" />
+                    </Component>
+                </Directory>
+                <Directory Id="dir904F21403B4163CBD5D8F8BE6EDA808F" Name="music">
+                    <Component Id="cmp7873BED49D87F9B7FFD7EDC3ED7A0CBB" Guid="PUT-GUID-HERE">
+                        <File Id="filE8366463856B08C382537BAA3B7FE6A8" KeyPath="yes" Source="SourceDir\common\music\birds.mp3" />
+                    </Component>
+                </Directory>
+                <Directory Id="dirFCAC56BB83BA88C908B4C1023C89C897" Name="sfx">
+                    <Component Id="cmpBD3A64EC15C624D614B734737C55ECA7" Guid="PUT-GUID-HERE">
+                        <File Id="fil3E8067EA4B85A218C71369BC4ABF61CC" KeyPath="yes" Source="SourceDir\common\sfx\monster_death.wav" />
+                    </Component>
+                    <Component Id="cmp9D64109CE01F6E3604171D446C816D7B" Guid="PUT-GUID-HERE">
+                        <File Id="fil9A6390A93D697A9DC1F9FD8D40B53ADD" KeyPath="yes" Source="SourceDir\common\sfx\door_.wav" />
+                    </Component>
+                    <Component Id="cmpBFE52B1D252A0CEE75468B8E40D8D270" Guid="PUT-GUID-HERE">
+                        <File Id="fil8FE6A0216E0B52945DCC051E1D55CB20" KeyPath="yes" Source="SourceDir\common\sfx\pistol_shoot.wav" />
+                    </Component>
+                    <Component Id="cmp2075034B78CBFF3DA48F785D4E133136" Guid="PUT-GUID-HERE">
+                        <File Id="fil562AB40D362A755A62DB1A2D56A94F7C" KeyPath="yes" Source="SourceDir\common\sfx\door.wav" />
+                    </Component>
+                    <Component Id="cmp6ACC22F04985B5DFB10F66FF0F38C803" Guid="PUT-GUID-HERE">
+                        <File Id="fil19AB22FCD85A5A94116D2EDB58E844FB" KeyPath="yes" Source="SourceDir\common\sfx\shotgun_shoot.wav" />
+                    </Component>
+                    <Component Id="cmpC00AE38D0545FFAFE34EBF8C644DF6A8" Guid="PUT-GUID-HERE">
+                        <File Id="filEA728CAC19182E81B7E1E27CAC604100" KeyPath="yes" Source="SourceDir\common\sfx\monster_hurt.wav" />
+                    </Component>
+                    <Component Id="cmp36FD3E59AC1C08F3317FCA036618EE1B" Guid="PUT-GUID-HERE">
+                        <File Id="fil36F66BB223B538BE1806060AD1583A79" KeyPath="yes" Source="SourceDir\common\sfx\ammo_collect.wav" />
+                    </Component>
+                    <Component Id="cmp68C91C80090074406A03E5054E2622E3" Guid="PUT-GUID-HERE">
+                        <File Id="fil9DCF43F44494FDDD6197A46EDAD1DB70" KeyPath="yes" Source="SourceDir\common\sfx\beep.wav" />
+                    </Component>
+                    <Component Id="cmp8CBBED37992958EF25EA829CF9CF5FCC" Guid="PUT-GUID-HERE">
+                        <File Id="filD95E601EEC274FB4A4C7AFA1E16F076E" KeyPath="yes" Source="SourceDir\common\sfx\click.wav" />
+                    </Component>
+                </Directory>
+                <Directory Id="dir4C26A4DE3E9D0DFB3FE52A5A98265511" Name="images">
+                    <Component Id="cmpF3FD686E490B608CDA31BEBC9DA886A0" Guid="PUT-GUID-HERE">
+                        <File Id="fil336B6C47EBE659A300BF11F29D3CA5C6" KeyPath="yes" Source="SourceDir\common\images\outside_window.png" />
+                    </Component>
+                    <Component Id="cmpBE27073BE9893A2467F8BE590A2B89FE" Guid="PUT-GUID-HERE">
+                        <File Id="filC53FFF2B650FE76C941EF7D32184EBBF" KeyPath="yes" Source="SourceDir\common\images\bad_guy.png" />
+                    </Component>
+                    <Component Id="cmp4388F3550A9B900C4F9BE1395253E626" Guid="PUT-GUID-HERE">
+                        <File Id="fil582202A1B501B5896B5BEEF182ECB666" KeyPath="yes" Source="SourceDir\common\images\grey_bricks.png" />
+                    </Component>
+                    <Component Id="cmpBF13AC3B796CBB473C6C5B1870CBB07B" Guid="PUT-GUID-HERE">
+                        <File Id="filBB30C3EBE906C74BEB52977243B6AA45" KeyPath="yes" Source="SourceDir\common\images\white_marble.png" />
+                    </Component>
+                    <Component Id="cmp405462B280C5412810DB746410824C36" Guid="PUT-GUID-HERE">
+                        <File Id="filAEEA48A60AA14FF21941F468785465E0" KeyPath="yes" Source="SourceDir\common\images\dark_bricks.png" />
+                    </Component>
+                    <Component Id="cmp8D463B543DBF61B1BF5E6B071AD9585F" Guid="PUT-GUID-HERE">
+                        <File Id="filB03EE4E4B15AE2DD1DF9809B73C5F11F" KeyPath="yes" Source="SourceDir\common\images\sky.png" />
+                    </Component>
+                    <Component Id="cmp6CCD55DA6F48D9991E5158CF2BEDAA97" Guid="PUT-GUID-HERE">
+                        <File Id="filFD1A971E53C187789D800F85CA76EBBA" KeyPath="yes" Source="SourceDir\common\images\explosion.png" />
+                    </Component>
+                    <Component Id="cmpC71DE19DFDAE0ED2782EA22DEF2F8B6E" Guid="PUT-GUID-HERE">
+                        <File Id="filBA80985D01E78E90C3442B6F0802B14B" KeyPath="yes" Source="SourceDir\common\images\light_wood.png" />
+                    </Component>
+                    <Component Id="cmp5B3AD1EC582803DCFECB710111DBE2A8" Guid="PUT-GUID-HERE">
+                        <File Id="fil3EC47573124FE06ED51481457FB2E07C" KeyPath="yes" Source="SourceDir\common\images\singularity.png" />
+                    </Component>
+                    <Component Id="cmp6167182E53A4583C1B6AA5AA40446BC9" Guid="PUT-GUID-HERE">
+                        <File Id="filB4000D05E1FE82ACDB84AB19992722D8" KeyPath="yes" Source="SourceDir\common\images\bed.png" />
+                    </Component>
+                    <Component Id="cmp10440018D0ED9202CA6D58E9ACEFACD2" Guid="PUT-GUID-HERE">
+                        <File Id="fil9445468BCBEA296ADB2801CC430CD790" KeyPath="yes" Source="SourceDir\common\images\procalc.png" />
+                    </Component>
+                    <Component Id="cmpDE5AC9B4F75BB2F597C8AF23E72E32F6" Guid="PUT-GUID-HERE">
+                        <File Id="fil18CC63521E5AB2BB7FA75DB09873E097" KeyPath="yes" Source="SourceDir\common\images\metal_ceiling.png" />
+                    </Component>
+                    <Component Id="cmpFBEFBAF1E5EAEC6447B26E3EC6CFCA0C" Guid="PUT-GUID-HERE">
+                        <File Id="filBF0A2E36081B9D1CCF304A8E47BB2408" KeyPath="yes" Source="SourceDir\common\images\white_paint.png" />
+                    </Component>
+                    <Component Id="cmp2FAFFC2202C89675B594E2DBE868E620" Guid="PUT-GUID-HERE">
+                        <File Id="filBEE4CFB326F1C9D21DB093AF22996C77" KeyPath="yes" Source="SourceDir\common\images\white_lino.png" />
+                    </Component>
+                    <Component Id="cmpE06473825FF35241C1FBBBF35D94A7EF" Guid="PUT-GUID-HERE">
+                        <File Id="filF5ED803052F06CF847A1746622D5F84F" KeyPath="yes" Source="SourceDir\common\images\slimy_bricks.png" />
+                    </Component>
+                    <Component Id="cmp8293EB46EC3E4D2F54529216EA11DC24" Guid="PUT-GUID-HERE">
+                        <File Id="fil555BB513A09833F924F6F764639E3234" KeyPath="yes" Source="SourceDir\common\images\marble_tiles.png" />
+                    </Component>
+                    <Component Id="cmpF1D5053566DAAA1814C6609F91E5BB76" Guid="PUT-GUID-HERE">
+                        <File Id="filDA48560C2CBBA282EEE03B5AA043D926" KeyPath="yes" Source="SourceDir\common\images\warning.png" />
+                    </Component>
+                    <Component Id="cmp9038558103727EFE73614A0A909E8D0D" Guid="PUT-GUID-HERE">
+                        <File Id="filB73D9E9A50A0BA01BDBB6713EC635A73" KeyPath="yes" Source="SourceDir\common\images\bricks_and_metal.png" />
+                    </Component>
+                    <Component Id="cmp5B0ADC383861D45879E8B3876742DE03" Guid="PUT-GUID-HERE">
+                        <File Id="fil5B632FA653A9DEE059DA30E66D791ED7" KeyPath="yes" Source="SourceDir\common\images\apex.png" />
+                    </Component>
+                    <Component Id="cmpA16B31EF04BD91E4E753688EB1FEDF29" Guid="PUT-GUID-HERE">
+                        <File Id="fil6C08A5E2909E1755B29D6E132EA5BF04" KeyPath="yes" Source="SourceDir\common\images\metal_floor.png" />
+                    </Component>
+                    <Component Id="cmp53A4AB95315448E72B26A80765B74429" Guid="PUT-GUID-HERE">
+                        <File Id="fil34B0EE41A79218D94E4576360C5A3579" KeyPath="yes" Source="SourceDir\common\images\hedge.png" />
+                    </Component>
+                    <Component Id="cmpB1478EA36B179FBABF6FBB29DB694589" Guid="PUT-GUID-HERE">
+                        <File Id="filD5CBD5D940677A6D7E62B143C4D643FF" KeyPath="yes" Source="SourceDir\common\images\white_tiles.png" />
+                    </Component>
+                    <Component Id="cmp491CB3A48A77AC0E80C10FA4D82DCC8B" Guid="PUT-GUID-HERE">
+                        <File Id="fil997319460F1711BDE321818434747C98" KeyPath="yes" Source="SourceDir\common\images\white_paint0.png" />
+                    </Component>
+                    <Component Id="cmp423B5C9DBF1664D4B3D38C2762F18F41" Guid="PUT-GUID-HERE">
+                        <File Id="fil0AFF1F865FE0AA3AE97A0592B58D41F7" KeyPath="yes" Source="SourceDir\common\images\white_pillow.png" />
+                    </Component>
+                    <Component Id="cmp379D6528B7D371CF6D2112A7637E6F2A" Guid="PUT-GUID-HERE">
+                        <File Id="fil79D2CB148FED102EBBEE397BF3309231" KeyPath="yes" Source="SourceDir\common\images\slime.png" />
+                    </Component>
+                    <Component Id="cmpAEC74EB8C7F53DC60369B498A9EA0BC4" Guid="PUT-GUID-HERE">
+                        <File Id="fil404A276AE8F3B53BF1FD72AB8DFCADC3" KeyPath="yes" Source="SourceDir\common\images\bliss.png" />
+                    </Component>
+                    <Component Id="cmp94B671075A35ADA98472AD95F320AF23" Guid="PUT-GUID-HERE">
+                        <File Id="fil926F60E8F0D7E90A8D152B08287BDEE2" KeyPath="yes" Source="SourceDir\common\images\filing_cabinet_front.png" />
+                    </Component>
+                    <Component Id="cmp8FAEE9F3F81B79E09107A12612B4A035" Guid="PUT-GUID-HERE">
+                        <File Id="fil95A5B75DEB9426E65E454A7F6A2E0562" KeyPath="yes" Source="SourceDir\common\images\crosshair.png" />
+                    </Component>
+                    <Component Id="cmpD4F2EAD9A9FD60E0EF9D74C0C7CBB444" Guid="PUT-GUID-HERE">
+                        <File Id="fil612D0D987F5E79AE47DE17512828E4DB" KeyPath="yes" Source="SourceDir\common\images\console.png" />
+                    </Component>
+                    <Component Id="cmp0FBB7BCBF73ABDC1A28B2B26D88EB6A1" Guid="PUT-GUID-HERE">
+                        <File Id="filDEA12543E50C6261B9500CCDDCD79E1D" KeyPath="yes" Source="SourceDir\common\images\filing_cabinet_side.png" />
+                    </Component>
+                    <Component Id="cmp0083D2B56FDCA59D0A1678CE002D07FB" Guid="PUT-GUID-HERE">
+                        <File Id="filE4F16903D3EFFA9287F5BFBF55EDB016" KeyPath="yes" Source="SourceDir\common\images\crate.png" />
+                    </Component>
+                    <Component Id="cmp36C23471DE57E76912E83B16FB7B3485" Guid="PUT-GUID-HERE">
+                        <File Id="fil331F6F664ADBAEE72CE16072C40B43DC" KeyPath="yes" Source="SourceDir\common\images\gun.png" />
+                    </Component>
+                    <Component Id="cmp483A89DBBF24B8187399AF5BB5440A0D" Guid="PUT-GUID-HERE">
+                        <File Id="fil1AC656A9F28664A1A974F3ECF4EB5DAF" KeyPath="yes" Source="SourceDir\common\images\stone_slabs.png" />
+                    </Component>
+                    <Component Id="cmp12A72FF15038CB51435DF95B0EA4CFBA" Guid="PUT-GUID-HERE">
+                        <File Id="filF746506EA54E2B88AFDE708FE139089D" KeyPath="yes" Source="SourceDir\common\images\dark_wood.png" />
+                    </Component>
+                    <Component Id="cmpBF12C7E12305B60B01E75BD7227D1B7C" Guid="PUT-GUID-HERE">
+                        <File Id="fil7052646FD2E9CE82B3A7CA9C626FC0F5" KeyPath="yes" Source="SourceDir\common\images\granite.png" />
+                    </Component>
+                    <Component Id="cmp204D1EE79B77BF14FC2402D9F6A6986C" Guid="PUT-GUID-HERE">
+                        <File Id="fil4ABC808528CE27087C895B256767CBE8" KeyPath="yes" Source="SourceDir\common\images\lock.png" />
+                    </Component>
+                    <Component Id="cmp97BF59C47C3AF6ACB7DCC9D18CBC1ED4" Guid="PUT-GUID-HERE">
+                        <File Id="fil423A32A0FE43AF54865134B90D0B94F5" KeyPath="yes" Source="SourceDir\common\images\cracked_mud.png" />
+                    </Component>
+                    <Component Id="cmp905CE75285AEFA1C0664E73C53B3AD38" Guid="PUT-GUID-HERE">
+                        <File Id="fil8B3290715F77B7193FA0859D4DF5B500" KeyPath="yes" Source="SourceDir\common\images\door.png" />
+                    </Component>
+                    <Component Id="cmp30731B00168FCE0C2D77650DC789354C" Guid="PUT-GUID-HERE">
+                        <File Id="fil019CA9FB322909D8C43F480B5A4DAC93" KeyPath="yes" Source="SourceDir\common\images\ammo.png" />
+                    </Component>
+                    <Component Id="cmp0B792E24580315AE7C23E5D8F0F4F6CF" Guid="PUT-GUID-HERE">
+                        <File Id="fil168BEA97E5E41F5F026FFF2E54A01361" KeyPath="yes" Source="SourceDir\common\images\grass.png" />
+                    </Component>
+                    <Component Id="cmp490D2E49073D01D2F9AB5A1AA405E249" Guid="PUT-GUID-HERE">
+                        <File Id="fil957F955ED11AA90AE0775453E8651D75" KeyPath="yes" Source="SourceDir\common\images\grey_stone.png" />
+                    </Component>
+                    <Component Id="cmpFE76B39800A5445BA1BC3431AA6A8F3C" Guid="PUT-GUID-HERE">
+                        <File Id="fil7592AB853BA1586AF8109BE1B649004C" KeyPath="yes" Source="SourceDir\common\images\civilian.png" />
+                    </Component>
+                    <Component Id="cmp5F49891D5C0007EE44C00F27356F1B7A" Guid="PUT-GUID-HERE">
+                        <File Id="fil9FEA69DAE46FC8B1045D710F3A95274D" KeyPath="yes" Source="SourceDir\common\images\switch.png" />
+                    </Component>
+                    <Component Id="cmpBFC839A6B573CC7EBDF4E9AD294AE5DD" Guid="PUT-GUID-HERE">
+                        <File Id="filF36D3370A3F6984F79B2A1D2CAAEDA96" KeyPath="yes" Source="SourceDir\common\images\keycard.png" />
+                    </Component>
+                    <Component Id="cmp41D572359B0B3544A889E32AE505F817" Guid="PUT-GUID-HERE">
+                        <File Id="filA09DC940A123EB2E4078A9E243816EC9" KeyPath="yes" Source="SourceDir\common\images\default.png" />
+                    </Component>
+                    <Component Id="cmp7300254A2A14404C7B9B9F9AD2626664" Guid="PUT-GUID-HERE">
+                        <File Id="fil86A8923E3E7EFAD34BEACB2A9D84D2E8" KeyPath="yes" Source="SourceDir\common\images\inside_window.png" />
+                    </Component>
+                    <Component Id="cmpF06087EBBAD9B51EE2BC6959EC55AEE9" Guid="PUT-GUID-HERE">
+                        <File Id="fil85BD8FFEE0A070DED6EDB73AFC704B21" KeyPath="yes" Source="SourceDir\common\images\office_plant.png" />
+                    </Component>
+                    <Component Id="cmpB2DCEB5EC98C33B82F2C4A3F6E99FE03" Guid="PUT-GUID-HERE">
+                        <File Id="fil2763AA49B93D163852473CF076537236" KeyPath="yes" Source="SourceDir\common\images\light_bricks.png" />
+                    </Component>
+                    <Component Id="cmp7021E6EDD59B75183CB693F3AFF0C1A9" Guid="PUT-GUID-HERE">
+                        <File Id="fil630838ADDE39F96C9E812085E0F59D18" KeyPath="yes" Source="SourceDir\common\images\dirt.png" />
+                    </Component>
+                </Directory>
+            </Directory>
+            <Directory Id="dir7E84F9081599E8F70603B06372D4C1DE" Name="office_assistant">
+                <Component Id="cmpE189C710CF558EE7727153DCC802EA22" Guid="PUT-GUID-HERE">
+                    <File Id="fil56CC635CEB1AE61616226ECA41FCDC71" KeyPath="yes" Source="SourceDir\office_assistant\clippy.png" />
+                </Component>
+            </Directory>
+            <Directory Id="dir699DD2D9E81A4B4E3A59D9E0C210F944" Name="making_progress">
+                <Component Id="cmp5B5457F0111BCF02323747A5C44728E7" Guid="PUT-GUID-HERE">
+                    <File Id="filF504B1F72266D2E322CB7ED68BF1D1A3" KeyPath="yes" Source="SourceDir\making_progress\remaining.png" />
+                </Component>
+                <Component Id="cmp2888C8EFDA8B807AF8B984B21E745320" Guid="PUT-GUID-HERE">
+                    <File Id="fil39F8CF1C0FD21CC870C1E1B86C56EB6A" KeyPath="yes" Source="SourceDir\making_progress\digits.png" />
+                </Component>
+                <Component Id="cmp4603970A34CBEFD93139B36CDAF2E7BB" Guid="PUT-GUID-HERE">
+                    <File Id="fil68B45914E39794D7D599BF8B6FCF6785" KeyPath="yes" Source="SourceDir\making_progress\map.svg" />
+                </Component>
+                <Component Id="cmp9511F7C0C558D9598C6B7CE3DF00B7C8" Guid="PUT-GUID-HERE">
+                    <File Id="fil1149FEDB7F70F3CC0D361A5822CB0D8A" KeyPath="yes" Source="SourceDir\making_progress\progress_bar.png" />
+                </Component>
+                <Component Id="cmpE27011E9E0B4FC828079C33DD0FAE208" Guid="PUT-GUID-HERE">
+                    <File Id="filE1E2D8B5769E765982DD6711E2DAD6B3" KeyPath="yes" Source="SourceDir\making_progress\progress.png" />
+                </Component>
+                <Component Id="cmp2024379F01E0201A6F1DDBFD53807A4B" Guid="PUT-GUID-HERE">
+                    <File Id="fil3776858DCFC512A8B728BDB9F27606CA" KeyPath="yes" Source="SourceDir\making_progress\caption.png" />
+                </Component>
+            </Directory>
+            <Directory Id="dir43B0405439E791CAFD1ED2D1273AECC2" Name="are_you_sure">
+                <Component Id="cmpBF3847D2D2FE149C95DA3CBB1973675F" Guid="PUT-GUID-HERE">
+                    <File Id="filDE4F631597B6C46A3E9C471170296DA7" KeyPath="yes" Source="SourceDir\are_you_sure\login.png" />
+                </Component>
+                <Component Id="cmp6DAD5D8856159A067B51259CAC6034E7" Guid="PUT-GUID-HERE">
+                    <File Id="filA44B45E1C7F1A7673839E2E1E9E9D7F1" KeyPath="yes" Source="SourceDir\are_you_sure\config_maze.png" />
+                </Component>
+            </Directory>
+            <Directory Id="dirE17F8E9610689D68B8789F449E125F33" Name="shuffled_keys">
+                <Component Id="cmpC4D99215D287D051EF0AFB459B5D0CF8" Guid="PUT-GUID-HERE">
+                    <File Id="filC6BA6214F171BA0935340F11E3FCCAFB" KeyPath="yes" Source="SourceDir\shuffled_keys\loading.png" />
+                </Component>
+            </Directory>
+            <Directory Id="dir5F087A9DC3C138003B18227A55C594C1" Name="its_raining_tetrominos">
+                <Component Id="cmp8D6F915C087DB6B5AC9160E79FF65425" Guid="PUT-GUID-HERE">
+                    <File Id="fil1030EBA1DE9EF5ABA9EF3DB8E9CE1A8E" KeyPath="yes" Source="SourceDir\its_raining_tetrominos\troubleshooter2.html" />
+                </Component>
+                <Component Id="cmp791CD3C06239E38FCD178EDC2CA1E9C7" Guid="PUT-GUID-HERE">
+                    <File Id="filAB91313968B76A5F4B310D1965FFBDA2" KeyPath="yes" Source="SourceDir\its_raining_tetrominos\troubleshooter1.html" />
+                </Component>
+                <Component Id="cmp2951006FFD0C11986B29FB354A5B6977" Guid="PUT-GUID-HERE">
+                    <File Id="filF8078E549881ADF292BCB59BD982DC0D" KeyPath="yes" Source="SourceDir\its_raining_tetrominos\map.svg" />
+                </Component>
+                <Component Id="cmp55980CA1DED321749E435A3AC78AB48F" Guid="PUT-GUID-HERE">
+                    <File Id="fil2469D49AC17C43E3B79342A761373072" KeyPath="yes" Source="SourceDir\its_raining_tetrominos\machine.png" />
+                </Component>
+            </Directory>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="dataComponentGroup">
+            <ComponentRef Id="cmpC385B5F22C5B678E342128EFA9A41BB9" />
+            <ComponentRef Id="cmpB2497055CB3804F7C512E0B530453C55" />
+            <ComponentRef Id="cmp0E417F7604E3B9B01251FB2471EDC4CC" />
+            <ComponentRef Id="cmpD54B7B72DA94B99F217B683DBF78C3D7" />
+            <ComponentRef Id="cmp39E07BC63712E9F9B7BB6AD6FF7C5880" />
+            <ComponentRef Id="cmpCF09387469748A220639B6A85A98ABF6" />
+            <ComponentRef Id="cmpB6DAB0B3D33F03A8BAE7A6EA4E7C155D" />
+            <ComponentRef Id="cmpC99954292A2CB07E066EE8A99F2DC3D6" />
+            <ComponentRef Id="cmp66A87983C1CCACB742BFD94994AC2C67" />
+            <ComponentRef Id="cmp4C4E1ACC779ACF9C5D80F4C594189A7A" />
+            <ComponentRef Id="cmp6350D5BEA22F46F46CCCEC7A797D4D08" />
+            <ComponentRef Id="cmpDC3D20FE4DD50C243F3473E76F9C74E8" />
+            <ComponentRef Id="cmpE93DAE10D06BD5EB7AAEC30B958FF44F" />
+            <ComponentRef Id="cmp0E84E4498B4E1BEBC4AE3C61C8036382" />
+            <ComponentRef Id="cmp113E62B3DF56761E08CAFD041D4D9E41" />
+            <ComponentRef Id="cmpF1C8586CAC10715BB2F40AC0696C7C44" />
+            <ComponentRef Id="cmp2FD7CD6BA59DB3452FCBB4604BE1BD14" />
+            <ComponentRef Id="cmp7873BED49D87F9B7FFD7EDC3ED7A0CBB" />
+            <ComponentRef Id="cmpBD3A64EC15C624D614B734737C55ECA7" />
+            <ComponentRef Id="cmp9D64109CE01F6E3604171D446C816D7B" />
+            <ComponentRef Id="cmpBFE52B1D252A0CEE75468B8E40D8D270" />
+            <ComponentRef Id="cmp2075034B78CBFF3DA48F785D4E133136" />
+            <ComponentRef Id="cmp6ACC22F04985B5DFB10F66FF0F38C803" />
+            <ComponentRef Id="cmpC00AE38D0545FFAFE34EBF8C644DF6A8" />
+            <ComponentRef Id="cmp36FD3E59AC1C08F3317FCA036618EE1B" />
+            <ComponentRef Id="cmp68C91C80090074406A03E5054E2622E3" />
+            <ComponentRef Id="cmp8CBBED37992958EF25EA829CF9CF5FCC" />
+            <ComponentRef Id="cmpF3FD686E490B608CDA31BEBC9DA886A0" />
+            <ComponentRef Id="cmpBE27073BE9893A2467F8BE590A2B89FE" />
+            <ComponentRef Id="cmp4388F3550A9B900C4F9BE1395253E626" />
+            <ComponentRef Id="cmpBF13AC3B796CBB473C6C5B1870CBB07B" />
+            <ComponentRef Id="cmp405462B280C5412810DB746410824C36" />
+            <ComponentRef Id="cmp8D463B543DBF61B1BF5E6B071AD9585F" />
+            <ComponentRef Id="cmp6CCD55DA6F48D9991E5158CF2BEDAA97" />
+            <ComponentRef Id="cmpC71DE19DFDAE0ED2782EA22DEF2F8B6E" />
+            <ComponentRef Id="cmp5B3AD1EC582803DCFECB710111DBE2A8" />
+            <ComponentRef Id="cmp6167182E53A4583C1B6AA5AA40446BC9" />
+            <ComponentRef Id="cmp10440018D0ED9202CA6D58E9ACEFACD2" />
+            <ComponentRef Id="cmpDE5AC9B4F75BB2F597C8AF23E72E32F6" />
+            <ComponentRef Id="cmpFBEFBAF1E5EAEC6447B26E3EC6CFCA0C" />
+            <ComponentRef Id="cmp2FAFFC2202C89675B594E2DBE868E620" />
+            <ComponentRef Id="cmpE06473825FF35241C1FBBBF35D94A7EF" />
+            <ComponentRef Id="cmp8293EB46EC3E4D2F54529216EA11DC24" />
+            <ComponentRef Id="cmpF1D5053566DAAA1814C6609F91E5BB76" />
+            <ComponentRef Id="cmp9038558103727EFE73614A0A909E8D0D" />
+            <ComponentRef Id="cmp5B0ADC383861D45879E8B3876742DE03" />
+            <ComponentRef Id="cmpA16B31EF04BD91E4E753688EB1FEDF29" />
+            <ComponentRef Id="cmp53A4AB95315448E72B26A80765B74429" />
+            <ComponentRef Id="cmpB1478EA36B179FBABF6FBB29DB694589" />
+            <ComponentRef Id="cmp491CB3A48A77AC0E80C10FA4D82DCC8B" />
+            <ComponentRef Id="cmp423B5C9DBF1664D4B3D38C2762F18F41" />
+            <ComponentRef Id="cmp379D6528B7D371CF6D2112A7637E6F2A" />
+            <ComponentRef Id="cmpAEC74EB8C7F53DC60369B498A9EA0BC4" />
+            <ComponentRef Id="cmp94B671075A35ADA98472AD95F320AF23" />
+            <ComponentRef Id="cmp8FAEE9F3F81B79E09107A12612B4A035" />
+            <ComponentRef Id="cmpD4F2EAD9A9FD60E0EF9D74C0C7CBB444" />
+            <ComponentRef Id="cmp0FBB7BCBF73ABDC1A28B2B26D88EB6A1" />
+            <ComponentRef Id="cmp0083D2B56FDCA59D0A1678CE002D07FB" />
+            <ComponentRef Id="cmp36C23471DE57E76912E83B16FB7B3485" />
+            <ComponentRef Id="cmp483A89DBBF24B8187399AF5BB5440A0D" />
+            <ComponentRef Id="cmp12A72FF15038CB51435DF95B0EA4CFBA" />
+            <ComponentRef Id="cmpBF12C7E12305B60B01E75BD7227D1B7C" />
+            <ComponentRef Id="cmp204D1EE79B77BF14FC2402D9F6A6986C" />
+            <ComponentRef Id="cmp97BF59C47C3AF6ACB7DCC9D18CBC1ED4" />
+            <ComponentRef Id="cmp905CE75285AEFA1C0664E73C53B3AD38" />
+            <ComponentRef Id="cmp30731B00168FCE0C2D77650DC789354C" />
+            <ComponentRef Id="cmp0B792E24580315AE7C23E5D8F0F4F6CF" />
+            <ComponentRef Id="cmp490D2E49073D01D2F9AB5A1AA405E249" />
+            <ComponentRef Id="cmpFE76B39800A5445BA1BC3431AA6A8F3C" />
+            <ComponentRef Id="cmp5F49891D5C0007EE44C00F27356F1B7A" />
+            <ComponentRef Id="cmpBFC839A6B573CC7EBDF4E9AD294AE5DD" />
+            <ComponentRef Id="cmp41D572359B0B3544A889E32AE505F817" />
+            <ComponentRef Id="cmp7300254A2A14404C7B9B9F9AD2626664" />
+            <ComponentRef Id="cmpF06087EBBAD9B51EE2BC6959EC55AEE9" />
+            <ComponentRef Id="cmpB2DCEB5EC98C33B82F2C4A3F6E99FE03" />
+            <ComponentRef Id="cmp7021E6EDD59B75183CB693F3AFF0C1A9" />
+            <ComponentRef Id="cmpE189C710CF558EE7727153DCC802EA22" />
+            <ComponentRef Id="cmp5B5457F0111BCF02323747A5C44728E7" />
+            <ComponentRef Id="cmp2888C8EFDA8B807AF8B984B21E745320" />
+            <ComponentRef Id="cmp4603970A34CBEFD93139B36CDAF2E7BB" />
+            <ComponentRef Id="cmp9511F7C0C558D9598C6B7CE3DF00B7C8" />
+            <ComponentRef Id="cmpE27011E9E0B4FC828079C33DD0FAE208" />
+            <ComponentRef Id="cmp2024379F01E0201A6F1DDBFD53807A4B" />
+            <ComponentRef Id="cmpBF3847D2D2FE149C95DA3CBB1973675F" />
+            <ComponentRef Id="cmp6DAD5D8856159A067B51259CAC6034E7" />
+            <ComponentRef Id="cmpC4D99215D287D051EF0AFB459B5D0CF8" />
+            <ComponentRef Id="cmp8D6F915C087DB6B5AC9160E79FF65425" />
+            <ComponentRef Id="cmp791CD3C06239E38FCD178EDC2CA1E9C7" />
+            <ComponentRef Id="cmp2951006FFD0C11986B29FB354A5B6977" />
+            <ComponentRef Id="cmp55980CA1DED321749E435A3AC78AB48F" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <?define VersionNumber='1.0.0' ?>
+  <?define InfoURL='http://proofficecalculator.com' ?>
+
+  <Product Name='Pro Office Calculator' Manufacturer='Rob Jinman'
+    Id='YOURGUID-86C7-4D14-AEC0-86416A69ABDE'
+    UpgradeCode='YOURGUID-7349-453F-94F6-BCB5110BA4FD'
+    Language='1033' Codepage='1252' Version='$(var.VersionNumber)'>
+
+  <Package Id='*' Keywords='Installer' Description="Pro Office Calculator Installer"
+    Comments='Pro Office Calculator is created and maintained by Rob Jinman who owns exclusive copyrights.' Manufacturer='Rob Jinman'
+    InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='media1.cab' EmbedCab='yes' />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='INSTALLDIR' Name='procalc'>
+
+          <Directory Id="dataFolder" Name="data" />
+
+          <Component Id='MainExecutable' Guid='YOURGUID-83F1-4F22-985B-FDB3C8ABD471'>
+            <File Id='ProcalcEXE' Name='procalc.exe' DiskId='1' Source='procalc.exe' KeyPath='yes'>
+              <Shortcut Id="startmenuProcalc" Directory="ProgramMenuDir" Name="Pro Office Calculator"
+                WorkingDirectory='INSTALLDIR' Icon="procalc.ico" IconIndex="0" Advertise="yes" />
+              <Shortcut Id="desktopProcalc" Directory="DesktopFolder" Name="Pro Office Calculator"
+                WorkingDirectory='INSTALLDIR' Icon="procalc.ico" IconIndex="0" />
+            </File>
+          </Component>
+
+          <Component Id='HelperLibrary' Guid='YOURGUID-6BE3-460D-A14F-75658D16550B'>
+            <File Id='HelperDLL' Name='Helper.dll' DiskId='1' Source='Helper.dll' KeyPath='yes' />
+          </Component>
+
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="Foobar 1.0">
+          <Component Id="ProgramMenuDir" Guid="YOURGUID-7E98-44CE-B049-C477CC0A2B00">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentGroupRef Id="MyComponentGroup"/>
+      <ComponentRef Id='MainExecutable' />
+      <ComponentRef Id='HelperLibrary' />
+      <ComponentRef Id='Manual' />
+      <ComponentRef Id='ProgramMenuDir' />
+    </Feature>
+
+    <Icon Id="Foobar10.ico" SourceFile="FoobarAppl10.ico" />
+
+  </Product>
+</Wix>

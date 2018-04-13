@@ -5,11 +5,15 @@ set(projectName procalc)
 project(${projectName})
 
 if (WIN32)
-  set(QT_DIR "C:/Qt/5.5/custom_dist")
+  set(QT_DIR "C:/Qt/5.10.1/msvc2017_64")
+  set(BUILD_SUBDIR "win64")
+
   add_compile_options(-DWIN32)
+else()
+  set(BUILD_SUBDIR "linux")
 endif()
 
-set(PROCALC_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies/build/dist")
+set(PROCALC_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies/build/${BUILD_SUBDIR}/dist")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROCALC_DEPENDENCIES_DIR}/lib/cmake")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${QT_DIR}/lib/cmake")
