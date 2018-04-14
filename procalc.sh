@@ -10,26 +10,26 @@ else
 fi
 
 if [ "$systemName" == "Mac" ]; then
-  hangmanAppName="Hangman.app"
+  procalcAppName="procalc.app"
 
-  # Check /Applications and then ~/Applications for Hangman.app
-  if [ -x "/Applications/$hangmanAppName" ]; then
-    hangmanDir="/Applications"
-  elif [ -x "$HOME/Applications/$hangmanAppName" ]; then
-    hangmanDir="$HOME/Applications"
+  # Check /Applications and then ~/Applications for procalc.app
+  if [ -x "/Applications/$procalcAppName" ]; then
+    procalcDir="/Applications"
+  elif [ -x "$HOME/Applications/$procalcAppName" ]; then
+    procalcDir="$HOME/Applications"
   else
-    # Exit if Hangman can't be found
-    if [ ! -x "$hangmanDir/$hangmanAppName" ]; then
-      printf "Cannot locate Hangman.app, it is usually located in /Applications.\n"
+    # Exit if procalc can't be found
+    if [ ! -x "$procalcDir/$procalcAppName" ]; then
+      printf "Cannot locate procalc.app, it is usually located in /Applications.\n"
       exit 1
     fi
   fi
 
-  open -a "$hangmanPath/$hangmanAppName" -n --args "$@"
+  open -a "$procalcPath/$procalcAppName" -n --args "$@"
 elif [ $systemName == "Linux" ]; then
   # This script should be at usr/games
   script=$(readlink -f "$0")
   usrDir=$(readlink -f "$(dirname $script)/..")
 
-  (cd "$usrDir/share/hangman"; nohup "$usrDir/bin/hangman" "$@" > /dev/null 2>&1) &
+  (cd "$usrDir/share/procalc"; nohup "$usrDir/bin/procalc" "$@" > /dev/null 2>&1) &
 fi

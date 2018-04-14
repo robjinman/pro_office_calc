@@ -11,8 +11,6 @@ add_compile_options(-Wall -g)
 file(GLOB_RECURSE srcs src/*.cpp)
 add_executable(unitTests ${srcs})
 
-target_compile_features(unitTests PUBLIC cxx_std_14)
-
 target_link_libraries(unitTests procalclib gtest gtest_main pthread)
 
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/data" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

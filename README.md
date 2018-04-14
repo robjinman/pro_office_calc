@@ -5,12 +5,48 @@ Pro Office Calculator
 
 ### Linux
 
+To install development dependencies run
+
 ```
-    mkdir build
-    cd build
-    cmake -G "Unix Makefiles" ..
-    make
+    sudo apt-get install -y \
+      g++ \
+      cmake \
+      qtbase5-dev \
+      qtmultimedia5-dev \
+      libqt5multimedia5-plugins
 ```
+
+If you don't want to install the development dependencies on your system, you can use the supplied
+VagrantFile. From vagrant/xenial run
+
+```
+    vagrant up
+    vagrant ssh
+```
+
+The project directory will be mounted at /vagrant.
+
+gtest can be built from the dependencies directory. Create the directory dependencies/build/linux
+and from there run
+
+```
+    cmake -DCMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../..
+    make -j4
+```
+
+Create the directory build/linux under the project root and from there run
+
+```
+    cmake -DCMAKE_INSTALL_PREFIX=./dist/usr -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
+    make -j4 && make install
+```
+
+To run the app, from build/linux run
+
+```
+    ./run.sh
+```
+
 
 ### Windows
 
@@ -31,7 +67,10 @@ If compiling Qt, install
   * Python 2
   * Active Perl
 
-... making sure python and perl are on PATH.
+... making sure they're both on PATH.
+
+If not building Qt 5.10.1 from source (see below), install it via installer from official website.
+
 
 #### Build Qt5 (Optional)
 
@@ -93,6 +132,7 @@ Run windeployqt to copy dependencies into bin folder.
     heat dir "data" -cg dataComponentGroup -ke -srd -dr dataFolder -sfrag -o "windows\data.wxs"
 ```
 
+
 ## To profile (Linux only)
 
 ### Time profile
@@ -109,6 +149,7 @@ For graphical output
 ```
     google-pprof --gv ./procalc ./prof.out
 ```
+
 
 ### Cache profile
 
