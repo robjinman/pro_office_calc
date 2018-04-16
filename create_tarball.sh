@@ -4,9 +4,8 @@ packageName="procalc"
 destination="./build"
 commit="HEAD"
 snapshot=false
-revision=1
 
-while getopts "c:v:s:r" opt
+while getopts "c:v:s" opt
 do
   case $opt in
     c) commit="$OPTARG"
@@ -14,8 +13,6 @@ do
     s) snapshot=true
        ;;
     v) version="$OPTARG"
-       ;;
-    r) revision="$OPTARG"
        ;;
   esac
 done
@@ -43,9 +40,9 @@ if [ "$snapshot" = true ]; then
   timestamp=$(date -u +%Y%m%d%H%M%S)
   minor="${version: -1}"
   minorPlus1=$((minor + 1))
-  suffix="+${minorPlus1}SNAPSHOT${timestamp}-0ubuntu${revision}"
+  suffix="+${minorPlus1}SNAPSHOT${timestamp}"
 else
-  suffix="-0ubuntu${revision}"
+  suffix=""
 fi
 
 printf "Building archive... "
