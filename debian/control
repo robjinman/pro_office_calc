@@ -1,8 +1,8 @@
 Source: procalc
 Maintainer: Rob Jinman <jinmanr@gmail.com>
-Section: mathematics
+Section: math
 Priority: optional
-Standards-Version: 3.9.2
+Standards-Version: 3.9.7
 Build-Depends: debhelper (>= 9), cmake (>= 3.5.1), qtbase5-dev (>= 5.5.1), qtmultimedia5-dev (>= 5.5.1), libqt5multimedia5-plugins (>= 5.5.1), libtinyxml2-dev (>= 2.2.0)
 
 Package: procalc

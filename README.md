@@ -136,7 +136,7 @@ outside the project root.
 Create a new changelog file, giving the version number from the tarball, e.g.
 
 ```
-    dch --create -v 0.0.1+2SNAPSHOT20180415202135 --package procalc
+    dch --create -v 0.0.1+2SNAPSHOT20180415202135-0ubuntu1 --package procalc
 ```
 
 ... and edit the file accordingly.
