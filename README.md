@@ -130,7 +130,8 @@ Run windeployqt to copy dependencies into bin folder.
 
 ### Linux (Debian)
 
-Create a tarball with `create_tarball.sh`.
+Create a tarball with `create_tarball.sh`. It should appear in the build directory. Copy it to
+outside the project root.
 
 Create a new changelog file, giving the version number from the tarball, e.g.
 
@@ -150,10 +151,8 @@ Try building a binary package. From the project root, run
 
 ```
     -us    Do not sign the source package.
-
     -uc    Do not sign the .changes file.
 ```
-
 
 
 ### Windows
