@@ -40,7 +40,7 @@ if [ "$snapshot" = true ]; then
   timestamp=$(date -u +%Y%m%d%H%M%S)
   minor="${version: -1}"
   minorPlus1=$((minor + 1))
-  suffix="+${minorPlus1}SNAPSHOT$timestamp"
+  suffix="+${minorPlus1}SNAPSHOT${timestamp}"
 else
   suffix=""
 fi
@@ -53,8 +53,8 @@ git archive --format=tar.gz -o "$destination/$tmpArchiveName" "$commit"
 
 cd "$destination"
 
-unpackedDir="$packageName-$version$suffix"
-archiveName="$packageName_$version$suffix.orig.tar.gz"
+unpackedDir="${packageName}-${version}${suffix}"
+archiveName="${packageName}_${version}${suffix}.orig.tar.gz"
 
 mkdir -p "$unpackedDir"
 

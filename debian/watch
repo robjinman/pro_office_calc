@@ -1,0 +1,2 @@
+version=4
+https://github.com/RobJinman/pro_office_calc/releases .*/v(\d\S+)\.tar\.gz

@@ -13,7 +13,9 @@ To install development dependencies run
       cmake \
       qtbase5-dev \
       qtmultimedia5-dev \
-      libqt5multimedia5-plugins
+      libqt5multimedia5-plugins \
+      libtinyxml2-dev \
+      packaging-dev
 ```
 
 If you don't want to install the development dependencies on your system, you can use the supplied
@@ -125,6 +127,34 @@ Run windeployqt to copy dependencies into bin folder.
 
 
 ## Creating distributable packages
+
+### Linux (Debian)
+
+Create a tarball with `create_tarball.sh`.
+
+Create a new changelog file, giving the version number from the tarball, e.g.
+
+```
+    dch --create -v 0.0.1+2SNAPSHOT20180415202135 --package procalc
+```
+
+... and edit the file accordingly.
+
+Try building a binary package. From the project root, run
+
+```
+    debuild -us -uc
+```
+
+... where the options are
+
+```
+    -us    Do not sign the source package.
+
+    -uc    Do not sign the .changes file.
+```
+
+
 
 ### Windows
 
