@@ -130,29 +130,50 @@ Run windeployqt to copy dependencies into bin folder.
 
 ### Linux (Debian)
 
-Create a tarball with `create_tarball.sh`. It should appear in the build directory. Copy it to
-outside the project root.
-
-Create a new changelog file, giving the version number from the tarball, e.g.
+On the branch you want to release, create a tarball with
 
 ```
-    dch --create -v 0.0.1+2SNAPSHOT20180415202135-0ubuntu1 --package procalc
+    ./create_tarball.sh -s
 ```
 
-... and edit the file accordingly.
+It should appear in the build directory. Copy it to outside the project root.
 
-Try building a binary package. From the project root, run
-
-```
-    debuild -us -uc
-```
-
-... where the options are
+Checkout the debian branch. Create a new changelog file, giving the version number from the tarball
+with the debian revision number appended, e.g.
 
 ```
-    -us    Do not sign the source package.
-    -uc    Do not sign the .changes file.
+    dch --create -v 0.0.1+2SNAPSHOT20180416185206-0ubuntu1 --package procalc
 ```
+
+... and edit the file so it looks something like this
+
+```
+    procalc (0.0.1+2SNAPSHOT20180416185206-0ubuntu1) xenial; urgency=medium
+
+      [Rob Jinman]
+      * Initial release.
+
+     -- Rob Jinman <jinmanr@gmail.com>  Mon, 16 Apr 2018 19:55:28 +0100
+
+```
+
+Create a debian package, from the project root, run
+
+```
+    debuild
+```
+
+To build only the source package for uploading to a launchpad PPA, run
+
+```
+    debuild -S -sa -kXXXXXXXX
+```
+
+... where -S signifies source only, -sa forces inclusion of the orig tarball, and XXXXXXXX
+denotes a PGP key ID. To create a PGP key, install seahorse from the repositories and import to
+launchpad.
+
+Upload source package to PPA via launchpad website.
 
 
 ### Windows
