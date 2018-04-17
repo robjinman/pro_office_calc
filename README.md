@@ -163,13 +163,13 @@ giving the version number from the tarball with the debian revision number appen
 To create a debian package, from the project root, run
 
 ```
-    debuild -kXXXXXXXX
+    CMAKE_BUILD_TYPE=Release debuild -kXXXXXXXX
 ```
 
 Or to build only the source package for uploading to a launchpad PPA, run
 
 ```
-    debuild -S -sa -kXXXXXXXX
+    CMAKE_BUILD_TYPE=Release debuild -S -sa -kXXXXXXXX
 ```
 
 ... where -S signifies source only, -sa forces inclusion of the orig tarball, and XXXXXXXX
