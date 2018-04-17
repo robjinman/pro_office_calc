@@ -128,6 +128,9 @@ Run windeployqt to copy dependencies into bin folder.
 
 ## Creating distributable packages
 
+(This is only really relevent to me as the maintainer, but I'm putting it here for convenience.)
+
+
 ### Linux (Debian)
 
 On the branch you want to release, create a tarball with
@@ -138,8 +141,8 @@ On the branch you want to release, create a tarball with
 
 It should appear in the build directory. Copy it to outside the project root.
 
-Checkout the debian branch. Create a new changelog file, giving the version number from the tarball
-with the debian revision number appended, e.g.
+Checkout the debian branch and merge in the trunk so it's up-to-date. Create a new changelog file,
+giving the version number from the tarball with the debian revision number appended, e.g.
 
 ```
     dch --create -v 0.0.1+2SNAPSHOT20180416185206-0ubuntu1 --package procalc
@@ -157,21 +160,21 @@ with the debian revision number appended, e.g.
 
 ```
 
-Create a debian package, from the project root, run
+To create a debian package, from the project root, run
 
 ```
-    debuild
+    debuild -kXXXXXXXX
 ```
 
-To build only the source package for uploading to a launchpad PPA, run
+Or to build only the source package for uploading to a launchpad PPA, run
 
 ```
     debuild -S -sa -kXXXXXXXX
 ```
 
 ... where -S signifies source only, -sa forces inclusion of the orig tarball, and XXXXXXXX
-denotes a PGP key ID. To create a PGP key, install seahorse from the repositories and import to
-launchpad.
+denotes a PGP key ID. To create a PGP key, use seahorse (a GnuPG front-end, which can be installed
+from the repositories), and add the key to launchpad.
 
 Upload source package to PPA via launchpad website.
 
