@@ -176,7 +176,28 @@ Or to build only the source package for uploading to a launchpad PPA, run
 denotes a PGP key ID. To create a PGP key, use seahorse (a GnuPG front-end, which can be installed
 from the repositories), and add the key to launchpad.
 
-Upload source package to PPA via launchpad website.
+If it fails to sign, it could be that seahorse was using gpg2 to create the key, but debuild is
+using gpg1. A workaround is to create a symlink at /usr/bin/gpg pointing to /usr/bin/gpg2, e.g.
+
+```
+    sudo mv /usr/bin/gpg /usr/bin/gpg.bak
+    sudo ln -s /usr/bin/gpg2 /usr/bin/gpg
+
+```
+
+Upload the source package to the PPA with dput, specifying the .changes file, e.g.
+
+```
+    dput ppa:rjinman/snapshots ../procalc_0.0.1+2SNAPSHOT20180417201730-0ubuntu1_source.changes
+```
+
+Users can now install Pro Office Calculator by adding the PPA and running apt-get.
+
+```
+    sudo add-apt-repository ppa:rjinman/snapshots
+    sudo apt-get update
+    sudo apt-get install procalc
+```
 
 
 ### Windows

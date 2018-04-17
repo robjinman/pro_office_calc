@@ -1,6 +1,6 @@
-procalc (0.0.1+2SNAPSHOT20180417200004-0ubuntu1) xenial; urgency=medium
+procalc (0.0.1+2SNAPSHOT20180417201730-0ubuntu1) xenial; urgency=medium
 
   [Rob Jinman]
-  * Initial release. (Closes: #XXXXXX)
+  * Initial release.
 
- -- Rob Jinman <jinmanr@gmail.com>  Tue, 17 Apr 2018 21:02:10 +0100
+ -- Rob Jinman <jinmanr@gmail.com>  Tue, 17 Apr 2018 21:18:40 +0100
