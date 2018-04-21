@@ -1,45 +1,41 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
-  <?define VersionNumber='1.0.0' ?>
-  <?define InfoURL='http://proofficecalculator.com' ?>
+  <?define versionNumber='1.0.0' ?>
+  <?define infoURL='http://proofficecalculator.com' ?>
 
   <Product Name='Pro Office Calculator' Manufacturer='Rob Jinman'
-    Id='YOURGUID-86C7-4D14-AEC0-86416A69ABDE'
-    UpgradeCode='YOURGUID-7349-453F-94F6-BCB5110BA4FD'
-    Language='1033' Codepage='1252' Version='$(var.VersionNumber)'>
+    Id='19dab212-44a0-40fb-a00a-da8ff6b64a75'
+    UpgradeCode='760f3e92-111b-4658-bd92-9fc6380c1102'
+    Language='1033' Codepage='1252' Version='$(var.versionNumber)'>
 
   <Package Id='*' Keywords='Installer' Description="Pro Office Calculator Installer"
     Comments='Pro Office Calculator is created and maintained by Rob Jinman who owns exclusive copyrights.' Manufacturer='Rob Jinman'
-    InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+    InstallerVersion='200' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
 
     <Media Id='1' Cabinet='media1.cab' EmbedCab='yes' />
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
-      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+      <Directory Id='ProgramFiles64Folder' Name='PFiles'>
         <Directory Id='INSTALLDIR' Name='procalc'>
 
-          <Directory Id="dataFolder" Name="data" />
+          <Directory Id='dataFolder' Name='data' />
 
-          <Component Id='MainExecutable' Guid='YOURGUID-83F1-4F22-985B-FDB3C8ABD471'>
-            <File Id='ProcalcEXE' Name='procalc.exe' DiskId='1' Source='procalc.exe' KeyPath='yes'>
-              <Shortcut Id="startmenuProcalc" Directory="ProgramMenuDir" Name="Pro Office Calculator"
+          <Component Id='mainExecutable' Guid='1db57494-b669-4386-80ad-605dc33afce9'>
+            <File Id='procalcEXE' Name='procalc.exe' DiskId='1' Source='procalc.exe' KeyPath='yes'>
+              <Shortcut Id="startmenuProcalc" Directory="programMenuDir" Name="Pro Office Calculator"
                 WorkingDirectory='INSTALLDIR' Icon="procalc.ico" IconIndex="0" Advertise="yes" />
               <Shortcut Id="desktopProcalc" Directory="DesktopFolder" Name="Pro Office Calculator"
-                WorkingDirectory='INSTALLDIR' Icon="procalc.ico" IconIndex="0" />
+                WorkingDirectory='INSTALLDIR' Icon="procalc.ico" IconIndex="0" Advertise='yes' />
             </File>
           </Component>
-
-          <Component Id='HelperLibrary' Guid='YOURGUID-6BE3-460D-A14F-75658D16550B'>
-            <File Id='HelperDLL' Name='Helper.dll' DiskId='1' Source='Helper.dll' KeyPath='yes' />
-          </Component>
-
+        </Directory>
       </Directory>
 
       <Directory Id="ProgramMenuFolder" Name="Programs">
-        <Directory Id="ProgramMenuDir" Name="Foobar 1.0">
-          <Component Id="ProgramMenuDir" Guid="YOURGUID-7E98-44CE-B049-C477CC0A2B00">
-            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+        <Directory Id="programMenuDir" Name="procalc">
+          <Component Id="programMenuDir" Guid="3b1cddef-2e7a-43b3-89de-b55f450cb001">
+            <RemoveFolder Id='programMenuDir' On='uninstall' />
             <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
           </Component>
         </Directory>
@@ -49,14 +45,13 @@
     </Directory>
 
     <Feature Id='Complete' Level='1'>
-      <ComponentGroupRef Id="MyComponentGroup"/>
-      <ComponentRef Id='MainExecutable' />
-      <ComponentRef Id='HelperLibrary' />
-      <ComponentRef Id='Manual' />
-      <ComponentRef Id='ProgramMenuDir' />
+      <ComponentGroupRef Id="dataComponentGroup"/>
+      <ComponentGroupRef Id="libsComponentGroup"/>
+      <ComponentRef Id='mainExecutable' />
+      <ComponentRef Id='programMenuDir' />
     </Feature>
 
-    <Icon Id="Foobar10.ico" SourceFile="FoobarAppl10.ico" />
+    <Icon Id="procalc.ico" SourceFile="procalc.ico" />
 
   </Product>
 </Wix>

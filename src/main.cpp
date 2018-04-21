@@ -48,7 +48,7 @@ using std::unique_ptr;
 //===========================================
 int loadStateId() {
   int id = 0;
-  ifstream fin(config::dataPath("procalc.dat"), ifstream::binary);
+  ifstream fin(config::saveDataPath("procalc.dat"), ifstream::binary);
 
   if (fin.good()) {
     fin.read(reinterpret_cast<char*>(&id), sizeof(id));
@@ -63,7 +63,7 @@ int loadStateId() {
 void persistStateId(int id) {
   DBG_PRINT("Persisting state id " << id << "\n");
 
-  ofstream fout(config::dataPath("procalc.dat"), ofstream::binary | ofstream::trunc);
+  ofstream fout(config::saveDataPath("procalc.dat"), ofstream::binary | ofstream::trunc);
   fout.write(reinterpret_cast<const char*>(&id), sizeof(id));
 }
 

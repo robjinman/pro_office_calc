@@ -9,6 +9,7 @@ namespace config {
 
 
 std::string dataPath(const std::string& relPath);
+std::string saveDataPath(const std::string& relPath);
 
 
 }

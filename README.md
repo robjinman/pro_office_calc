@@ -116,19 +116,26 @@ Now create a build/win64 directory under the project root and from there run
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 
+Be sure to substitute Release when making the release build.
+
 Open the MSVC project and build solutions ALL_BUILD followed by INSTALL making sure to select the
 Release configuration (even if Debug was given for CMAKE_BUILD_TYPE).
 
 Run windeployqt to copy dependencies into bin folder.
 
 ```
-    C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe --release dist\bin\procalc.exe`
+    C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe --release dist\procalc.exe --dir dist\libs
 ```
 
+To run the app, from build/win64/dist
+
+```
+    run
+```
 
 ## Creating distributable packages
 
-(This is only really relevent to me as the maintainer, but I'm putting it here for convenience.)
+(This is only really relevant to me as the maintainer, but I'm putting it here for convenience.)
 
 
 ### Linux (Debian)
@@ -202,10 +209,36 @@ Users can now install Pro Office Calculator by adding the PPA and running apt-ge
 
 ### Windows
 
+The data.wxs was initially created by running (from the windows dir)
+
 ```
-    heat dir "data" -cg dataComponentGroup -ke -srd -dr dataFolder -sfrag -o "windows\data.wxs"
+    heat dir "..\build\win64\dist\data" -cg dataComponentGroup -ke -gg -srd -dr dataFolder -sfrag -o "data.wxs"
 ```
 
+... and libs.wxs with
+
+```
+    heat dir "..\build\win64\dist\libs" -cg libsComponentGroup -ke -gg -srd -dr INSTALLDIR -sfrag -o "libs.wxs"
+```
+
+... where the arguments mean
+
+```
+    -cg     Create a component group that we can refer to from procalc.wxs
+    -srd    Suppress identifier generation of the root folder (we want to use /data as the root)
+    -dr     Specify the directory name
+    -sfrag  Suppress fragment generation
+    -ke     Keep empty directories
+    -gg     Generate UUIDs
+```
+
+It is unlikely the above commands will need to be run again as these wxs files should now be
+maintained manually.
+
+```
+    candle procalc.wxs libs.wxs data.wxs -arch x64
+    light procalc.wixobj data.wixobj libs.wixobj -b ..\build\win64\dist -b ..\build\win64\dist\libs -b ..\build\win64\dist\data -o procalc.msi
+```
 
 ## To profile (Linux only)
 

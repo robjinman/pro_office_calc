@@ -9,14 +9,31 @@ namespace config {
 
 
 string dataPath(const string& relPath) {
-#ifdef DEBUG
-  #ifdef WIN32
-    return string("./data/") + relPath;
-  #else
-    return string("./usr/share/procalc/data/") + relPath;
-  #endif
+#ifdef WIN32
+  return string("./data/") + relPath;
 #else
-  return QStandardPaths::locate(QStandardPaths::AppDataLocation, relPath.c_str()).toStdString();
+  #ifdef DEBUG
+    return string("./usr/share/procalc/data/") + relPath;
+  #else
+    return string("/usr/share/procalc/data/") + relPath;
+  #endif
+#endif
+}
+
+string saveDataPath(const string& relPath) {
+#ifdef DEBUG
+  return string("./data/") + relPath;
+#else
+  static string dir;
+
+  if (dir.length() == 0) {
+    auto& paths = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+    if (!paths.empty()) {
+      dir = paths.first().toStdString();
+    }
+  }
+
+  return dir + "/" + relPath;
 #endif
 }
 
