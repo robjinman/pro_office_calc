@@ -39,14 +39,8 @@ and from there run
 Create the directory build/linux under the project root and from there run
 
 ```
-    cmake -DCMAKE_INSTALL_PREFIX=./dist/usr -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
-    make -j4 && make install
-```
-
-To run the app, from build/linux run
-
-```
-    ./run.sh
+    cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
+    make -j4
 ```
 
 

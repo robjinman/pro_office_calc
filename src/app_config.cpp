@@ -13,7 +13,7 @@ string dataPath(const string& relPath) {
   return string("./data/") + relPath;
 #else
   #ifdef DEBUG
-    return string("./usr/share/procalc/data/") + relPath;
+    return string("./data/") + relPath;
   #else
     return string("/usr/share/procalc/data/") + relPath;
   #endif
