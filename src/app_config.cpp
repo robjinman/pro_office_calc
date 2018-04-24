@@ -29,7 +29,7 @@ string saveDataPath(const string& relPath) {
   static string dir;
 
   if (dir.length() == 0) {
-    auto& paths = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+    auto paths = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
     if (!paths.empty()) {
       dir = paths.first().toStdString();
     }
