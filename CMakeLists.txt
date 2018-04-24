@@ -4,6 +4,8 @@ set(projectName procalc)
 
 project(${projectName})
 
+message("***** Building ${CMAKE_BUILD_TYPE} build *****")
+
 if (WIN32)
   set(QT_DIR "C:/Qt/5.10.1/msvc2017_64")
   set(BUILD_SUBDIR "win64")

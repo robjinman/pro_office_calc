@@ -9,8 +9,10 @@ namespace config {
 
 
 string dataPath(const string& relPath) {
+// Windows
 #ifdef WIN32
   return string("./data/") + relPath;
+// Linux
 #else
   #ifdef DEBUG
     return string("./data/") + relPath;
