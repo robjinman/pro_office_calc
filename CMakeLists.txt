@@ -66,7 +66,7 @@ else()
   add_compile_options(-O3)
 endif()
 
-if (CMAKE_BUILD_TYPE MATCHES Release)
+if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
   message("Release mode")
 else()
   message("Debug mode")

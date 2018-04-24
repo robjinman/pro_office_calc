@@ -19,6 +19,8 @@ key_id="$1"
 export DEBEMAIL="jinmanr@gmail.com"
 export DEBFULLNAME="Rob Jinman"
 
+changelog_path="${pwd}/debian/changelog"
+
 ./create_tarball.sh -s
 
 tarball_path=$(find build -name "procalc_*.orig.tar.gz")
@@ -45,6 +47,9 @@ if $release; then
 else
   dch -v "${deb_version}"
 fi
+
+# Replace the old changelog with the new one
+mv ./debian/changelog "${changelog_path}"
 
 export CMAKE_BUILD_TYPE=Release
 debuild -k${key_id}
