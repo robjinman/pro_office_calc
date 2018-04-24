@@ -157,7 +157,6 @@ using gpg1. A workaround is to create a symlink at /usr/bin/gpg pointing to /usr
 ```
     sudo mv /usr/bin/gpg /usr/bin/gpg.bak
     sudo ln -s /usr/bin/gpg2 /usr/bin/gpg
-
 ```
 
 Upload the source package to the PPA with dput, specifying the .changes file, e.g.

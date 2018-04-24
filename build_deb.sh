@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 [OPTIONS] keyid"
-  exit 1
-fi
-
 release=false
 source_only=false
 
@@ -23,7 +18,7 @@ do
 done
 
 if [ -z $key_id ]; then
-  echo "Missing required option -k XXXXXX"
+  echo "Missing required option -k key_id"
   exit 1
 fi
 
