@@ -6,20 +6,31 @@ if [ $# -lt 1 ]; then
 fi
 
 release=false
+source_only=false
 
-while getopts "r" opt
+while getopts "k:rs" opt
 do
   case $opt in
     r) release=true
+       echo "Making release package"
+       ;;
+    s) source_only=true
+       echo "Building source package only"
+       ;;
+    k) key_id="$OPTARG"
        ;;
   esac
 done
 
-key_id="$1"
+if [ -z $key_id ]; then
+  echo "Missing required option -k XXXXXX"
+  exit 1
+fi
+
 export DEBEMAIL="jinmanr@gmail.com"
 export DEBFULLNAME="Rob Jinman"
 
-changelog_path="${pwd}/debian/changelog"
+changelog_path="$(pwd)/debian/changelog"
 
 ./create_tarball.sh -s
 
@@ -36,20 +47,24 @@ fi
 version="${BASH_REMATCH[1]}"
 deb_version="${version}-0ubuntu1"
 
-mv "${tarball_path}" ../
+mv "$tarball_path" ../
 cd ..
-tar -xf "${tarball_name}"
+tar -xf "$tarball_name"
 cd "procalc-${version}"
 
 if $release; then
-  echo "Making release package"
   dch --release
 else
-  dch -v "${deb_version}"
+  dch -v "$deb_version"
 fi
 
 # Replace the old changelog with the new one
-mv ./debian/changelog "${changelog_path}"
+cp ./debian/changelog "$changelog_path"
 
 export CMAKE_BUILD_TYPE=Release
-debuild -k${key_id}
+
+if $source_only; then
+  debuild -S -sa -k$key_id
+else
+  debuild -k$key_id
+fi

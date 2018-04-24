@@ -129,53 +129,27 @@ To run the app, from build/win64/dist
 
 ## Creating distributable packages
 
-(This is only really relevant to me as the maintainer, but I'm putting it here for convenience.)
+(Putting it here for my own convenience as maintainer.)
 
 
 ### Linux (Debian)
 
-On the branch you want to release, create a tarball with
+On the branch you want to release, run
 
 ```
-    ./create_tarball.sh -s
+    ./build_deb.sh -rs -k XXXXXX
 ```
 
-It should appear in the build directory. Copy it to outside the project root.
-
-Checkout the debian branch and merge in the trunk so it's up-to-date. Create a new changelog file,
-giving the version number from the tarball with the debian revision number appended, e.g.
+... where the options are as follows
 
 ```
-    dch --create -v 0.0.1+2SNAPSHOT20180416185206-0ubuntu1 --package procalc
+    -r         Signifies a release build. Only affects the changelog by causing dch to be run with --release option
+    -s         Build source package only
+    -k XXXXXX  The ID of the PGP key to sign the package with
 ```
 
-... and edit the file so it looks something like this
-
-```
-    procalc (0.0.1+2SNAPSHOT20180416185206-0ubuntu1) xenial; urgency=medium
-
-      [Rob Jinman]
-      * Initial release.
-
-     -- Rob Jinman <jinmanr@gmail.com>  Mon, 16 Apr 2018 19:55:28 +0100
-
-```
-
-To create a debian package, from the project root, run
-
-```
-    CMAKE_BUILD_TYPE=Release debuild -kXXXXXXXX
-```
-
-Or to build only the source package for uploading to a launchpad PPA, run
-
-```
-    CMAKE_BUILD_TYPE=Release debuild -S -sa -kXXXXXXXX
-```
-
-... where -S signifies source only, -sa forces inclusion of the orig tarball, and XXXXXXXX
-denotes a PGP key ID. To create a PGP key, use seahorse (a GnuPG front-end, which can be installed
-from the repositories), and add the key to launchpad.
+To create a PGP key, use seahorse (a GnuPG front-end, which can be installed from the repositories),
+and add the key to launchpad.
 
 If it fails to sign, it could be that seahorse was using gpg2 to create the key, but debuild is
 using gpg1. A workaround is to create a symlink at /usr/bin/gpg pointing to /usr/bin/gpg2, e.g.
