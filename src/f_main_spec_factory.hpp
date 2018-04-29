@@ -3,7 +3,7 @@
 
 
 
-class FMainSpec;
+struct FMainSpec;
 
 
 FMainSpec* makeFMainSpec(int stateId);

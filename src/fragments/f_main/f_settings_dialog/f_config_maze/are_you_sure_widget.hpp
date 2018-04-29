@@ -38,23 +38,24 @@ class AreYouSureWidget : public QWidget {
     class Template;
     typedef std::map<std::string, Template> TemplateMap;
 
-    struct Template {
-      Template(const std::string& text1, const std::string& text2)
-        : text1(text1),
-          text2(text2) {}
+    class Template {
+      public:
+        Template(const std::string& text1, const std::string& text2)
+          : text1(text1),
+            text2(text2) {}
 
-      explicit Template(const std::string& text1)
-        : text1(text1),
-          text2("") {}
+        explicit Template(const std::string& text1)
+          : text1(text1),
+            text2("") {}
 
-      Template() {}
+        Template() {}
 
-      std::string generate(const TemplateMap& templates, int maxDepth = 10) const;
-      std::string generate_(const TemplateMap& templates, const std::string& text,
-        int maxDepth) const;
+        std::string generate(const TemplateMap& templates, int maxDepth = 10) const;
+        std::string generate_(const TemplateMap& templates, const std::string& text,
+          int maxDepth) const;
 
-      std::string text1;
-      std::string text2;
+        std::string text1;
+        std::string text2;
     };
 
     QtObjPtr<QStackedLayout> m_pages;

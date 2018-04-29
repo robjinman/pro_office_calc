@@ -6,7 +6,9 @@
 #include <vector>
 #include <ostream>
 #include <functional>
-#include <omp.h>
+#ifndef __APPLE__
+  #include <omp.h>
+#endif
 #include <QPainter>
 #include <QPaintDevice>
 #include <QBrush>
@@ -29,18 +31,6 @@ using std::for_each;
 
 static const double TWO_FIVE_FIVE_RP = 1.0 / 255.0;
 
-
-static inline CZone& getZone(const SpatialSystem& spatialSystem, const CRegion& r) {
-  return dynamic_cast<CZone&>(spatialSystem.getComponent(r.entityId()));
-}
-
-static inline CEdge& getEdge(const SpatialSystem& spatialSystem, const CBoundary& b) {
-  return dynamic_cast<CEdge&>(spatialSystem.getComponent(b.entityId()));
-}
-
-static inline CVRect& getVRect(const SpatialSystem& spatialSystem, const CSprite& s) {
-  return dynamic_cast<CVRect&>(spatialSystem.getComponent(s.entityId()));
-}
 
 static inline CVRect& getVRect(const SpatialSystem& spatialSystem, const CWallDecal& d) {
   return dynamic_cast<CVRect&>(spatialSystem.getComponent(d.entityId()));

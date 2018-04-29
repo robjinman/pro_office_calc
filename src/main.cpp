@@ -1,9 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#ifdef __APPLE__
-#  include "CoreFoundation/CoreFoundation.h"
-#endif
 #include "application.hpp"
 #include "exception.hpp"
 #include "app_config.hpp"
@@ -15,25 +12,6 @@
 #include "request_state_change_event.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
-
-
-#ifdef __APPLE__
-
-//===========================================
-// changeWorkingDir
-//===========================================
-void changeWorkingDir() {
-  CFBundleRef mainBundle = CFBundleGetMainBundle();
-  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-
-  char path[PATH_MAX];
-  CFURLGetFileSystemRepresentation(resourcesURL, TRUE, reinterpret_cast<UInt8*>(path), PATH_MAX);
-
-  CFRelease(resourcesURL);
-  chdir(path);
-}
-
-#endif
 
 
 using std::ifstream;
@@ -71,11 +49,6 @@ void persistStateId(int id) {
 // main
 //===========================================
 int main(int argc, char** argv) {
-
-#ifdef __APPLE__
-  changeWorkingDir();
-#endif
-
   try {
     int stateId = 0;
 

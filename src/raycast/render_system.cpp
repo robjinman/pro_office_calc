@@ -42,7 +42,6 @@ static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const C
 //===========================================
 RenderSystem::RenderSystem(EntityManager& entityManager, QImage& target)
   : m_entityManager(entityManager),
-    m_target(target),
     m_renderer(entityManager, target) {}
 
 //===========================================

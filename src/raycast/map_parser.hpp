@@ -19,7 +19,7 @@ struct Path {
   bool closed = false;
 };
 
-class Object;
+struct Object;
 
 typedef std::unique_ptr<Object> pObject_t;
 

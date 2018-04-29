@@ -11,7 +11,7 @@ class TimeService;
 class Matrix;
 class RootFactory;
 class CalculatorWidget;
-namespace parser { class Object; }
+namespace parser { struct Object; }
 
 
 namespace youve_got_mail {
@@ -20,7 +20,7 @@ namespace youve_got_mail {
 class ObjectFactory : public GameObjectFactory {
   public:
     ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-      AudioService& audioService, TimeService& timeService, CalculatorWidget& wgtCalculator);
+      TimeService& timeService, CalculatorWidget& wgtCalculator);
 
     const std::set<std::string>& types() const override;
 
@@ -30,7 +30,6 @@ class ObjectFactory : public GameObjectFactory {
   private:
     RootFactory& m_rootFactory;
     EntityManager& m_entityManager;
-    AudioService& m_audioService;
     TimeService& m_timeService;
     CalculatorWidget& m_wgtCalculator;
 

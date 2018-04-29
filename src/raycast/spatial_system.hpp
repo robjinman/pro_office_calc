@@ -15,7 +15,7 @@
 
 
 namespace tinyxml2 { class XMLElement; }
-namespace parser { class Object; }
+namespace parser { struct Object; }
 
 
 struct Intersection {

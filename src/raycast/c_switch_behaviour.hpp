@@ -15,16 +15,17 @@ class CWallDecal;
 enum class SwitchState { ON, OFF };
 
 
-struct ESwitchActivate : public GameEvent {
-  ESwitchActivate(entityId_t switchEntityId, SwitchState state, const std::string& message)
-    : GameEvent("switch_activated"),
-      switchEntityId(switchEntityId),
-      state(state),
-      message(message) {}
+class ESwitchActivate : public GameEvent {
+  public:
+    ESwitchActivate(entityId_t switchEntityId, SwitchState state, const std::string& message)
+      : GameEvent("switch_activated"),
+        switchEntityId(switchEntityId),
+        state(state),
+        message(message) {}
 
-  entityId_t switchEntityId;
-  SwitchState state;
-  std::string message;
+    entityId_t switchEntityId;
+    SwitchState state;
+    std::string message;
 };
 
 class CSwitchBehaviour : public CBehaviour {
@@ -50,7 +51,6 @@ class CSwitchBehaviour : public CBehaviour {
     std::string m_message;
     SwitchState m_state;
     bool m_toggleable;
-    double m_toggleDelay;
     Debouncer m_timer;
 
     entityId_t m_captionBgId = -1;

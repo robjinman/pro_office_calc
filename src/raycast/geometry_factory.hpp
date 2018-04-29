@@ -13,7 +13,7 @@ class AudioService;
 class TimeService;
 class Matrix;
 class RootFactory;
-namespace parser { class Object; }
+namespace parser { struct Object; }
 
 class GeometryFactory : public GameObjectFactory {
   public:

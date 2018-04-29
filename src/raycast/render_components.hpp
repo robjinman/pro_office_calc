@@ -29,14 +29,15 @@ enum class CRenderKind {
   OVERLAY
 };
 
-struct CRender : public Component {
-  CRender(CRenderKind kind, entityId_t entityId, entityId_t parentId)
-    : Component(entityId, ComponentKind::C_RENDER),
-      kind(kind),
-      parentId(parentId) {}
+class CRender : public Component {
+  public:
+    CRender(CRenderKind kind, entityId_t entityId, entityId_t parentId)
+      : Component(entityId, ComponentKind::C_RENDER),
+        kind(kind),
+        parentId(parentId) {}
 
-  CRenderKind kind;
-  entityId_t parentId;
+    CRenderKind kind;
+    entityId_t parentId;
 };
 
 typedef std::unique_ptr<CRender> pCRender_t;
@@ -138,31 +139,34 @@ class CSprite : public CRender {
 
 typedef std::unique_ptr<CSprite> pCSprite_t;
 
-struct CWallDecal : public CRender {
-  CWallDecal(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
+class CWallDecal : public CRender {
+  public:
+    CWallDecal(entityId_t entityId, entityId_t parentId)
+      : CRender(CRenderKind::WALL_DECAL, entityId, parentId) {}
 
-  std::string texture;
-  QRectF texRect = QRectF(0, 0, 1, 1);
-  int zIndex = 0;
+    std::string texture;
+    QRectF texRect = QRectF(0, 0, 1, 1);
+    int zIndex = 0;
 };
 
 typedef std::unique_ptr<CWallDecal> pCWallDecal_t;
 
-struct CBoundary : public CRender {
-  CBoundary(CRenderKind kind, entityId_t entityId, entityId_t parentId)
-    : CRender(kind, entityId, parentId) {}
+class CBoundary : public CRender {
+  public:
+    CBoundary(CRenderKind kind, entityId_t entityId, entityId_t parentId)
+      : CRender(kind, entityId, parentId) {}
 
-  std::list<pCWallDecal_t> decals;
+    std::list<pCWallDecal_t> decals;
 };
 
 typedef std::unique_ptr<CBoundary> pCBoundary_t;
 
-struct CFloorDecal : public CRender {
-  CFloorDecal(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::FLOOR_DECAL, entityId, parentId) {}
+class CFloorDecal : public CRender {
+  public:
+    CFloorDecal(entityId_t entityId, entityId_t parentId)
+      : CRender(CRenderKind::FLOOR_DECAL, entityId, parentId) {}
 
-  std::string texture;
+    std::string texture;
 };
 
 typedef std::unique_ptr<CFloorDecal> pCFloorDecal_t;
@@ -170,57 +174,60 @@ typedef std::unique_ptr<CFloorDecal> pCFloorDecal_t;
 class CRegion;
 typedef std::unique_ptr<CRegion> pCRegion_t;
 
-struct CRegion : public CRender {
-  CRegion(entityId_t entityId, entityId_t parentId)
-    : CRender(CRenderKind::REGION, entityId, parentId) {}
+class CRegion : public CRender {
+  public:
+    CRegion(entityId_t entityId, entityId_t parentId)
+      : CRender(CRenderKind::REGION, entityId, parentId) {}
 
-  bool hasCeiling = true; // TODO: Remove
-  std::string floorTexture;
-  QRectF floorTexRect = QRectF(0, 0, 1, 1);
-  std::string ceilingTexture;
-  QRectF ceilingTexRect = QRectF(0, 0, 1, 1);
-  std::list<pCRegion_t> children;
-  std::list<CBoundary*> boundaries;
-  std::list<pCSprite_t> sprites;
-  std::list<pCFloorDecal_t> floorDecals;
+    bool hasCeiling = true; // TODO: Remove
+    std::string floorTexture;
+    QRectF floorTexRect = QRectF(0, 0, 1, 1);
+    std::string ceilingTexture;
+    QRectF ceilingTexRect = QRectF(0, 0, 1, 1);
+    std::list<pCRegion_t> children;
+    std::list<CBoundary*> boundaries;
+    std::list<pCSprite_t> sprites;
+    std::list<pCFloorDecal_t> floorDecals;
 };
 
 void forEachConstCRegion(const CRegion& region, std::function<void(const CRegion&)> fn);
 void forEachCRegion(CRegion& region, std::function<void(CRegion&)> fn);
 
-struct CWall : public CBoundary {
-  CWall(entityId_t entityId, entityId_t parentId)
-    : CBoundary(CRenderKind::WALL, entityId, parentId) {}
+class CWall : public CBoundary {
+  public:
+    CWall(entityId_t entityId, entityId_t parentId)
+      : CBoundary(CRenderKind::WALL, entityId, parentId) {}
 
-  std::string texture;
-  QRectF texRect = QRectF(0, 0, 1, 1);
-  CRegion* region;
+    std::string texture;
+    QRectF texRect = QRectF(0, 0, 1, 1);
+    CRegion* region;
 };
 
-struct CJoin : public CBoundary {
-  CJoin(entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : CBoundary(CRenderKind::JOIN, entityId, parentId),
-      joinId(joinId) {}
+class CJoin : public CBoundary {
+  public:
+    CJoin(entityId_t entityId, entityId_t parentId, entityId_t joinId)
+      : CBoundary(CRenderKind::JOIN, entityId, parentId),
+        joinId(joinId) {}
 
-  void mergeIn(const CJoin& other) {
-    if (topTexture == "default") {
-      topTexture = other.topTexture;
+    void mergeIn(const CJoin& other) {
+      if (topTexture == "default") {
+        topTexture = other.topTexture;
+      }
+      if (bottomTexture == "default") {
+        bottomTexture = other.bottomTexture;
+      }
     }
-    if (bottomTexture == "default") {
-      bottomTexture = other.bottomTexture;
-    }
-  }
 
-  entityId_t joinId = 0;
+    entityId_t joinId = 0;
 
-  std::string topTexture = "default";
-  std::string bottomTexture = "default";
+    std::string topTexture = "default";
+    std::string bottomTexture = "default";
 
-  QRectF topTexRect = QRectF(0, 0, 1, 1);
-  QRectF bottomTexRect = QRectF(0, 0, 1, 1);
+    QRectF topTexRect = QRectF(0, 0, 1, 1);
+    QRectF bottomTexRect = QRectF(0, 0, 1, 1);
 
-  CRegion* regionA = nullptr;
-  CRegion* regionB = nullptr;
+    CRegion* regionA = nullptr;
+    CRegion* regionB = nullptr;
 };
 
 

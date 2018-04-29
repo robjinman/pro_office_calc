@@ -43,6 +43,30 @@ Create the directory build/linux under the project root and from there run
     make -j4
 ```
 
+### OS X
+
+Install the development dependencies via homebrew
+
+```
+    brew install qt
+    brew install tinyxml2
+```
+
+Create the directory build/osx and from there, run
+
+```
+    cmake -DCMAKE_BUILD_TYPE=Debug -G "Xcode" ../..
+```
+
+Open the XCode project, and change the build configuration to Release via Product -> Scheme ->
+Edit Scheme -> Run -> Info. Build the project.
+
+Run the app from the build/osx directory
+
+```
+    ./Release/procalc
+```
+
 
 ### Windows
 

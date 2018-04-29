@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cmath>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QApplication>
@@ -101,7 +102,7 @@ void FNormalCalcTrigger::onButtonClick(int id) {
         return i < commonData.updateLoop.fps() * 1.5;
       });
 
-      commonData.updateLoop.add([=,&data]() mutable {
+      commonData.updateLoop.add([=]() mutable {
         ++i;
         if (i % 2) {
           setColour(*window, origCol, QPalette::Window);

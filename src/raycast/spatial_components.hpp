@@ -21,66 +21,71 @@ enum class CSpatialKind {
   PATH
 };
 
-struct CSpatial : public Component {
-  CSpatial(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
-    : Component(entityId, ComponentKind::C_SPATIAL),
-      kind(kind),
-      parentId(parentId) {}
+class CSpatial : public Component {
+  public:
+    CSpatial(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
+      : Component(entityId, ComponentKind::C_SPATIAL),
+        kind(kind),
+        parentId(parentId) {}
 
-  CSpatialKind kind;
-  entityId_t parentId;
+    CSpatialKind kind;
+    entityId_t parentId;
 };
 
 typedef std::unique_ptr<CSpatial> pCSpatial_t;
 
-struct CPath : public CSpatial {
-  CPath(entityId_t entityId, entityId_t parentId)
-    : CSpatial(CSpatialKind::PATH, entityId, parentId) {}
+class CPath : public CSpatial {
+  public:
+    CPath(entityId_t entityId, entityId_t parentId)
+      : CSpatial(CSpatialKind::PATH, entityId, parentId) {}
 
-  std::vector<Point> points;
+    std::vector<Point> points;
 };
 
 typedef std::unique_ptr<CPath> pCPath_t;
 
 class CZone;
 
-struct CVRect : public CSpatial {
-  CVRect(entityId_t entityId, entityId_t parentId, const Size& size)
-    : CSpatial(CSpatialKind::V_RECT, entityId, parentId),
-      size(size) {}
+class CVRect : public CSpatial {
+  public:
+    CVRect(entityId_t entityId, entityId_t parentId, const Size& size)
+      : CSpatial(CSpatialKind::V_RECT, entityId, parentId),
+        size(size) {}
 
-  void setTransform(const Matrix& m) {
-    pos.x = m.tx();
-    pos.y = m.ty();
-    angle = m.a();
-  }
+    void setTransform(const Matrix& m) {
+      pos.x = m.tx();
+      pos.y = m.ty();
+      angle = m.a();
+    }
 
-  CZone* zone = nullptr;
-  Vec2f pos;
-  double angle;
-  Size size;
-  // Height above floor
-  double height = 0;
+    CZone* zone = nullptr;
+    Vec2f pos;
+    double angle;
+    Size size;
+    // Height above floor
+    double height = 0;
 };
 
 typedef std::unique_ptr<CVRect> pCVRect_t;
 
-struct CEdge : public CSpatial {
-  CEdge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
-    : CSpatial(kind, entityId, parentId) {}
+class CEdge : public CSpatial {
+  public:
+    CEdge(CSpatialKind kind, entityId_t entityId, entityId_t parentId)
+      : CSpatial(kind, entityId, parentId) {}
 
-  LineSegment lseg;
-  std::list<pCVRect_t> vRects;
+    LineSegment lseg;
+    std::list<pCVRect_t> vRects;
 };
 
 typedef std::unique_ptr<CEdge> pCEdge_t;
 
-struct CHRect : public CSpatial {
-  CHRect(entityId_t entityId, entityId_t parentId)
-    : CSpatial(CSpatialKind::H_RECT, entityId, parentId) {}
+class CHRect : public CSpatial {
+  public:
+    CHRect(entityId_t entityId, entityId_t parentId)
+      : CSpatial(CSpatialKind::H_RECT, entityId, parentId) {}
 
-  Size size;
-  Matrix transform;
+    Size size;
+    Matrix transform;
 };
 
 typedef std::unique_ptr<CHRect> pCHRect_t;
@@ -106,30 +111,32 @@ class CZone : public CSpatial {
 void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
 void forEachZone(CZone& zone, std::function<void(CZone&)> fn);
 
-struct CHardEdge : public CEdge {
-  CHardEdge(entityId_t entityId, entityId_t parentId)
-    : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
+class CHardEdge : public CEdge {
+  public:
+    CHardEdge(entityId_t entityId, entityId_t parentId)
+      : CEdge(CSpatialKind::HARD_EDGE, entityId, parentId) {}
 
-  CZone* zone = nullptr;
+    CZone* zone = nullptr;
 
-  double height() const {
-    return zone->ceilingHeight - zone->floorHeight;
-  }
+    double height() const {
+      return zone->ceilingHeight - zone->floorHeight;
+    }
 };
 
-struct CSoftEdge : public CEdge {
-  CSoftEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
-    : CEdge(CSpatialKind::SOFT_EDGE, entityId, parentId),
-      joinId(joinId) {}
+class CSoftEdge : public CEdge {
+  public:
+    CSoftEdge(entityId_t entityId, entityId_t parentId, entityId_t joinId)
+      : CEdge(CSpatialKind::SOFT_EDGE, entityId, parentId),
+        joinId(joinId) {}
 
-  entityId_t joinId = -1;
-  entityId_t twinId = -1;
+    entityId_t joinId = -1;
+    entityId_t twinId = -1;
 
-  bool isPortal = false;
-  Matrix toTwin;
+    bool isPortal = false;
+    Matrix toTwin;
 
-  CZone* zoneA = nullptr;
-  CZone* zoneB = nullptr;
+    CZone* zoneA = nullptr;
+    CZone* zoneB = nullptr;
 };
 
 

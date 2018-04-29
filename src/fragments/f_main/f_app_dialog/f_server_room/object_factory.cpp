@@ -263,10 +263,9 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
 // ObjectFactory::ObjectFactory
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-  AudioService& audioService, TimeService& timeService, CalculatorWidget& wgtCalculator)
+  TimeService& timeService, CalculatorWidget& wgtCalculator)
   : m_rootFactory(rootFactory),
     m_entityManager(entityManager),
-    m_audioService(audioService),
     m_timeService(timeService),
     m_wgtCalculator(wgtCalculator) {}
 

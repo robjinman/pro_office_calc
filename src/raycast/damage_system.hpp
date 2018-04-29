@@ -53,7 +53,7 @@ enum class AttenuationCurve {
 
 class EntityManager;
 class CZone;
-class Intersection;
+struct Intersection;
 
 class DamageSystem : public System {
   public:

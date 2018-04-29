@@ -15,7 +15,23 @@ using std::ostream;
 using std::vector;
 
 
+#ifdef __APPLE__
+#include <chrono>
+
+using std::chrono::system_clock;
+using std::chrono::milliseconds;
+using std::chrono::duration_cast;
+
+long randomSeed() {
+  return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+#else
 static std::random_device rd;
+
+long randomSeed() {
+  return rd();
+}
+#endif
 
 
 #ifdef DEBUG
@@ -36,10 +52,6 @@ ostream& operator<<(ostream& os, const QPointF& p) {
   return os;
 }
 #endif
-
-long randomSeed() {
-  return rd();
-}
 
 string readString(istream& is) {
   int nBytes = 0;

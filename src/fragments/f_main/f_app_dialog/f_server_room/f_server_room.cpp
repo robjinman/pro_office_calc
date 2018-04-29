@@ -25,7 +25,7 @@ FServerRoom::FServerRoom(Fragment& parent_, FragmentData& parentData_,
 void FServerRoom::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FServerRoom::reload\n");
 
-  commonData.eventSystem.listen("launchServerRoom", [this, &spec_](const Event&) {
+  commonData.eventSystem.listen("launchServerRoom", [this](const Event&) {
     auto& parentData = parentFragData<WidgetFragData>();
 
     m_data.vbox = makeQtObjPtr<QVBoxLayout>();
@@ -52,7 +52,6 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
 
     auto& rootFactory = m_data.wgtRaycast->rootFactory();
     auto& timeService = m_data.wgtRaycast->timeService();
-    auto& audioService = m_data.wgtRaycast->audioService();
     auto& entityManager = m_data.wgtRaycast->entityManager();
 
     m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>();
@@ -60,7 +59,7 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     m_data.wgtCalculator->hide();
 
     GameObjectFactory* factory = new youve_got_mail::ObjectFactory(rootFactory, entityManager,
-      audioService, timeService, *m_data.wgtCalculator);
+      timeService, *m_data.wgtCalculator);
 
     m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
     m_data.wgtRaycast->initialise(config::dataPath("youve_got_mail/map.svg"));

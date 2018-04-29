@@ -23,7 +23,7 @@ FServerRoomInit::FServerRoomInit(Fragment& parent_, FragmentData& parentData_,
 void FServerRoomInit::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FServerRoomInit::reload\n");
 
-  commonData.eventSystem.listen("launchServerRoom", [this, &spec_](const Event&) {
+  commonData.eventSystem.listen("launchServerRoom", [this](const Event&) {
     auto& parentData = parentFragData<FDesktopData>();
 
     QPixmap pix(config::dataPath("youve_got_mail/procalc_dark.png").c_str());

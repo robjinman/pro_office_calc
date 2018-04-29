@@ -53,7 +53,7 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
     toggleFeatures(e.features);
   }, m_setupCompleteIdx);
 
-  commonData.eventSystem.listen("dialogClosed", [this, &commonData](const Event& event) {
+  commonData.eventSystem.listen("dialogClosed", [&commonData](const Event& event) {
     const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
 
     if (e.name == "procalcSetup") {

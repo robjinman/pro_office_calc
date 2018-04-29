@@ -10,18 +10,20 @@
 typedef long entityId_t;
 
 
-struct GameEvent {
-  explicit GameEvent(const std::string& name)
-    : name(name) {}
+class GameEvent {
+  public:
+    explicit GameEvent(const std::string& name)
+      : name(name) {}
 
-  std::string name;
+    std::string name;
 
-  virtual ~GameEvent() {}
+    virtual ~GameEvent() {}
 };
 
-struct EActivateEntity : public GameEvent {
-  EActivateEntity()
-    : GameEvent("activate_entity") {}
+class EActivateEntity : public GameEvent {
+  public:
+    EActivateEntity()
+      : GameEvent("activate_entity") {}
 };
 
 class Component {

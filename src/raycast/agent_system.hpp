@@ -43,7 +43,6 @@ class CAgent : public Component {
 
     state_t m_state = ST_STATIONARY;
 
-    bool m_shooting = false;
     std::unique_ptr<TimePattern> m_gunfireTiming;
 
     entityId_t m_targetObject = -1;

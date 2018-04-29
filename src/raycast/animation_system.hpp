@@ -99,8 +99,7 @@ class EntityManager;
 class AnimationSystem : public System {
   public:
     AnimationSystem(EntityManager& entityManager, double frameRate)
-      : m_entityManager(entityManager),
-        m_frameRate(frameRate) {}
+      : m_entityManager(entityManager) {}
 
     void playAnimation(entityId_t entityId, const std::string& anim, bool loop);
     void stopAnimation(entityId_t entityId);
@@ -116,7 +115,6 @@ class AnimationSystem : public System {
 
   private:
     EntityManager& m_entityManager;
-    double m_frameRate;
     std::map<entityId_t, pCAnimation_t> m_components;
 
     void updateAnimation(CAnimation& c, int which);

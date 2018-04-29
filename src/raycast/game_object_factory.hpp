@@ -9,7 +9,7 @@
 
 
 class Matrix;
-namespace parser { class Object; }
+namespace parser { struct Object; }
 
 class GameObjectFactory {
   public:

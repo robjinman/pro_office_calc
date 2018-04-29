@@ -32,7 +32,6 @@ class RenderSystem : public System {
 
   private:
     EntityManager& m_entityManager;
-    QImage& m_target;
     Renderer m_renderer;
 
     std::map<entityId_t, CRender*> m_components;

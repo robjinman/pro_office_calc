@@ -38,7 +38,7 @@ class FMain : public QMainWindow, public Fragment {
     virtual ~FMain();
 
   protected:
-    virtual void closeEvent(QCloseEvent*);
+    virtual void closeEvent(QCloseEvent*) override;
 
   private slots:
     void showAbout();

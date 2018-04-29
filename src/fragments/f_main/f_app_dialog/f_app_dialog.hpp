@@ -9,17 +9,19 @@
 #include "event.hpp"
 
 
-struct DialogClosedEvent : public Event {
-  DialogClosedEvent(const std::string& name)
-    : Event("dialogClosed"),
-      name(name) {}
+class DialogClosedEvent : public Event {
+  public:
+    DialogClosedEvent(const std::string& name)
+      : Event("dialogClosed"),
+        name(name) {}
 
-  std::string name;
+    std::string name;
 };
 
-struct FAppDialogData : public WidgetFragData {
-  FAppDialogData()
-    : WidgetFragData(makeQtObjPtr<QVBoxLayout>()) {}
+class FAppDialogData : public WidgetFragData {
+  public:
+    FAppDialogData()
+      : WidgetFragData(makeQtObjPtr<QVBoxLayout>()) {}
 };
 
 class FAppDialog : public QDialog, public Fragment {

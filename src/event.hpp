@@ -6,16 +6,17 @@
 #include <string>
 
 
-struct Event {
-  Event(const char* name)
-    : name(name) {}
+class Event {
+  public:
+    Event(const char* name)
+      : name(name) {}
 
-  Event(const std::string& name)
-    : name(name) {}
+    Event(const std::string& name)
+      : name(name) {}
 
-  std::string name;
+    std::string name;
 
-  virtual ~Event() {}
+    virtual ~Event() {}
 };
 
 typedef std::unique_ptr<Event> pEvent_t;

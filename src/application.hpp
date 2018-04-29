@@ -7,7 +7,7 @@
 
 class Application : public QApplication {
   public:
-    Application(int argc, char** argv)
+    Application(int& argc, char** argv)
       : QApplication(argc, argv) {}
 
     virtual bool notify(QObject* receiver, QEvent* event);
