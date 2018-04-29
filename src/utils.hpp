@@ -3,11 +3,13 @@
 
 
 #include <istream>
+#include <sstream>
 #include <string>
 #include <memory>
 #include <map>
 #include <vector>
 #include <QPointer>
+#include "exception.hpp"
 #ifdef DEBUG
 #  include <iostream>
 #  define DBG_PRINT(msg) std::cout << msg;
@@ -22,6 +24,29 @@
 #define DEG_TO_RAD(x) (x * PI / 180.0)
 #define RAD_TO_DEG(x) (x * 180.0 / PI)
 
+template<class T>
+inline typename T::mapped_type& getValueFromMap(T& map, const typename T::key_type& key,
+  const char* file, int line) {
+
+  auto it = map.find(key);
+  if (it == map.end()) {
+    std::stringstream ss;
+    ss << "Map does not contain key '" << key << "'";
+    throw Exception(ss.str(), file, line);
+  }
+
+  return it->second;
+}
+
+template<class T>
+inline const typename T::mapped_type& getValueFromMap(const T& map, const typename T::key_type& key,
+  const char* file, int line) {
+
+  return getValueFromMap<T>(const_cast<T&>(map), key, file, line);
+}
+
+#define GET_VALUE(mapInst, keyName) \
+  getValueFromMap(mapInst, keyName, __FILE__, __LINE__)
 
 std::string readString(std::istream& is);
 void writeString(std::ostream& os, const std::string& s);

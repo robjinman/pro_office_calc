@@ -490,7 +490,7 @@ CZone& SpatialSystem::zone(entityId_t entityId) {
 //===========================================
 const CZone& SpatialSystem::constZone(entityId_t entityId) const {
   while (entityId != -1) {
-    CSpatial& c = *m_components.at(entityId);
+    CSpatial& c = *GET_VALUE(m_components, entityId);
 
     if (c.kind == CSpatialKind::ZONE) {
       return dynamic_cast<CZone&>(c);
@@ -510,19 +510,19 @@ bool SpatialSystem::isAncestor(entityId_t a, entityId_t b) const {
     return false;
   }
 
-  const CSpatial& bComp = *m_components.at(b);
+  const CSpatial& bComp = *GET_VALUE(m_components, b);
   if (bComp.parentId == -1) {
     return false;
   }
 
-  const CSpatial* anc = m_components.at(bComp.parentId);
+  const CSpatial* anc = GET_VALUE(m_components, bComp.parentId);
 
   while (anc->parentId != -1) {
     if (anc->entityId() == a) {
       return true;
     }
 
-    anc = m_components.at(anc->parentId);
+    anc = GET_VALUE(m_components, anc->parentId);
   };
 
   return false;
@@ -930,15 +930,15 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
   double cullNearerThan) const {
 
   const CZone& zone = constZone(parentId);
-  const CSpatial& parent = *m_components.at(parentId);
+  const CSpatial& parent = *GET_VALUE(m_components, parentId);
   Matrix invMatrix = matrix.inverse();
 
   LineSegment ray(point, 10000.0 * dir);
   visited.insert(parentId);
 
-  auto& children = m_entityChildren.at(parentId);
+  auto& children = GET_VALUE(m_entityChildren, parentId);
   for (entityId_t childId : children) {
-    const CSpatial& c = *m_components.at(childId);
+    const CSpatial& c = *GET_VALUE(m_components, childId);
 
     switch (c.kind) {
       case CSpatialKind::ZONE: {
@@ -1313,7 +1313,7 @@ bool SpatialSystem::hasComponent(entityId_t entityId) const {
 // SpatialSystem::getComponent
 //===========================================
 CSpatial& SpatialSystem::getComponent(entityId_t entityId) const {
-  return *m_components.at(entityId);
+  return *GET_VALUE(m_components, entityId);
 }
 
 //===========================================
@@ -1377,7 +1377,7 @@ bool SpatialSystem::isRoot(const CSpatial& c) const {
 bool SpatialSystem::removeChildFromComponent(CSpatial& parent, const CSpatial& child,
   bool keepAlive) {
 
-  m_entityChildren.at(parent.entityId()).erase(child.entityId());
+  GET_VALUE(m_entityChildren, parent.entityId()).erase(child.entityId());
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
