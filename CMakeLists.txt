@@ -112,16 +112,24 @@ target_link_libraries(${LIB_TARGET_NAME} Qt5::Gui)
 target_link_libraries(${LIB_TARGET_NAME} Qt5::Multimedia)
 
 if (APPLE)
+  set(ICON_FILE "${CMAKE_SOURCE_DIR}/${PROJECT_SHORT_NAME}.icns")
+
   set(MACOSX_BUNDLE true)
   set(MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_LONG_NAME}")
   set(MACOSX_BUNDLE_INFO_STRING "${PROJECT_LONG_NAME} ${PROJECT_VERSION}")
   set(MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION}")
   set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
   set(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}")
-  set(MACOSX_BUNDLE_ICON_FILE "${CMAKE_SOURCE_DIR}/${PROJECT_SHORT_NAME}.icns")
+  set(MACOSX_BUNDLE_ICON_FILE "procalc.icns")
 
+  set_source_files_properties("${ICON_FILE}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   set_source_files_properties("${VERSION_FILE}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-  add_executable(${APP_TARGET_NAME} MACOSX_BUNDLE "${CMAKE_SOURCE_DIR}/src/main.cpp" ${DATA_FILES} "${VERSION_FILE}")
+
+  add_executable(${APP_TARGET_NAME} MACOSX_BUNDLE
+    "${CMAKE_SOURCE_DIR}/src/main.cpp"
+    ${DATA_FILES}
+    "${ICON_FILE}"
+    "${VERSION_FILE}")
 else()
   add_executable(${APP_TARGET_NAME} "${CMAKE_SOURCE_DIR}/src/main.cpp")
 endif()
