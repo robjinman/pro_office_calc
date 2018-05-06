@@ -10,7 +10,7 @@ set(PROCALC_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies/build/${BUILD_SUB
 
 project(${PROJECT_SHORT_NAME})
 
-file(STRINGS "${CMAKE_SOURCE_DIR}/VERSION" VERSION_STRINGS)
+file(STRINGS "${VERSION_FILE}" VERSION_STRINGS)
 list(GET VERSION_STRINGS 0 PROJECT_VERSION)
 
 message("***** Building ${PROJECT_LONG_NAME} ${PROJECT_VERSION} - ${CMAKE_BUILD_TYPE} build *****")
@@ -120,25 +120,24 @@ if (APPLE)
   set(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}")
   set(MACOSX_BUNDLE_ICON_FILE "${CMAKE_SOURCE_DIR}/${PROJECT_SHORT_NAME}.icns")
 
-  set_source_files_properties("${DATA_DIR}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   set_source_files_properties("${VERSION_FILE}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-  add_executable(${APP_TARGET_NAME} MACOSX_BUNDLE "${CMAKE_SOURCE_DIR}/src/main.cpp" "${DATA_DIR}" "${VERSION_FILE}")
+  add_executable(${APP_TARGET_NAME} MACOSX_BUNDLE "${CMAKE_SOURCE_DIR}/src/main.cpp" ${DATA_FILES} "${VERSION_FILE}")
 else()
   add_executable(${APP_TARGET_NAME} "${CMAKE_SOURCE_DIR}/src/main.cpp")
 endif()
 
 target_link_libraries(${APP_TARGET_NAME} ${LIB_TARGET_NAME})
 
-file(COPY "data" DESTINATION "${CMAKE_BINARY_DIR}")
-file(COPY "VERSION" DESTINATION "${CMAKE_BINARY_DIR}/data")
+file(COPY "${DATA_DIR}" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "${VERSION_FILE}" DESTINATION "${CMAKE_BINARY_DIR}/data")
 
 if (LINUX)
   file(COPY "run.sh" DESTINATION "${CMAKE_BINARY_DIR}")
 
   install(TARGETS ${PROJECT_SHORT_NAME} DESTINATION "bin")
 
-  install(DIRECTORY "data" DESTINATION "share/${PROJECT_SHORT_NAME}")
-  install(FILES "VERSION" DESTINATION "share/${PROJECT_SHORT_NAME}")
+  install(DIRECTORY "${DATA_DIR}" DESTINATION "share/${PROJECT_SHORT_NAME}")
+  install(FILES "${VERSION_FILE}" DESTINATION "share/${PROJECT_SHORT_NAME}")
   install(FILES "${PROJECT_SHORT_NAME}.desktop" DESTINATION "share/applications")
   install(FILES "${PROJECT_SHORT_NAME}.svg" DESTINATION "share/pixmaps")
 
@@ -150,12 +149,14 @@ elseif (WIN32)
 
   install(TARGETS ${PROJECT_SHORT_NAME} DESTINATION ".")
   install(FILES "${PROCALC_DEPENDENCIES_DIR}/bin/tinyxml2.dll" DESTINATION "libs")
-  install(DIRECTORY "data" DESTINATION ".")
-  install(FILES "VERSION" DESTINATION ".")
+  install(DIRECTORY "${DATA_DIR}" DESTINATION ".")
+  install(FILES "${VERSION_FILE}" DESTINATION ".")
   install(FILES "${PROJECT_SHORT_NAME}.ico" DESTINATION ".")
   install(FILES "run.bat" DESTINATION ".")
 elseif (APPLE)
   install(CODE "set(QT_DIR \"${QT_DIR}\")")
+  install(CODE "set(DATA_DIR \"${DATA_DIR}\")")
+
   install(SCRIPT "${CMAKE_MODULE_PATH}/osx_bundle.cmake")
 endif()
 

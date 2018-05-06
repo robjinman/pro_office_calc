@@ -13,7 +13,10 @@ string dataPath(const string& relPath) {
 // Windows
 #ifdef WIN32
   return QCoreApplication::applicationDirPath().toStdString() + "/data/" + relPath;
-// Linux & OSX
+// OS X
+#elif defined(__APPLE__)
+  return QCoreApplication::applicationDirPath().toStdString() + "/../Resources/data/" + relPath;
+// Linux
 #else
   #ifdef DEBUG
     return QCoreApplication::applicationDirPath().toStdString() + "/data/" + relPath;
