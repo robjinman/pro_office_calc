@@ -32,16 +32,23 @@ gtest can be built from the dependencies directory. Create the directory depende
 and from there run
 
 ```
-    cmake -DCMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../..
+    cmake -D CMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../..
     make -j4
 ```
 
 Create the directory build/linux under the project root and from there run
 
 ```
-    cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
+    cmake -D CMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
     make -j4
 ```
+
+Run the app from the build directory
+
+```
+    ./procalc
+```
+
 
 ### OS X
 
@@ -56,7 +63,11 @@ Install the development dependencies via homebrew
 Create the directory build/osx and from there, run
 
 ```
-    CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake -D CMAKE_BUILD_TYPE=Debug -D CMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../..
+    CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D CMAKE_INSTALL_PREFIX=./dist \
+      -G "Unix Makefiles" ../..
+
     make -j4
     make install
 ```
@@ -98,7 +109,14 @@ least qtimageformats, qtmultimedia, and qttools, so delete their skip options fr
 command before running it.
 
 ```
-    ..\Src\configure -release -nomake examples -nomake tests -nomake tools -opensource -opengl desktop -prefix C:\Qt\5.10.1\custom_dist -skip qt3d -skip qtactiveqt -skip qtandroidextras -skip qtcanvas3d -skip qtconnectivity -skip qtdeclarative -skip qtdoc -skip qtenginio -skip qtgraphicaleffects -skip qtimageformats -skip qtlocation -skip qtmacextras -skip qtmultimedia -skip qtquick1 -skip qtquickcontrols -skip qtscript -skip qtsensors -skip qtserialport -skip qtsvg -skip qttools -skip qttranslations -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebkit -skip qtwebkit-examples -skip qtwebsockets -skip qtwinextras -skip qtx11extras -skip qtxmlpatterns
+    ..\Src\configure -release -nomake examples -nomake tests -nomake tools -opensource ^
+      -opengl desktop -prefix C:\Qt\5.10.1\custom_dist -skip qt3d -skip qtactiveqt ^
+      -skip qtandroidextras -skip qtcanvas3d -skip qtconnectivity -skip qtdeclarative -skip qtdoc ^
+      -skip qtenginio -skip qtgraphicaleffects -skip qtimageformats -skip qtlocation ^
+      -skip qtmacextras -skip qtmultimedia -skip qtquick1 -skip qtquickcontrols -skip qtscript ^
+      -skip qtsensors -skip qtserialport -skip qtsvg -skip qttools -skip qttranslations ^
+      -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebkit -skip qtwebkit-examples ^
+      -skip qtwebsockets -skip qtwinextras -skip qtx11extras -skip qtxmlpatterns
 ```
 
 You can specify multimedia backend with `-mediaplayer-backend wmf` (default in Qt 5.10.1) or
@@ -115,8 +133,8 @@ Open the x64 Native Tools command prompt. Build the dependencies first by creati
 dependencies/build/win64 and from there running
 
 ```
-    cmake -DCMAKE_CXX_FLAGS=/w ^
-          -DCMAKE_INSTALL_PREFIX=./dist ^
+    cmake -D CMAKE_CXX_FLAGS=/w ^
+          -D CMAKE_INSTALL_PREFIX=./dist ^
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 
@@ -125,8 +143,8 @@ Open the MSVC project and build the Release configuration.
 Now create a build/win64 directory under the project root and from there run
 
 ```
-    cmake -DCMAKE_INSTALL_PREFIX=./dist ^
-          -DCMAKE_BUILD_TYPE=Debug ^
+    cmake -D CMAKE_INSTALL_PREFIX=./dist ^
+          -D CMAKE_BUILD_TYPE=Debug ^
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 
@@ -163,7 +181,8 @@ On the branch you want to release, run
 ... where the options are as follows
 
 ```
-    -r         Signifies a release build. Only affects the changelog by causing dch to be run with --release option
+    -r         Signifies a release build. Only affects the changelog by causing dch to be run with
+               --release option
     -s         Build source package only
     -k XXXXXX  The ID of the PGP key to sign the package with
 ```
@@ -199,13 +218,15 @@ Users can now install Pro Office Calculator by adding the PPA and running apt-ge
 The data.wxs was initially created by running (from the windows dir)
 
 ```
-    heat dir "..\build\win64\dist\data" -cg dataComponentGroup -ke -gg -srd -dr dataFolder -sfrag -o "data.wxs"
+    heat dir "..\build\win64\dist\data" ^
+      -cg dataComponentGroup -ke -gg -srd -dr dataFolder -sfrag -o "data.wxs"
 ```
 
 ... and libs.wxs with
 
 ```
-    heat dir "..\build\win64\dist\libs" -cg libsComponentGroup -ke -gg -srd -dr INSTALLDIR -sfrag -o "libs.wxs"
+    heat dir "..\build\win64\dist\libs" ^
+      -cg libsComponentGroup -ke -gg -srd -dr INSTALLDIR -sfrag -o "libs.wxs"
 ```
 
 ... where the arguments mean
@@ -224,7 +245,12 @@ maintained manually.
 
 ```
     candle procalc.wxs libs.wxs data.wxs -arch x64
-    light procalc.wixobj data.wixobj libs.wixobj -b ..\build\win64\dist -b ..\build\win64\dist\libs -b ..\build\win64\dist\data -o procalc.msi
+
+    light procalc.wixobj data.wixobj libs.wixobj ^
+      -b ..\build\win64\dist ^
+      -b ..\build\win64\dist\libs ^
+      -b ..\build\win64\dist\data ^
+      -o procalc.msi
 ```
 
 ## To profile (Linux only)
