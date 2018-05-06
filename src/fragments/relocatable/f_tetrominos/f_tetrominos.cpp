@@ -116,64 +116,64 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
         case Tetromino::I:
           t.colour = QColor(230, 50, 50);
           makeTetromino({{
-            {0, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 1, 0, 0}
+            {{0, 1, 0, 0}},
+            {{0, 1, 0, 0}},
+            {{0, 1, 0, 0}},
+            {{0, 1, 0, 0}}
           }}, t.blocks);
           break;
         case Tetromino::J:
           t.colour = QColor(250, 40, 200);
           makeTetromino({{
-            {0, 0, 0, 0},
-            {0, 0, 1, 0},
-            {0, 0, 1, 0},
-            {0, 1, 1, 0}
+            {{0, 0, 0, 0}},
+            {{0, 0, 1, 0}},
+            {{0, 0, 1, 0}},
+            {{0, 1, 1, 0}}
           }}, t.blocks);
           break;
         case Tetromino::L:
           t.colour = QColor(250, 250, 0);
           makeTetromino({{
-            {0, 0, 0, 0},
-            {0, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 1, 1, 0}
+            {{0, 0, 0, 0}},
+            {{0, 1, 0, 0}},
+            {{0, 1, 0, 0}},
+            {{0, 1, 1, 0}}
           }}, t.blocks);
           break;
         case Tetromino::O:
           t.colour = QColor(100, 220, 250);
           makeTetromino({{
-            {0, 0, 0, 0},
-            {0, 1, 1, 0},
-            {0, 1, 1, 0},
-            {0, 0, 0, 0}
+            {{0, 0, 0, 0}},
+            {{0, 1, 1, 0}},
+            {{0, 1, 1, 0}},
+            {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
         case Tetromino::S:
           t.colour = QColor(20, 20, 200);
           makeTetromino({{
-            {0, 0, 0, 0},
-            {0, 1, 1, 0},
-            {1, 1, 0, 0},
-            {0, 0, 0, 0}
+            {{0, 0, 0, 0}},
+            {{0, 1, 1, 0}},
+            {{1, 1, 0, 0}},
+            {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
         case Tetromino::T:
           t.colour = QColor(160, 160, 160);
           makeTetromino({{
-            {0, 0, 0, 0},
-            {1, 1, 1, 0},
-            {0, 1, 0, 0},
-            {0, 0, 0, 0}
+            {{0, 0, 0, 0}},
+            {{1, 1, 1, 0}},
+            {{0, 1, 0, 0}},
+            {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
         case Tetromino::Z:
           t.colour = QColor(50, 250, 50);
           makeTetromino({{
-            {0, 0, 0, 0},
-            {0, 1, 1, 0},
-            {0, 0, 1, 1},
-            {0, 0, 0, 0}
+            {{0, 0, 0, 0}},
+            {{0, 1, 1, 0}},
+            {{0, 0, 1, 1}},
+            {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
       }

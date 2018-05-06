@@ -1,4 +1,5 @@
 #include <QStandardPaths>
+#include <QCoreApplication>
 #include "app_config.hpp"
 
 
@@ -11,11 +12,11 @@ namespace config {
 string dataPath(const string& relPath) {
 // Windows
 #ifdef WIN32
-  return string("./data/") + relPath;
-// Linux
+  return QCoreApplication::applicationDirPath().toStdString() + "/data/" + relPath;
+// Linux & OSX
 #else
   #ifdef DEBUG
-    return string("./data/") + relPath;
+    return QCoreApplication::applicationDirPath().toStdString() + "/data/" + relPath;
   #else
     return string("/usr/share/procalc/data/") + relPath;
   #endif
@@ -24,7 +25,7 @@ string dataPath(const string& relPath) {
 
 string saveDataPath(const string& relPath) {
 #ifdef DEBUG
-  return string("./data/") + relPath;
+  return QCoreApplication::applicationDirPath().toStdString() + "/" + relPath;
 #else
   static string dir;
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <QDir>
 #include "application.hpp"
 #include "exception.hpp"
 #include "app_config.hpp"
@@ -50,6 +51,15 @@ void persistStateId(int id) {
 //===========================================
 int main(int argc, char** argv) {
   try {
+    Application app(argc, argv);
+
+#ifdef __APPLE__
+    QDir dir(QCoreApplication::applicationDirPath());
+    dir.cdUp();
+    dir.cd("Plugins");
+    QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
+#endif
+
     int stateId = 0;
 
     if (argc > 1) {
@@ -65,8 +75,6 @@ int main(int argc, char** argv) {
     UpdateLoop updateLoop(50);
 
     unique_ptr<FMainSpec> mainSpec(makeFMainSpec(stateId));
-
-    Application app(argc, argv);
 
     FMain mainFragment({eventSystem, updateLoop});
     mainFragment.rebuild(*mainSpec, false);

@@ -6,9 +6,6 @@
 #include <vector>
 #include <ostream>
 #include <functional>
-#ifndef __APPLE__
-  #include <omp.h>
-#endif
 #include <QPainter>
 #include <QPaintDevice>
 #include <QBrush>

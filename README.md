@@ -50,22 +50,18 @@ Install the development dependencies via homebrew
 ```
     brew install qt
     brew install tinyxml2
+    brew install llvm
 ```
 
 Create the directory build/osx and from there, run
 
 ```
-    cmake -DCMAKE_BUILD_TYPE=Debug -G "Xcode" ../..
+    CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake -D CMAKE_BUILD_TYPE=Debug -D CMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../..
+    make -j4
+    make install
 ```
 
-Open the XCode project, and change the build configuration to Release via Product -> Scheme ->
-Edit Scheme -> Run -> Info. Build the project.
-
-Run the app from the build/osx directory
-
-```
-    ./Release/procalc
-```
+This will create a redistributable app bundle called procalc.app.
 
 
 ### Windows
