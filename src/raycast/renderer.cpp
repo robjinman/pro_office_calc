@@ -895,10 +895,11 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
   const int W = m_viewport_px.x;
   CastResult prev;
 
-#pragma omp parallel for \
-  num_threads(4) \
-  private(prev)
-
+#ifndef SINGLE_THREAD
+  #pragma omp parallel for \
+    num_threads(4) \
+    private(prev)
+#endif
   for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - m_viewport_px.x / 2) / m_hWorldUnit_px;
 

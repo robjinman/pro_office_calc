@@ -258,8 +258,8 @@ maintained manually.
 ### Time profile
 
 ```
-    cmake -G "Unix Makefiles" -DPROFILING_ON=1 ..
-    make
+    cmake -D CMAKE_BUILD_TYPE=Debug -D PROFILING_ON=1 -G "Unix Makefiles" ../..
+    make -j4
     CPUPROFILE=./prof.out ./procalc
     google-pprof --text ./procalc ./prof.out > ./prof.txt
 ```

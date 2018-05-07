@@ -62,7 +62,12 @@ if (OPENMP_FOUND)
 endif()
 
 if (PROFILING_ON)
+  message("Profiling ON")
+
   find_package(GooglePerfTools REQUIRED)
+
+  add_compile_options(-DSINGLE_THREAD)
+  set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed -lprofiler -Wl,--as-needed")
 endif()
 
 file(GLOB_RECURSE srcs src/*.cpp)
@@ -95,11 +100,6 @@ else()
 
   if (NOT WIN32)
     add_compile_options(-g)
-
-    if (PROFILING_ON)
-      message("Profiling ON")
-      set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed -lprofiler -Wl,--as-needed")
-    endif()
   endif()
 endif()
 
