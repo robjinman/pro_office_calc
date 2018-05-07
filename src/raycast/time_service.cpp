@@ -11,6 +11,13 @@ static long nextId = 0;
 
 
 //===========================================
+// TimeService::now
+//===========================================
+double TimeService::now() const {
+  return m_frame / frameRate;
+}
+
+//===========================================
 // TimeService::addTween
 //===========================================
 void TimeService::addTween(const Tween& tween, const char* name) {
@@ -30,21 +37,22 @@ void TimeService::addTween(const Tween& tween, const char* name) {
 }
 
 //===========================================
-// TimeService::deletePendingTimeouts
+// TimeService::deletePending
 //===========================================
-void TimeService::deletePendingTimeouts() {
-  for (long id : m_timeoutsPendingDeletion) {
+void TimeService::deletePending() {
+  for (long id : m_pendingDeletion) {
     m_timeouts.erase(id);
+    m_intervals.erase(id);
   }
 
-  m_timeoutsPendingDeletion.clear();
+  m_pendingDeletion.clear();
 }
 
 //===========================================
 // TimeService::update
 //===========================================
 void TimeService::update() {
-  deletePendingTimeouts();
+  deletePending();
 
   double elapsed = m_frame / frameRate;
 
@@ -70,7 +78,27 @@ void TimeService::update() {
 
     if (elapsed >= timeout.duration) {
       timeout.fn();
+
       it = m_timeouts.erase(it);
+    }
+    else {
+      ++it;
+    }
+  }
+
+  for (auto it = m_intervals.begin(); it != m_intervals.end();) {
+    Interval& interval = it->second;
+
+    long frames = m_frame - interval.start;
+    double elapsed = frames / frameRate;
+
+    if (elapsed >= interval.duration) {
+      bool cont = interval.fn();
+      interval.start = m_frame;
+
+      if (!cont) {
+        it = m_intervals.erase(it);
+      }
     }
     else {
       ++it;
@@ -89,8 +117,16 @@ long TimeService::onTimeout(function<void()> fn, double seconds) {
 }
 
 //===========================================
+// TimeService::atIntervals
+//===========================================
+long TimeService::atIntervals(function<bool()> fn, double seconds) {
+  m_intervals[nextId] = Interval{fn, seconds, m_frame};
+  return nextId++;
+}
+
+//===========================================
 // TimeService::cancelTimeout
 //===========================================
 void TimeService::cancelTimeout(long id) {
-  m_timeoutsPendingDeletion.insert(id);
+  m_pendingDeletion.insert(id);
 }

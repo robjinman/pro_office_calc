@@ -21,8 +21,11 @@ class TimeService {
 
     void addTween(const Tween& tween, const char* name = nullptr);
     long onTimeout(std::function<void()> fn, double seconds);
+    long atIntervals(std::function<bool()> fn, double seconds);
     void cancelTimeout(long id);
     void update();
+
+    double now() const;
 
     const double frameRate;
 
@@ -38,12 +41,19 @@ class TimeService {
       long long start;
     };
 
+    struct Interval {
+      std::function<bool()> fn;
+      double duration;
+      long long start;
+    };
+
     long long m_frame = 0;
     std::map<std::string, TweenWrap> m_tweens;
     std::map<long, Timeout> m_timeouts;
-    std::set<long> m_timeoutsPendingDeletion;
+    std::map<long, Interval> m_intervals;
+    std::set<long> m_pendingDeletion;
 
-    void deletePendingTimeouts();
+    void deletePending();
 };
 
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include "app_config.hpp"
 
 
 class FragmentData {
@@ -18,6 +19,7 @@ class UpdateLoop;
 
 class CommonFragData {
   public:
+    config::CommandLineArgs& commandLineArgs;
     EventSystem& eventSystem;
     UpdateLoop& updateLoop;
 };

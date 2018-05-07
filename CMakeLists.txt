@@ -66,7 +66,11 @@ if (PROFILING_ON)
 
   find_package(GooglePerfTools REQUIRED)
 
-  add_compile_options(-DSINGLE_THREAD)
+  if (NOT DEFINED PROFILE_DURATION)
+    set(PROFILE_DURATION -1)
+  endif()
+
+  add_compile_options(-DSINGLE_THREAD -DPROFILING_ON)
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed -lprofiler -Wl,--as-needed")
 endif()
 

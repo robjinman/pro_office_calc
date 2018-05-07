@@ -15,6 +15,7 @@
 #include "fragments/f_main/f_desktop/f_desktop_spec.hpp"
 #include "fragments/f_main/f_troubleshooter_dialog/f_troubleshooter_dialog_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog_spec.hpp"
+#include "fragments/f_main/f_maze_3d/f_maze_3d_spec.hpp"
 
 
 struct FMainSpec : public FragmentSpec {
@@ -33,7 +34,8 @@ struct FMainSpec : public FragmentSpec {
         &appDialogSpec2,
         &appDialogSpec3,
         &appDialogSpec4,
-        &tetrominosSpec
+        &tetrominosSpec,
+        &maze3dSpec
       }),
       appDialogSpec0(0),
       appDialogSpec1(1),
@@ -55,6 +57,7 @@ struct FMainSpec : public FragmentSpec {
   FAppDialogSpec appDialogSpec4;
   FTroubleshooterDialogSpec troubleshooterDialogSpec;
   FTetrominosSpec tetrominosSpec;
+  FMaze3dSpec maze3dSpec;
 
   QString windowTitle = "Pro Office Calculator";
   int width = 400;

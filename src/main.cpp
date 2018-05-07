@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <vector>
 #include <QDir>
 #include "application.hpp"
 #include "exception.hpp"
@@ -20,6 +21,7 @@ using std::ofstream;
 using std::cout;
 using std::cerr;
 using std::unique_ptr;
+using std::vector;
 
 
 //===========================================
@@ -60,10 +62,12 @@ int main(int argc, char** argv) {
     QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
 #endif
 
+    config::CommandLineArgs args = config::getArgs(argc, argv);
+
     int stateId = 0;
 
-    if (argc > 1) {
-      stateId = std::stoi(argv[1]);
+    if (args.size() > 0) {
+      stateId = config::getIntArg(args, 0, 0);
     }
     else {
       stateId = loadStateId();
@@ -76,7 +80,7 @@ int main(int argc, char** argv) {
 
     unique_ptr<FMainSpec> mainSpec(makeFMainSpec(stateId));
 
-    FMain mainFragment({eventSystem, updateLoop});
+    FMain mainFragment({args, eventSystem, updateLoop});
     mainFragment.rebuild(*mainSpec, false);
     mainFragment.show();
 

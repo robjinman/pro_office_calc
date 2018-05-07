@@ -11,8 +11,9 @@ namespace st_raycast {
 
 FMainSpec* makeFMainSpec(int stateId) {
   FMainSpec* mainSpec = new FMainSpec;
+  mainSpec->width = 320;
+  mainSpec->height = 260;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
-  mainSpec->bgColour = QColor(160, 160, 160);
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
   mainSpec->helpLabel = "H͠e͘l͢p";
@@ -25,10 +26,7 @@ FMainSpec* makeFMainSpec(int stateId) {
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
-  mainSpec->settingsDialogSpec.setEnabled(true);
-  mainSpec->settingsDialogSpec.width = 320;
-  mainSpec->settingsDialogSpec.height = 240;
-  mainSpec->settingsDialogSpec.maze3dSpec.setEnabled(true);
+  mainSpec->maze3dSpec.setEnabled(true);
 
   return mainSpec;
 }
