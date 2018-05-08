@@ -1,0 +1,12 @@
+Frame rate target: 200
+
+N   FILE    FPS   OPTIMISATION
+1   1.ps    106   None
+2   2.ps    109   Inline isBetween
+3   3.ps    109   Replace std::list with std::vector in SpatialSystem::getEntitiesAlongRay
+4   4.ps    109   Reserve space in intersections vector prior to calling SpatialSystem::findIntersections_r
+5   5.ps    121   Add cullFartherThan param to findIntersections_r
+6
+7
+8
+9

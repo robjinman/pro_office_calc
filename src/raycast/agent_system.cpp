@@ -1,5 +1,5 @@
 #include <cassert>
-#include <list>
+#include <vector>
 #include <random>
 #include "raycast/entity_manager.hpp"
 #include "raycast/agent_system.hpp"
@@ -14,7 +14,6 @@
 
 
 using std::vector;
-using std::list;
 using std::function;
 
 
@@ -98,7 +97,7 @@ bool CAgent::hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f
   height = body.zone->floorHeight + body.size.y * 0.5;
   vAngle = atan2(targetHeight - height, length(target_rel));
 
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, ray * 0.1,
+  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, ray * 0.1,
     height, ray, vAngle, m);
 
   if (intersections.size() > 0) {

@@ -1,7 +1,6 @@
 #include <cmath>
 #include <cassert>
 #include <limits>
-#include <list>
 #include <set>
 #include <vector>
 #include <ostream>
@@ -231,7 +230,7 @@ void Renderer::castRay(const RenderGraph& rg, const Camera& cam, const SpatialSy
 
   LineSegment rotProjPlane = projectionPlane(cam, rg);
 
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(dir);
+  vector<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(dir);
 
   LineSegment projRay0(Point(0, 0), rotProjPlane.A * 9999.9);
   LineSegment projRay1(Point(0, 0), rotProjPlane.B * 9999.9);

@@ -3,7 +3,6 @@
 
 
 #include <string>
-#include <list>
 #include <vector>
 #include <map>
 #include <ostream>
@@ -94,13 +93,13 @@ class SpatialSystem : public System {
     std::set<entityId_t> entitiesInRadius(const CZone& zone, const Point& pos, double radius,
       double heightAboveFloor = 0.0) const;
 
-    std::list<pIntersection_t> entitiesAlongRay(const CZone& zone, const Point& pos,
+    std::vector<pIntersection_t> entitiesAlongRay(const CZone& zone, const Point& pos,
       const Vec2f& dir, const Matrix& matrix) const;
-    std::list<pIntersection_t> entitiesAlongRay(const Vec2f& dir) const;
+    std::vector<pIntersection_t> entitiesAlongRay(const Vec2f& dir) const;
 
-    std::list<pIntersection_t> entitiesAlong3dRay(const CZone& zone, const Point& pos,
+    std::vector<pIntersection_t> entitiesAlong3dRay(const CZone& zone, const Point& pos,
       double height, const Vec2f& dir, double vAngle, const Matrix& matrix) const;
-    std::list<pIntersection_t> entitiesAlong3dRay(const Vec2f& dir, double camSpaceVAngle) const;
+    std::vector<pIntersection_t> entitiesAlong3dRay(const Vec2f& dir, double camSpaceVAngle) const;
 
     std::set<entityId_t> getAncestors(entityId_t entityId) const;
 
@@ -135,9 +134,8 @@ class SpatialSystem : public System {
     bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) const;
     bool isAncestor(entityId_t a, entityId_t b) const;
     void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-      entityId_t parentId, std::list<pIntersection_t>& intersections,
-      std::set<entityId_t>& visited,
-      double cullNearerThan = 0) const;
+      entityId_t parentId, std::vector<pIntersection_t>& intersections,
+      std::set<entityId_t>& visited, double cullNearerThan, double& cullFartherThan) const;
     void addChildToComponent(CSpatial& parent, pCSpatial_t child);
     bool removeChildFromComponent(CSpatial& parent, const CSpatial& child, bool keepAlive = false);
 

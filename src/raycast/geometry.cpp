@@ -226,16 +226,6 @@ Point lineIntersect(const Line& l0, const Line& l1, int depth) {
 }
 
 //===========================================
-// isBetween
-//===========================================
-bool isBetween(double x, double a, double b, double delta) {
-  if (a < b) {
-    return x >= a - delta && x <= b + delta;
-  }
-  return x >= b - delta && x <= a + delta;
-}
-
-//===========================================
 // clipToLineSegment
 //===========================================
 Point clipToLineSegment(const Point& p, const LineSegment& lseg) {

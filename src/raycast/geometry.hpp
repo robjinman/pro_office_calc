@@ -220,13 +220,19 @@ inline double clipNumber(double x, const Range& range) {
   return x;
 }
 
+inline bool isBetween(double x, double a, double b, double delta = 0.00001) {
+  if (a < b) {
+    return x >= a - delta && x <= b + delta;
+  }
+  return x >= b - delta && x <= a + delta;
+}
+
 struct Circle {
   Point pos;
   double radius;
 };
 
 Point lineIntersect(const Line& l0, const Line& l1, int depth = 0);
-bool isBetween(double x, double a, double b, double delta = 0.00001);
 bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 double distanceFromLine(const Line& l, const Point& p);

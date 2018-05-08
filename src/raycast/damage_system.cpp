@@ -3,7 +3,7 @@
 #include "raycast/entity_manager.hpp"
 
 
-using std::list;
+using std::vector;
 using std::set;
 using std::make_pair;
 
@@ -168,7 +168,7 @@ void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
 //===========================================
 void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage) {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(ray, camSpaceVAngle);
+  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(ray, camSpaceVAngle);
 
   if (intersections.size() > 0) {
     double dist = intersections.front()->distanceFromOrigin;
@@ -191,7 +191,7 @@ void DamageSystem::damageAtIntersection(const CZone& zone, const Point& pos, dou
   const Vec2f& dir, double vAngle, const Matrix& matrix, int damage) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  list<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(zone, pos, height, dir,
+  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(zone, pos, height, dir,
     vAngle, matrix);
 
   if (intersections.size() > 0) {

@@ -34,7 +34,7 @@ using std::list;
 
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
-const int FRAME_RATE = 60;
+const int FRAME_RATE = 200;
 
 const double PLAYER_SPEED = 250.0;
 
