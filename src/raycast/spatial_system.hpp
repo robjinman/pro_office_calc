@@ -123,7 +123,7 @@ class SpatialSystem : public System {
     double m_frameRate;
 
     std::map<entityId_t, CSpatial*> m_components;
-    std::map<entityId_t, std::set<entityId_t>> m_entityChildren;
+    std::map<entityId_t, std::set<CSpatial*>> m_entityChildren;
 
     Vec2i m_playerCell;
 
@@ -134,7 +134,7 @@ class SpatialSystem : public System {
     bool areTwins(const CSoftEdge& se1, const CSoftEdge& se2) const;
     bool isAncestor(entityId_t a, entityId_t b) const;
     void findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-      entityId_t parentId, std::vector<pIntersection_t>& intersections,
+      const CSpatial& parent, std::vector<pIntersection_t>& intersections,
       std::set<entityId_t>& visited, double cullNearerThan, double& cullFartherThan) const;
     void addChildToComponent(CSpatial& parent, pCSpatial_t child);
     bool removeChildFromComponent(CSpatial& parent, const CSpatial& child, bool keepAlive = false);

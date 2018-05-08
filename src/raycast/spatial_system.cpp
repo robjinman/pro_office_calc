@@ -320,7 +320,7 @@ static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
 // SpatialSystem::addChildToComponent
 //===========================================
 void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
-  const CSpatial* ptr = child.get();
+  CSpatial* ptr = child.get();
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
@@ -337,7 +337,7 @@ void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
         << parent.kind);
   };
 
-  m_entityChildren[parent.entityId()].insert(ptr->entityId());
+  m_entityChildren[parent.entityId()].insert(ptr);
 }
 
 //===========================================
@@ -926,25 +926,24 @@ void SpatialSystem::connectZones() {
 // SpatialSystem::findIntersections_r
 //===========================================
 void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  entityId_t parentId, vector<pIntersection_t>& intersections, set<entityId_t>& visited,
+  const CSpatial& parent, vector<pIntersection_t>& intersections, set<entityId_t>& visited,
   double cullNearerThan, double& cullFartherThan) const {
 
-  const CZone& zone = constZone(parentId);
-  const CSpatial& parent = *GET_VALUE(m_components, parentId);
+  const CZone& zone = constZone(parent.entityId());
   Matrix invMatrix = matrix.inverse();
 
   LineSegment ray(point, 10000.0 * dir);
-  visited.insert(parentId);
+  visited.insert(parent.entityId());
 
-  auto& children = GET_VALUE(m_entityChildren, parentId);
-  for (entityId_t childId : children) {
-    const CSpatial& c = *GET_VALUE(m_components, childId);
+  auto& children = GET_VALUE(m_entityChildren, parent.entityId());
+  for (const CSpatial* pChild : children) {
+    const CSpatial& c = *pChild;
 
     switch (c.kind) {
       case CSpatialKind::ZONE: {
-        if (visited.count(childId) == 0) {
-          findIntersections_r(point, dir, matrix, childId, intersections, visited,
-            cullNearerThan, cullFartherThan);
+        if (visited.count(c.entityId()) == 0) {
+          findIntersections_r(point, dir, matrix, c, intersections, visited, cullNearerThan,
+            cullFartherThan);
         }
         break;
       }
@@ -1034,9 +1033,9 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             cullFartherThan = pt.x + 1.0;
           }
 
-          if (visited.count(childId) == 0) {
-            findIntersections_r(point, dir, matrix, childId, intersections, visited,
-              cullNearerThan, cullFartherThan);
+          if (visited.count(c.entityId()) == 0) {
+            findIntersections_r(point, dir, matrix, c, intersections, visited, cullNearerThan,
+              cullFartherThan);
           }
 
           pIntersection_t X(new Intersection(edge.kind, parent.kind));
@@ -1078,8 +1077,8 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             intersections.push_back(std::move(X));
 
             if (visited.count(next.entityId()) == 0) {
-              findIntersections_r(point, dir, mat, next.entityId(), intersections, visited,
-                cullNearerThan_, cullFartherThan);
+              findIntersections_r(point, dir, mat, next, intersections, visited, cullNearerThan_,
+                cullFartherThan);
             }
           }
           else {
@@ -1124,8 +1123,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const
   set<entityId_t> visited;
   double cullFartherThan = 10000;
 
-  findIntersections_r(pos, dir, matrix, zone.entityId(), intersections, visited, 0,
-    cullFartherThan);
+  findIntersections_r(pos, dir, matrix, zone, intersections, visited, 0, cullFartherThan);
 
   std::sort(intersections.begin(), intersections.end(),
     [](const pIntersection_t& a, const pIntersection_t& b) {
@@ -1390,7 +1388,7 @@ bool SpatialSystem::isRoot(const CSpatial& c) const {
 bool SpatialSystem::removeChildFromComponent(CSpatial& parent, const CSpatial& child,
   bool keepAlive) {
 
-  GET_VALUE(m_entityChildren, parent.entityId()).erase(child.entityId());
+  GET_VALUE(m_entityChildren, parent.entityId()).erase(const_cast<CSpatial*>(&child));
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
@@ -1411,10 +1409,10 @@ void SpatialSystem::removeEntity_r(entityId_t id) {
 
   auto it = m_entityChildren.find(id);
   if (it != m_entityChildren.end()) {
-    set<entityId_t>& children = it->second;
+    set<CSpatial*>& children = it->second;
 
-    for (entityId_t child : children) {
-      removeEntity_r(child);
+    for (CSpatial* child : children) {
+      removeEntity_r(child->entityId());
     }
   }
 

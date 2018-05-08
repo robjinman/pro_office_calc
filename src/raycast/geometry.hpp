@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <limits>
+#include "utils.hpp"
 
 
 template<class T>
@@ -74,58 +75,6 @@ struct Vec3 {
 
 typedef Vec3<double> Vec3f;
 
-struct Range {
-  Range()
-    : a(0), b(0) {}
-
-  Range(double a, double b)
-    : a(a), b(b) {}
-
-  double a;
-  double b;
-
-  bool operator==(const Range& rhs) const {
-    return a == rhs.a && b == rhs.b;
-  }
-
-  bool operator!=(const Range& rhs) const {
-    return !(*this == rhs);
-  }
-};
-
-Point operator+(const Point& lhs, const Point& rhs);
-Point operator-(const Point& lhs, const Point& rhs);
-Point operator/(const Point& lhs, double rhs);
-Point operator*(const Point& lhs, double rhs);
-
-inline bool operator<(const Point& lhs, const Point& rhs) {
-  return lhs.x * lhs.x + lhs.y * lhs.y < rhs.x * rhs.x + rhs.y * rhs.y;
-}
-
-inline Point operator*(double lhs, const Point& rhs) {
-  return rhs * lhs;
-}
-
-inline bool pointsEqual(const Point& lhs, const Point& rhs, double delta) {
-  return fabs(rhs.x - lhs.x) <= delta && fabs(rhs.y - lhs.y) <= delta;
-}
-
-inline double distance(const Point& A, const Point& B) {
-  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
-}
-
-inline double length(const Vec2f& v) {
-  return sqrt(v.x * v.x + v.y * v.y);
-}
-
-inline double dotProduct(const Vec2f& A, const Vec2f& B) {
-  return A.x * B.x + A.y * B.y;
-}
-
-inline double angle(const Vec2f& A, const Vec2f& B) {
-    return acos(dotProduct(A, B) / (length(A) * length(B)));
-}
-
 class Matrix {
   public:
     Matrix();
@@ -161,8 +110,133 @@ class Matrix {
     Matrix inverse() const;
 };
 
-Point operator*(const Matrix& lhs, const Point& rhs);
-Matrix operator*(const Matrix& lhs, const Matrix& rhs);
+inline Matrix operator*(const Matrix& A, const Matrix& B) {
+  Matrix m;
+  m.data = {{
+    {{A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][2] * B[2][0],
+      A[0][0] * B[0][1] + A[0][1] * B[1][1] + A[0][2] * B[2][1],
+      A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][2] * B[2][2]}},
+    {{A[1][0] * B[0][0] + A[1][1] * B[1][0] + A[1][2] * B[2][0],
+      A[1][0] * B[0][1] + A[1][1] * B[1][1] + A[1][2] * B[2][1],
+      A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2] * B[2][2]}},
+    {{A[2][0] * B[0][0] + A[2][1] * B[1][0] + A[2][2] * B[2][0],
+      A[2][0] * B[0][1] + A[2][1] * B[1][1] + A[2][2] * B[2][1],
+      A[2][0] * B[0][2] + A[2][1] * B[1][2] + A[2][2] * B[2][2]}}
+  }};
+
+  return m;
+}
+
+inline Matrix::Matrix()
+  : data{{
+      {{1.0, 0.0, 0.0}},
+      {{0.0, 1.0, 0.0}},
+      {{0.0, 0.0, 1.0}}
+    }} {}
+
+inline Matrix::Matrix(double a, Vec2f t)
+  : data{{
+      {{cos(a), -sin(a), t.x}},
+      {{sin(a), cos(a), t.y}},
+      {{0.0, 0.0, 1.0}}
+    }} {}
+
+inline Matrix Matrix::inverse() const {
+  Matrix m;
+  m.data = {{
+    {{data[0][0], data[1][0], -data[0][0] * data[0][2] - data[1][0] * data[1][2]}},
+    {{data[0][1], data[1][1], -data[0][1] * data[0][2] - data[1][1] * data[1][2]}},
+    {{0.0, 0.0, 1.0}}
+  }};
+  return m;
+}
+
+struct Range {
+  Range()
+    : a(0), b(0) {}
+
+  Range(double a, double b)
+    : a(a), b(b) {}
+
+  double a;
+  double b;
+
+  bool operator==(const Range& rhs) const {
+    return a == rhs.a && b == rhs.b;
+  }
+
+  bool operator!=(const Range& rhs) const {
+    return !(*this == rhs);
+  }
+};
+
+inline Point operator+(const Point& lhs, const Point& rhs) {
+  return Point(lhs.x + rhs.x, lhs.y + rhs.y);
+}
+
+inline Point operator-(const Point& lhs, const Point& rhs) {
+  return Point(lhs.x - rhs.x, lhs.y - rhs.y);
+}
+
+inline Point operator/(const Point& lhs, double rhs) {
+  return Point(lhs.x / rhs, lhs.y / rhs);
+}
+
+inline Point operator*(const Point& lhs, double rhs) {
+  return Point(lhs.x * rhs, lhs.y * rhs);
+}
+
+inline Point operator*(const Matrix& lhs, const Point& rhs) {
+  Point p;
+  p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
+  p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
+  return p;
+}
+
+inline Vec3f operator*(const Matrix& lhs, const Vec3f& rhs) {
+  Vec3f p;
+  p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
+  p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
+  p.y = lhs[2][0] * rhs.x + lhs[2][1] * rhs.y + lhs[2][2];
+  return p;
+}
+
+inline Vec3f operator*(const Vec3f& lhs, const Matrix& rhs) {
+  Vec3f p;
+  p.x = lhs.x * rhs[0][0] + lhs.y * rhs[1][0] + lhs.z * rhs[2][0];
+  p.y = lhs.x * rhs[0][1] + lhs.y * rhs[1][1] + lhs.z * rhs[2][1];
+  p.z = lhs.x * rhs[0][2] + lhs.y * rhs[1][2] + lhs.z * rhs[2][2];
+
+  return p;
+}
+
+inline bool operator<(const Point& lhs, const Point& rhs) {
+  return lhs.x * lhs.x + lhs.y * lhs.y < rhs.x * rhs.x + rhs.y * rhs.y;
+}
+
+inline Point operator*(double lhs, const Point& rhs) {
+  return rhs * lhs;
+}
+
+inline bool pointsEqual(const Point& lhs, const Point& rhs, double delta) {
+  return fabs(rhs.x - lhs.x) <= delta && fabs(rhs.y - lhs.y) <= delta;
+}
+
+inline double distance(const Point& A, const Point& B) {
+  return sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
+}
+
+inline double length(const Vec2f& v) {
+  return sqrt(v.x * v.x + v.y * v.y);
+}
+
+inline double dotProduct(const Vec2f& A, const Vec2f& B) {
+  return A.x * B.x + A.y * B.y;
+}
+
+inline double angle(const Vec2f& A, const Vec2f& B) {
+    return acos(dotProduct(A, B) / (length(A) * length(B)));
+}
 
 struct Line {
   Line(const Point& A, const Point& B) {
@@ -210,6 +284,66 @@ struct LineSegment {
   Point B;
 };
 
+inline double LineSegment::length() const {
+  return distance(A, B);
+}
+
+inline double LineSegment::signedDistance(const Point& p) const {
+  Vec2f AB = B - A;
+  Vec2f P = p - A;
+
+  double theta = acos(AB.dot(P) / (::length(P) * ::length(AB)));
+  double sign = theta > 0.5 * PI ? -1 : 1;
+
+  return distance(A, p) * sign;
+}
+
+struct Circle {
+  Point pos;
+  double radius;
+};
+
+inline bool isBetween(double x, double a, double b, double delta = 0.00001) {
+  if (a < b) {
+    return x >= a - delta && x <= b + delta;
+  }
+  return x >= b - delta && x <= a + delta;
+}
+
+Point lineIntersect(const Line& l0, const Line& l1, int depth = 0);
+bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
+
+inline bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
+  p = lineIntersect(l0.line(), l1.line());
+  return (isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x))
+    && (isBetween(p.y, l0.A.y, l0.B.y) && isBetween(p.y, l1.A.y, l1.B.y));
+}
+
+inline LineSegment transform(const LineSegment& lseg, const Matrix& m) {
+  return LineSegment(m * lseg.A, m * lseg.B);
+}
+
+inline Point projectionOntoLine(const Line& l, const Point& p) {
+  double a = -l.b;
+  double b = l.a;
+  double c = -p.y * b - p.x * a;
+  Line m(a, b, c);
+  return lineIntersect(l, m);
+}
+
+inline Point clipToLineSegment(const Point& p, const LineSegment& lseg) {
+  Point p_ = projectionOntoLine(lseg.line(), p);
+
+  double d = lseg.signedDistance(p_);
+  if (d < 0) {
+    return lseg.A;
+  }
+  if (d > lseg.length()) {
+    return lseg.B;
+  }
+  return p_;
+}
+
 inline double clipNumber(double x, const Range& range) {
   if (x < range.a) {
     x = range.a;
@@ -220,30 +354,43 @@ inline double clipNumber(double x, const Range& range) {
   return x;
 }
 
-inline bool isBetween(double x, double a, double b, double delta = 0.00001) {
-  if (a < b) {
-    return x >= a - delta && x <= b + delta;
-  }
-  return x >= b - delta && x <= a + delta;
+inline double distanceFromLine(const Line& l, const Point& p) {
+  return distance(p, projectionOntoLine(l, p));
 }
 
-struct Circle {
-  Point pos;
-  double radius;
-};
+inline Vec2f normalise(const Vec2f& v) {
+  double l = sqrt(v.x * v.x + v.y * v.y);
+  return Vec2f(v.x / l, v.y / l);
+}
 
-Point lineIntersect(const Line& l0, const Line& l1, int depth = 0);
-bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p);
-bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
-double distanceFromLine(const Line& l, const Point& p);
-Point projectionOntoLine(const Line& l, const Point& p);
-Point clipToLineSegment(const Point& p, const LineSegment& lseg);
-LineSegment transform(const LineSegment& lseg, const Matrix& m);
-Vec2f normalise(const Vec2f& v);
-double normaliseAngle(double a);
+inline double normaliseAngle(double angle) {
+  double q = angle / (2.0 * PI);
+  angle = 2.0 * PI * (q - floor(q));
+
+  if (angle < 0.0) {
+    return 2.0 * PI + angle;
+  }
+  else {
+    return angle;
+  }
+}
 
 enum clipResult_t { CLIPPED_TO_TOP, CLIPPED_TO_BOTTOM, NOT_CLIPPED };
-clipResult_t clipNumber(double x, const Range& range, double& result);
+
+inline clipResult_t clipNumber(double x, const Range& range, double& result) {
+  if (x < range.a) {
+    result = range.a;
+    return CLIPPED_TO_BOTTOM;
+  }
+  else if (x > range.b) {
+    result = range.b;
+    return CLIPPED_TO_TOP;
+  }
+  else {
+    result = x;
+    return NOT_CLIPPED;
+  }
+}
 
 #ifdef DEBUG
 #include <ostream>

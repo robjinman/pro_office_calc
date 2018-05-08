@@ -42,146 +42,6 @@ ostream& operator<<(ostream& os, const Matrix& mat) {
 }
 #endif
 
-//===========================================
-// operator+
-//===========================================
-Point operator+(const Point& lhs, const Point& rhs) {
-  return Point(lhs.x + rhs.x, lhs.y + rhs.y);
-}
-
-//===========================================
-// operator-
-//===========================================
-Point operator-(const Point& lhs, const Point& rhs) {
-  return Point(lhs.x - rhs.x, lhs.y - rhs.y);
-}
-
-//===========================================
-// operator/
-//===========================================
-Point operator/(const Point& lhs, double rhs) {
-  return Point(lhs.x / rhs, lhs.y / rhs);
-}
-
-//===========================================
-// operator*
-//===========================================
-Point operator*(const Point& lhs, double rhs) {
-  return Point(lhs.x * rhs, lhs.y * rhs);
-}
-
-//===========================================
-// operator*
-//===========================================
-Point operator*(const Matrix& lhs, const Point& rhs) {
-  Point p;
-  p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
-  p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
-  return p;
-}
-
-//===========================================
-// operator*
-//===========================================
-Vec3f operator*(const Matrix& lhs, const Vec3f& rhs) {
-  Vec3f p;
-  p.x = lhs[0][0] * rhs.x + lhs[0][1] * rhs.y + lhs[0][2];
-  p.y = lhs[1][0] * rhs.x + lhs[1][1] * rhs.y + lhs[1][2];
-  p.y = lhs[2][0] * rhs.x + lhs[2][1] * rhs.y + lhs[2][2];
-  return p;
-}
-
-//===========================================
-// operator*
-//===========================================
-Vec3f operator*(const Vec3f& lhs, const Matrix& rhs) {
-  Vec3f p;
-  p.x = lhs.x * rhs[0][0] + lhs.y * rhs[1][0] + lhs.z * rhs[2][0];
-  p.y = lhs.x * rhs[0][1] + lhs.y * rhs[1][1] + lhs.z * rhs[2][1];
-  p.z = lhs.x * rhs[0][2] + lhs.y * rhs[1][2] + lhs.z * rhs[2][2];
-
-  return p;
-}
-
-//===========================================
-// operator*
-//===========================================
-Matrix operator*(const Matrix& A, const Matrix& B) {
-  Matrix m;
-  m.data = {{
-    {{A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][2] * B[2][0],
-      A[0][0] * B[0][1] + A[0][1] * B[1][1] + A[0][2] * B[2][1],
-      A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][2] * B[2][2]}},
-    {{A[1][0] * B[0][0] + A[1][1] * B[1][0] + A[1][2] * B[2][0],
-      A[1][0] * B[0][1] + A[1][1] * B[1][1] + A[1][2] * B[2][1],
-      A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2] * B[2][2]}},
-    {{A[2][0] * B[0][0] + A[2][1] * B[1][0] + A[2][2] * B[2][0],
-      A[2][0] * B[0][1] + A[2][1] * B[1][1] + A[2][2] * B[2][1],
-      A[2][0] * B[0][2] + A[2][1] * B[1][2] + A[2][2] * B[2][2]}}
-  }};
-
-  return m;
-}
-
-//===========================================
-// Matrix::Matrix
-//===========================================
-Matrix::Matrix()
-  : data{{
-      {{1.0, 0.0, 0.0}},
-      {{0.0, 1.0, 0.0}},
-      {{0.0, 0.0, 1.0}}
-    }} {}
-
-//===========================================
-// Matrix::Matrix
-//===========================================
-Matrix::Matrix(double a, Vec2f t)
-  : data{{
-      {{cos(a), -sin(a), t.x}},
-      {{sin(a), cos(a), t.y}},
-      {{0.0, 0.0, 1.0}}
-    }} {}
-
-//===========================================
-// Matrix::inverse
-//===========================================
-Matrix Matrix::inverse() const {
-  Matrix m;
-  m.data = {{
-    {{data[0][0], data[1][0], -data[0][0] * data[0][2] - data[1][0] * data[1][2]}},
-    {{data[0][1], data[1][1], -data[0][1] * data[0][2] - data[1][1] * data[1][2]}},
-    {{0.0, 0.0, 1.0}}
-  }};
-  return m;
-}
-
-//===========================================
-// LineSegment::length
-//===========================================
-double LineSegment::length() const {
-  return distance(A, B);
-}
-
-//===========================================
-// LineSegment::signedDistance
-//===========================================
-double LineSegment::signedDistance(const Point& p) const {
-  Vec2f AB = B - A;
-  Vec2f P = p - A;
-
-  double theta = acos(AB.dot(P) / (::length(P) * ::length(AB)));
-  double sign = theta > 0.5 * PI ? -1 : 1;
-
-  return distance(A, p) * sign;
-}
-
-//===========================================
-// transform
-//===========================================
-LineSegment transform(const LineSegment& lseg, const Matrix& m) {
-  return LineSegment(m * lseg.A, m * lseg.B);
-}
 
 //===========================================
 // lineIntersect
@@ -195,8 +55,8 @@ Point lineIntersect(const Line& l0, const Line& l1, int depth) {
     Vec3f l0params(l0.a, l0.b, l0.c);
     Vec3f l1params(l1.a, l1.b, l1.c);
 
-    Matrix m(0.25 * PI, Vec2f(0, 0));
-    Matrix m_inv = m.inverse();
+    static Matrix m(0.25 * PI, Vec2f(0, 0));
+    static Matrix m_inv = m.inverse();
 
     Vec3f l0params_ = l0params * m_inv;
     Vec3f l1params_ = l1params * m_inv;
@@ -223,31 +83,6 @@ Point lineIntersect(const Line& l0, const Line& l1, int depth) {
 
     return p;
   }
-}
-
-//===========================================
-// clipToLineSegment
-//===========================================
-Point clipToLineSegment(const Point& p, const LineSegment& lseg) {
-  Point p_ = projectionOntoLine(lseg.line(), p);
-
-  double d = lseg.signedDistance(p_);
-  if (d < 0) {
-    return lseg.A;
-  }
-  if (d > lseg.length()) {
-    return lseg.B;
-  }
-  return p_;
-}
-
-//===========================================
-// lineSegmentIntersect
-//===========================================
-bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
-  p = lineIntersect(l0.line(), l1.line());
-  return (isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x))
-    && (isBetween(p.y, l0.A.y, l0.B.y) && isBetween(p.y, l1.A.y, l1.B.y));
 }
 
 //===========================================
@@ -293,63 +128,4 @@ bool lineSegmentCircleIntersect(const Circle& circ, const LineSegment& lseg) {
 
   return (isBetween(x0, lseg.A.x, lseg.B.x) && isBetween(y0, lseg.A.y, lseg.B.y))
     || (isBetween(x1, lseg.A.x, lseg.B.x) && isBetween(y1, lseg.A.y, lseg.B.y));
-}
-
-//===========================================
-// distanceFromLine
-//===========================================
-double distanceFromLine(const Line& l, const Point& p) {
-  return distance(p, projectionOntoLine(l, p));
-}
-
-//===========================================
-// projectionOntoLine
-//===========================================
-Point projectionOntoLine(const Line& l, const Point& p) {
-  double a = -l.b;
-  double b = l.a;
-  double c = -p.y * b - p.x * a;
-  Line m(a, b, c);
-  return lineIntersect(l, m);
-}
-
-//===========================================
-// normalise
-//===========================================
-Vec2f normalise(const Vec2f& v) {
-  double l = sqrt(v.x * v.x + v.y * v.y);
-  return Vec2f(v.x / l, v.y / l);
-}
-
-//===========================================
-// normaliseAngle
-//===========================================
-double normaliseAngle(double angle) {
-  double q = angle / (2.0 * PI);
-  angle = 2.0 * PI * (q - floor(q));
-
-  if (angle < 0.0) {
-    return 2.0 * PI + angle;
-  }
-  else {
-    return angle;
-  }
-}
-
-//===========================================
-// clipNumber
-//===========================================
-clipResult_t clipNumber(double x, const Range& range, double& result) {
-  if (x < range.a) {
-    result = range.a;
-    return CLIPPED_TO_BOTTOM;
-  }
-  else if (x > range.b) {
-    result = range.b;
-    return CLIPPED_TO_TOP;
-  }
-  else {
-    result = x;
-    return NOT_CLIPPED;
-  }
 }

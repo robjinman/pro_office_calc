@@ -516,8 +516,8 @@ void Renderer::drawFloorSlice(const RenderGraph& rg, const Camera& cam,
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceBottom_px; j <= slice.viewportBottom_px; ++j) {
-    assert(isBetween(screenX_px, 0, m_target.width() - 1) && isBetween(j, 0,
-      m_target.height() - 1));
+    assert(isBetween(screenX_px, 0, m_target.width() - 1)
+      && isBetween(j, 0, m_target.height() - 1));
 
     QRgb* pixels = reinterpret_cast<QRgb*>(m_target.scanLine(j));
 
