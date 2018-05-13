@@ -713,7 +713,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 
       assert(body.zone->parent != nullptr);
 
-      vector<const CSoftEdge*> edgesCrossed;
+      vector<const CSoftEdge*> edgesToCross;
       LineSegment lseg(body.pos, body.pos + dv);
 
       bool abort = false;
@@ -736,7 +736,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
             }
 
             const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
-            edgesCrossed.push_back(&se);
+            edgesToCross.push_back(&se);
           }
         }
       });
@@ -748,31 +748,40 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
       Matrix m;
       map<entityId_t, bool> crossed;
       vector<const CSoftEdge*> excluded;
-      for (auto jt = edgesCrossed.begin(); jt != edgesCrossed.end(); ++jt) {
-        const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(**jt);
 
-        if (se.zoneA->entityId() != body.zone->entityId() &&
-          se.zoneB->entityId() != body.zone->entityId()) {
+      while (!edgesToCross.empty()) {
+        const CSoftEdge* se = edgesToCross.front();
 
-          excluded.push_back(&se);
-          continue;
-        }
+        if (se->zoneA == body.zone || se->zoneB == body.zone) {
+          edgesToCross.erase(edgesToCross.begin());
 
-        if (!crossed[se.joinId]) {
-          CZone* nextZone = getNextZone(*body.zone, se);
+          if (!crossed[se->joinId]) {
+            CZone* nextZone = getNextZone(*body.zone, *se);
 
-          crossZones(id, body.zone->entityId(), nextZone->entityId());
-          body.zone = nextZone;
+            crossZones(id, body.zone->entityId(), nextZone->entityId());
+            body.zone = nextZone;
 
-          m = m * se.toTwin;
+            m = m * se->toTwin;
 
-          if (se.joinId != -1) {
-            crossed[se.joinId] = true;
+            if (se->joinId != -1) {
+              crossed[se->joinId] = true;
+            }
           }
-        }
 
-        edgesCrossed.insert(edgesCrossed.end(), excluded.begin(), excluded.end());
-        excluded.clear();
+          for (auto it = excluded.rbegin(); it != excluded.rend(); ++it) {
+            edgesToCross.insert(edgesToCross.begin(), *it);
+          }
+          excluded.clear();
+        }
+        else {
+          excluded.push_back(se);
+          edgesToCross.erase(edgesToCross.begin());
+        }
+      }
+
+      if (excluded.size() > 0) {
+        // TODO: Find out why this happens
+        DBG_PRINT("Warning: Bad intersections omitted\n");
       }
 
       body.pos = body.pos + dv;
