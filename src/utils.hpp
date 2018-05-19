@@ -10,14 +10,36 @@
 #include <vector>
 #include <QPointer>
 #include "exception.hpp"
+
+
+//===========================================
+// Debug Build
+//
 #ifdef DEBUG
-#  include <iostream>
-#  define DBG_PRINT(msg) std::cout << msg;
-#  define DBG_PRINT_VAR(var) std::cout << #var" = " << var << "\n";
+#include <iostream>
+
+#define DBG_PRINT(msg) std::cout << msg;
+#define DBG_PRINT_VAR(var) std::cout << #var" = " << var << "\n";
+
+// TODO
+#define DYNAMIC_CAST static_cast
+
+//===========================================
+
+//===========================================
+// Release Build
+//
 #else
-#  define DBG_PRINT(msg)
-#  define DBG_PRINT_VAR(var)
+
+#define DBG_PRINT(msg)
+#define DBG_PRINT_VAR(var)
+
+#define DYNAMIC_CAST static_cast
+
 #endif
+//===========================================
+
+
 #include "platform.hpp"
 
 #define PI 3.141592653589793

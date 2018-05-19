@@ -101,7 +101,7 @@ static bool canStepAcrossEdge(const CZone& zone, double height, const Size& body
     return false;
   }
 
-  const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+  const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
   CZone* nextZone = getNextZone(zone, se);
 
   bool canStep = nextZone->floorHeight - height <= PLAYER_STEP_HEIGHT;
@@ -251,30 +251,30 @@ static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
 static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::ZONE: {
-      pCZone_t ptr(dynamic_cast<CZone*>(child.release()));
+      pCZone_t ptr(DYNAMIC_CAST<CZone*>(child.release()));
       ptr->parent = &zone;
       zone.children.push_back(std::move(ptr));
       break;
     }
     case CSpatialKind::SOFT_EDGE:
     case CSpatialKind::HARD_EDGE: {
-      pCEdge_t ptr(dynamic_cast<CEdge*>(child.release()));
+      pCEdge_t ptr(DYNAMIC_CAST<CEdge*>(child.release()));
       zone.edges.push_back(ptr.get());
       sg.edges.push_back(std::move(ptr));
       break;
     }
     case CSpatialKind::H_RECT: {
-      pCHRect_t ptr(dynamic_cast<CHRect*>(child.release()));
+      pCHRect_t ptr(DYNAMIC_CAST<CHRect*>(child.release()));
       zone.hRects.push_back(std::move(ptr));
       break;
     }
     case CSpatialKind::V_RECT: {
-      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      pCVRect_t ptr(DYNAMIC_CAST<CVRect*>(child.release()));
       zone.vRects.push_back(std::move(ptr));
       break;
     }
     case CSpatialKind::PATH: {
-      pCPath_t ptr(dynamic_cast<CPath*>(child.release()));
+      pCPath_t ptr(DYNAMIC_CAST<CPath*>(child.release()));
       zone.paths.push_back(std::move(ptr));
       break;
     }
@@ -290,7 +290,7 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
 static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::V_RECT: {
-      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      pCVRect_t ptr(DYNAMIC_CAST<CVRect*>(child.release()));
       edge.vRects.push_back(std::move(ptr));
       break;
     }
@@ -306,7 +306,7 @@ static void addToHardEdge(CHardEdge& edge, pCSpatial_t child) {
 static void addToSoftEdge(CSoftEdge& edge, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::V_RECT: {
-      pCVRect_t ptr(dynamic_cast<CVRect*>(child.release()));
+      pCVRect_t ptr(DYNAMIC_CAST<CVRect*>(child.release()));
       edge.vRects.push_back(std::move(ptr));
       break;
     }
@@ -324,13 +324,13 @@ void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
-      addToZone(sg, dynamic_cast<CZone&>(parent), std::move(child));
+      addToZone(sg, DYNAMIC_CAST<CZone&>(parent), std::move(child));
       break;
     case CSpatialKind::HARD_EDGE:
-      addToHardEdge(dynamic_cast<CHardEdge&>(parent), std::move(child));
+      addToHardEdge(DYNAMIC_CAST<CHardEdge&>(parent), std::move(child));
       break;
     case CSpatialKind::SOFT_EDGE:
-      addToSoftEdge(dynamic_cast<CSoftEdge&>(parent), std::move(child));
+      addToSoftEdge(DYNAMIC_CAST<CSoftEdge&>(parent), std::move(child));
       break;
     default:
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
@@ -349,7 +349,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
   switch (child.kind) {
     case CSpatialKind::ZONE: {
       auto it = find_if(zone.children.begin(), zone.children.end(), [&](const pCZone_t& e) {
-        return e.get() == dynamic_cast<const CZone*>(&child);
+        return e.get() == DYNAMIC_CAST<const CZone*>(&child);
       });
       if (it != zone.children.end()) {
         if (keepAlive) {
@@ -363,11 +363,11 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
     case CSpatialKind::SOFT_EDGE:
     case CSpatialKind::HARD_EDGE: {
       auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const CEdge* e) {
-        return e == dynamic_cast<const CEdge*>(&child);
+        return e == DYNAMIC_CAST<const CEdge*>(&child);
       });
       erase(zone.edges, it);
       auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
-        return e.get() == dynamic_cast<const CEdge*>(&child);
+        return e.get() == DYNAMIC_CAST<const CEdge*>(&child);
       });
       if (jt != sg.edges.end()) {
         if (keepAlive) {
@@ -380,7 +380,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
     }
     case CSpatialKind::H_RECT: {
       auto it = find_if(zone.hRects.begin(), zone.hRects.end(), [&](const pCHRect_t& e) {
-        return e.get() == dynamic_cast<const CHRect*>(&child);
+        return e.get() == DYNAMIC_CAST<const CHRect*>(&child);
       });
       if (it != zone.hRects.end()) {
         if (keepAlive) {
@@ -393,7 +393,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
     }
     case CSpatialKind::V_RECT: {
       auto it = find_if(zone.vRects.begin(), zone.vRects.end(), [&](const pCVRect_t& e) {
-        return e.get() == dynamic_cast<const CVRect*>(&child);
+        return e.get() == DYNAMIC_CAST<const CVRect*>(&child);
       });
       if (it != zone.vRects.end()) {
         if (keepAlive) {
@@ -406,7 +406,7 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
     }
     case CSpatialKind::PATH: {
       auto it = find_if(zone.paths.begin(), zone.paths.end(), [&](const pCPath_t& e) {
-        return e.get() == dynamic_cast<const CPath*>(&child);
+        return e.get() == DYNAMIC_CAST<const CPath*>(&child);
       });
       if (it != zone.paths.end()) {
         if (keepAlive) {
@@ -434,7 +434,7 @@ static bool removeFromHardEdge(CHardEdge& edge, const CSpatial& child, bool keep
   switch (child.kind) {
     case CSpatialKind::V_RECT: {
       auto it = find_if(edge.vRects.begin(), edge.vRects.end(), [&](const pCVRect_t& e) {
-        return e.get() == dynamic_cast<const CVRect*>(&child);
+        return e.get() == DYNAMIC_CAST<const CVRect*>(&child);
       });
       if (it != edge.vRects.end()) {
         if (keepAlive) {
@@ -493,7 +493,7 @@ const CZone& SpatialSystem::constZone(entityId_t entityId) const {
     CSpatial& c = *GET_VALUE(m_components, entityId);
 
     if (c.kind == CSpatialKind::ZONE) {
-      return dynamic_cast<CZone&>(c);
+      return DYNAMIC_CAST<const CZone&>(c);
     }
 
     entityId = c.parentId;
@@ -543,7 +543,7 @@ void SpatialSystem::connectSubzones(CZone& zone) {
   forEachZone(zone, [&](CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge* se = dynamic_cast<CSoftEdge*>(*it);
+        CSoftEdge* se = DYNAMIC_CAST<CSoftEdge*>(*it);
         assert(se != nullptr);
 
         bool hasTwin = false;
@@ -552,7 +552,7 @@ void SpatialSystem::connectSubzones(CZone& zone) {
             if (&r_ != &r) {
               for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
                 if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
-                  CSoftEdge* other = dynamic_cast<CSoftEdge*>(*lt);
+                  CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(*lt);
 
                   if (areTwins(*se, *other)) {
                     hasTwin = true;
@@ -625,7 +625,7 @@ void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "player_activate") {
     EPlayerActivateEntity e(*sg.player);
     const CZone& zone = getCurrentZone();
-    const CVRect& body = dynamic_cast<const CVRect&>(getComponent(sg.player->body));
+    const CVRect& body = DYNAMIC_CAST<const CVRect&>(getComponent(sg.player->body));
 
     double y = sg.player->feetHeight() - zone.floorHeight + 0.5 * body.size.y;
 
@@ -663,8 +663,8 @@ void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entity
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CSpatial& c = *it->second;
-    CZone& oldZone = dynamic_cast<CZone&>(getComponent(oldZoneId));
-    CZone& newZone = dynamic_cast<CZone&>(getComponent(newZoneId));
+    CZone& oldZone = DYNAMIC_CAST<CZone&>(getComponent(oldZoneId));
+    CZone& newZone = DYNAMIC_CAST<CZone&>(getComponent(newZoneId));
 
     if (removeChildFromComponent(oldZone, c, true)) {
       addChildToComponent(newZone, pCSpatial_t(&c));
@@ -684,7 +684,7 @@ void SpatialSystem::relocateEntity(entityId_t id, CZone& zone, const Point& poin
 
     // Currently, only VRects can be moved
     if (c.kind == CSpatialKind::V_RECT) {
-      CVRect& body = dynamic_cast<CVRect&>(c);
+      CVRect& body = DYNAMIC_CAST<CVRect&>(c);
 
       crossZones(id, body.zone->entityId(), zone.entityId());
 
@@ -704,7 +704,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 
     // Currently, only VRects can be moved
     if (c.kind == CSpatialKind::V_RECT) {
-      CVRect& body = dynamic_cast<CVRect&>(c);
+      CVRect& body = DYNAMIC_CAST<CVRect&>(c);
 
       // TODO
       double radius = 10.0; //body.size.x * 0.5;
@@ -735,7 +735,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
               return;
             }
 
-            const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+            const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
             edgesToCross.push_back(&se);
           }
         }
@@ -796,7 +796,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 //===========================================
 void SpatialSystem::movePlayer(const Vec2f& v) {
   Player& player = *sg.player;
-  const CVRect& body = dynamic_cast<const CVRect&>(getComponent(player.body));
+  const CVRect& body = DYNAMIC_CAST<const CVRect&>(getComponent(player.body));
   const CZone& zone =  getCurrentZone();
 
   Vec2f dv(cos(body.angle) * v.x - sin(body.angle) * v.y,
@@ -834,8 +834,8 @@ vector<Point> SpatialSystem::shortestPath(entityId_t entityA, entityId_t entityB
     EXCEPTION("Component not of type V_RECT");
   }
 
-  const CVRect& rectA = dynamic_cast<const CVRect&>(compA);
-  const CVRect& rectB = dynamic_cast<const CVRect&>(compB);
+  const CVRect& rectA = DYNAMIC_CAST<const CVRect&>(compA);
+  const CVRect& rectB = DYNAMIC_CAST<const CVRect&>(compB);
 
   return shortestPath(rectA.pos, rectB.pos, radius);
 }
@@ -935,10 +935,9 @@ void SpatialSystem::connectZones() {
 // SpatialSystem::findIntersections_r
 //===========================================
 void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
-  const CSpatial& parent, vector<pIntersection_t>& intersections, set<entityId_t>& visited,
-  double cullNearerThan, double& cullFartherThan) const {
+  const CZone& zone, const CSpatial& parent, vector<pIntersection_t>& intersections,
+  set<entityId_t>& visited, double cullNearerThan, double& cullFartherThan) const {
 
-  const CZone& zone = constZone(parent.entityId());
   Matrix invMatrix = matrix.inverse();
 
   LineSegment ray(point, 10000.0 * dir);
@@ -951,13 +950,13 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
     switch (c.kind) {
       case CSpatialKind::ZONE: {
         if (visited.count(c.entityId()) == 0) {
-          findIntersections_r(point, dir, matrix, c, intersections, visited, cullNearerThan,
-            cullFartherThan);
+          findIntersections_r(point, dir, matrix, DYNAMIC_CAST<const CZone&>(c), c, intersections,
+            visited, cullNearerThan, cullFartherThan);
         }
         break;
       }
       case CSpatialKind::V_RECT: {
-        const CVRect& vRect = dynamic_cast<const CVRect&>(c);
+        const CVRect& vRect = DYNAMIC_CAST<const CVRect&>(c);
 
         if (parent.kind == CSpatialKind::ZONE) {
           Point pos = matrix * vRect.pos;
@@ -984,7 +983,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
           }
         }
         else if (parent.kind == CSpatialKind::HARD_EDGE || parent.kind == CSpatialKind::SOFT_EDGE) {
-          const CEdge& edge = dynamic_cast<const CEdge&>(parent);
+          const CEdge& edge = DYNAMIC_CAST<const CEdge&>(parent);
           LineSegment wallLseg = transform(edge.lseg, matrix);
 
           Vec2f v = normalise(wallLseg.B - wallLseg.A);
@@ -1005,7 +1004,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
             double vRectFloorH = vRect.zone->floorHeight;
             if (edge.kind == CSpatialKind::SOFT_EDGE) {
-              const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+              const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
               vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
             }
             double y0 = vRectFloorH + vRect.pos.y;
@@ -1027,7 +1026,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
       }
       case CSpatialKind::HARD_EDGE:
       case CSpatialKind::SOFT_EDGE: {
-        const CEdge& edge = dynamic_cast<const CEdge&>(c);
+        const CEdge& edge = DYNAMIC_CAST<const CEdge&>(c);
         LineSegment lseg = transform(edge.lseg, matrix);
 
         Point pt;
@@ -1043,7 +1042,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
           }
 
           if (visited.count(c.entityId()) == 0) {
-            findIntersections_r(point, dir, matrix, c, intersections, visited, cullNearerThan,
+            findIntersections_r(point, dir, matrix, zone, c, intersections, visited, cullNearerThan,
               cullFartherThan);
           }
 
@@ -1062,7 +1061,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             intersections.push_back(std::move(X));
           }
           else if (edge.kind == CSpatialKind::SOFT_EDGE) {
-            const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+            const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
             const CZone& next = se.zoneA == &zone ? *se.zoneB : *se.zoneA;
 
             if (visited.count(se.joinId) > 0) {
@@ -1086,8 +1085,8 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             intersections.push_back(std::move(X));
 
             if (visited.count(next.entityId()) == 0) {
-              findIntersections_r(point, dir, mat, next, intersections, visited, cullNearerThan_,
-                cullFartherThan);
+              findIntersections_r(point, dir, mat, next, next, intersections, visited,
+                cullNearerThan_, cullFartherThan);
             }
           }
           else {
@@ -1132,7 +1131,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const
   set<entityId_t> visited;
   double cullFartherThan = 10000;
 
-  findIntersections_r(pos, dir, matrix, zone, intersections, visited, 0, cullFartherThan);
+  findIntersections_r(pos, dir, matrix, zone, zone, intersections, visited, 0, cullFartherThan);
 
   std::sort(intersections.begin(), intersections.end(),
     [](const pIntersection_t& a, const pIntersection_t& b) {
@@ -1257,7 +1256,7 @@ static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const
             double vRectFloorH = vRect.zone->floorHeight;
 
             if (edge.kind == CSpatialKind::SOFT_EDGE) {
-              const CSoftEdge& se = dynamic_cast<const CSoftEdge&>(edge);
+              const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
               vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
             }
 
@@ -1344,7 +1343,7 @@ void SpatialSystem::addComponent(pComponent_t component) {
     EXCEPTION("Component is not of kind C_SPATIAL");
   }
 
-  CSpatial* ptr = dynamic_cast<CSpatial*>(component.release());
+  CSpatial* ptr = DYNAMIC_CAST<CSpatial*>(component.release());
   pCSpatial_t c(ptr);
 
   if (c->parentId == -1) {
@@ -1356,7 +1355,7 @@ void SpatialSystem::addComponent(pComponent_t component) {
       EXCEPTION("Root zone already set");
     }
 
-    pCZone_t z(dynamic_cast<CZone*>(c.release()));
+    pCZone_t z(DYNAMIC_CAST<CZone*>(c.release()));
 
     sg.rootZone = std::move(z);
     m_components.clear();
@@ -1387,7 +1386,7 @@ bool SpatialSystem::isRoot(const CSpatial& c) const {
   if (sg.rootZone == nullptr) {
     return false;
   }
-  const CZone* ptr = dynamic_cast<const CZone*>(&c);
+  const CZone* ptr = DYNAMIC_CAST<const CZone*>(&c);
   return ptr == sg.rootZone.get();
 }
 
@@ -1401,9 +1400,9 @@ bool SpatialSystem::removeChildFromComponent(CSpatial& parent, const CSpatial& c
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
-      return removeFromZone(sg, dynamic_cast<CZone&>(parent), child, keepAlive);
+      return removeFromZone(sg, DYNAMIC_CAST<CZone&>(parent), child, keepAlive);
     case CSpatialKind::HARD_EDGE:
-      return removeFromHardEdge(dynamic_cast<CHardEdge&>(parent), child, keepAlive);
+      return removeFromHardEdge(DYNAMIC_CAST<CHardEdge&>(parent), child, keepAlive);
     default:
       EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
         << parent.kind);

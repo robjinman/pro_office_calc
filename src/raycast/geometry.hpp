@@ -364,11 +364,14 @@ inline Vec2f normalise(const Vec2f& v) {
 }
 
 inline double normaliseAngle(double angle) {
-  double q = angle / (2.0 * PI);
-  angle = 2.0 * PI * (q - floor(q));
+  static const double pi2 = 2.0 * PI;
+  static const double pi2_rp = 1.0 / pi2;
+
+  double n = trunc(angle * pi2_rp);
+  angle -= pi2 * n;
 
   if (angle < 0.0) {
-    return 2.0 * PI + angle;
+    return pi2 + angle;
   }
   else {
     return angle;

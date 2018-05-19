@@ -29,11 +29,11 @@ static const double TWO_FIVE_FIVE_RP = 1.0 / 255.0;
 
 
 static inline CVRect& getVRect(const SpatialSystem& spatialSystem, const CWallDecal& d) {
-  return dynamic_cast<CVRect&>(spatialSystem.getComponent(d.entityId()));
+  return DYNAMIC_CAST<CVRect&>(spatialSystem.getComponent(d.entityId()));
 }
 
 static inline CHRect& getHRect(const SpatialSystem& spatialSystem, const CFloorDecal& d) {
-  return dynamic_cast<CHRect&>(spatialSystem.getComponent(d.entityId()));
+  return DYNAMIC_CAST<CHRect&>(spatialSystem.getComponent(d.entityId()));
 }
 
 //===========================================
@@ -71,12 +71,6 @@ static inline QRgb blend(const QRgb& A, const QRgb& B, double alphaB) {
 // pixel
 //===========================================
 static inline QRgb pixel(const QImage& img, int x, int y) {
-  if (!isBetween(x, 0, img.width()) || !isBetween(y, 0, img.height())) {
-    DBG_PRINT("Warning: Image coords (" << x << ", " << y << ") outside of range " << img.width()
-      << "x" << img.height() << "\n")
-
-    return 0;
-  }
   return reinterpret_cast<const QRgb*>(img.constScanLine(y))[x];
 }
 
@@ -140,21 +134,21 @@ Renderer::XWrapper* Renderer::constructXWrapper(const SpatialSystem& spatialSyst
   switch (pX->kind) {
     case CSpatialKind::HARD_EDGE: {
       WallX* wrapper = new WallX(std::move(X));
-      wrapper->hardEdge = dynamic_cast<const CHardEdge*>(&spatialSystem.getComponent(pX->entityId));
-      wrapper->wall = dynamic_cast<const CWall*>(&renderSystem.getComponent(pX->entityId));
+      wrapper->hardEdge = DYNAMIC_CAST<const CHardEdge*>(&spatialSystem.getComponent(pX->entityId));
+      wrapper->wall = DYNAMIC_CAST<const CWall*>(&renderSystem.getComponent(pX->entityId));
       return wrapper;
     }
     case CSpatialKind::SOFT_EDGE: {
       JoinX* wrapper = new JoinX(std::move(X));
-      wrapper->softEdge = dynamic_cast<const CSoftEdge*>(&spatialSystem.getComponent(pX->entityId));
-      wrapper->join = dynamic_cast<const CJoin*>(&renderSystem.getComponent(pX->entityId));
+      wrapper->softEdge = DYNAMIC_CAST<const CSoftEdge*>(&spatialSystem.getComponent(pX->entityId));
+      wrapper->join = DYNAMIC_CAST<const CJoin*>(&renderSystem.getComponent(pX->entityId));
       return wrapper;
     }
     case CSpatialKind::V_RECT: {
       if (pX->parentKind == CSpatialKind::ZONE) {
         SpriteX* wrapper = new SpriteX(std::move(X));
-        wrapper->vRect = dynamic_cast<const CVRect*>(&spatialSystem.getComponent(pX->entityId));
-        wrapper->sprite = dynamic_cast<const CSprite*>(&renderSystem.getComponent(pX->entityId));
+        wrapper->vRect = DYNAMIC_CAST<const CVRect*>(&spatialSystem.getComponent(pX->entityId));
+        wrapper->sprite = DYNAMIC_CAST<const CSprite*>(&renderSystem.getComponent(pX->entityId));
         return wrapper;
       }
     }
@@ -252,7 +246,7 @@ void Renderer::castRay(const RenderGraph& rg, const Camera& cam, const SpatialSy
     result.intersections.push_back(pXWrapper_t(X));
 
     if (X->kind == XWrapperKind::WALL) {
-      WallX& wallX = dynamic_cast<WallX&>(*X);
+      WallX& wallX = DYNAMIC_CAST<WallX&>(*X);
       wallX.nearZone = zone;
 
       double floorHeight = zone->floorHeight;
@@ -271,7 +265,7 @@ void Renderer::castRay(const RenderGraph& rg, const Camera& cam, const SpatialSy
       break;
     }
     else if (X->kind == XWrapperKind::JOIN) {
-      JoinX& joinX = dynamic_cast<JoinX&>(*X);
+      JoinX& joinX = DYNAMIC_CAST<JoinX&>(*X);
 
       if(!(zone == joinX.softEdge->zoneA || zone == joinX.softEdge->zoneB)) {
         //DBG_PRINT("Warning: Possibly overlapping regions\n");
@@ -284,9 +278,9 @@ void Renderer::castRay(const RenderGraph& rg, const Camera& cam, const SpatialSy
       joinX.farZone = nextZone;
 
       const CRegion& region =
-        dynamic_cast<const CRegion&>(renderSystem.getComponent(zone->entityId()));
+        DYNAMIC_CAST<const CRegion&>(renderSystem.getComponent(zone->entityId()));
       const CRegion& nextRegion =
-        dynamic_cast<const CRegion&>(renderSystem.getComponent(nextZone->entityId()));
+        DYNAMIC_CAST<const CRegion&>(renderSystem.getComponent(nextZone->entityId()));
 
       double floorDiff = nextZone->floorHeight - zone->floorHeight;
       double ceilingDiff = zone->ceilingHeight - nextZone->ceilingHeight;
@@ -339,7 +333,7 @@ void Renderer::castRay(const RenderGraph& rg, const Camera& cam, const SpatialSy
       zone = nextZone;
     }
     else if (X->kind == XWrapperKind::SPRITE) {
-      SpriteX& spriteX = dynamic_cast<SpriteX&>(*X);
+      SpriteX& spriteX = DYNAMIC_CAST<SpriteX&>(*X);
 
       double floorHeight = spriteX.vRect->zone->floorHeight;
       const Point& pt = spriteX.X->point_rel;
@@ -448,9 +442,6 @@ void Renderer::drawCeilingSlice(const RenderGraph& rg, const Camera& cam, const 
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
-    assert(isBetween(screenX_px, 0, m_target.width() - 1) && isBetween(j, 0,
-      m_target.height() - 1));
-
     QRgb* pixels = reinterpret_cast<QRgb*>(m_target.scanLine(j));
 
     double projY_wd = (screenH_px * 0.5 - j) * vWorldUnit_px_rp;
@@ -516,9 +507,6 @@ void Renderer::drawFloorSlice(const RenderGraph& rg, const Camera& cam,
   double cosHAngle_rp = 1.0 / cos(hAngle);
 
   for (int j = slice.sliceBottom_px; j <= slice.viewportBottom_px; ++j) {
-    assert(isBetween(screenX_px, 0, m_target.width() - 1)
-      && isBetween(j, 0, m_target.height() - 1));
-
     QRgb* pixels = reinterpret_cast<QRgb*>(m_target.scanLine(j));
 
     double projY_wd = (j - screenH_px * 0.5) * vWorldUnit_px_rp;
@@ -916,10 +904,10 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
       XWrapper& X = **it;
 
       if (X.kind == XWrapperKind::WALL) {
-        const WallX& wallX = dynamic_cast<const WallX&>(X);
+        const WallX& wallX = DYNAMIC_CAST<const WallX&>(X);
 
         const CZone& zone = *wallX.nearZone;
-        const CRegion& region = dynamic_cast<const CRegion&>(renderSystem
+        const CRegion& region = DYNAMIC_CAST<const CRegion&>(renderSystem
           .getComponent(wallX.nearZone->entityId()));
 
         ScreenSlice slice = drawSlice(rg, cam, *wallX.X, wallX.slice, wallX.wall->texture,
@@ -944,13 +932,13 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
         }
       }
       else if (X.kind == XWrapperKind::JOIN) {
-        const JoinX& joinX = dynamic_cast<const JoinX&>(X);
+        const JoinX& joinX = DYNAMIC_CAST<const JoinX&>(X);
 
         ScreenSlice slice0 = drawSlice(rg, cam, *joinX.X, joinX.slice0, joinX.join->bottomTexture,
           joinX.join->bottomTexRect, screenX_px, joinX.farZone->floorHeight);
 
         const CZone& zone = *joinX.nearZone;
-        const CRegion& region = dynamic_cast<const CRegion&>(renderSystem
+        const CRegion& region = DYNAMIC_CAST<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
 
         drawFloorSlice(rg, cam, spatialSystem, *joinX.X, region, zone.floorHeight, slice0,
@@ -986,7 +974,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {
-        const SpriteX& spriteX = dynamic_cast<const SpriteX&>(X);
+        const SpriteX& spriteX = DYNAMIC_CAST<const SpriteX&>(X);
         drawSprite(rg, cam, spriteX, screenX_px);
       }
     }
@@ -999,13 +987,13 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
 
     switch (overlay.kind) {
       case COverlayKind::IMAGE:
-        drawImageOverlay(rg, painter, dynamic_cast<const CImageOverlay&>(overlay));
+        drawImageOverlay(rg, painter, DYNAMIC_CAST<const CImageOverlay&>(overlay));
         break;
       case COverlayKind::TEXT:
-        drawTextOverlay(rg, painter, dynamic_cast<const CTextOverlay&>(overlay));
+        drawTextOverlay(rg, painter, DYNAMIC_CAST<const CTextOverlay&>(overlay));
         break;
       case COverlayKind::COLOUR:
-        drawColourOverlay(rg, painter, dynamic_cast<const CColourOverlay&>(overlay));
+        drawColourOverlay(rg, painter, DYNAMIC_CAST<const CColourOverlay&>(overlay));
         break;
     }
   }

@@ -1,6 +1,7 @@
 Frame rate target: 200
 
 N   FILE    FPS   OPTIMISATION
+320x480
 1   1.ps    106   None
 2   2.ps    109   Inline isBetween
 3   3.ps    109   Replace std::list with std::vector in SpatialSystem::getEntitiesAlongRay
@@ -9,4 +10,9 @@ N   FILE    FPS   OPTIMISATION
 6   6.ps    131   Change m_entityChildren from std::map<entityId_t, std::set<entityId_t*>> to std::map<entityId_t, std::set<CSpatial*>>
 7   7.ps    131   Change parentId param to parent in findIntersections_r
 8   8.ps    138   Inlined most functions from geometry module
-9
+9   9.ps    154   Replaced dynamic_cast with static_cast in Renderer and SpatialSystem
+10  10.ps   158   Reduced use of GET_VALUE in findIntersections_r by adding zone parameter
+640x480
+11  11.ps   50
+12  12.ps   51    Removed floating point division from normaliseAngle
+
