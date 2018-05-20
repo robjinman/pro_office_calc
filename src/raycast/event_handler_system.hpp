@@ -11,8 +11,22 @@
 
 
 struct EventHandler {
+  EventHandler(const EventHandler&) = delete;
+  EventHandler& operator=(const EventHandler&) = delete;
+
+  typedef std::function<void(const GameEvent& event)> handlerFn_t;
+
+  EventHandler(const std::string& name, handlerFn_t&& handler)
+    : name(name),
+      handler(handler) {}
+
+  EventHandler(EventHandler&& cpy) {
+    name = std::move(cpy.name);
+    handler = std::move(cpy.handler);
+  }
+
   std::string name;
-  std::function<void(const GameEvent& event)> handler;
+  handlerFn_t handler;
 };
 
 struct CEventHandler : public Component {

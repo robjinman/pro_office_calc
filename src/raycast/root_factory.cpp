@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "raycast/root_factory.hpp"
+#include "raycast/map_parser.hpp"
 #include "utils.hpp"
 
 
@@ -38,7 +39,12 @@ const set<string>& RootFactory::types() const {
 bool RootFactory::constructObject(const string& type, entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  DBG_PRINT(string(m_dbgIndentLvl++, '\t') << "Constructing " << type << "...\n");
+#ifdef DEBUG
+  const string& name = getValue(obj.dict, "name", "");
+
+  DBG_PRINT(string(m_dbgIndentLvl++, '\t') << "Constructing " << type
+    << (name.length() > 0 ? string(" (") + name + ")" : "") << "...\n");
+#endif
 
   auto it = m_factoriesByType.find(type);
   if (it != m_factoriesByType.end()) {

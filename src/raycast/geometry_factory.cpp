@@ -76,8 +76,11 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
   const CEdge& edge = dynamic_cast<const CEdge&>(spatialSystem.getComponent(parentId));
   const LineSegment& wall = edge.lseg;
 
-  Point A = parentTransform * obj.transform * obj.path.points[0];
-  Point B = parentTransform * obj.transform * obj.path.points[1];
+  LineSegment lseg(obj.path.points[0], obj.path.points[1]);
+  lseg = transform(lseg, parentTransform * obj.transform);
+
+  Point A = lseg.A;
+  Point B = lseg.B;
 
   double a_ = distance(wall.A, A);
   double b_ = distance(wall.A, B);
@@ -97,6 +100,8 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
     && isBetween(A.y, wall.A.y, wall.B.y, delta)
     && isBetween(B.x, wall.A.x, wall.B.x, delta)
     && isBetween(B.y, wall.A.y, wall.B.y, delta))) {
+
+    std::cout << "two\n";
 
     return false;
   }
@@ -373,7 +378,7 @@ bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parent
 
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
-    edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
+    edge->lseg = transform(edge->lseg, m);
 
     snapEndpoint(m_endpoints, edge->lseg.A);
     snapEndpoint(m_endpoints, edge->lseg.B);

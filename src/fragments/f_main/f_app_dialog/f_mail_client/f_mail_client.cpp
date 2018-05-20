@@ -12,7 +12,10 @@
 
 
 using std::vector;
+using std::to_string;
 
+
+static const int doorCode = 1000 + (rand() % 9000);
 
 struct Email {
   QString subject;
@@ -29,7 +32,8 @@ struct Email {
   QString attachment;
 };
 
-const std::array<Email, 8> EMAILS = {{
+// Emails in chronological order
+const std::array<Email, 11> EMAILS = {{
   // 0
   {
     "Meeting to discuss y2k issue",
@@ -43,7 +47,7 @@ const std::array<Email, 8> EMAILS = {{
 
     // Message body
     //
-    "I've arranged a meeting on Tuesday afternoon to discuss the y2k or \"millenium bug\" issue. "
+    "I've arranged a meeting for tomorrow afternoon to discuss the y2k or \"millenium bug\" issue. "
     "See the attached document for a brief overview.\n\n"
 
     "Brian Williams,\n"
@@ -54,14 +58,102 @@ const std::array<Email, 8> EMAILS = {{
   },
   // 1
   {
+    "Potentially dangerous app - remove ASAP",
+    "Alan Shand",
+    "devteam",
+    "12/03/95 13:06:44",
+
+    "Pǫt̡entia҉l̵ly̕ ̢dangero͢u̵s̴ ͏app̡ ̕-͝ re̛m̴o͜vę A̕SAP",
+    "Al̛a̕n S̵han̡ḑ",
+    "1̵2/͞0͜3̸/̛95͡ ́13:͘0͠6:4͜4",
+
+    // Message body
+    //
+    "Just a quick update before I leave.\n\n"
+
+    "This is an urgent request to retract validation of Pro Office Calculator due to potentially "
+    "dangerous behaviour not uncovered during initial testing. I've had Brian and his team look "
+    "into this. It's clearly doing something odd, but they're unsure what.\n\n"
+
+    "In my absence, please ensure this application does NOT ship with the upcoming release of Apex "
+    "OS.\n\n"
+
+    "See you all next week.\n\n"
+
+    "Alan Shand,\n"
+    "Chief QA Officer,\n"
+    "Apex Systems\n"
+  },
+  // 2
+  {
+    "Quick question",
+    "Alan Shand",
+    "devteam",
+    "12/03/95 13:08:17",
+
+    "Q͏uic͟k̢ q̷u͝e̛sţio͝ņ",
+    "Àl͞a̴n̨ Sha̕nd",
+    "12/̀03͞/͞9̀5̨ ͘1͟3:͢08:1̀7",
+
+    // Message body
+    //
+    "Sorry, one more thing. Is Rob Jinman one of our ex-contractors?\n\n"
+
+    "Alan Shand,\n"
+    "Chief QA Officer,\n"
+    "Apex Systems\n"
+  },
+  // Outage happens here when you destroy the servers, which erases the last three messages.
+  // Mysteriously, an email from Rob Jinman seems to have appeared while the servers were down.
+  //
+  // 3
+  {
+    "Please Read",
+    "Rob Jinman",
+    "larry",
+    "12/03/95 13:22:20",
+
+    "Please Read",
+    "Rob Jinman",
+    "12/03/95 13:22:20",
+
+    // Message body
+    //
+    QString("Good work. The code for the exit door is ") + to_string(doorCode).c_str() + ".\n\n"
+    "Rob\n"
+  },
+  // Servers come back online
+  //
+  // 4
+  {
+    "Mail server outage",
+    "Richard Nelms",
+    "all",
+    "12/03/95 14:01:23",
+
+    "Mail server outage",
+    "Richard Nelms",
+    "12/03/95 14:01:23",
+
+    // Message body
+    //
+    "We had an outage of the mail servers this afternoon between around 13:10 and 13:40. It's "
+    "likely that some mail was lost.\n\n"
+
+    "Richard Nelms,\n"
+    "Systems Administator,\n"
+    "Apex Systems\n"
+  },
+  // 5
+  {
     "Larry?",
     "Daniel Bright",
     "Me",
-    "12/03/95 17:48:25",
+    "12/03/95 13:09:25",
 
     "L͝a͡rry̢?̛",
     "Dani̴el̨ B̀r̴ig̸h̸t̡",
-    "12/03́/͢9͡5҉ 1̛7:̀4̴8͜:̕25̶",
+    "12/03́/͢9͡5҉ 13:̀09:̕25̶",
 
     // Message body
     //
@@ -72,58 +164,16 @@ const std::array<Email, 8> EMAILS = {{
     "Application Development Manager,\n"
     "Apex Systems\n"
   },
-  // 2
-  {
-    "Potentially dangerous app - remove ASAP",
-    "Alan Shand",
-    "devteam",
-    "13/03/95 13:06:44",
-
-    "Pǫt̡entia҉l̵ly̕ ̢dangero͢u̵s̴ ͏app̡ ̕-͝ re̛m̴o͜vę A̕SAP",
-    "Al̛a̕n S̵han̡ḑ",
-    "1̵3͜/͞0͜3̸/̛95͡ ́13:͘0͠6:4͜4",
-
-    // Message body
-    //
-    "This is an urgent request to retract validation of Pro Office Calculator due to potentially "
-    "dangerous behaviour not uncovered during initial testing. I've had Brian and his team look "
-    "into this. It's clearly doing something odd, but they're unsure what.\n\n"
-
-    "Please ensure this application does NOT ship with the upcoming release of Apex OS.\n\n"
-
-    "Alan Shand,\n"
-    "Chief QA Officer,\n"
-    "Apex Systems\n"
-  },
-  // 3
-  {
-    "Quick question",
-    "Alan Shand",
-    "devteam",
-    "13/03/95 13:08:17",
-
-    "Q͏uic͟k̢ q̷u͝e̛sţio͝ņ",
-    "Àl͞a̴n̨ Sha̕nd",
-    "13/̀03͞/͞9̀5̨ ͘1͟3:͢08:1̀7",
-
-    // Message body
-    //
-    "Is Rob Jinman one of our ex-contractors?\n\n"
-
-    "Alan Shand,\n"
-    "Chief QA Officer,\n"
-    "Apex Systems\n"
-  },
-  // 4
+  // 6
   {
     "Re: Quick question",
     "Paul Gresham",
     "devteam",
-    "13/03/95 13:06:44",
+    "12/03/95 14:04:35",
 
     "Ŗe: ̨Q͟uick ̴q̛u̸esti͝ón̨",
     "Paul͢ ̨Gr͘es̵ham̷",
-    "1̀3/̡0̶3/95͟ 13:0̷6:͟4͘4",
+    "12/̴03̧/95͢ 1̢4:0̕4̵:͝3̢5",
 
     // Message body
     //
@@ -136,21 +186,21 @@ const std::array<Email, 8> EMAILS = {{
     "Systems Architect,\n"
     "Apex Systems\n"
   },
-  // 5
+  // 7
   {
     "Latest regarding Pro Office Calc",
     "Brian Williams",
     "devteam",
-    "15/03/95 11:20:09",
+    "12/03/95 16:20:09",
 
     "La̧tes҉t r͟eg̴ard͢iǹg Pr̡o ͏Of̕fíc͏e ͞Cal̛ç",
     "B̀ri̧a͘n̢ ̷W̷i̢l̕l̨i͞a̕ms̢",
-    "15͜/̧0҉3͢/̡9̶5 ̶1́1͝:̧2̨0͟:0̧9",
+    "12/̧0҉3͢/̡9̶5 ̶1́6:̧2̨0͟:0̧9",
 
     // Message body
     //
-    "Alan, it's using library functions and system calls that weren't implemented at the time the "
-    "app was submitted. That doesn't make any sense.\n\n"
+    "It's using library functions and system calls that weren't implemented at the time the app "
+    "was submitted. That doesn't make any sense.\n\n"
 
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"
@@ -158,16 +208,16 @@ const std::array<Email, 8> EMAILS = {{
 
     "syscalls.txt"
   },
-  // 6
+  // 8
   {
     "re: Latest regarding Pro Office Calc",
     "Michael Considine",
     "devteam",
-    "15/03/95 11:55:12",
+    "12/03/95 16:38:12",
 
     "r͟e͏: ҉Latest r͏e͞ga͢r͞dińg ͝P̛ro͠ O͡f̴fic͏e̴ ͝C͟a͝l͠c̀",
     "M̀i̧çha͜e͟l͡ ̵Con͢s͡id͜i҉n͡e",
-    "15/͡0͏3̧/95͘ ͠11͘:55͠:̀12",
+    "12/͡0͏3̧/95͘ ͠16:38:̀12",
 
     // Message body
     //
@@ -177,16 +227,16 @@ const std::array<Email, 8> EMAILS = {{
     "Senior Kernel Developer,\n"
     "Apex Systems\n"
   },
-  // 7
+  // 9
   {
     "re: re: Latest regarding Pro Office Calc",
     "Brian Williams",
     "devteam",
-    "15/03/95 12:01:19",
+    "12/03/95 16:42:19",
 
     "re: re:͘ ̡Ļate̡s̢t ̴r̴e̶gar̴d͝ing̛ ͞P͠r͏ó O̴f҉f͜ice̴ Ca̵lc",
     "Br̨i̵an W̛i̴l͜l̴i̕am̷s͢",
-    "1̴5/0̀3/͡95̀ ́1҉2:0͏1͝:19",
+    "1̴2/0̀3/͡95̀ ́16:42:19",
 
     // Message body
     //
@@ -195,12 +245,33 @@ const std::array<Email, 8> EMAILS = {{
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"
     "Apex Systems\n"
-  }
+  },
+  // 10
+  {
+    "y2k issue",
+    "Brian Williams",
+    "devteam",
+    "12/03/95 17:10:58",
+
+    "y2k issue",
+    "Brian Williams",
+    "12/03/95 17:10:58",
+
+    // Message body
+    //
+    "Following our meeting earlier, it's become clear that the Y2K problem should take priority "
+    "over the coming weeks. Expect changes in your schedule/workload to reflect this.\n\n"
+
+    "Brian Williams,\n"
+    "Lead Kernel Developer,\n"
+    "Apex Systems\n"
+  },
 }};
 
 const vector<vector<int>> INBOX_STATES = {
-  { 0, 2, 3, 4, 5, 6, 7 },   // ST_INITIAL
-  { 0, 1, 2, 3, 4, 5, 6, 7 } // ST_LARRY_DEAD
+  { 0, 1, 2, 6, 7, 8, 9 },    // ST_INITIAL
+  { 0, 1, 2, 5, 6, 7, 8, 9 }, // ST_LARRY_DEAD
+  { 0, 3, 4, 5, 10 }          // ST_SERVERS_DESTROYED
 };
 
 //===========================================
@@ -257,6 +328,13 @@ void FMailClient::reload(const FragmentSpec& spec_) {
     populateInbox();
     enableEmails(0, -1);
   }, m_larryKilledId);
+
+  commonData.eventSystem.listen("youveGotMail/serversDestroyed", [this](const Event&) {
+    m_inboxState = ST_SERVERS_DESTROYED;
+    m_data.wgtTabs->removeTab(1);
+    populateInbox();
+    enableEmails(0, -1);
+  }, m_serversDestroyedId);
 }
 
 //===========================================
@@ -356,6 +434,7 @@ void FMailClient::onCellDoubleClick(int row, int col) {
 
     tab.wgtText->setText(email.body);
     tab.wgtFrom->setText(email.from);
+    tab.wgtDate->setText(email.date);
     tab.wgtSubject->setText(email.subject);
     tab.wgtAttachments->setText(email.attachment);
     tab.wgtTo->setText(email.to);
@@ -388,11 +467,13 @@ void FMailClient::setupEmailTab() {
   tab.wgtText = makeQtObjPtr<QTextBrowser>();
 
   QLabel* wgtFromLabel = new QLabel("From");
+  QLabel* wgtDateLabel = new QLabel("Date");
   QLabel* wgtSubjectLabel = new QLabel("Subject");
   QLabel* wgtAttachmentsLabel = new QLabel("Attachments");
   QLabel* wgtToLabel = new QLabel("To");
 
   tab.wgtFrom = makeQtObjPtr<QLabel>("...");
+  tab.wgtDate = makeQtObjPtr<QLabel>("...");
   tab.wgtSubject = makeQtObjPtr<QLabel>("...");
   tab.wgtAttachments = makeQtObjPtr<QLabel>("...");
   tab.wgtTo = makeQtObjPtr<QLabel>("...");
@@ -406,18 +487,20 @@ void FMailClient::setupEmailTab() {
   QPushButton* wgtDelete = new QPushButton("̵D̴̀́e̴͟l͏et͠͝ȩ͟");
   wgtDelete->setDisabled(true);
 
-  tab.grid->addWidget(tab.wgtText.get(), 5, 0, 1, 4);
+  tab.grid->addWidget(tab.wgtText.get(), 6, 0, 1, 4);
   tab.grid->addWidget(wgtFromLabel, 0, 0);
-  tab.grid->addWidget(wgtSubjectLabel, 1, 0);
-  tab.grid->addWidget(wgtToLabel, 2, 0);
-  tab.grid->addWidget(wgtAttachmentsLabel, 3, 0);
+  tab.grid->addWidget(wgtDateLabel, 1, 0);
+  tab.grid->addWidget(wgtSubjectLabel, 2, 0);
+  tab.grid->addWidget(wgtToLabel, 3, 0);
+  tab.grid->addWidget(wgtAttachmentsLabel, 4, 0);
   tab.grid->addWidget(tab.wgtFrom.get(), 0, 1, 1, 3);
-  tab.grid->addWidget(tab.wgtSubject.get(), 1, 1, 1, 3);
-  tab.grid->addWidget(tab.wgtTo.get(), 2, 1, 1, 3);
-  tab.grid->addWidget(tab.wgtAttachments.get(), 3, 1, 1, 3);
-  tab.grid->addWidget(wgtReply, 4, 1);
-  tab.grid->addWidget(wgtForward, 4, 2);
-  tab.grid->addWidget(wgtDelete, 4, 3);
+  tab.grid->addWidget(tab.wgtDate.get(), 1, 1, 1, 3);
+  tab.grid->addWidget(tab.wgtSubject.get(), 2, 1, 1, 3);
+  tab.grid->addWidget(tab.wgtTo.get(), 3, 1, 1, 3);
+  tab.grid->addWidget(tab.wgtAttachments.get(), 4, 1, 1, 3);
+  tab.grid->addWidget(wgtReply, 5, 1);
+  tab.grid->addWidget(wgtForward, 5, 2);
+  tab.grid->addWidget(wgtDelete, 5, 3);
 }
 
 //===========================================
@@ -483,6 +566,7 @@ void FMailClient::cleanUp() {
   parentData.box->removeWidget(this);
 
   commonData.eventSystem.forget(m_larryKilledId);
+  commonData.eventSystem.forget(m_serversDestroyedId);
 }
 
 //===========================================

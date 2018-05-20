@@ -54,6 +54,22 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
       m_eventSystem.fire(pEvent_t(new Event("youveGotMail/larryKilled")));
     }
   }});
+  handlers->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
+    [this](const GameEvent& e_) {
+
+    auto& e = dynamic_cast<const EEntityDestroyed&>(e_);
+    if (e.entityId == Component::getIdFromString("larry")) {
+      m_eventSystem.fire(pEvent_t(new Event("youveGotMail/larryKilled")));
+    }
+  }});
+  int serversDestroyed = 0;
+  handlers->broadcastedEventHandlers.push_back(EventHandler{"server_destroyed",
+    [this, serversDestroyed](const GameEvent& e) mutable {
+
+    if (++serversDestroyed == 2) {
+      m_eventSystem.fire(pEvent_t(new Event("youveGotMail/serversDestroyed")));
+    }
+  }});
 
   eventHandlerSystem.addComponent(pComponent_t(handlers));
 }

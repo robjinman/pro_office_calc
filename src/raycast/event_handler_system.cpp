@@ -11,7 +11,7 @@ static void sendEventToComponent(CEventHandler& c, const GameEvent& e, bool targ
   auto& handlers = targeted ? c.targetedEventHandlers : c.broadcastedEventHandlers;
 
   for (auto it = handlers.begin(); it != handlers.end(); ++it) {
-    EventHandler handler = *it;
+    EventHandler& handler = *it;
 
     if (handler.name == e.name || handler.name == "*") {
       handler.handler(e);

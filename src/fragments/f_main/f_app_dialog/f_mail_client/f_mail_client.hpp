@@ -29,6 +29,7 @@ struct FMailClientData : public FragmentData {
     QtObjPtr<QGridLayout> grid;
     QtObjPtr<QTextBrowser> wgtText;
     QtObjPtr<QLabel> wgtFrom;
+    QtObjPtr<QLabel> wgtDate;
     QtObjPtr<QLabel> wgtSubject;
     QtObjPtr<QLabel> wgtTo;
     QtObjPtr<QLabel> wgtAttachments;
@@ -60,9 +61,11 @@ class FMailClient : public QWidget, public Fragment {
 
     bool m_serverRoomLaunched = false;
     int m_larryKilledId = -1;
+    int m_serversDestroyedId = -1;
 
     const int ST_INITIAL = 0;
     const int ST_LARRY_DEAD = 1;
+    const int ST_SERVERS_DESTROYED = 2;
 
     int m_inboxState = 0;
 

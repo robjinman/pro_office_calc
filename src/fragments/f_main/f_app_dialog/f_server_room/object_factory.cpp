@@ -156,6 +156,7 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
       [=, &animationSystem](const GameEvent& e) {
 
       animationSystem.playAnimation(entityId, "explode", false);
+      m_entityManager.broadcastEvent(GameEvent("server_destroyed"));
     }});
     eventHandlerSystem.addComponent(pComponent_t(handlers));
 
