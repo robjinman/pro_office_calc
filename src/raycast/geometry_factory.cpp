@@ -51,7 +51,7 @@ bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, en
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
-  Matrix m = parentTransform * obj.transform;
+  Matrix m = parentTransform * obj.groupTransform * obj.pathTransform;
 
   CPath* path = new CPath(makeIdForObj(obj), parentId);
 
@@ -77,7 +77,7 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
   const LineSegment& wall = edge.lseg;
 
   LineSegment lseg(obj.path.points[0], obj.path.points[1]);
-  lseg = transform(lseg, parentTransform * obj.transform);
+  lseg = transform(lseg, parentTransform * obj.groupTransform * obj.pathTransform);
 
   Point A = lseg.A;
   Point B = lseg.B;
@@ -149,7 +149,7 @@ bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
   CRegion& region = dynamic_cast<CRegion&>(renderSystem.getComponent(parentId));
 
-  Matrix m = parentTransform * obj.transform;
+  Matrix m = parentTransform * obj.groupTransform * obj.pathTransform;
 
   list<CHardEdge*> edges;
 
@@ -189,7 +189,8 @@ bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
     renderSystem.addComponent(pComponent_t(wall));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
-      m_rootFactory.constructObject((*it)->type, -1, **it, entityId, m);
+      m_rootFactory.constructObject((*it)->type, -1, **it, entityId,
+        parentTransform * obj.groupTransform);
     }
   }
 
@@ -225,7 +226,7 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& o
 
   CHRect* hRect = new CHRect(entityId, parentId);
   hRect->size = size;
-  hRect->transform = parentTransform * obj.transform * m;
+  hRect->transform = parentTransform * obj.groupTransform * obj.pathTransform * m;
 
   spatialSystem.addComponent(pComponent_t(hRect));
 
@@ -255,7 +256,8 @@ bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
 
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
-  Matrix m = parentTransform * obj.transform * transformFromTriangle(obj.path);
+  Matrix m = parentTransform * obj.groupTransform * obj.pathTransform
+    * transformFromTriangle(obj.path);
 
   Player* player = new Player(m_entityManager, m_audioService, tallness, zone, m);
   player->sprite = Component::getNextId();
@@ -330,7 +332,7 @@ bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
 
   edge->lseg.A = obj.path.points[0];
   edge->lseg.B = obj.path.points[1];
-  edge->lseg = transform(edge->lseg, parentTransform * obj.transform);
+  edge->lseg = transform(edge->lseg, parentTransform * obj.groupTransform * obj.pathTransform);
   edge->isPortal = true;
 
   snapEndpoint(m_endpoints, edge->lseg.A);
@@ -356,8 +358,6 @@ bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parent
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  Matrix m = parentTransform * obj.transform;
-
   list<CSoftEdge*> edges;
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
@@ -378,7 +378,7 @@ bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parent
 
     edge->lseg.A = obj.path.points[j];
     edge->lseg.B = obj.path.points[i];
-    edge->lseg = transform(edge->lseg, m);
+    edge->lseg = transform(edge->lseg, parentTransform * obj.groupTransform * obj.pathTransform);
 
     snapEndpoint(m_endpoints, edge->lseg.A);
     snapEndpoint(m_endpoints, edge->lseg.B);
@@ -394,7 +394,8 @@ bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parent
     renderSystem.addComponent(pComponent_t(boundary));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
-      m_rootFactory.constructObject((*it)->type, -1, **it, entityId, m);
+      m_rootFactory.constructObject((*it)->type, -1, **it, entityId,
+        parentTransform * obj.groupTransform);
     }
   }
 
@@ -433,8 +434,6 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, parser::Object& obj
     if (obj.path.points.size() > 0) {
       EXCEPTION("Region has unexpected path");
     }
-
-    Matrix transform = parentTransform * obj.transform;
 
     if (contains<string>(obj.dict, "has_ceiling")) {
       string s = getValue(obj.dict, "has_ceiling");
@@ -515,7 +514,8 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, parser::Object& obj
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       parser::Object& child = **it;
 
-      m_rootFactory.constructObject(child.type, -1, child, entityId, transform);
+      m_rootFactory.constructObject(child.type, -1, child, entityId,
+        parentTransform * obj.groupTransform);
     }
   }
   catch (Exception& ex) {

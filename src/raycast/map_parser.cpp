@@ -240,7 +240,9 @@ Matrix parseTransform(const string& s) {
 //===========================================
 // extractGeometry
 //===========================================
-void extractGeometry(const XMLElement& node, Path& path, Matrix& transform) {
+void extractGeometry(const XMLElement& node, Path& path, Matrix& groupTransform,
+  Matrix& pathTransform) {
+
   Matrix groupM;
   Matrix pathM;
 
@@ -272,7 +274,8 @@ void extractGeometry(const XMLElement& node, Path& path, Matrix& transform) {
     e = e->NextSiblingElement();
   }
 
-  transform = groupM * pathM;
+  groupTransform = groupM;
+  pathTransform = pathM;
 }
 
 //===========================================
@@ -288,7 +291,7 @@ Object* constructObject_r(const XMLElement& node) {
   obj->type = obj->dict.at("type");
   obj->dict.erase("type");
 
-  extractGeometry(node, obj->path, obj->transform);
+  extractGeometry(node, obj->path, obj->groupTransform, obj->pathTransform);
 
   const XMLElement* e = node.FirstChildElement();
   while (e != nullptr) {

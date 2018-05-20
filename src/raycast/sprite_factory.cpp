@@ -44,7 +44,7 @@ bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, en
 
   CVRect* vRect = new CVRect(entityId, zone.entityId(), texture.size_wd);
   Matrix m = transformFromTriangle(obj.path);
-  vRect->setTransform(parentTransform * obj.transform * m);
+  vRect->setTransform(parentTransform * obj.groupTransform * obj.pathTransform * m);
   vRect->zone = &zone;
   vRect->height = height;
 
@@ -174,13 +174,13 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
     agentSystem.addComponent(pComponent_t(agent));
 
-    Matrix m = parentTransform * obj.transform;
-
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       parser::Object& ch = **it;
       entityId_t invItemId = makeIdForObj(ch);
 
-      if (m_rootFactory.constructObject(ch.type, invItemId, ch, entityId, m)) {
+      if (m_rootFactory.constructObject(ch.type, invItemId, ch, entityId,
+        parentTransform * obj.groupTransform)) {
+
         const CCollectable& item =
           dynamic_cast<const CCollectable&>(inventorySystem.getComponent(invItemId));
 

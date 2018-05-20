@@ -262,7 +262,7 @@ bool MiscFactory::constructSpawnPoint(entityId_t entityId, parser::Object& obj, 
 
   CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(1, 1));
   Matrix m = transformFromTriangle(obj.path);
-  vRect->setTransform(parentTransform * obj.transform * m);
+  vRect->setTransform(parentTransform * obj.groupTransform * obj.pathTransform * m);
   vRect->zone = &zone;
 
   spatialSystem.addComponent(pComponent_t(vRect));

@@ -24,7 +24,8 @@ struct Object;
 typedef std::unique_ptr<Object> pObject_t;
 
 struct Object {
-  Matrix transform;
+  Matrix groupTransform;
+  Matrix pathTransform;
   Path path;
   std::string type;
   std::map<std::string, std::string> dict;
@@ -32,7 +33,8 @@ struct Object {
 
   Object* clone() const {
     Object* cpy = new Object;
-    cpy->transform = transform;
+    cpy->groupTransform = groupTransform;
+    cpy->pathTransform = pathTransform;
     cpy->path = path;
     cpy->type = type;
     cpy->dict = dict;
