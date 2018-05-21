@@ -63,7 +63,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
           drawExitDoorDigitDisplay();
 
-          if (QString::compare(m_exitDoorInput, exitDoorCode) == 0) {
+          if (m_exitDoorInput.trimmed() == exitDoorCode.trimmed()) {
             DBG_PRINT("Correct door code entered. Opening door.\n");
 
             EActivateEntity e;
