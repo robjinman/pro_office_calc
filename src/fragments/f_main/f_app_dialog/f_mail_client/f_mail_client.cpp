@@ -6,6 +6,7 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_server_room/defs.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
 #include "app_config.hpp"
@@ -14,8 +15,6 @@
 using std::vector;
 using std::to_string;
 
-
-static const int doorCode = 1000 + (rand() % 9000);
 
 struct Email {
   QString subject;
@@ -119,7 +118,7 @@ const std::array<Email, 11> EMAILS = {{
 
     // Message body
     //
-    QString("Good work. The code for the exit door is ") + to_string(doorCode).c_str() + ".\n\n"
+    QString("Good work. The code for the exit door is ") + youve_got_mail::exitDoorCode + ".\n\n"
     "Rob\n"
   },
   // Servers come back online

@@ -16324,9 +16324,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35355339"
-     inkscape:cx="1505.9522"
-     inkscape:cy="22.99105"
+     inkscape:zoom="0.0625"
+     inkscape:cx="11393.405"
+     inkscape:cy="-5047.2411"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -22722,7 +22722,7 @@
          inkscape:connector-curvature="0" />
       <path
          style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient11960);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-         d="m 13270.342,1900.9783 -286.446,222.7981 a 3.4989596,4.6310583 83.967354 0 0 -0.582,0.5454 l -157.05,178.2606 a 3.5376565,3.6069257 63.486661 0 0 -0.892,2.5851 l 16.816,265.6916 -164.54,250.1084 a 2.0478608,2.2199842 66.142849 0 0 -0.297,0.6844 l -63.956,270.8866 a 1.1665735,1.5351004 43.947944 0 0 -0.04,0.3318 c 0,0 0.659,126.6421 0.711,136.7428 l -185.15,20.841 185.945,-19.4929 a 0.71844361,0.71120382 87.188429 0 0 0.637,-0.7101 c 0.238,-45.7357 0.476,-91.4713 0.714,-137.207 l 65.216,-270.0236 166.054,-249.8129 a 2.8938661,2.8214477 60.728982 0 0 0.469,-1.7489 l -15.364,-265.2355 156.866,-175.9089 287.012,-221.4306 z"
+         d="m 13270.342,1900.9783 -286.446,222.7981 a 3.4989596,4.6310583 83.967354 0 0 -0.582,0.5454 l -157.05,178.2606 a 3.5376565,3.6069257 63.486661 0 0 -0.892,2.5851 l 16.816,265.6916 -164.54,250.1084 a 2.0478608,2.2199842 66.142849 0 0 -0.297,0.6844 l -63.956,270.8866 a 1.1665735,1.5351004 43.947944 0 0 -0.04,0.3318 c 0.237,45.5809 0.474,91.1619 0.711,136.7428 l -185.15,20.841 185.945,-19.4929 a 0.71844361,0.71120382 87.188429 0 0 0.637,-0.7101 c 0.238,-45.7357 0.476,-91.4713 0.714,-137.207 l 65.216,-270.0236 166.054,-249.8129 a 2.8938661,2.8214477 60.728982 0 0 0.469,-1.7489 l -15.364,-265.2355 156.866,-175.9089 287.012,-221.4306 z"
          id="path13571"
          inkscape:path-effect="#path-effect13573"
          inkscape:original-d="m 13273.404,1904.931 -286.883,222.2335 -157.584,177.7869 16.163,266.6802 -165.665,250.5179 -64.65,270.7208 0,137.3808 -185.868,20.203"
@@ -33913,24 +33913,36 @@
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m 1503.309,1209.3399 0,551.5433"
        id="path8830"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215" />
     <path
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m 1620.6887,1209.3399 0,207.8894 72.1249,0 0,87.6812 -73.5391,0 0,254.5585"
        id="path8834"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215" />
     <path
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m 1559.8775,1210.7541 c 0,0 1.6755,173.6142 1.9411,188.2283 1.1218,61.727 65.9412,52.4307 65.9412,52.4307"
        id="path8838"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="csc" />
+       sodipodi:nodetypes="csc"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215" />
     <path
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m 1648.4314,1479.5405 c -59.6201,0.4571 -82.6121,13.025 -85.3241,41.3536 -6.7534,70.5437 -4.644,232.918 -4.644,232.918"
        id="path8840"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="csc" />
+       sodipodi:nodetypes="csc"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215" />
     <path
        sodipodi:type="star"
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
@@ -33948,7 +33960,10 @@
        d="m 1305,1257.3622 -31.2224,-15.9737 29.4448,-19.0526 z"
        inkscape:transform-center-x="8.9600431"
        inkscape:transform-center-y="38.48616"
-       transform="matrix(0.59461802,-0.723507,0.92823424,0.46347172,-288.05509,1812.8581)" />
+       transform="matrix(0.59461802,-0.723507,0.92823424,0.46347172,-288.05509,1812.8581)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215" />
     <path
        sodipodi:type="star"
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
@@ -33966,6 +33981,296 @@
        d="m 1305,1257.3622 -31.2224,-15.9737 29.4448,-19.0526 z"
        inkscape:transform-center-x="38.486161"
        inkscape:transform-center-y="-8.9600418"
-       transform="matrix(0.723507,0.59461802,-0.46347172,0.92823424,1197.5876,-173.8054)" />
+       transform="matrix(0.723507,0.59461802,-0.46347172,0.92823424,1197.5876,-173.8054)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215" />
+    <g
+       id="g13151"
+       transform="matrix(0.63695929,0,0,0.64875661,565.31868,629.15843)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/shaft_diagram.png"
+       inkscape:export-xdpi="16.11215"
+       inkscape:export-ydpi="16.11215">
+      <ellipse
+         ry="20.215828"
+         rx="20"
+         cy="1808.6586"
+         cx="1559"
+         id="path12782"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:9.33371449;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path12786"
+         d="m 1558.8809,1828.3769 -0.6116,44.1541 -27.2184,31.3274"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:9.33371449;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path12788"
+         d="m 1558.4518,1874.2994 21.7076,30.225"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:9.33371449;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path12792"
+         d="m 1529.4283,1854.9284 28.4098,-13.435 27.0353,13.435"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:9.33371353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60"
+       width="76"
+       height="76"
+       x="314.84631"
+       y="1397.614"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/one.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-2"
+       width="76"
+       height="76"
+       x="419.49811"
+       y="1396.907"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/two.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-61"
+       width="76"
+       height="76"
+       x="359.5"
+       y="1627.8622"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/six.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-8"
+       width="76"
+       height="76"
+       x="211.71782"
+       y="1399.712"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/zero.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-7"
+       width="76"
+       height="76"
+       x="149.5"
+       y="1632.8622"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/eight.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-9"
+       width="76"
+       height="76"
+       x="514.25037"
+       y="1396.9069"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/three.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-20"
+       width="76"
+       height="76"
+       x="254.5"
+       y="1665.3622"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/seven.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-23"
+       width="76"
+       height="76"
+       x="469"
+       y="1578.8622"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/five.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-75"
+       width="76"
+       height="76"
+       x="271.71277"
+       y="1534.7927"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/four.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="234.56497"
+       y="1457.1661"
+       id="text12794"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/zero.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12796"
+         x="234.56497"
+         y="1457.1661">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="337.28995"
+       y="1453.2917"
+       id="text12798"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/one.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12800"
+         x="337.28995"
+         y="1453.2917">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="444.06305"
+       y="1452.5846"
+       id="text12802"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/two.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12804"
+         x="444.06305"
+         y="1452.5846">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="538.81537"
+       y="1453.2917"
+       id="text12806"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/three.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12808"
+         x="538.81537"
+         y="1453.2917">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="493.56052"
+       y="1635.0182"
+       id="text12814"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/five.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12816"
+         x="493.56052"
+         y="1635.0182">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="381.83765"
+       y="1681.6873"
+       id="text12818"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/six.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12820"
+         x="381.83765"
+         y="1681.6873">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="278.60007"
+       y="1721.2852"
+       id="text12822"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/seven.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12824"
+         x="278.60007"
+         y="1721.2852">7</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="173.16147"
+       y="1688.6136"
+       id="text12826"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/eight.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12828"
+         x="173.16147"
+         y="1688.6136">8</tspan></text>
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#101628;fill-opacity:1;fill-rule:nonzero;stroke:#525355;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect12834-60-6"
+       width="76"
+       height="76"
+       x="214.5"
+       y="1767.3622"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/nine.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="237.57065"
+       y="1823.3243"
+       id="text12830"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/nine.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12832"
+         x="237.57065"
+         y="1823.3243">9</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#00b600;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="294.39905"
+       y="1591.006"
+       id="text12810"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/four.png"
+       inkscape:export-xdpi="34.860806"
+       inkscape:export-ydpi="34.860806"><tspan
+         sodipodi:role="line"
+         id="tspan12812"
+         x="294.39905"
+         y="1591.006">4</tspan></text>
+    <g
+       id="g24436-9"
+       transform="matrix(0,0.48787524,-0.48787524,0,15846.124,663.15876)"
+       inkscape:export-xdpi="4.6665316"
+       inkscape:export-ydpi="4.6665316"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/youve_got_mail/left_arrow.png">
+      <path
+         inkscape:connector-curvature="0"
+         id="path24416-2"
+         d="m 13227.241,4355.0139 -16.39,1702.2711 -493.072,5.497 938.653,1479.195 998.375,-1472.971 -483.83,-11.124 10.93,-1697.1772 -954.666,-5.6909 z m 95.52,97.0342 761.929,4.7278 -10.747,1695.4861 401.689,9.069 -816.556,1204.868 -767.012,-1208.824 414.307,-4.532 0.968,-47.288 15.822,-1653.2861 0,0 z"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:0.75813958;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <path
+         id="path24306-5-2-9-3-2"
+         d="m 13322.75,4452.1345 761.929,4.5343 -10.746,1695.4782 401.691,9.068 -816.559,1204.868 -767.012,-1208.824 414.308,-4.532 0.967,-47.288 15.82,-1653.2859 z"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b51400;fill-opacity:0.72093021;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         inkscape:connector-curvature="0" />
+    </g>
   </g>
 </svg>

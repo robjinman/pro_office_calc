@@ -2,6 +2,9 @@
 #define __PROCALC_FRAGMENTS_F_SERVER_ROOM_GAME_LOGIC_HPP__
 
 
+#include <QString>
+
+
 class EventSystem;
 class Event;
 class EntityManager;
@@ -18,10 +21,13 @@ class GameLogic {
 
   private:
     void onDivByZero(const Event& event);
+    void drawExitDoorDigitDisplay();
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
     int m_eventIdx = -1;
+    char m_exitDoorSelectedNum = '\0';
+    QString m_exitDoorInput;
 };
 
 

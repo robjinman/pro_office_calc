@@ -8,15 +8,28 @@
 #include "button_grid.hpp"
 #include "calculator.hpp"
 #include "qt_obj_ptr.hpp"
+#include "event.hpp"
+
+
+struct CalculatorButtonPressEvent : public Event {
+  CalculatorButtonPressEvent(int buttonId, Calculator& calculator)
+    : Event("calculatorButtonPress"),
+      buttonId(buttonId),
+      calculator(calculator) {}
+
+    int buttonId;
+    Calculator& calculator;
+};
 
 
 class QMainWindow;
+class EventSystem;
 
 class CalculatorWidget : public QWidget {
   Q_OBJECT
 
   public:
-    CalculatorWidget();
+    CalculatorWidget(EventSystem& eventSystem);
 
     Calculator calculator;
     QtObjPtr<QVBoxLayout> vbox;
@@ -27,6 +40,9 @@ class CalculatorWidget : public QWidget {
 
   public slots:
     void onButtonClick(int id);
+
+  private:
+    EventSystem& m_eventSystem;
 };
 
 

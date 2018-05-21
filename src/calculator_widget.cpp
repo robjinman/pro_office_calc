@@ -1,12 +1,14 @@
 #include "calculator_widget.hpp"
+#include "event_system.hpp"
 #include "utils.hpp"
 
 
 //===========================================
 // CalculatorWidget::CalculatorWidget
 //===========================================
-CalculatorWidget::CalculatorWidget()
-  : QWidget(nullptr) {
+CalculatorWidget::CalculatorWidget(EventSystem& eventSystem)
+  : QWidget(nullptr),
+    m_eventSystem(eventSystem) {
 
   QFont f = font();
   f.setPointSize(16);
@@ -64,6 +66,8 @@ void CalculatorWidget::onButtonClick(int id) {
   }
 
   wgtDigitDisplay->setText(calculator.display().c_str());
+
+  m_eventSystem.fire(pEvent_t(new CalculatorButtonPressEvent(id, calculator)));
 }
 
 //===========================================

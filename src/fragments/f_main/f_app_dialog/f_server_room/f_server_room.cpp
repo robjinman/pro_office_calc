@@ -54,7 +54,7 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     auto& timeService = m_data.wgtRaycast->timeService();
     auto& entityManager = m_data.wgtRaycast->entityManager();
 
-    m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>();
+    m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>(commonData.eventSystem);
     m_data.wgtCalculator->show();
     m_data.wgtCalculator->hide();
 

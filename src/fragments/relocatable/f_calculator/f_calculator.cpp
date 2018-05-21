@@ -26,7 +26,7 @@ void FCalculator::reload(const FragmentSpec& spec_) {
   m_origParentState.spacing = parentData.box->spacing();
   m_origParentState.margins = parentData.box->contentsMargins();
 
-  m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>();
+  m_data.wgtCalculator = makeQtObjPtr<CalculatorWidget>(commonData.eventSystem);
 
   parentData.box->setSpacing(0);
   parentData.box->setContentsMargins(0, 0, 0, 0);
