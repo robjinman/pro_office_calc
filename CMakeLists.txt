@@ -6,7 +6,6 @@ set(APP_TARGET_NAME "procalc")
 set(LIB_TARGET_NAME "procalclib")
 set(DATA_DIR "${CMAKE_SOURCE_DIR}/data")
 set(VERSION_FILE "${CMAKE_SOURCE_DIR}/VERSION")
-set(PROCALC_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies/build/${BUILD_SUBDIR}/dist")
 
 project(${PROJECT_SHORT_NAME})
 
@@ -30,6 +29,8 @@ elseif (APPLE)
 else()
   set(BUILD_SUBDIR "linux")
 endif()
+
+set(PROCALC_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies/build/${BUILD_SUBDIR}/dist")
 
 set(CMAKE_CXX_STANDARD 14)
 

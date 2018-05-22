@@ -13,7 +13,10 @@ namespace config {
 // convert
 //===========================================
 template<typename T>
-T convert(const string&) {}
+T convert(const string&) {
+  T t;
+  return t;
+}
 
 template<>
 double convert<double>(const string& s) {
