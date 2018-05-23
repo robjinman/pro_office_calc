@@ -1,5 +1,5 @@
+#include <random>
 #include "fragments/f_main/f_app_dialog/f_server_room/game_logic.hpp"
-#include "fragments/f_main/f_app_dialog/f_server_room/defs.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
@@ -15,6 +15,12 @@ using std::string;
 
 
 namespace youve_got_mail {
+
+
+static std::mt19937 randEngine(randomSeed());
+static std::uniform_int_distribution<int> randInt(1000, 9999);
+
+extern const std::string exitDoorCode = std::to_string(randInt(randEngine));
 
 
 //===========================================
@@ -59,11 +65,11 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
             m_exitDoorInput += m_exitDoorSelectedNum;
           }
 
-          DBG_PRINT("Current door input: " << m_exitDoorInput.toStdString() << "\n");
+          DBG_PRINT("Current door input: " << m_exitDoorInput << "\n");
 
           drawExitDoorDigitDisplay();
 
-          if (m_exitDoorInput.trimmed() == exitDoorCode.trimmed()) {
+          if (m_exitDoorInput == exitDoorCode) {
             DBG_PRINT("Correct door code entered. Opening door.\n");
 
             EActivateEntity e;
@@ -143,6 +149,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   eventHandlerSystem.addComponent(pComponent_t(handlers));
 
   drawExitDoorDigitDisplay();
+
+  DBG_PRINT("Exit door code: " << exitDoorCode << "\n");
 }
 
 //===========================================
@@ -160,7 +168,7 @@ void GameLogic::drawExitDoorDigitDisplay() {
   painter.setPen(QColor(0, 255, 0));
 
   tex.image.fill(QColor(20, 20, 50));
-  painter.drawText(8, 16, m_exitDoorInput);
+  painter.drawText(8, 16, m_exitDoorInput.c_str());
 }
 
 //===========================================

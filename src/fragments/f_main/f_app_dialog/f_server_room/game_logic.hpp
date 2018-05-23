@@ -2,7 +2,7 @@
 #define __PROCALC_FRAGMENTS_F_SERVER_ROOM_GAME_LOGIC_HPP__
 
 
-#include <QString>
+#include <string>
 
 
 class EventSystem;
@@ -27,7 +27,7 @@ class GameLogic {
     EntityManager& m_entityManager;
     int m_eventIdx = -1;
     char m_exitDoorSelectedNum = '\0';
-    QString m_exitDoorInput;
+    std::string m_exitDoorInput;
 };
 
 
