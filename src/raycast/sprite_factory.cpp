@@ -145,7 +145,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
         animationSystem.playAnimation(entityId, "hurt", false);
 
         if (damage->health == 0) {
-          m_audioService.playSoundAtPos("monster_death", vRect.pos);
+          m_audioService.playSoundAtPos("civilian_death", vRect.pos);
           auto& bucket = dynamic_cast<ItemBucket&>(*inventory->buckets["item"]);
 
           for (auto it = bucket.items.begin(); it != bucket.items.end(); ++it) {
@@ -157,7 +157,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
           m_entityManager.deleteEntity(entityId);
         }
         else {
-          m_audioService.playSoundAtPos("monster_hurt", vRect.pos);
+          m_audioService.playSoundAtPos("civilian_hurt", vRect.pos);
         }
       }
     }});
