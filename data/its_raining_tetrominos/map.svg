@@ -234,7 +234,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-5-6-9-7-62-6-8"
                x="628.64709"
-               y="504.25909">texture=slimy_bricks</tspan></text>
+               y="504.25909">texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -267,7 +267,7 @@
            transform="scale(1.0603588,0.94307701)"><tspan
              id="tspan4215-5-6-9-7-6-5-6"
              x="361.29196"
-             y="1014.7387">texture=slimy_bricks</tspan></text>
+             y="1014.7387">texture=metal_wall</tspan></text>
       </g>
       <g
          id="g5091">
@@ -296,7 +296,7 @@
            transform="scale(1.060373,0.94306441)"><tspan
              id="tspan4215-5-6-9-7-6-5-6-2"
              x="558.18182"
-             y="670.64264">texture=slimy_bricks</tspan></text>
+             y="670.64264">texture=metal_wall</tspan></text>
       </g>
       <g
          id="g3815-7"
@@ -342,7 +342,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-5-6-9-7-62-6-8-2"
                x="628.64709"
-               y="504.25909">texture=slimy_bricks</tspan></text>
+               y="504.25909">texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -576,7 +576,7 @@
              sodipodi:linespacing="125%"><tspan
                y="869.22119"
                x="3476.0029"
-               id="tspan4215-5-6-9-7-6-7-9-2">top_texture=slimy_bricks</tspan></text>
+               id="tspan4215-5-6-9-7-6-7-9-2">top_texture=metal_wall</tspan></text>
           <text
              transform="scale(1.0603588,0.943077)"
              id="text4213-3-0-7-9-3-8-5-2-8"
@@ -587,7 +587,7 @@
              sodipodi:linespacing="125%"><tspan
                y="870.50897"
                x="3476.1184"
-               id="tspan4215-5-6-9-7-6-7-9-2-9">bottom_texture=slimy_bricks</tspan></text>
+               id="tspan4215-5-6-9-7-6-7-9-2-9">bottom_texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -655,7 +655,7 @@
              sodipodi:linespacing="125%"><tspan
                y="869.22119"
                x="3476.0029"
-               id="tspan4215-5-6-9-7-6-7-9-2-5">top_texture=slimy_bricks</tspan></text>
+               id="tspan4215-5-6-9-7-6-7-9-2-5">top_texture=metal_wall</tspan></text>
           <text
              transform="scale(1.0603588,0.943077)"
              id="text4213-3-0-7-9-3-8-5-2-8-0"
@@ -666,7 +666,7 @@
              sodipodi:linespacing="125%"><tspan
                y="870.50897"
                x="3476.1184"
-               id="tspan4215-5-6-9-7-6-7-9-2-9-3">bottom_texture=slimy_bricks</tspan></text>
+               id="tspan4215-5-6-9-7-6-7-9-2-9-3">bottom_texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -700,7 +700,7 @@
              id="tspan4215-5-6-9-7-6-5-1"
              x="3398.9944"
              y="1140.1467"
-             style="stroke:none;stroke-opacity:1">texture=slimy_bricks</tspan></text>
+             style="stroke:none;stroke-opacity:1">texture=metal_wall</tspan></text>
       </g>
       <g
          id="g4878"
@@ -855,7 +855,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-5-6-9-7-62-6-8-2-4"
                x="628.64709"
-               y="504.25909">texture=slimy_bricks</tspan></text>
+               y="504.25909">texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -902,7 +902,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-5-6-9-7-62-6-8-2-6"
                x="628.64709"
-               y="504.25909">texture=slimy_bricks</tspan></text>
+               y="504.25909">texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -949,7 +949,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-5-6-9-7-62-6-8-2-2"
                x="628.64709"
-               y="504.25909">texture=slimy_bricks</tspan></text>
+               y="504.25909">texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -996,7 +996,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4215-5-6-9-7-62-6-8-2-0"
                x="628.64709"
-               y="504.25909">texture=slimy_bricks</tspan></text>
+               y="504.25909">texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -3212,7 +3212,7 @@
            id="tspan5260"
            x="134.03926"
            y="133.5849"
-           style="font-size:12.94190121px">slimy_bricks=common/images/slimy_bricks.png</tspan></text>
+           style="font-size:12.94190121px">metal_wall=common/images/metal_wall.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
