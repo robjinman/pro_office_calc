@@ -402,6 +402,7 @@ std::ostream& operator<<(std::ostream& os, const LineSegment& lseg);
 std::ostream& operator<<(std::ostream& os, const Line& line);
 std::ostream& operator<<(std::ostream& os, const Circle& circ);
 std::ostream& operator<<(std::ostream& os, const Matrix& mat);
+std::ostream& operator<<(std::ostream& os, const Range& range);
 #endif
 
 

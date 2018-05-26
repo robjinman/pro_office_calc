@@ -33,8 +33,8 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->troubleshooterDialogSpec.setEnabled(true);
   mainSpec->troubleshooterDialogSpec.width = 400;
   mainSpec->troubleshooterDialogSpec.height = 300;
-  mainSpec->troubleshooterDialogSpec.glitchSpec.setEnabled(true);
-  mainSpec->troubleshooterDialogSpec.tetrominosSpec.setEnabled(true);
+  //mainSpec->troubleshooterDialogSpec.glitchSpec.setEnabled(true);
+  //mainSpec->troubleshooterDialogSpec.tetrominosSpec.setEnabled(true);
 
   return mainSpec;
 }

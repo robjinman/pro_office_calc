@@ -40,6 +40,11 @@ ostream& operator<<(ostream& os, const Matrix& mat) {
 
   return os;
 }
+
+ostream& operator<<(ostream& os, const Range& range) {
+  os << "Range [" << range.a << ", " << range.b << "]";
+  return os;
+}
 #endif
 
 

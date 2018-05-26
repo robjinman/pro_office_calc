@@ -1197,7 +1197,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const CZone& zone, con
     if (!isBetween(y, X.heightRanges.first.a, X.heightRanges.first.b)
       && !isBetween(y, X.heightRanges.second.a, X.heightRanges.second.b)) {
 
-      intersections.erase(it++);
+      it = intersections.erase(it);
     }
     else {
       X.height = y - X.heightRanges.first.a;
