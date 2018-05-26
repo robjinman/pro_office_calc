@@ -242,9 +242,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="600.36648"
-     inkscape:cy="845.34691"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="406.77204"
+     inkscape:cy="616.72685"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -271,7 +271,10 @@
      id="layer1">
     <g
        id="g8098"
-       transform="matrix(0.92697524,0,0,0.91819532,6.9649677,63.326911)">
+       transform="matrix(0.92697524,0,0,0.91819532,24.137561,-1.3228515)"
+       inkscape:export-filename="/home/rob/Desktop/metal_floor.png"
+       inkscape:export-xdpi="180"
+       inkscape:export-ydpi="180">
       <rect
          ry="0"
          y="229.57686"
