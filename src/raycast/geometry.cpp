@@ -55,8 +55,6 @@ Point lineIntersect(const Line& l0, const Line& l1, int depth) {
   assert(depth <= 1);
 
   if (l0.hasSteepGradient() || l1.hasSteepGradient()) {
-    Vec3f p;
-
     Vec3f l0params(l0.a, l0.b, l0.c);
     Vec3f l1params(l1.a, l1.b, l1.c);
 
@@ -70,9 +68,13 @@ Point lineIntersect(const Line& l0, const Line& l1, int depth) {
     Line l1_(l1params_.x, l1params_.y, l1params_.z);
 
     if (l0_.hasSteepGradient() || l1_.hasSteepGradient()) {
-      return lineIntersect(l0_, l1_, depth + 1);
+      Point p = lineIntersect(l0_, l1_, depth + 1);
+      Vec3f p_(p.x, p.y, 0);
+      p_ = p_ * m;
+      return Point(p_.x, p_.y);
     }
 
+    Vec3f p;
     p.x = (l1_.b * l0_.c - l0_.b * l1_.c) / (l0_.b * l1_.a - l1_.b * l0_.a);
     p.y = (-l0_.a * p.x - l0_.c) / l0_.b;
     p.z = 0;
