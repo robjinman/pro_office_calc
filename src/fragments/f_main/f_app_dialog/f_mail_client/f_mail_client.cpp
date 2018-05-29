@@ -50,8 +50,8 @@ const std::array<Email, 11> EMAILS = {{
 
     // Message body
     //
-    "I've arranged a meeting for tomorrow afternoon to discuss the y2k or \"millenium bug\" issue. "
-    "See the attached document for a brief overview.\n\n"
+    "I've arranged a meeting for tomorrow afternoon to discuss the y2k or \"millennium bug\" "
+    "issue. See the attached document for a brief overview.\n\n"
 
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"

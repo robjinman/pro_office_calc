@@ -1,11 +1,11 @@
-#ifndef __PROCALC_STATES_ST_CLIPPYS_REVENGE_HPP__
-#define __PROCALC_STATES_ST_CLIPPYS_REVENGE_HPP__
+#ifndef __PROCALC_STATES_ST_MILLENNIUM_BUG_HPP__
+#define __PROCALC_STATES_ST_MILLENNIUM_BUG_HPP__
 
 
 #include "fragments/f_main/f_main_spec.hpp"
 
 
-namespace st_clippys_revenge {
+namespace st_millennium_bug {
 
 
 FMainSpec* makeFMainSpec(int stateId) {

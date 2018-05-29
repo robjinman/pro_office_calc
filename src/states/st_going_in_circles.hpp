@@ -1,11 +1,11 @@
-#ifndef __PROCALC_STATES_ST_T_MINUS_2_MINUTES_HPP__
-#define __PROCALC_STATES_ST_T_MINUS_2_MINUTES_HPP__
+#ifndef __PROCALC_STATES_ST_GOING_IN_CIRCLES_HPP__
+#define __PROCALC_STATES_ST_GOING_IN_CIRCLES_HPP__
 
 
 #include "fragments/f_main/f_main_spec.hpp"
 
 
-namespace st_t_minus_2_minutes {
+namespace st_going_in_circles {
 
 
 FMainSpec* makeFMainSpec(int stateId) {

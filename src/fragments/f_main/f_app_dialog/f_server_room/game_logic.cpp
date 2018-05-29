@@ -52,7 +52,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     auto& e = dynamic_cast<const EChangedZone&>(e_);
     if (e.entityId == player.body) {
       if (e.newZone == Component::getIdFromString("level_exit")) {
-        m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_SUICIDE_MISSION, true)));
+        m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_GOING_IN_CIRCLES, true)));
       }
       else if (e.newZone == Component::getIdFromString("input_sensor_a")
         || e.newZone == Component::getIdFromString("input_sensor_b")) {

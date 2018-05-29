@@ -1,5 +1,6 @@
 #include "f_main_spec_factory.hpp"
 #include "exception.hpp"
+#include "fragments/f_main/f_main_spec.hpp"
 #include "state_ids.hpp"
 #include "states/st_normal_calc.hpp"
 #include "states/st_danger_infinity.hpp"
@@ -8,14 +9,10 @@
 #include "states/st_its_raining_tetrominos.hpp"
 #include "states/st_making_progress.hpp"
 #include "states/st_youve_got_mail.hpp"
-#include "states/st_suicide_mission.hpp"
-#include "states/st_limbo.hpp"
-#include "states/st_a_simple_favour.hpp"
-#include "states/st_clippys_revenge.hpp"
-#include "states/st_t_minus_2_minutes.hpp"
+#include "states/st_going_in_circles.hpp"
+#include "states/st_millennium_bug.hpp"
 #include "states/st_back_to_normal.hpp"
-#include "states/st_raycast.hpp" // TODO: Remove
-#include "fragments/f_main/f_main_spec.hpp"
+#include "states/st_test.hpp"
 
 
 FMainSpec* makeFMainSpec(int stateId) {
@@ -43,21 +40,15 @@ FMainSpec* makeFMainSpec(int stateId) {
       return st_making_progress::makeFMainSpec(stateId);
     case ST_YOUVE_GOT_MAIL:
       return st_youve_got_mail::makeFMainSpec(stateId);
-    case ST_SUICIDE_MISSION:
-      return st_suicide_mission::makeFMainSpec(stateId);
-    case ST_LIMBO:
-      return st_limbo::makeFMainSpec(stateId);
-    case ST_A_SIMPLE_FAVOUR:
-      return st_a_simple_favour::makeFMainSpec(stateId);
-    case ST_CLIPPYS_REVENGE:
-      return st_clippys_revenge::makeFMainSpec(stateId);
-    case ST_T_MINUS_2_MINUTES:
-      return st_t_minus_2_minutes::makeFMainSpec(stateId);
+    case ST_GOING_IN_CIRCLES:
+      return st_going_in_circles::makeFMainSpec(stateId);
+    case ST_MILLENNIUM_BUG:
+      return st_millennium_bug::makeFMainSpec(stateId);
     case ST_BACK_TO_NORMAL:
       return st_back_to_normal::makeFMainSpec(stateId);
 
-    case ST_RAYCAST: // TODO: Remove
-      return st_raycast::makeFMainSpec(stateId);
+    case ST_TEST:
+      return st_test::makeFMainSpec(stateId);
     default:
       EXCEPTION("Unrecognised state id");
   }

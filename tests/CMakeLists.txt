@@ -6,7 +6,7 @@ include_directories("${PROCALC_DEPENDENCIES_DIR}/include")
 
 link_directories("${PROCALC_DEPENDENCIES_DIR}/lib")
 
-add_compile_options(-Wall -g)
+add_compile_options(-Wall -g -DDEBUG)
 
 file(GLOB_RECURSE srcs src/*.cpp)
 add_executable(unitTests ${srcs})

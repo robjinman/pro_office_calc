@@ -397,7 +397,7 @@ inline clipResult_t clipNumber(double x, const Range& range, double& result) {
 
 #ifdef DEBUG
 #include <ostream>
-std::ostream& operator<<(std::ostream& os, const Point& lseg);
+std::ostream& operator<<(std::ostream& os, const Point& pt);
 std::ostream& operator<<(std::ostream& os, const LineSegment& lseg);
 std::ostream& operator<<(std::ostream& os, const Line& line);
 std::ostream& operator<<(std::ostream& os, const Circle& circ);

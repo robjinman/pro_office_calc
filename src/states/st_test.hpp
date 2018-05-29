@@ -1,12 +1,12 @@
-#ifndef __PROCALC_STATES_ST_RAYCAST_HPP__
-#define __PROCALC_STATES_ST_RAYCAST_HPP__
+#ifndef __PROCALC_STATES_ST_TEST_HPP__
+#define __PROCALC_STATES_ST_TEST_HPP__
 
 
 #include "fragments/f_main/f_main_spec.hpp"
 #include "app_config.hpp"
 
 
-namespace st_raycast {
+namespace st_test {
 
 
 FMainSpec* makeFMainSpec(int stateId) {
