@@ -11,6 +11,7 @@
 #include "fragments/f_main/f_app_dialog/f_server_room/f_server_room_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_file_system/f_file_system_spec.hpp"
 
 
 struct FAppDialogSpec : public FragmentSpec {
@@ -21,7 +22,8 @@ struct FAppDialogSpec : public FragmentSpec {
         &mailClientSpec,
         &serverRoomSpec,
         &procalcSetupSpec,
-        &textEditorSpec
+        &textEditorSpec,
+        &fileSystemSpec
       }) {}
 
   FGlitchSpec glitchSpec;
@@ -30,6 +32,7 @@ struct FAppDialogSpec : public FragmentSpec {
   FServerRoomSpec serverRoomSpec;
   FProcalcSetupSpec procalcSetupSpec;
   FTextEditorSpec textEditorSpec;
+  FFileSystemSpec fileSystemSpec;
 
   std::string name = "dialog";
   QString titleText = "Application";

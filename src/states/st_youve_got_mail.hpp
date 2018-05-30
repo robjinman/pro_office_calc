@@ -19,7 +19,6 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->helpLabel = "H͠e͘l͢p";
   mainSpec->aboutLabel = "A͡b҉ou͞t̵";
   mainSpec->aboutDialogTitle = "A͞b̶out";
-  mainSpec->aboutDialogText = "";
   mainSpec->aboutDialogText = QString() +
     "<div>"
     "  <img src='" + config::dataPath("common/images/apex.png").c_str() + "'>"

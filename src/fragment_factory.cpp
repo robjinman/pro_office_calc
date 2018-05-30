@@ -17,6 +17,7 @@
 #include "fragments/f_main/f_app_dialog/f_server_room/f_server_room.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup.hpp"
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor.hpp"
+#include "fragments/f_main/f_app_dialog/f_file_system/f_file_system.hpp"
 #include "fragments/f_main/f_maze_3d/f_maze_3d.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
 #include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
@@ -82,6 +83,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FServerRoom") {
     return new FServerRoom(parent, parentData, commonData);
+  }
+  else if (name == "FFileSystem") {
+    return new FFileSystem(parent, parentData, commonData);
   }
   else if (name == "FProcalcSetup") {
     return new FProcalcSetup(parent, parentData, commonData);
