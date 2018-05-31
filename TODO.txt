@@ -14,6 +14,8 @@ TODO
 - You've Got Mail - Display Larry's name somewhere
 - Adjust dates wherever they appear
 - Provide font rather than use default
+- Shuffled Keys - Move number to loading screen
+- Set render buffer background to black
 
 Possible engine features
 - Multiple guns
