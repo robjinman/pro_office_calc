@@ -1,6 +1,12 @@
 #include "fragments/f_main/f_app_dialog/f_file_system/object_factory.hpp"
+#include "raycast/map_parser.hpp"
+#include "raycast/animation_system.hpp"
+#include "raycast/root_factory.hpp"
+#include "raycast/entity_manager.hpp"
+#include "raycast/time_service.hpp"
 
 
+using std::vector;
 using std::set;
 using std::string;
 
@@ -21,8 +27,41 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{};
+  static const set<string> types{"computer_screen"};
   return types;
+}
+
+//===========================================
+// ObjectFactory::constructComputerScreen
+//===========================================
+bool ObjectFactory::constructComputerScreen(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("join", entityId, obj, parentId, parentTransform)) {
+    AnimationSystem& animationSystem =
+      m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+
+    // Number of frames in sprite sheet
+    const int W = 1;
+    const int H = 23;
+
+    CAnimation* anim = new CAnimation(entityId);
+
+    vector<AnimationFrame> frames = constructFrames(W, H,
+      { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 });
+    anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 3.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+    animationSystem.playAnimation(entityId, "idle", true);
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================
@@ -31,7 +70,9 @@ const set<string>& ObjectFactory::types() const {
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   parser::Object& obj, entityId_t region, const Matrix& parentTransform) {
 
-  // TODO
+  if (type == "computer_screen") {
+    return constructComputerScreen(entityId, obj, region, parentTransform);
+  }
 
   return false;
 }

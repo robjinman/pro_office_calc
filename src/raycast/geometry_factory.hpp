@@ -39,7 +39,7 @@ class GeometryFactory : public GameObjectFactory {
     bool constructFloorDecal(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructPlayer(parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
-    bool constructBoundaries(parser::Object& obj, entityId_t parentId,
+    bool constructBoundaries(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructPortal(parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
     bool constructRegion_r(entityId_t entityId, parser::Object& obj, entityId_t parentId,

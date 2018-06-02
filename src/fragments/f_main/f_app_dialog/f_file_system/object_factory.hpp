@@ -30,14 +30,8 @@ class ObjectFactory : public GameObjectFactory {
     EntityManager& m_entityManager;
     TimeService& m_timeService;
 
-    bool constructBigScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+    bool constructComputerScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
-    bool constructCalculator(entityId_t entityId, parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-    bool constructServerRack(entityId_t entityId, parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-
-    void renderCalc() const;
 };
 
 

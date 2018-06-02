@@ -356,13 +356,21 @@ bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
 //===========================================
 // GeometryFactory::constructBoundaries
 //===========================================
-bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parentId,
-  const Matrix& parentTransform) {
+bool GeometryFactory::constructBoundaries(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
   list<CSoftEdge*> edges;
+
+  if (obj.path.points.size() > 2 && entityId != -1) {
+    EXCEPTION("Cannot specify entityId for multiple joins");
+  }
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     int j = i - 1;
@@ -375,8 +383,6 @@ bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parent
         continue;
       }
     }
-
-    entityId_t entityId = Component::getNextId();
 
     CSoftEdge* edge = new CSoftEdge(entityId, parentId, Component::getNextId());
 
@@ -401,6 +407,8 @@ bool GeometryFactory::constructBoundaries(parser::Object& obj, entityId_t parent
       m_rootFactory.constructObject((*it)->type, -1, **it, entityId,
         parentTransform * obj.groupTransform);
     }
+
+    entityId = Component::getNextId();
   }
 
   return true;
@@ -635,7 +643,7 @@ bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
     return constructRegion(entityId, obj, parentId, parentTransform);
   }
   else if (type == "join") {
-    return constructBoundaries(obj, parentId, parentTransform);
+    return constructBoundaries(entityId, obj, parentId, parentTransform);
   }
   else if (type == "portal") {
     return constructPortal(obj, parentId, parentTransform);
