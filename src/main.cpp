@@ -18,7 +18,6 @@
 
 using std::ifstream;
 using std::ofstream;
-using std::cout;
 using std::cerr;
 using std::unique_ptr;
 using std::vector;

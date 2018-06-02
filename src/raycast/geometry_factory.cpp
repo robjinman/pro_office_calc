@@ -101,8 +101,6 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
     && isBetween(B.x, wall.A.x, wall.B.x, delta)
     && isBetween(B.y, wall.A.y, wall.B.y, delta))) {
 
-    std::cout << "two\n";
-
     return false;
   }
 

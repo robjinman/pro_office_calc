@@ -876,9 +876,6 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
   m_hWorldUnit_px = m_viewport_px.x / rg.viewport.x;
   m_vWorldUnit_px = m_viewport_px.y / rg.viewport.y;
 
-  QRect rect(QPoint(), QSize(m_viewport_px.x, m_viewport_px.y));
-  painter.fillRect(rect, QBrush(QColor(255, 0, 0)));
-
   const int W = m_viewport_px.x;
   CastResult prev;
 
