@@ -11,6 +11,9 @@
 #include "utils.hpp"
 
 
+#undef minor
+
+
 template<class T>
 struct Vec2 {
   Vec2()
@@ -108,6 +111,8 @@ class Matrix {
     }
 
     Matrix inverse() const;
+    double determinant() const;
+    double minor(int row, int col) const;
 };
 
 inline Matrix operator*(const Matrix& A, const Matrix& B) {
@@ -141,6 +146,64 @@ inline Matrix::Matrix(double a, Vec2f t)
       {{0.0, 0.0, 1.0}}
     }} {}
 
+inline double Matrix::minor(int row, int col) const {
+  int r1, r2, c1, c2;
+
+  switch (row) {
+    case 0:
+      r1 = 1;
+      r2 = 2;
+      break;
+    case 1:
+      r1 = 0;
+      r2 = 2;
+      break;
+    case 2:
+      r1 = 0;
+      r2 = 1;
+      break;
+  }
+
+  switch (col) {
+    case 0:
+      c1 = 1;
+      c2 = 2;
+      break;
+    case 1:
+      c1 = 0;
+      c2 = 2;
+      break;
+    case 2:
+      c1 = 0;
+      c2 = 1;
+      break;
+  }
+
+  return data[r1][c1] * data[r2][c2] - data[r2][c1] * data[r1][c2];
+}
+
+inline double Matrix::determinant() const {
+  return data[0][0] * minor(0, 0) - data[0][1] * minor(0, 1) + data[0][2] * minor(0, 2);
+}
+
+inline Matrix Matrix::inverse() const {
+  Matrix m;
+
+  double det_rp = 1.0 / determinant();
+
+  for (int row = 0; row < 3; ++row) {
+    for (int col = 0; col < 3; ++col) {
+      int sign = (row + col) % 2 == 0 ? 1.0 : -1.0;
+
+      m[col][row] = sign * det_rp * minor(row, col);
+    }
+  }
+
+  return m;
+}
+
+// Old, cheap inverse function that works for rotation + translation matrices, but not scale
+/*
 inline Matrix Matrix::inverse() const {
   Matrix m;
   m.data = {{
@@ -150,6 +213,7 @@ inline Matrix Matrix::inverse() const {
   }};
   return m;
 }
+*/
 
 struct Range {
   Range()

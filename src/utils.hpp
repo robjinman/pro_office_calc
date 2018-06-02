@@ -12,40 +12,6 @@
 #include "exception.hpp"
 
 
-//===========================================
-// Debug Build
-//
-#ifdef DEBUG
-#include <iostream>
-
-#define DBG_PRINT(msg) std::cout << msg;
-#define DBG_PRINT_VAR(var) std::cout << #var" = " << var << "\n";
-
-// TODO
-#define DYNAMIC_CAST static_cast
-
-//===========================================
-
-//===========================================
-// Release Build
-//
-#else
-
-#define DBG_PRINT(msg)
-#define DBG_PRINT_VAR(var)
-
-#define DYNAMIC_CAST static_cast
-
-#endif
-//===========================================
-
-
-#include "platform.hpp"
-
-#define PI 3.141592653589793
-#define DEG_TO_RAD(x) (x * PI / 180.0)
-#define RAD_TO_DEG(x) (x * 180.0 / PI)
-
 template<class T>
 inline typename T::mapped_type& getValueFromMap(T& map, const typename T::key_type& key,
   const char* file, int line) {
@@ -67,8 +33,44 @@ inline const typename T::mapped_type& getValueFromMap(const T& map, const typena
   return getValueFromMap<T>(const_cast<T&>(map), key, file, line);
 }
 
+
+//===========================================
+// Debug Build
+//
+#ifdef DEBUG
+#include <iostream>
+
+#define DBG_PRINT(msg) std::cout << msg;
+#define DBG_PRINT_VAR(var) std::cout << #var" = " << var << "\n";
+
+#define DYNAMIC_CAST dynamic_cast
+
 #define GET_VALUE(mapInst, keyName) \
   getValueFromMap(mapInst, keyName, __FILE__, __LINE__)
+//===========================================
+
+//===========================================
+// Release Build
+//
+#else
+
+#define DBG_PRINT(msg)
+#define DBG_PRINT_VAR(var)
+
+#define DYNAMIC_CAST static_cast
+
+#define GET_VALUE(mapInst, keyName) \
+  mapInst.at(keyName)
+
+#endif
+//===========================================
+
+
+#include "platform.hpp"
+
+#define PI 3.141592653589793
+#define DEG_TO_RAD(x) (x * PI / 180.0)
+#define RAD_TO_DEG(x) (x * 180.0 / PI)
 
 std::string readString(std::istream& is);
 void writeString(std::ostream& os, const std::string& s);

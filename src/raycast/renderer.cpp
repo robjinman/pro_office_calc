@@ -471,7 +471,7 @@ static const CFloorDecal* getFloorDecal(const SpatialSystem& spatialSystem, cons
     const CFloorDecal& decal = **it;
 
     const CHRect& hRect = getHRect(spatialSystem, decal);
-    x = hRect.transform.inverse() * pt;
+    x = hRect.transform * pt;
 
     if (isBetween(x.x, 0, hRect.size.x) && isBetween(x.y, 0, hRect.size.y)) {
       return &decal;
@@ -531,7 +531,7 @@ void Renderer::drawFloorSlice(const RenderGraph& rg, const Camera& cam,
       Size texSz_tx(decalTex.image.rect().width(), decalTex.image.rect().height());
 
       Point texel(texSz_tx.x * decalPt.x / hRect.size.x, texSz_tx.y * decalPt.y / hRect.size.y);
-      pixels[screenX_px] = pixel(decalTex.image, texel.x, texel.y);
+      pixels[screenX_px] = applyShade(pixel(decalTex.image, texel.x, texel.y), d);
     }
     else {
       Point texel = worldPointToFloorTexel(p, tileSz_wd_rp, frameRect_tx);
@@ -651,7 +651,7 @@ Renderer::ScreenSlice Renderer::drawSlice(const RenderGraph& rg, const Camera& c
   const Intersection& X, const Slice& slice, const string& texture, const QRectF& frameRect,
   double screenX_px, double targetH_wd) const {
 
-  const Texture& wallTex = rg.textures.at(texture);
+  const Texture& wallTex = GET_VALUE(rg.textures, texture);
 
   const QRectF& rect = wallTex.image.rect();
   Size texSz_tx(rect.width(), rect.height());

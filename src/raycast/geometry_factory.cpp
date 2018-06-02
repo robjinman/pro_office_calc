@@ -210,7 +210,11 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& o
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  string texture = getValue(obj.dict, "texture", "default");
+  string texName = getValue(obj.dict, "texture", "default");
+
+  if (obj.path.points.size() != 4) {
+    EXCEPTION("Floor decal path must have exactly 4 points");
+  }
 
   Point pos = obj.path.points[0];
   Size size = obj.path.points[2] - obj.path.points[0];
@@ -218,20 +222,20 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& o
   assert(size.x > 0);
   assert(size.y > 0);
 
-  Matrix m(0, pos);
-
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
   }
 
+  Matrix m = parentTransform * obj.groupTransform * obj.pathTransform * Matrix(0, pos);
+
   CHRect* hRect = new CHRect(entityId, parentId);
   hRect->size = size;
-  hRect->transform = parentTransform * obj.groupTransform * obj.pathTransform * m;
+  hRect->transform = m.inverse();
 
   spatialSystem.addComponent(pComponent_t(hRect));
 
   CFloorDecal* decal = new CFloorDecal(entityId, parentId);
-  decal->texture = texture;
+  decal->texture = texName;
 
   renderSystem.addComponent(pComponent_t(decal));
 
