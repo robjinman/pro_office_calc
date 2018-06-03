@@ -25,15 +25,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.99999996"
-     inkscape:cx="1972.8454"
-     inkscape:cy="-912.89268"
+     inkscape:zoom="1.9999999"
+     inkscape:cx="920.85769"
+     inkscape:cy="-628.72202"
      inkscape:document-units="px"
-     inkscape:current-layer="g4965"
+     inkscape:current-layer="svg4381"
      showgrid="false"
      inkscape:window-width="1280"
-     inkscape:window-height="975"
-     inkscape:window-x="0"
+     inkscape:window-height="999"
+     inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      showguides="false" />
@@ -241,7 +241,7 @@
            id="tspan5260-6"
            x="134.35382"
            y="139.60439"
-           style="font-size:12.94190121px">white_lino=common/images/marble_tiles.png</tspan></text>
+           style="font-size:12.94190121px">white_lino=common/images/metal_ceiling.png</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

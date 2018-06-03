@@ -125,9 +125,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.839192"
-     inkscape:cx="1285.3377"
-     inkscape:cy="229.09284"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="665.85619"
+     inkscape:cy="622.6791"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -158,7 +158,7 @@
        width="400"
        height="100"
        x="146.42857"
-       y="229.50505"
+       y="37.576069"
        inkscape:export-xdpi="33.75"
        inkscape:export-ydpi="33.75"
        inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/program_files_dir.png" />
@@ -175,98 +175,113 @@
          id="flowPara7266">Pr</flowPara></flowRoot>    <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="189.84325"
-       y="291.64035"
+       x="178.27513"
+       y="99.134415"
        id="text7268"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/program_files_dir.png"
+       inkscape:export-xdpi="33.75"
+       inkscape:export-ydpi="33.75"><tspan
          sodipodi:role="line"
          id="tspan7270"
-         x="189.84325"
-         y="291.64035">Program Files</tspan></text>
+         x="178.27513"
+         y="99.134415">/program_files</tspan></text>
     <rect
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000044;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect7258-7"
        width="400"
        height="100"
        x="143.42857"
-       y="354.64792"
+       y="162.71893"
        inkscape:export-xdpi="34.200001"
        inkscape:export-ydpi="34.200001"
        inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/system_dir.png" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="270.63641"
-       y="417.34573"
+       x="258.74557"
+       y="223.1723"
        id="text7268-2"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/system_dir.png"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"><tspan
          sodipodi:role="line"
          id="tspan7270-8"
-         x="270.63641"
-         y="417.34573">System</tspan></text>
+         x="258.74557"
+         y="223.1723">/system</tspan></text>
     <rect
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000044;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect7258-2"
        width="400"
        height="100"
        x="146.28572"
-       y="480.36221"
+       y="288.43323"
        inkscape:export-xdpi="34.200001"
        inkscape:export-ydpi="34.200001"
        inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/logs_dir.png" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="297.50989"
-       y="540.81555"
+       x="286.5578"
+       y="349.50266"
        id="text7268-9"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/logs_dir.png"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"><tspan
          sodipodi:role="line"
          id="tspan7270-9"
-         x="297.50989"
-         y="540.81555">Logs</tspan></text>
+         x="286.5578"
+         y="349.50266">/logs</tspan></text>
     <rect
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000044;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect7258-6"
        width="400"
        height="100"
        x="142"
-       y="601.79077"
+       y="409.86179"
        inkscape:export-xdpi="33.75"
        inkscape:export-ydpi="33.75"
        inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/home_dir.png" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="293.28284"
-       y="666.10669"
+       x="281.47025"
+       y="473.21939"
        id="text7268-0"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/home_dir.png"
+       inkscape:export-xdpi="33.75"
+       inkscape:export-ydpi="33.75"><tspan
          sodipodi:role="line"
          id="tspan7270-2"
-         x="293.28284"
-         y="666.10669">Home</tspan></text>
+         x="281.47025"
+         y="473.21939">/home</tspan></text>
     <rect
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000044;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect7258-76"
        width="400"
        height="100"
        x="140.57143"
-       y="724.64789"
+       y="532.71893"
        inkscape:export-xdpi="34.200001"
        inkscape:export-ydpi="34.200001"
        inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/rob_dir.png" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="303.99933"
-       y="789.5799"
+       x="231.91121"
+       y="596.07654"
        id="text7268-1"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/rob_dir.png"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"><tspan
          sodipodi:role="line"
          id="tspan7270-3"
-         x="303.99933"
-         y="789.5799">Rob</tspan></text>
+         x="231.91121"
+         y="596.07654">/home/rob</tspan></text>
     <rect
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:#a0a0a0;stroke-width:14;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect14987"
@@ -753,7 +768,7 @@
        y="838.96161"
        ry="0" />
     <rect
-       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient17081);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#c5c5a2;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect16380-12"
        width="4.8214283"
        height="4.8214283"
@@ -880,5 +895,53 @@
            inkscape:connector-curvature="0" />
       </g>
     </g>
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000044;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect7258-76-4"
+       width="400"
+       height="100"
+       x="147.49248"
+       y="671.03217"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/misc_dir.png" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="179.39771"
+       y="735.45563"
+       id="text7268-1-9"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/misc_dir.png"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"><tspan
+         sodipodi:role="line"
+         id="tspan7270-3-0"
+         x="179.39771"
+         y="735.45563">/home/rob/misc</tspan></text>
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000044;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect7258-76-4-1"
+       width="400"
+       height="100"
+       x="149.51277"
+       y="814.47382"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/porn_dir.png" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40.05329895px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="181.32021"
+       y="875.52368"
+       id="text7268-1-9-2"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/going_in_circles/porn_dir.png"
+       inkscape:export-xdpi="34.200001"
+       inkscape:export-ydpi="34.200001"><tspan
+         sodipodi:role="line"
+         id="tspan7270-3-0-0"
+         x="181.32021"
+         y="875.52368">/home/rob/porn</tspan></text>
   </g>
 </svg>
