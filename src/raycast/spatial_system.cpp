@@ -1080,6 +1080,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             if (se.isPortal) {
               mat = (se.toTwin * invMatrix).inverse();
               cullNearerThan_ = X->distanceFromOrigin;
+              cullFartherThan = 10000;
             }
 
             intersections.push_back(std::move(X));
