@@ -1256,11 +1256,6 @@ static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const
 
             double vRectFloorH = vRect.zone->floorHeight;
 
-            if (edge.kind == CSpatialKind::SOFT_EDGE) {
-              const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
-              vRectFloorH = smallest(se.zoneA->floorHeight, se.zoneB->floorHeight);
-            }
-
             double y1 = zone.floorHeight + heightAboveFloor;
             double y2 = vRectFloorH + vRect.pos.y + 0.5 * vRect.size.y;
 

@@ -934,17 +934,36 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
         ScreenSlice slice0 = drawSlice(rg, cam, *joinX.X, joinX.slice0, joinX.join->bottomTexture,
           joinX.join->bottomTexRect, screenX_px, joinX.farZone->floorHeight);
 
+        ScreenSlice slice1;
+        if (joinX.slice1.visible) {
+          slice1 = drawSlice(rg, cam, *joinX.X, joinX.slice1, joinX.join->topTexture,
+            joinX.join->topTexRect, screenX_px, joinX.farZone->ceilingHeight);
+        }
+
+        const CZone& parentZone = *joinX.softEdge->zoneA;
         const CZone& zone = *joinX.nearZone;
         const CRegion& region = DYNAMIC_CAST<const CRegion&>(renderSystem
           .getComponent(joinX.nearZone->entityId()));
+
+        vector<CWallDecal*> decals = getWallDecals(spatialSystem, *joinX.join,
+          joinX.X->distanceAlongTarget);
+
+        Slice slice = joinX.slice0;
+
+        if (joinX.slice1.visible) {
+          slice.sliceTop_wd = joinX.slice1.sliceTop_wd;
+          slice.projSliceTop_wd = joinX.slice1.projSliceTop_wd;
+          slice.viewportTop_wd = joinX.slice1.viewportTop_wd;
+        }
+
+        for (auto decal : decals) {
+          drawWallDecal(rg, cam, spatialSystem, *decal, *joinX.X, slice, parentZone, screenX_px);
+        }
 
         drawFloorSlice(rg, cam, spatialSystem, *joinX.X, region, zone.floorHeight, slice0,
           screenX_px, projX_wd);
 
         if (joinX.slice1.visible) {
-          ScreenSlice slice1 = drawSlice(rg, cam, *joinX.X, joinX.slice1, joinX.join->topTexture,
-            joinX.join->topTexRect, screenX_px, joinX.farZone->ceilingHeight);
-
           if (region.hasCeiling) {
             drawCeilingSlice(rg, cam, *joinX.X, region, zone.ceilingHeight, slice1, screenX_px,
               projX_wd);
@@ -952,22 +971,6 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
           else {
             drawSkySlice(rg, cam, slice1, screenX_px);
           }
-        }
-
-        vector<CWallDecal*> decals = getWallDecals(spatialSystem, *joinX.join,
-          joinX.X->distanceAlongTarget);
-
-        for (auto decal : decals) {
-          Slice slice = joinX.slice0;
-
-          if (joinX.slice1.visible) {
-            slice.sliceTop_wd = joinX.slice1.sliceTop_wd;
-            slice.projSliceTop_wd = joinX.slice1.projSliceTop_wd;
-            slice.viewportTop_wd = joinX.slice1.viewportTop_wd;
-          }
-
-          drawWallDecal(rg, cam, spatialSystem, *decal, *joinX.X, slice, *joinX.nearZone,
-            screenX_px);
         }
       }
       else if (X.kind == XWrapperKind::SPRITE) {
