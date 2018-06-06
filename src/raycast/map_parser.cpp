@@ -10,6 +10,7 @@ using std::string;
 using std::map;
 using std::pair;
 using std::istream;
+using std::ostream;
 using std::stringstream;
 using tinyxml2::XMLDocument;
 using tinyxml2::XMLElement;
@@ -279,17 +280,77 @@ void extractGeometry(const XMLElement& node, Path& path, Matrix& groupTransform,
 }
 
 //===========================================
+// getRoot
+//===========================================
+static const Object* getRoot(const Object* obj_) {
+  const Object* obj = obj_;
+
+  while (obj->parent != nullptr) {
+    obj = obj->parent;
+  }
+
+  return obj;
+}
+
+//===========================================
+// printTrace_r
+//===========================================
+static void printTrace_r(ostream& out, const Object* obj, const Object* problemObj, int depth = 0) {
+  out << string(depth * 2, ' ');
+
+  string name = getValue(obj->dict, "name", "");
+
+  if (obj == problemObj) {
+    out << "***";
+  }
+
+  out << (obj->type != "" ? obj->type : "TYPE_MISSING");
+
+  if (obj == problemObj) {
+    out << "***";
+  }
+
+  if (name != "") {
+    out << ", '" << name << "'";
+  }
+
+  out << "\n";
+
+  for (auto& child : obj->children) {
+    printTrace_r(out, child.get(), problemObj, depth + 1);
+  }
+}
+
+//===========================================
+// printErrors
+//===========================================
+static void printErrors(ostream& out, const ParseErrors& errors) {
+  out << "The following errors occurred parsing map file:\n";
+
+  for (auto& error : errors) {
+    const Object* root = getRoot(error.object);
+
+    out << error.message << "\n";
+    out << "Trace:\n";
+
+    printTrace_r(out, root, error.object);
+  }
+}
+
+//===========================================
 // constructObject_r
 //===========================================
-Object* constructObject_r(const XMLElement& node) {
-  Object* obj = new Object;
+Object* constructObject_r(const Object* parent, const XMLElement& node, ParseErrors& errors) {
+  Object* obj = new Object(parent);
 
   extractKvPairs(node, obj->dict);
   if (obj->dict.count("type") == 0) {
-    EXCEPTION("Object has no type key");
+    errors.push_back(ParseError{obj, "Object has no type key"});
   }
-  obj->type = obj->dict.at("type");
-  obj->dict.erase("type");
+  else {
+    obj->type = obj->dict.at("type");
+    obj->dict.erase("type");
+  }
 
   extractGeometry(node, obj->path, obj->groupTransform, obj->pathTransform);
 
@@ -298,7 +359,7 @@ Object* constructObject_r(const XMLElement& node) {
     string tag(e->Name());
 
     if (tag == "g") {
-      obj->children.push_back(pObject_t(constructObject_r(*e)));
+      obj->children.push_back(pObject_t(constructObject_r(obj, *e, errors)));
     }
 
     e = e->NextSiblingElement();
@@ -318,6 +379,8 @@ void parse(const string& file, list<pObject_t>& objects) {
     EXCEPTION("Error parsing map file " << file << "; ErrorID=" << doc.ErrorID());
   }
 
+  ParseErrors errors;
+
   XMLElement* root = doc.FirstChildElement("svg");
   XMLElement* e = root->FirstChildElement();
 
@@ -325,10 +388,17 @@ void parse(const string& file, list<pObject_t>& objects) {
     string tag(e->Name());
 
     if (tag == "g") {
-      objects.push_back(pObject_t(constructObject_r(*e)));
+      objects.push_back(pObject_t(constructObject_r(nullptr, *e, errors)));
     }
 
     e = e->NextSiblingElement();
+  }
+
+  if (errors.size() > 0) {
+    stringstream errString;
+    printErrors(errString, errors);
+
+    EXCEPTION(errString.str());
   }
 }
 

@@ -159,7 +159,7 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
 
   m_rootFactory.constructObject("region", -1, rootRegion, -1, Matrix());
 
-  parser::Object tmp;
+  parser::Object tmp(nullptr);
   m_rootFactory.constructObject("player_inventory", -1, tmp, -1, Matrix());
 }
 

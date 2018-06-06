@@ -159,8 +159,10 @@ TEST_F(MapParserTest, constructObject_r_keyValuePairs) {
   XMLDocument doc;
   doc.Parse(xml.c_str(), xml.size());
 
+  ParseErrors errors;
+
   XMLElement* node = doc.FirstChildElement("g");
-  Object* obj = constructObject_r(*node);
+  Object* obj = constructObject_r(nullptr, *node, errors);
 
   ASSERT_EQ(obj->type, "typename");
 
@@ -193,8 +195,10 @@ TEST_F(MapParserTest, constructObject_r_nestedObjects) {
   XMLDocument doc;
   doc.Parse(xml.c_str(), xml.size());
 
+  ParseErrors errors;
+
   XMLElement* node = doc.FirstChildElement("g");
-  Object* obj = constructObject_r(*node);
+  Object* obj = constructObject_r(nullptr, *node, errors);
 
   ASSERT_EQ(obj->type, "type1");
 

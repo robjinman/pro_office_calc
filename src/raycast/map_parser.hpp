@@ -24,6 +24,12 @@ struct Object;
 typedef std::unique_ptr<Object> pObject_t;
 
 struct Object {
+  Object(const Object* parent)
+    : parent(parent) {}
+
+  // For printing debug information on parse error
+  const Object* parent = nullptr;
+
   Matrix groupTransform;
   Matrix pathTransform;
   Path path;
@@ -32,7 +38,7 @@ struct Object {
   std::list<pObject_t> children;
 
   Object* clone() const {
-    Object* cpy = new Object;
+    Object* cpy = new Object(nullptr);
     cpy->groupTransform = groupTransform;
     cpy->pathTransform = pathTransform;
     cpy->path = path;
@@ -55,6 +61,13 @@ struct PathStreamToken {
   Point p;
 };
 
+struct ParseError {
+  const Object* object;
+  std::string message;
+};
+
+typedef std::list<ParseError> ParseErrors;
+
 Matrix transformFromTriangle(const Path& path);
 PathStreamToken getNextToken(std::istream& is);
 void constructPath(const tinyxml2::XMLElement& e, Path& path);
@@ -64,7 +77,8 @@ Matrix parseTranslateTransform(const std::string& s);
 Matrix parseMatrixTransform(const std::string& s);
 Matrix parseTransform(const std::string& s);
 void extractGeometry(const tinyxml2::XMLElement& node, Path& path, Matrix& transform);
-Object* constructObject_r(const tinyxml2::XMLElement& node);
+Object* constructObject_r(const Object* parent, const tinyxml2::XMLElement& node,
+  ParseErrors& errors);
 
 
 }
