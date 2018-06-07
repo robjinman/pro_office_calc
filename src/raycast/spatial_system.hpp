@@ -94,12 +94,14 @@ class SpatialSystem : public System {
       double heightAboveFloor = 0.0) const;
 
     std::vector<pIntersection_t> entitiesAlongRay(const CZone& zone, const Point& pos,
-      const Vec2f& dir, const Matrix& matrix) const;
-    std::vector<pIntersection_t> entitiesAlongRay(const Vec2f& dir) const;
+      const Vec2f& dir, const Matrix& matrix, double distance = 10000) const;
+    std::vector<pIntersection_t> entitiesAlongRay(const Vec2f& dir, double distance = 10000) const;
 
     std::vector<pIntersection_t> entitiesAlong3dRay(const CZone& zone, const Point& pos,
-      double height, const Vec2f& dir, double vAngle, const Matrix& matrix) const;
-    std::vector<pIntersection_t> entitiesAlong3dRay(const Vec2f& dir, double camSpaceVAngle) const;
+      double height, const Vec2f& dir, double vAngle, const Matrix& matrix,
+      double distance = 10000) const;
+    std::vector<pIntersection_t> entitiesAlong3dRay(const Vec2f& dir, double camSpaceVAngle,
+      double distance = 10000) const;
 
     std::set<entityId_t> getAncestors(entityId_t entityId) const;
 

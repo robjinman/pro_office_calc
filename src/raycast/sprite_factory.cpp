@@ -10,6 +10,7 @@
 #include "raycast/spawn_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/agent_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
 #include "raycast/root_factory.hpp"
@@ -110,10 +111,18 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     InventorySystem& inventorySystem =
       m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
     SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
     CCollector* inventory = new CCollector(entityId);
     inventory->buckets["item"] = pBucket_t(new ItemBucket(1));
     inventorySystem.addComponent(pComponent_t(inventory));
+
+    string name = getValue(obj.dict, "name", "");
+    if (name != "") {
+      CFocus* focus = new CFocus(entityId);
+      focus->tooltip = name.replace(0, 1, 1, asciiToUpper(name[0]));
+      focusSystem.addComponent(pComponent_t(focus));
+    }
 
     // Number of frames in sprite sheet
     const int W = 8;

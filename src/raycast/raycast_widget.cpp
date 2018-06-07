@@ -17,6 +17,7 @@
 #include "raycast/damage_system.hpp"
 #include "raycast/spawn_system.hpp"
 #include "raycast/agent_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/misc_factory.hpp"
 #include "raycast/sprite_factory.hpp"
@@ -210,6 +211,9 @@ void RaycastWidget::initialise(const string& mapFile) {
 
   AgentSystem* agentSystem = new AgentSystem(m_entityManager, m_timeService, m_audioService);
   m_entityManager.addSystem(ComponentKind::C_AGENT, pSystem_t(agentSystem));
+
+  FocusSystem* focusSystem = new FocusSystem(m_entityManager);
+  m_entityManager.addSystem(ComponentKind::C_FOCUS, pSystem_t(focusSystem));
 
   loadMap(mapFile);
 

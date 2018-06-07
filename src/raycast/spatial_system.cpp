@@ -965,7 +965,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
           Point pt;
           if (lineSegmentIntersect(ray, lseg, pt)) {
-            if (pt.x < cullNearerThan) {
+            if (pt.x < cullNearerThan || pt.x > cullFartherThan) {
               continue;
             }
 
@@ -1104,12 +1104,12 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 //===========================================
 // SpatialSystem::entitiesAlongRay
 //===========================================
-vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const Vec2f& ray) const {
+vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const Vec2f& ray, double distance) const {
   const Camera& camera = sg.player->camera();
 
   Matrix matrix = camera.matrix().inverse();
   vector<pIntersection_t> intersections = entitiesAlongRay(getCurrentZone(), Point(0, 0), ray,
-    matrix);
+    matrix, distance);
 
   auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
     return i->entityId == sg.player->body;
@@ -1124,13 +1124,13 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const Vec2f& ray) const 
 // SpatialSystem::entitiesAlongRay
 //===========================================
 vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const Point& pos,
-  const Vec2f& dir, const Matrix& matrix) const {
+  const Vec2f& dir, const Matrix& matrix, double distance) const {
 
   vector<pIntersection_t> intersections;
   intersections.reserve(20);
 
   set<entityId_t> visited;
-  double cullFartherThan = 10000;
+  double cullFartherThan = distance;
 
   findIntersections_r(pos, dir, matrix, zone, zone, intersections, visited, 0, cullFartherThan);
 
@@ -1186,9 +1186,9 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const
 // SpatialSystem::entitiesAlong3dRay
 //===========================================
 vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const CZone& zone, const Point& pos,
-  double height, const Vec2f& dir, double vAngle, const Matrix& matrix) const {
+  double height, const Vec2f& dir, double vAngle, const Matrix& matrix, double distance) const {
 
-  vector<pIntersection_t> intersections = entitiesAlongRay(zone, pos, dir, matrix);
+  vector<pIntersection_t> intersections = entitiesAlongRay(zone, pos, dir, matrix, distance);
 
   for (auto it = intersections.begin(); it != intersections.end();) {
     Intersection& X = **it;
@@ -1212,8 +1212,8 @@ vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const CZone& zone, con
 //===========================================
 // SpatialSystem::entitiesAlong3dRay
 //===========================================
-vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
-  double camSpaceVAngle) const {
+vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray, double camSpaceVAngle,
+  double distance) const {
 
   const Camera& camera = sg.player->camera();
   double height = camera.height;
@@ -1221,7 +1221,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray,
   Matrix matrix = camera.matrix().inverse();
 
   vector<pIntersection_t> intersections = entitiesAlong3dRay(getCurrentZone(), Point(0, 0), height,
-    ray, vAngle, matrix);
+    ray, vAngle, matrix, distance);
 
   auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
     return i->entityId == sg.player->body;

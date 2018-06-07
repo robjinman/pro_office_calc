@@ -108,6 +108,10 @@ long randomSeed();
 
 typedef std::hash<std::string> hashString;
 
+inline char asciiToUpper(char c) {
+  return c >= 'a' && c <= 'z' ? c + ('A' - 'a') : c;
+}
+
 #ifdef DEBUG
 class QRect;
 class QRectF;

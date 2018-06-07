@@ -11,7 +11,8 @@ enum class ComponentKind {
   C_EVENT_HANDLER,
   C_DAMAGE,
   C_SPAWN,
-  C_AGENT
+  C_AGENT,
+  C_FOCUS
 };
 
 

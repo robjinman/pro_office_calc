@@ -2,6 +2,7 @@
 #include "raycast/map_parser.hpp"
 #include "raycast/animation_system.hpp"
 #include "raycast/render_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
@@ -71,6 +72,8 @@ bool ObjectFactory::constructComputerScreen(entityId_t entityId, parser::Object&
 bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
+  string name = obj.dict["name"] = "jeff";
+
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
   }
@@ -79,6 +82,7 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
     RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
     CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
 
@@ -95,6 +99,11 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
       QRectF(dW * 6.0, 0, dW, 1),
       QRectF(dW * 7.0, 0, dW, 1)
     };
+
+    CFocus* focus = new CFocus(entityId);
+    focus->tooltip = name.replace(0, 1, 1, asciiToUpper(name[0]));
+
+    focusSystem.addComponent(pComponent_t(focus));
 
     return true;
   }
