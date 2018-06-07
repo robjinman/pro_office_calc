@@ -523,19 +523,27 @@ void Renderer::drawFloorSlice(const RenderGraph& rg, const Camera& cam,
     Point decalPt;
     const CFloorDecal* decal = getFloorDecal(spatialSystem, region, p, decalPt);
 
+    Point floorUv = worldPointToFloorTexel(p, tileSz_wd_rp, frameRect_tx);
+    QRgb& destPixel = pixels[screenX_px];
+
     if (decal != nullptr) {
+      destPixel = pixel(floorTex.image, floorUv.x, floorUv.y);
+
       const CHRect& hRect = getHRect(spatialSystem, *decal);
 
-      // TODO: Use frameRect
+      // TODO: Use frameRect to permit animations
       const Texture& decalTex = rg.textures.at(decal->texture);
       Size texSz_tx(decalTex.image.rect().width(), decalTex.image.rect().height());
 
-      Point texel(texSz_tx.x * decalPt.x / hRect.size.x, texSz_tx.y * decalPt.y / hRect.size.y);
-      pixels[screenX_px] = applyShade(pixel(decalTex.image, texel.x, texel.y), d);
+      Point decalUv(texSz_tx.x * decalPt.x / hRect.size.x, texSz_tx.y * decalPt.y / hRect.size.y);
+
+      QRgb decalTexel = pixel(decalTex.image, decalUv.x, decalUv.y);
+      QRgb decalAlpha = qAlpha(decalTexel);
+
+      destPixel = applyShade(blend(destPixel, decalTexel, TWO_FIVE_FIVE_RP * decalAlpha), d);
     }
     else {
-      Point texel = worldPointToFloorTexel(p, tileSz_wd_rp, frameRect_tx);
-      pixels[screenX_px] = applyShade(pixel(floorTex.image, texel.x, texel.y), d);
+      destPixel = applyShade(pixel(floorTex.image, floorUv.x, floorUv.y), d);
     }
   }
 }
