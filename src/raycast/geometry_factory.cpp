@@ -5,13 +5,11 @@
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/animation_system.hpp"
-#include "raycast/behaviour_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/time_service.hpp"
-#include "raycast/c_player_behaviour.hpp"
 #include "utils.hpp"
 
 
@@ -236,80 +234,6 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& o
   decal->texture = texName;
 
   renderSystem.addComponent(pComponent_t(decal));
-
-  return true;
-}
-
-//===========================================
-// constructPlayer
-//===========================================
-bool GeometryFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
-  const Matrix& parentTransform) {
-
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  AnimationSystem& animationSystem =
-    m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-  DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  BehaviourSystem& behaviourSystem =
-    m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
-
-  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
-
-  double tallness = std::stod(getValue(obj.dict, "tallness"));
-
-  Matrix m = parentTransform * obj.groupTransform * obj.pathTransform
-    * transformFromTriangle(obj.path);
-
-  Player* player = new Player(m_entityManager, m_audioService, tallness, zone, m);
-  player->sprite = Component::getNextId();
-  player->crosshair = Component::getNextId();
-
-  CDamage* damage = new CDamage(player->body, 10, 10);
-  damageSystem.addComponent(pCDamage_t(damage));
-
-  CPlayerBehaviour* behaviour = new CPlayerBehaviour(player->body, m_entityManager, m_timeService);
-  behaviourSystem.addComponent(pComponent_t(behaviour));
-
-  const Size& viewport = renderSystem.rg.viewport;
-
-  Size sz(0.5, 0.5);
-  CImageOverlay* crosshair = new CImageOverlay(player->crosshair, "crosshair",
-    viewport / 2 - sz / 2, sz);
-  renderSystem.addComponent(pCRender_t(crosshair));
-
-  CImageOverlay* sprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.5, 0),
-    Size(4, 4));
-  sprite->texRect = QRectF(0, 0, 0.25, 1);
-  renderSystem.addComponent(pCRender_t(sprite));
-
-  CAnimation* shoot = new CAnimation(player->sprite);
-  shoot->addAnimation(pAnimation_t(new Animation("shoot", m_timeService.frameRate, 0.4, {
-    AnimationFrame{{
-      QRectF(0.75, 0, 0.25, 1)
-    }},
-    AnimationFrame{{
-      QRectF(0.5, 0, 0.25, 1)
-    }},
-    AnimationFrame{{
-      QRectF(0.25, 0, 0.25, 1)
-    }},
-    AnimationFrame{{
-      QRectF(0, 0, 0.25, 1)
-    }}
-  })));
-  shoot->addAnimation(pAnimation_t(new Animation("shoot_no_ammo", m_timeService.frameRate, 0.2, {
-    AnimationFrame{{
-      QRectF(0.25, 0, 0.25, 1)
-    }},
-    AnimationFrame{{
-      QRectF(0, 0, 0.25, 1)
-    }}
-  })));
-
-  animationSystem.addComponent(pCAnimation_t(shoot));
-
-  spatialSystem.sg.player.reset(player);
 
   return true;
 }
@@ -615,7 +539,6 @@ GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entity
 //===========================================
 const set<string>& GeometryFactory::types() const {
   static const set<string> types{
-    "player",
     "region",
     "join",
     "portal",
@@ -634,10 +557,7 @@ const set<string>& GeometryFactory::types() const {
 bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
   parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
-  if (type == "player") {
-    return constructPlayer(obj, parentId, parentTransform);
-  }
-  else if (type == "region") {
+  if (type == "region") {
     return constructRegion(entityId, obj, parentId, parentTransform);
   }
   else if (type == "join") {
