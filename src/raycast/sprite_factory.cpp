@@ -38,7 +38,7 @@ bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, en
   }
 
   string texName = getValue(obj.dict, "texture", "default");
-  const Texture& texture = renderSystem.rg.textures.at(texName);
+  const Texture& texture = GET_VALUE(renderSystem.rg.textures, texName);
 
   double height = std::stod(getValue(obj.dict, "height", "0.0"));
 
@@ -96,7 +96,9 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     entityId = makeIdForObj(obj);
   }
 
-  obj.dict["texture"] = "civilian";
+  if (!contains<string>(obj.dict, "texture")) {
+    obj.dict["texture"] = "civilian";
+  }
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
     AnimationSystem& animationSystem =

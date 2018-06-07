@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1"
-     inkscape:cx="226.73869"
-     inkscape:cy="3349.0419"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="201.14691"
+     inkscape:cy="2996.8402"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -52,7 +52,7 @@
        dotted="true"
        empspacing="1"
        visible="true"
-       enabled="true" />
+       enabled="false" />
   </sodipodi:namedview>
   <defs
      id="defs4962" />
@@ -13030,6 +13030,26 @@
                x="544.15387"
                y="2445.165">texture=compass</tspan></text>
         </g>
+        <g
+           id="g17027">
+          <path
+             sodipodi:nodetypes="cccc"
+             inkscape:connector-curvature="0"
+             id="path17021"
+             d="m 348.21263,2597.3015 9.76777,2.7071 -1.5,-14 z"
+             style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:4, 1;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text17023"
+             y="2608.4785"
+             x="339.18011"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             xml:space="preserve"><tspan
+               y="2608.4785"
+               x="339.18011"
+               id="tspan17025"
+               sodipodi:role="line">type=jeff</tspan></text>
+        </g>
       </g>
       <g
          transform="translate(9.3912617,2.3283415e-5)"
@@ -13460,7 +13480,7 @@
                sodipodi:role="line"
                id="tspan8320-2-0"
                x="1083.7285"
-               y="1826.7502">texture=grey_bricks</tspan></text>
+               y="1826.7502">texture=slimy_bricks</tspan></text>
         </g>
         <g
            id="g15105"
@@ -15346,6 +15366,18 @@
            y="842.77014"
            x="139.10043"
            id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4">marble_tiles=common/images/marble_tiles.png</tspan></text>
+      <text
+         transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
+         id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-2-9-0-8-2-8-9-0-3-0-5"
+         y="857.04822"
+         x="139.64154"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:46.25099564px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"
+         sodipodi:linespacing="125%"><tspan
+           style="font-size:11.97151279px"
+           y="857.04822"
+           x="139.64154"
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4">jeff=going_in_circles/jeff.png,60,60</tspan></text>
     </g>
   </g>
 </svg>

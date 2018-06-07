@@ -1,6 +1,7 @@
 #include "fragments/f_main/f_app_dialog/f_file_system/object_factory.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/animation_system.hpp"
+#include "raycast/render_system.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
@@ -27,7 +28,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"computer_screen"};
+  static const set<string> types{"computer_screen", "jeff"};
   return types;
 }
 
@@ -65,6 +66,43 @@ bool ObjectFactory::constructComputerScreen(entityId_t entityId, parser::Object&
 }
 
 //===========================================
+// ObjectFactory::constructJeff
+//===========================================
+bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["texture"] = "jeff";
+
+  if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
+    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+    CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
+
+    double W = 8.0;
+    double dW = 1.0 / W;
+
+    sprite.texViews = {
+      QRectF(dW * 0.0, 0, dW, 1),
+      QRectF(dW * 1.0, 0, dW, 1),
+      QRectF(dW * 2.0, 0, dW, 1),
+      QRectF(dW * 3.0, 0, dW, 1),
+      QRectF(dW * 4.0, 0, dW, 1),
+      QRectF(dW * 5.0, 0, dW, 1),
+      QRectF(dW * 6.0, 0, dW, 1),
+      QRectF(dW * 7.0, 0, dW, 1)
+    };
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructObject
 //===========================================
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
@@ -72,6 +110,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
 
   if (type == "computer_screen") {
     return constructComputerScreen(entityId, obj, region, parentTransform);
+  }
+  else if (type == "jeff") {
+    return constructJeff(entityId, obj, region, parentTransform);
   }
 
   return false;
