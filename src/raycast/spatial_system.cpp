@@ -549,11 +549,11 @@ void SpatialSystem::connectSubzones(CZone& zone) {
         bool hasTwin = false;
         forEachZone(zone, [&](CZone& r_) {
           if (!hasTwin) {
-            if (&r_ != &r) {
-              for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-                if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
-                  CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(*lt);
+            for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+              if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
+                CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(*lt);
 
+                if (other != se) {
                   if (areTwins(*se, *other)) {
                     hasTwin = true;
 
@@ -1085,7 +1085,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
             intersections.push_back(std::move(X));
 
-            if (visited.count(next.entityId()) == 0) {
+            if (visited.count(next.entityId()) == 0 || se.isPortal) {
               findIntersections_r(point, dir, mat, next, next, intersections, visited,
                 cullNearerThan_, cullFartherThan);
             }
