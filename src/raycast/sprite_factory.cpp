@@ -120,7 +120,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     string name = getValue(obj.dict, "name", "");
     if (name != "") {
       CFocus* focus = new CFocus(entityId);
-      focus->tooltip = name.replace(0, 1, 1, asciiToUpper(name[0]));
+      focus->hoverText = name.replace(0, 1, 1, asciiToUpper(name[0]));
       focusSystem.addComponent(pComponent_t(focus));
     }
 

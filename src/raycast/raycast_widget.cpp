@@ -212,7 +212,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   AgentSystem* agentSystem = new AgentSystem(m_entityManager, m_timeService, m_audioService);
   m_entityManager.addSystem(ComponentKind::C_AGENT, pSystem_t(agentSystem));
 
-  FocusSystem* focusSystem = new FocusSystem(m_entityManager);
+  FocusSystem* focusSystem = new FocusSystem(m_entityManager, m_timeService);
   m_entityManager.addSystem(ComponentKind::C_FOCUS, pSystem_t(focusSystem));
 
   loadMap(mapFile);

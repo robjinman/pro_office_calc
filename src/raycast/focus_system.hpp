@@ -12,18 +12,19 @@ struct CFocus : public Component {
   CFocus(entityId_t entityId)
     : Component(entityId, ComponentKind::C_FOCUS) {}
 
-  std::string tooltip;
-  std::function<void()> onFocus;
+  std::string hoverText;
+  std::string captionText;
+  std::function<void()> onHover;
 };
 
 typedef std::unique_ptr<CFocus> pCFocus_t;
 
 class EntityManager;
-class RenderSystem;
+class TimeService;
 
 class FocusSystem : public System {
   public:
-    FocusSystem(EntityManager& entityManager);
+    FocusSystem(EntityManager& entityManager, TimeService& timeService);
 
     void update() override;
     void handleEvent(const GameEvent& event) override {}
@@ -34,13 +35,21 @@ class FocusSystem : public System {
     CFocus& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
+    void showCaption(entityId_t entity);
+
   private:
     void initialise();
+    void deleteCaption();
 
     EntityManager& m_entityManager;
+    TimeService& m_timeService;
     bool m_initialised = false;
-    entityId_t m_tooltipId = -1;
+    entityId_t m_toolTipId = -1;
     double m_focusDistance = 0;
+
+    entityId_t m_captionBgId = -1;
+    entityId_t m_captionTextId = -1;
+    long m_captionTimeoutId = -1;
 
     std::map<entityId_t, pCFocus_t> m_components;
 };

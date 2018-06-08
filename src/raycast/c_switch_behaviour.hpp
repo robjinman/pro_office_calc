@@ -20,12 +20,12 @@ class ESwitchActivate : public GameEvent {
     ESwitchActivate(entityId_t switchEntityId, SwitchState state, const std::string& message)
       : GameEvent("switch_activated"),
         switchEntityId(switchEntityId),
-        state(state),
-        message(message) {}
+        message(message),
+        state(state) {}
 
     entityId_t switchEntityId;
-    SwitchState state;
     std::string message;
+    SwitchState state;
 };
 
 class CSwitchBehaviour : public CBehaviour {
@@ -36,7 +36,6 @@ class CSwitchBehaviour : public CBehaviour {
 
     std::string requiredItemType;
     std::string requiredItemName;
-    std::string caption;
 
     void update() override;
     void handleBroadcastedEvent(const GameEvent& event) override {}
@@ -52,10 +51,6 @@ class CSwitchBehaviour : public CBehaviour {
     SwitchState m_state;
     bool m_toggleable;
     Debouncer m_timer;
-
-    entityId_t m_captionBgId = -1;
-    entityId_t m_captionTextId = -1;
-    long m_captionTimeoutId = -1;
 
     CWallDecal* getDecal() const;
     void setDecal();

@@ -14,6 +14,7 @@
 #include "raycast/event_handler_system.hpp"
 #include "raycast/behaviour_system.hpp"
 #include "raycast/spawn_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/c_elevator_behaviour.hpp"
 #include "raycast/c_switch_behaviour.hpp"
@@ -395,6 +396,7 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
   if (m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform)) {
     BehaviourSystem& behaviourSystem =
       m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+    FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
     entityId_t target = Component::getIdFromString(getValue(obj.dict, "target"));
     bool toggleable = getValue(obj.dict, "toggleable", "false") == "true";
@@ -410,11 +412,18 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
     CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, m_timeService,
       target, message, initialState, toggleable, toggleDelay);
 
-    behaviour->caption = getValue(obj.dict, "caption", "");
     behaviour->requiredItemType = getValue(obj.dict, "required_item_type", "");
     behaviour->requiredItemName = getValue(obj.dict, "required_item_name", "");
 
     behaviourSystem.addComponent(pComponent_t(behaviour));
+
+    string captionText = getValue(obj.dict, "caption", "");
+    if (captionText != "") {
+      CFocus* focus = new CFocus(entityId);
+      focus->captionText = captionText;
+
+      focusSystem.addComponent(pComponent_t(focus));
+    }
 
     return true;
   }

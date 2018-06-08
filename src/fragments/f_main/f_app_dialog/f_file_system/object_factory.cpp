@@ -104,14 +104,23 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
     };
 
     CFocus* focus = new CFocus(entityId);
-    focus->tooltip = name.replace(0, 1, 1, asciiToUpper(name[0]));
-
+    focus->hoverText = name.replace(0, 1, 1, asciiToUpper(name[0]));
     focusSystem.addComponent(pComponent_t(focus));
 
     CEventHandler* activateHandler = new CEventHandler(entityId);
+
+    bool inCircles = false;
     activateHandler->targetedEventHandlers.push_back(
-      EventHandler{"player_activate_entity", [](const GameEvent& e) {
-        std::cout << "Hi, I'm Jeff\n";
+      EventHandler{"player_activate_entity", [=, &focusSystem](const GameEvent& e) mutable {
+        if (inCircles) {
+          focus->captionText = "\"Do you ever feel you're going in circles?\"";
+        }
+        else {
+          focus->captionText = "\"People head North to die\"";
+        }
+
+        inCircles = !inCircles;
+        focusSystem.showCaption(entityId);
       }});
 
     eventHandlerSystem.addComponent(pComponent_t(activateHandler));
