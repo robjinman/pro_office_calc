@@ -45,6 +45,11 @@ void EntityManager::addComponent(pComponent_t component) {
 //===========================================
 void EntityManager::deleteEntity(entityId_t entityId) {
   m_pendingDelete.insert(entityId);
+
+  EEntityDeleted e{entityId};
+
+  fireEvent(e, {entityId});
+  broadcastEvent(e);
 }
 
 //===========================================

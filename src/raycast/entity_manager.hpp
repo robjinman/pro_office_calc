@@ -4,9 +4,18 @@
 
 #include <map>
 #include <set>
-#include "raycast/component_kinds.hpp"
+#include "raycast/component.hpp"
 #include "raycast/system.hpp"
 
+
+class EEntityDeleted : public GameEvent {
+  public:
+    EEntityDeleted(entityId_t entityId)
+      : GameEvent("entity_deleted"),
+        entityId(entityId) {}
+
+    entityId_t entityId;
+};
 
 class EntityManager {
   public:
