@@ -9,9 +9,6 @@
 using std::vector;
 
 
-static const double FOCUS_DISTANCE = 80.0;
-
-
 //===========================================
 // FocusSystem::FocusSystem
 //===========================================
@@ -22,12 +19,15 @@ FocusSystem::FocusSystem(EntityManager& entityManager)
 // FocusSystem::initialise
 //===========================================
 void FocusSystem::initialise() {
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
   m_tooltipId = Component::getNextId();
   CTextOverlay* tooltip = new CTextOverlay(m_tooltipId, "", Point(7.3, 4.8), 0.5, Qt::white, 1);
 
   renderSystem.addComponent(pComponent_t(tooltip));
+
+  m_focusDistance = spatialSystem.sg.player->activationRadius;
 
   m_initialised = true;
 }
@@ -46,7 +46,7 @@ void FocusSystem::update() {
   CTextOverlay& tooltip = dynamic_cast<CTextOverlay&>(renderSystem.getComponent(m_tooltipId));
 
   vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(Vec2f(1.0, 0), 0,
-    FOCUS_DISTANCE);
+    m_focusDistance);
 
   if (intersections.size() > 0) {
     pIntersection_t& X = intersections.front();

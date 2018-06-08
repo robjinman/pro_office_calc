@@ -40,6 +40,7 @@ class FocusSystem : public System {
     EntityManager& m_entityManager;
     bool m_initialised = false;
     entityId_t m_tooltipId = -1;
+    double m_focusDistance = 0;
 
     std::map<entityId_t, pCFocus_t> m_components;
 };

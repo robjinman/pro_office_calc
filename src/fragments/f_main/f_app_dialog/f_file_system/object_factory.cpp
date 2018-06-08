@@ -3,6 +3,7 @@
 #include "raycast/animation_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/focus_system.hpp"
+#include "raycast/event_handler_system.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
@@ -83,6 +84,8 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
     RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
     FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+    EventHandlerSystem& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
     CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
 
@@ -104,6 +107,14 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
     focus->tooltip = name.replace(0, 1, 1, asciiToUpper(name[0]));
 
     focusSystem.addComponent(pComponent_t(focus));
+
+    CEventHandler* activateHandler = new CEventHandler(entityId);
+    activateHandler->targetedEventHandlers.push_back(
+      EventHandler{"player_activate_entity", [](const GameEvent& e) {
+        std::cout << "Hi, I'm Jeff\n";
+      }});
+
+    eventHandlerSystem.addComponent(pComponent_t(activateHandler));
 
     return true;
   }
