@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="5874.7999"
-     inkscape:cy="3593.7955"
+     inkscape:zoom="4"
+     inkscape:cx="5624.257"
+     inkscape:cy="3449.9878"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -13048,7 +13048,7 @@
                y="2608.4785"
                x="339.18011"
                id="tspan17025"
-               sodipodi:role="line">type=jeff</tspan></text>
+               sodipodi:role="line">type=jiff</tspan></text>
         </g>
       </g>
       <g
@@ -15371,8 +15371,10 @@
            id="g18449">
           <path
              style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.25;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-             d="m 126.87696,809.87436 -199.395187,0 0,-420 439.499997,0"
-             id="path19843" />
+             d="m 126.87696,809.87436 -199.395187,0 0,-421.92031 439.499997,1.39001 -0.11032,-20.83547"
+             id="path19843"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccc" />
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"
@@ -15397,7 +15399,8 @@
                y="662.30157">texture=grey_bricks</tspan></text>
         </g>
         <g
-           id="g19920">
+           id="g19920"
+           transform="translate(0,-21.53033)">
           <path
              id="path19841"
              d="m 446.98177,389.87436 -80,0"
@@ -15427,7 +15430,8 @@
                sodipodi:role="line">pair_name=portal10</tspan></text>
         </g>
         <g
-           id="g19913">
+           id="g19913"
+           transform="translate(0,180.16026)">
           <path
              id="path19862"
              d="m 627.48177,508.66296 0,79.89771"
@@ -15460,9 +15464,10 @@
            id="g19950">
           <path
              id="path19864"
-             d="m 446.98177,389.87436 180.5,0 0,118.78858"
+             d="m 627.48177,688.97517 -60,-0.0504 0,-21.0252 60,-0.0126 0,-278.0126 -180.5,0 -0.11032,-21.3658"
              style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.25;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-             inkscape:connector-curvature="0" />
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccccc" />
           <text
              sodipodi:linespacing="125%"
              id="text19942"
@@ -15519,9 +15524,10 @@
            id="g20026">
           <path
              id="rect17942"
-             d="m 627.48177,588.56066 0,221.31371 -420.7107,0"
+             d="m 627.48177,768.87289 0,41.00148 -420.7107,0"
              style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.25;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-             inkscape:connector-curvature="0" />
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccc" />
           <text
              xml:space="preserve"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -15544,6 +15550,25 @@
                id="tspan19948-1"
                x="474.64978"
                y="803.36597">texture=grey_bricks</tspan></text>
+        </g>
+        <g
+           transform="translate(139.83413,-236.9499)"
+           id="g4703-2">
+          <path
+             style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 269.57042,975.43162 3.22364,10.85721 -6.79214,0.0535 z"
+             id="path4611-6-6"
+             inkscape:connector-curvature="0" />
+          <text
+             xml:space="preserve"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             x="260.64661"
+             y="960.91064"
+             id="text4613-7-9"
+             sodipodi:linespacing="125%"><tspan
+               id="tspan4615-5-4"
+               x="260.64661"
+               y="960.91064">type=ammo</tspan></text>
         </g>
       </g>
       <g
@@ -16675,6 +16700,18 @@
            y="857.04822"
            x="139.64154"
            id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4">jeff=going_in_circles/jeff.png,60,60</tspan></text>
+      <text
+         transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
+         id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-2-9-0-8-2-8-9-0-3-0-5-2"
+         y="873.9353"
+         x="137.68175"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:46.25099564px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"
+         sodipodi:linespacing="125%"><tspan
+           style="font-size:11.97151279px"
+           y="873.9353"
+           x="137.68175"
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4-6">player=common/images/bad_guy.png,60,60</tspan></text>
     </g>
   </g>
 </svg>

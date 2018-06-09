@@ -104,6 +104,8 @@ class AnimationSystem : public System {
     void playAnimation(entityId_t entityId, const std::string& anim, bool loop);
     void stopAnimation(entityId_t entityId);
 
+    inline AnimState animationState(entityId_t entityId, const std::string& name) const;
+
     void update() override;
     void handleEvent(const GameEvent& event) override {}
     void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
@@ -120,6 +122,11 @@ class AnimationSystem : public System {
     void updateAnimation(CAnimation& c, int which);
 };
 
+inline AnimState AnimationSystem::animationState(entityId_t entityId,
+  const std::string& name) const {
+
+  return m_components.at(entityId)->m_animations.at(name).first->state();
+}
 
 std::vector<AnimationFrame> constructFrames(int W, int H, const std::vector<int>& rows);
 

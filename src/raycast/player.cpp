@@ -27,10 +27,10 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, double 
 
   body = Component::getIdFromString("player");
 
-  CVRect* b = new CVRect(body, zone.entityId(), Size(COLLISION_RADIUS * 2, tallness));
+  CVRect* b = new CVRect(body, zone.entityId(), Size(0, 0));
   b->setTransform(transform);
   b->zone = &zone;
-  b->size.x = COLLISION_RADIUS * 2.0;
+  b->size.x = 60.0;
   b->size.y = tallness + FOREHEAD_SIZE;
 
   spatialSystem.addComponent(pCSpatial_t(b));

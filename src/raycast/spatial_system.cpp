@@ -13,6 +13,7 @@
 #include "raycast/tween_curves.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
+#include "raycast/animation_system.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
 #include "event_system.hpp"
@@ -816,6 +817,13 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
     m_entityManager.fireEvent(e, entitiesInRadius(zone, player.pos(), player.collectionRadius,
       player.feetHeight() - zone.floorHeight));
   }
+
+  AnimationSystem& animationSystem =
+    m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+
+  if (animationSystem.animationState(player.body, "run") == AnimState::STOPPED) {
+    animationSystem.playAnimation(player.body, "run", false);
+  }
 }
 
 //===========================================
@@ -933,6 +941,9 @@ void SpatialSystem::connectZones() {
 
 //===========================================
 // SpatialSystem::findIntersections_r
+//
+// point and dir are in the space given by matrix. i.e. if matrix is the camera matrix, point and
+// dir are in camera space.
 //===========================================
 void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
   const CZone& zone, const CSpatial& parent, vector<pIntersection_t>& intersections,
@@ -940,7 +951,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
   Matrix invMatrix = matrix.inverse();
 
-  LineSegment ray(point, 10000.0 * dir);
+  LineSegment ray(point + Vec2f(0.01, 0), 10000.0 * dir);
   visited.insert(parent.entityId());
 
   auto& children = GET_VALUE(m_entityChildren, parent.entityId());
@@ -1111,12 +1122,6 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const Vec2f& ray, double
   vector<pIntersection_t> intersections = entitiesAlongRay(getCurrentZone(), Point(0, 0), ray,
     matrix, distance);
 
-  auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
-    return i->entityId == sg.player->body;
-  });
-
-  erase(intersections, it);
-
   return intersections;
 }
 
@@ -1222,12 +1227,6 @@ vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray, doub
 
   vector<pIntersection_t> intersections = entitiesAlong3dRay(getCurrentZone(), Point(0, 0), height,
     ray, vAngle, matrix, distance);
-
-  auto it = find_if(intersections.begin(), intersections.end(), [&](const pIntersection_t& i) {
-    return i->entityId == sg.player->body;
-  });
-
-  erase(intersections, it);
 
   return intersections;
 }

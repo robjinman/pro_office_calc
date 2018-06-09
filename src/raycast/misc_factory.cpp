@@ -273,6 +273,31 @@ bool MiscFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
   player->sprite = Component::getNextId();
   player->crosshair = Component::getNextId();
 
+  CSprite* bodySprite = new CSprite(player->body, parentId, "player");
+  renderSystem.addComponent(pComponent_t(bodySprite));
+
+  // Number of frames in sprite sheet
+  const int W = 8;
+  const int H = 14;
+
+  CAnimation* bodyAnims = new CAnimation(player->body);
+
+  vector<AnimationFrame> runFrames = constructFrames(W, H,
+    { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 });
+  bodyAnims->addAnimation(pAnimation_t(new Animation("run", m_timeService.frameRate, 1.0,
+    runFrames)));
+
+  vector<AnimationFrame> shootFrames = constructFrames(W, H, { 1, 0 });
+  bodyAnims->addAnimation(pAnimation_t(new Animation("shoot", m_timeService.frameRate, 1.0,
+    shootFrames)));
+
+  vector<AnimationFrame> idleFrames = constructFrames(W, H, { 0 });
+  bodyAnims->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0,
+    idleFrames)));
+
+  animationSystem.addComponent(pComponent_t(bodyAnims));
+  animationSystem.playAnimation(player->body, "idle", true);
+
   CDamage* damage = new CDamage(player->body, 10, 10);
   damageSystem.addComponent(pCDamage_t(damage));
 
@@ -286,10 +311,10 @@ bool MiscFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
     viewport / 2 - sz / 2, sz);
   renderSystem.addComponent(pCRender_t(crosshair));
 
-  CImageOverlay* sprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.5, 0),
+  CImageOverlay* gunSprite = new CImageOverlay(player->sprite, "gun", Point(viewport.x * 0.5, 0),
     Size(4, 4));
-  sprite->texRect = QRectF(0, 0, 0.25, 1);
-  renderSystem.addComponent(pCRender_t(sprite));
+  gunSprite->texRect = QRectF(0, 0, 0.25, 1);
+  renderSystem.addComponent(pCRender_t(gunSprite));
 
   CAnimation* shoot = new CAnimation(player->sprite);
   shoot->addAnimation(pAnimation_t(new Animation("shoot", m_timeService.frameRate, 0.4, {

@@ -130,6 +130,7 @@ class CSprite : public CRender {
       int n = texViews.size();
       double da = 2.0 * PI / n;
       int idx = static_cast<int>(round(normaliseAngle(a) / da)) % n;
+
       return texViews[idx];
     }
 

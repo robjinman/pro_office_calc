@@ -701,7 +701,7 @@ void Renderer::drawSprite(const RenderGraph& rg, const Camera& camera, const Spr
   const Slice& slice = X.slice;
 
   const Texture& tex = rg.textures.at(sprite.texture);
-  const QRectF& uv = sprite.getView(vRect, camera.pos());
+  const QRectF& uv = sprite.getView(vRect, X.X->viewPoint);
   QRect r = tex.image.rect();
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());
@@ -888,9 +888,9 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
   CastResult prev;
 
 #ifndef SINGLE_THREAD
-  #pragma omp parallel for \
-    num_threads(4) \
-    private(prev)
+  //#pragma omp parallel for \
+  //  num_threads(4) \
+  //  private(prev)
 #endif
   for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - m_viewport_px.x / 2) / m_hWorldUnit_px;
