@@ -89,6 +89,8 @@ bool Animation::update() {
 // AnimationSystem::playAnimation
 //===========================================
 void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name, bool loop) {
+  stopAnimation(entityId);
+
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CAnimation& component = *it->second;

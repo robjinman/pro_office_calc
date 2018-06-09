@@ -186,6 +186,7 @@ void Player::shoot() {
         .system<DamageSystem>(ComponentKind::C_DAMAGE);
 
       animationSystem.playAnimation(sprite, "shoot", false);
+      animationSystem.playAnimation(body, "shoot", false);
       m_audioService.playSound("pistol_shoot");
       inventorySystem.subtractFromBucket(body, "ammo", 1);
       damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
