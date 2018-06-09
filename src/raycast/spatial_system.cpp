@@ -814,15 +814,11 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
     m_playerCell = cell;
 
     EPlayerMove e(player);
-    m_entityManager.fireEvent(e, entitiesInRadius(zone, player.pos(), player.collectionRadius,
-      player.feetHeight() - zone.floorHeight));
-  }
+    auto inRadius = entitiesInRadius(zone, player.pos(), player.collectionRadius,
+      player.feetHeight() - zone.floorHeight);
+    inRadius.insert(player.body);
 
-  AnimationSystem& animationSystem =
-    m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
-  if (animationSystem.animationState(player.body, "run") == AnimState::STOPPED) {
-    animationSystem.playAnimation(player.body, "run", false);
+    m_entityManager.fireEvent(e, inRadius);
   }
 }
 

@@ -149,9 +149,9 @@ bool MiscFactory::constructPlayerInventory() {
     Point(9.5, viewport.y - 0.5), 0.5, Qt::red, 2);
   renderSystem.addComponent(pComponent_t(healthCounter));
 
-  CEventHandler* syncDisplay = new CEventHandler(player.body);
+  CEventHandler& events = eventHandlerSystem.getComponent(player.body);
 
-  syncDisplay->targetedEventHandlers.push_back(EventHandler{"bucket_count_change",
+  events.targetedEventHandlers.push_back(EventHandler{"bucket_count_change",
     [=](const GameEvent& e_) {
 
     const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
@@ -167,7 +167,7 @@ bool MiscFactory::constructPlayerInventory() {
     }
   }});
 
-  syncDisplay->targetedEventHandlers.push_back(EventHandler{"bucket_items_change",
+  events.targetedEventHandlers.push_back(EventHandler{"bucket_items_change",
     [=, &renderSystem](const GameEvent& e_) {
 
     const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
@@ -222,7 +222,7 @@ bool MiscFactory::constructPlayerInventory() {
     }
   }});
 
-  syncDisplay->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
+  events.targetedEventHandlers.push_back(EventHandler{"entity_damaged",
     [=, &damageSystem, &player](const GameEvent& e_) {
 
     const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(e_);
@@ -235,8 +235,6 @@ bool MiscFactory::constructPlayerInventory() {
       healthCounter->text = ss.str();
     }
   }});
-
-  eventHandlerSystem.addComponent(pComponent_t(syncDisplay));
 
   entityId_t bgId = Component::getNextId();
 
@@ -261,6 +259,8 @@ bool MiscFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   BehaviourSystem& behaviourSystem =
     m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+  EventHandlerSystem& eventHandlerSystem =
+    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
 
@@ -341,6 +341,25 @@ bool MiscFactory::constructPlayer(parser::Object& obj, entityId_t parentId,
   })));
 
   animationSystem.addComponent(pCAnimation_t(shoot));
+
+  CEventHandler* events = new CEventHandler(player->body);
+  events->targetedEventHandlers.push_back(EventHandler{"player_move",
+    [=, &animationSystem](const GameEvent& e) {
+
+    if (animationSystem.animationState(player->body, "run") == AnimState::STOPPED) {
+      animationSystem.playAnimation(player->body, "run", false);
+    }
+  }});
+  events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
+    [=, &animationSystem](const GameEvent& e_) {
+
+    const EAnimationFinished& e = dynamic_cast<const EAnimationFinished&>(e_);
+    if (e.animName == "run") {
+      animationSystem.playAnimation(player->body, "idle", true);
+    }
+  }});
+
+  eventHandlerSystem.addComponent(pComponent_t(events));
 
   spatialSystem.sg.player.reset(player);
 
