@@ -5,6 +5,7 @@
 #include "raycast/render_system.hpp"
 #include "raycast/damage_system.hpp"
 #include "raycast/inventory_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "event_system.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
@@ -31,6 +32,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
   Player& player = *spatialSystem.sg.player;
 
@@ -62,6 +64,18 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   }});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
+
+  entityId_t larryId = Component::getIdFromString("larry");
+  CFocus& focus = dynamic_cast<CFocus&>(focusSystem.getComponent(larryId));
+
+  focus.captionText = "\"Life is pleasant here\"";
+
+  auto& larryEvents = dynamic_cast<CEventHandler&>(eventHandlerSystem.getComponent(larryId));
+  larryEvents.targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
+    [=, &focusSystem](const GameEvent&) {
+
+    focusSystem.showCaption(larryId);
+  }});
 }
 
 //===========================================
