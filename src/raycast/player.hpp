@@ -26,6 +26,7 @@ class Player {
     double vVelocity = 0;
     double activationRadius = 100.0;
     double collectionRadius = 50.0;
+    bool invincible = false;
 
     entityId_t crosshair = -1;
     entityId_t sprite = -1;

@@ -61,22 +61,24 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
     }
   }
   else if (e.name == "entity_destroyed") {
-    player.alive = false;
+    if (!player.invincible) {
+      player.alive = false;
 
-    entityId_t entityId = Component::getNextId();
+      entityId_t entityId = Component::getNextId();
 
-    CColourOverlay* overlay = new CColourOverlay(entityId, QColor(200, 0, 0, 80), Point(0, 0),
-      renderSystem.rg.viewport);
+      CColourOverlay* overlay = new CColourOverlay(entityId, QColor(200, 0, 0, 80), Point(0, 0),
+        renderSystem.rg.viewport);
 
-    renderSystem.addComponent(pCRender_t(overlay));
+      renderSystem.addComponent(pCRender_t(overlay));
 
-    double y = player.feetHeight();
-    double h = player.getTallness();
+      double y = player.feetHeight();
+      double h = player.getTallness();
 
-    player.setFeetHeight(y + 0.6 * h);
-    player.changeTallness(-0.6 * h);
+      player.setFeetHeight(y + 0.6 * h);
+      player.changeTallness(-0.6 * h);
 
-    m_entityManager.deleteEntity(player.sprite);
-    m_entityManager.deleteEntity(player.crosshair);
+      m_entityManager.deleteEntity(player.sprite);
+      m_entityManager.deleteEntity(player.crosshair);
+    }
   }
 }

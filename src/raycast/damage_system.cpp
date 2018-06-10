@@ -96,7 +96,7 @@ void DamageSystem::damageEntity(entityId_t entityId, double damage) {
       DBG_PRINT("Damaging entity " << id << "\n");
       CDamage& component = *it->second;
 
-      if (component.health > 0) {
+      if (component.health > 0 || damage < 0) {
         component.health -= damage;
 
         if (component.health < 0) {

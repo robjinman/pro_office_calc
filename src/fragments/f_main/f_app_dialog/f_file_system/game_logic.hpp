@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include "raycast/component.hpp"
 
 
 class EventSystem;
@@ -23,6 +24,8 @@ class GameLogic {
   private:
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
+
+    entityId_t m_entityId = -1;
 };
 
 

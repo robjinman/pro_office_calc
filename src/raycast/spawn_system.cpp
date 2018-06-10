@@ -22,7 +22,7 @@ void SpawnSystem::handleEvent(const GameEvent& event) {
       std::shared_ptr<CSpawnable> spawnable(it->second.release());
 
       m_timeService.onTimeout([this, spawnable]() {
-        entityId_t entityId = Component::getNextId();
+        entityId_t entityId = makeIdForObj(*spawnable->object);
 
         m_rootFactory.constructObject(spawnable->typeName, entityId, *spawnable->object,
           spawnable->parentId, spawnable->parentTransform);
@@ -45,7 +45,9 @@ void SpawnSystem::handleEvent(const GameEvent& event) {
           AgentSystem& agentSystem =
             m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
 
-          agentSystem.navigateTo(entityId, oldPos);
+          if (agentSystem.hasComponent(entityId)) {
+            agentSystem.navigateTo(entityId, oldPos);
+          }
         }
       }, spawnable->delay);
     }
