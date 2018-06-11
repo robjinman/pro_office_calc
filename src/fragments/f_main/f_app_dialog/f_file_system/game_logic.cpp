@@ -29,13 +29,9 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   m_entityId = Component::getNextId();
 
-  auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
   Player& player = *spatialSystem.sg.player;
-
   player.invincible = true;
 
   EventHandlerSystem& eventHandlerSystem
@@ -43,27 +39,19 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   CEventHandler* events = new CEventHandler(m_entityId);
   events->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
-    [=, &player, &damageSystem, &spatialSystem, &inventorySystem](const GameEvent& e_) {
-
-    auto& e = dynamic_cast<const EEntityDestroyed&>(e_);
-
-    if (e.entityId == player.body) {
-      std::cout << "Player is dead!\n";
-
-      damageSystem.damageEntity(player.body, -10);
-
-      int ammo = inventorySystem.getBucketValue(player.body, "ammo");
-      inventorySystem.subtractFromBucket(player.body, "ammo", ammo);
-
-      entityId_t spawnPointId = Component::getIdFromString("spawn_point");
-      CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
-
-      spatialSystem.relocateEntity(player.body, *spawnPoint.zone, spawnPoint.pos);
-      player.setFeetHeight(0);
-    }
-  }});
-
+    std::bind(&GameLogic::onEntityDestroyed, this, std::placeholders::_1)});
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+    std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
   eventHandlerSystem.addComponent(pComponent_t(events));
+
+  setupLarry(eventHandlerSystem);
+}
+
+//===========================================
+// GameLogic::setupLarry
+//===========================================
+void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
+  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
   entityId_t larryId = Component::getIdFromString("larry");
   CFocus& focus = dynamic_cast<CFocus&>(focusSystem.getComponent(larryId));
@@ -76,6 +64,48 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
     focusSystem.showCaption(larryId);
   }});
+}
+
+//===========================================
+// GameLogic::onEntityDestroyed
+//===========================================
+void GameLogic::onEntityDestroyed(const GameEvent& event) {
+  auto& e = dynamic_cast<const EEntityDestroyed&>(event);
+
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+
+  if (e.entityId == player.body) {
+    auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+    auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+
+    damageSystem.damageEntity(player.body, -10);
+
+    int ammo = inventorySystem.getBucketValue(player.body, "ammo");
+    inventorySystem.subtractFromBucket(player.body, "ammo", ammo);
+
+    entityId_t spawnPointId = Component::getIdFromString("spawn_point");
+    CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
+
+    spatialSystem.relocateEntity(player.body, *spawnPoint.zone, spawnPoint.pos);
+    player.setFeetHeight(0);
+  }
+}
+
+//===========================================
+// GameLogic::onEntityChangeZone
+//===========================================
+void GameLogic::onEntityChangeZone(const GameEvent& event) {
+  const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
+
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+
+  if (e.entityId == player.body) {
+    if (e.newZone == Component::getIdFromString("level_exit")) {
+      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MILLENNIUM_BUG)));
+    }
+  }
 }
 
 //===========================================

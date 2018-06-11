@@ -9,6 +9,8 @@
 class EventSystem;
 class Event;
 class EntityManager;
+class EventHandlerSystem;
+class GameEvent;
 
 
 namespace going_in_circles {
@@ -22,6 +24,10 @@ class GameLogic {
     ~GameLogic();
 
   private:
+    void onEntityDestroyed(const GameEvent& event);
+    void onEntityChangeZone(const GameEvent& event);
+    void setupLarry(EventHandlerSystem& eventHandlerSystem);
+
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
 
