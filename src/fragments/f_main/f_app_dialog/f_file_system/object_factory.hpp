@@ -18,7 +18,8 @@ namespace going_in_circles {
 
 class ObjectFactory : public GameObjectFactory {
   public:
-    ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager, TimeService& timeService);
+    ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager, TimeService& timeService,
+      AudioService& audioService);
 
     const std::set<std::string>& types() const override;
 
@@ -29,6 +30,7 @@ class ObjectFactory : public GameObjectFactory {
     RootFactory& m_rootFactory;
     EntityManager& m_entityManager;
     TimeService& m_timeService;
+    AudioService& m_audioService;
 
     bool constructComputerScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);

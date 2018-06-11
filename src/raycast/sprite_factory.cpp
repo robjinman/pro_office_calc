@@ -147,29 +147,25 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
     CEventHandler* takeDamage = new CEventHandler(entityId);
     takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &spatialSystem, &vRect](const GameEvent& e) {
+      [=, &animationSystem, &spatialSystem, &vRect](const GameEvent&) {
 
-      const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
+      DBG_PRINT("Civilian health: " << damage->health << "\n");
+      //animationSystem.playAnimation(entityId, "hurt", false);
 
-      if (event.entityId == entityId) {
-        DBG_PRINT("Civilian health: " << damage->health << "\n");
-        animationSystem.playAnimation(entityId, "hurt", false);
+      if (damage->health == 0) {
+        m_audioService.playSoundAtPos("civilian_death", vRect.pos);
+        auto& bucket = dynamic_cast<ItemBucket&>(*inventory->buckets["item"]);
 
-        if (damage->health == 0) {
-          m_audioService.playSoundAtPos("civilian_death", vRect.pos);
-          auto& bucket = dynamic_cast<ItemBucket&>(*inventory->buckets["item"]);
-
-          for (auto it = bucket.items.begin(); it != bucket.items.end(); ++it) {
-            entityId_t itemId = it->second;
-            const CVRect& body = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId));
-            spatialSystem.relocateEntity(itemId, *body.zone, body.pos);
-          }
-
-          m_entityManager.deleteEntity(entityId);
+        for (auto it = bucket.items.begin(); it != bucket.items.end(); ++it) {
+          entityId_t itemId = it->second;
+          const CVRect& body = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId));
+          spatialSystem.relocateEntity(itemId, *body.zone, body.pos);
         }
-        else {
-          m_audioService.playSoundAtPos("civilian_hurt", vRect.pos);
-        }
+
+        m_entityManager.deleteEntity(entityId);
+      }
+      else {
+        m_audioService.playSoundAtPos("civilian_hurt", vRect.pos);
       }
     }});
     eventHandlerSystem.addComponent(pComponent_t(takeDamage));

@@ -4,9 +4,11 @@
 #include "raycast/render_system.hpp"
 #include "raycast/focus_system.hpp"
 #include "raycast/event_handler_system.hpp"
+#include "raycast/damage_system.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
+#include "raycast/audio_service.hpp"
 
 
 using std::vector;
@@ -21,10 +23,11 @@ namespace going_in_circles {
 // ObjectFactory::ObjectFactory
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-  TimeService& timeService)
+  TimeService& timeService, AudioService& audioService)
   : m_rootFactory(rootFactory),
     m_entityManager(entityManager),
-    m_timeService(timeService) {}
+    m_timeService(timeService),
+    m_audioService(audioService) {}
 
 //===========================================
 // ObjectFactory::types
@@ -82,10 +85,13 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
   obj.dict["texture"] = "jeff";
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-    FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-    EventHandlerSystem& eventHandlerSystem =
+    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+    auto& eventHandlerSystem =
       m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
 
     CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
 
@@ -103,14 +109,17 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
       QRectF(dW * 7.0, 0, dW, 1)
     };
 
+    CDamage* damage = new CDamage(entityId, 2, 2);
+    damageSystem.addComponent(pComponent_t(damage));
+
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = name.replace(0, 1, 1, asciiToUpper(name[0]));
     focusSystem.addComponent(pComponent_t(focus));
 
-    CEventHandler* activateHandler = new CEventHandler(entityId);
+    CEventHandler* events = new CEventHandler(entityId);
 
     bool inCircles = false;
-    activateHandler->targetedEventHandlers.push_back(
+    events->targetedEventHandlers.push_back(
       EventHandler{"player_activate_entity", [=, &focusSystem](const GameEvent& e) mutable {
         if (inCircles) {
           focus->captionText = "\"Do you ever feel you're going in circles?\"";
@@ -122,8 +131,28 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
         inCircles = !inCircles;
         focusSystem.showCaption(entityId);
       }});
+    events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
+      [=, &animationSystem, &spatialSystem](const GameEvent&) {
 
-    eventHandlerSystem.addComponent(pComponent_t(activateHandler));
+      CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId));
+
+      DBG_PRINT("Jeff health: " << damage->health << "\n");
+      animationSystem.playAnimation(entityId, "hurt", false);
+
+      if (damage->health == 0) {
+        m_audioService.playSoundAtPos("civilian_death", body.pos);
+
+        entityId_t spawnPointId = Component::getIdFromString("jeff_spawn_point");
+        CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
+
+        spatialSystem.relocateEntity(entityId, *spawnPoint.zone, spawnPoint.pos);
+      }
+      else {
+        m_audioService.playSoundAtPos("civilian_hurt", body.pos);
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
 
     return true;
   }

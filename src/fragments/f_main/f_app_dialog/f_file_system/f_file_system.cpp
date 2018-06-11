@@ -45,9 +45,10 @@ void FFileSystem::reload(const FragmentSpec& spec_) {
   auto& rootFactory = m_data.wgtRaycast->rootFactory();
   auto& timeService = m_data.wgtRaycast->timeService();
   auto& entityManager = m_data.wgtRaycast->entityManager();
+  auto& audioService = m_data.wgtRaycast->audioService();
 
   GameObjectFactory* factory = new going_in_circles::ObjectFactory(rootFactory, entityManager,
-    timeService);
+    timeService, audioService);
 
   m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
   m_data.wgtRaycast->initialise(config::dataPath("going_in_circles/map.svg"));
