@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <array>
 #include <QSoundEffect>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -12,7 +13,7 @@
 
 
 struct SoundEffect {
-  QSoundEffect sound;
+  std::array<QSoundEffect, 2> sound;
   double volume = 1.0;
 };
 

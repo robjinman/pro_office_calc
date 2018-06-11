@@ -29,7 +29,8 @@ void AudioService::addSound(const string& name, const string& resourcePath) {
   pSoundEffect_t sound(new SoundEffect);
 
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
-  sound->sound.setSource(QUrl::fromLocalFile(absPath));
+  sound->sound[0].setSource(QUrl::fromLocalFile(absPath));
+  sound->sound[1].setSource(QUrl::fromLocalFile(absPath));
 
   m_sounds.insert(make_pair(name, std::move(sound)));
 }
@@ -42,7 +43,7 @@ bool AudioService::soundIsPlaying(const string& name) const {
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    return sound.sound.isPlaying();
+    return sound.sound[0].isPlaying() || sound.sound[1].isPlaying();
   }
 
   return false;
@@ -64,9 +65,11 @@ void AudioService::playSound(const string& name, bool loop) {
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    sound.sound.setVolume(m_masterVolume * sound.volume);
-    sound.sound.setLoopCount(loop ? QSoundEffect::Infinite : 0);
-    sound.sound.play();
+    int i = sound.sound[0].isPlaying() ? 1 : 0;
+
+    sound.sound[i].setVolume(m_masterVolume * sound.volume);
+    sound.sound[i].setLoopCount(loop ? QSoundEffect::Infinite : 0);
+    sound.sound[i].play();
   }
 }
 
@@ -78,7 +81,8 @@ void AudioService::stopSound(const string& name) {
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    sound.sound.stop();
+    sound.sound[0].stop();
+    sound.sound[1].stop();
   }
 }
 
@@ -96,9 +100,11 @@ void AudioService::playSoundAtPos(const string& name, const Point& pos, bool loo
     double d = distance(spatialSystem.sg.player->pos(), pos);
     double v = 1.0 - clipNumber(d, Range(0, 2000)) / 2000;
 
-    sound.sound.setVolume(m_masterVolume * sound.volume * v);
-    sound.sound.setLoopCount(loop ? QSoundEffect::Infinite : 0);
-    sound.sound.play();
+    int i = sound.sound[0].isPlaying() ? 1 : 0;
+
+    sound.sound[i].setVolume(m_masterVolume * sound.volume * v);
+    sound.sound[i].setLoopCount(loop ? QSoundEffect::Infinite : 0);
+    sound.sound[i].play();
   }
 }
 
