@@ -69,7 +69,7 @@ class DamageSystem : public System {
     CDamage& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
-    void damageEntity(entityId_t id, double damage);
+    void damageEntity(entityId_t id, int damage);
 
     void damageWithinRadius(const CZone& zone, const Point& pos, double radius, int damage,
       AttenuationCurve attenuation = AttenuationCurve::LINEAR);
@@ -78,6 +78,9 @@ class DamageSystem : public System {
 
     void damageAtIntersection(const CZone& zone, const Point& pos, double height, const Vec2f& dir,
       double vAngle, const Matrix& matrix, int damage);
+
+    int getHealth(entityId_t entityId) const;
+    int getMaxHealth(entityId_t entityId) const;
 
   private:
     EntityManager& m_entityManager;

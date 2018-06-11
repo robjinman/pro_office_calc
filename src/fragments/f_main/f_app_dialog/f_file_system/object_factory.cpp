@@ -119,8 +119,10 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
     CEventHandler* events = new CEventHandler(entityId);
 
     bool inCircles = false;
-    events->targetedEventHandlers.push_back(
-      EventHandler{"player_activate_entity", [=, &focusSystem](const GameEvent& e) mutable {
+    events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
+      [=, &focusSystem, &damageSystem](const GameEvent& e) mutable {
+
+      if (damageSystem.getHealth(entityId) != 0) {
         if (inCircles) {
           focus->captionText = "\"Do you ever feel you're going in circles?\"";
         }
@@ -129,8 +131,13 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
         }
 
         inCircles = !inCircles;
-        focusSystem.showCaption(entityId);
-      }});
+      }
+      else {
+        focus->captionText = "\"The snacks here are pretty good\"";
+      }
+
+      focusSystem.showCaption(entityId);
+    }});
     events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
       [=, &animationSystem, &spatialSystem](const GameEvent&) {
 

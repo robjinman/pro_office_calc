@@ -83,7 +83,7 @@ static void fireDestroyedEvents(const EntityManager& entityManager, entityId_t i
 //===========================================
 // DamageSystem::damageEntity
 //===========================================
-void DamageSystem::damageEntity(entityId_t entityId, double damage) {
+void DamageSystem::damageEntity(entityId_t entityId, int damage) {
   const SpatialSystem& spatialSystem =
     m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
 
@@ -111,6 +111,20 @@ void DamageSystem::damageEntity(entityId_t entityId, double damage) {
       }
     }
   }
+}
+
+//===========================================
+// DamageSystem::getHealth
+//===========================================
+int DamageSystem::getHealth(entityId_t entityId) const {
+  return m_components.at(entityId)->health;
+}
+
+//===========================================
+// DamageSystem::getMaxHealth
+//===========================================
+int DamageSystem::getMaxHealth(entityId_t entityId) const {
+  return m_components.at(entityId)->maxHealth;
 }
 
 //===========================================
