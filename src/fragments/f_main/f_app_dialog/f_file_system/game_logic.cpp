@@ -58,8 +58,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
       entityId_t spawnPointId = Component::getIdFromString("spawn_point");
       CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
 
-      player.setFeetHeight(100);
       spatialSystem.relocateEntity(player.body, *spawnPoint.zone, spawnPoint.pos);
+      player.setFeetHeight(0);
     }
   }});
 
