@@ -13,6 +13,8 @@
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system/f_file_system_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/f_minesweeper_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_console/f_console_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_kernel/f_kernel_spec.hpp"
 
 
 struct FAppDialogSpec : public FragmentSpec {
@@ -25,7 +27,9 @@ struct FAppDialogSpec : public FragmentSpec {
         &procalcSetupSpec,
         &textEditorSpec,
         &fileSystemSpec,
-        &minesweeperSpec
+        &minesweeperSpec,
+        &kernelSpec,
+        &consoleSpec
       }) {}
 
   FGlitchSpec glitchSpec;
@@ -36,6 +40,8 @@ struct FAppDialogSpec : public FragmentSpec {
   FTextEditorSpec textEditorSpec;
   FFileSystemSpec fileSystemSpec;
   FMinesweeperSpec minesweeperSpec;
+  FKernelSpec kernelSpec;
+  FConsoleSpec consoleSpec;
 
   std::string name = "dialog";
   QString titleText = "Application";

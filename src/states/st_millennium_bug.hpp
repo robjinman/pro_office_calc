@@ -28,20 +28,27 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->desktopSpec.setEnabled(true);
   mainSpec->desktopSpec.icons = {
     {config::dataPath("millennium_bug/file_browser.png"), "File Browser", "fileBrowserLaunch"},
-    {config::dataPath("millennium_bug/minesweeper.png"), "Minesweeper", "minesweeperLaunch"}
+    {config::dataPath("millennium_bug/minesweeper.png"), "Minesweeper", "minesweeperLaunch"},
+    {config::dataPath("millennium_bug/console.png"), "Terminal", "terminalLaunch"}
   };
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.titleText = "File Browser";
   mainSpec->appDialogSpec0.width = 320;
   mainSpec->appDialogSpec0.height = 240;
   mainSpec->appDialogSpec0.showOnEvent = "fileBrowserLaunch";
-  //mainSpec->appDialogSpec0.fileSystemSpec.setEnabled(true);
+  mainSpec->appDialogSpec0.kernelSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
   mainSpec->appDialogSpec1.titleText = "Minesweeper";
   mainSpec->appDialogSpec1.width = 320;
   mainSpec->appDialogSpec1.height = 240;
   mainSpec->appDialogSpec1.showOnEvent = "minesweeperLaunch";
   mainSpec->appDialogSpec1.minesweeperSpec.setEnabled(true);
+  mainSpec->appDialogSpec2.setEnabled(true);
+  mainSpec->appDialogSpec2.titleText = "Minesweeper";
+  mainSpec->appDialogSpec2.width = 320;
+  mainSpec->appDialogSpec2.height = 240;
+  mainSpec->appDialogSpec2.showOnEvent = "terminalLaunch";
+  mainSpec->appDialogSpec2.consoleSpec.setEnabled(true);
 
   return mainSpec;
 }

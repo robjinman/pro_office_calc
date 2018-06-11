@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="-130.71429"
+     inkscape:cx="326.42857"
      inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -44,7 +44,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -118,8 +117,9 @@
     <g
        id="g4267"
        transform="matrix(0.92307692,0,0,0.92307692,-481.64245,-224.61052)"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001">
+       inkscape:export-xdpi="13.5"
+       inkscape:export-ydpi="13.5"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/minesweeper.png">
       <rect
          y="395.06256"
          x="1130.5637"
