@@ -6,6 +6,7 @@
 #include "raycast/damage_system.hpp"
 #include "raycast/inventory_system.hpp"
 #include "raycast/focus_system.hpp"
+#include "raycast/agent_system.hpp"
 #include "event_system.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
@@ -52,6 +53,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 //===========================================
 void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
   auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  auto& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
 
   entityId_t larryId = Component::getIdFromString("larry");
   CFocus& focus = dynamic_cast<CFocus&>(focusSystem.getComponent(larryId));
@@ -63,6 +66,26 @@ void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
     [=, &focusSystem](const GameEvent&) {
 
     focusSystem.showCaption(larryId);
+  }});
+
+  entityId_t switchId = Component::getIdFromString("exit_switch");
+  CEventHandler* switchEvents = nullptr;
+
+  if (eventHandlerSystem.hasComponent(switchId)) {
+    switchEvents = &dynamic_cast<CEventHandler&>(eventHandlerSystem.getComponent(switchId));
+  }
+  else {
+    switchEvents = new CEventHandler(switchId);
+    eventHandlerSystem.addComponent(pComponent_t(switchEvents));
+  }
+
+  switchEvents->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
+    [=, &spatialSystem, &agentSystem](const GameEvent& e_) {
+
+    entityId_t navPointId = Component::getIdFromString("exit_nav_point");
+    auto& vRect = dynamic_cast<CVRect&>(spatialSystem.getComponent(navPointId));
+
+    agentSystem.navigateTo(larryId, vRect.pos);
   }});
 }
 

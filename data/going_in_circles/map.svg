@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="5525.0674"
-     inkscape:cy="3379.191"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="2452.2051"
+     inkscape:cy="2057.2989"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g18461"
+     inkscape:current-layer="g22176"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -12794,6 +12794,17 @@
                    y="1406.9362"
                    x="-1036.4005"
                    id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-3-0-0-8-4-4-7-7-5">texture=switch</tspan></text>
+              <text
+                 transform="scale(1.0603588,0.94307701)"
+                 id="text4213-3-0-7-9-0-61-46-2-65-5-3-79-5-1-1-7"
+                 y="1410.0272"
+                 x="-1037.7366"
+                 style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.19305992px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                 xml:space="preserve"
+                 sodipodi:linespacing="125%"><tspan
+                   y="1410.0272"
+                   x="-1037.7366"
+                   id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-3-0-0-8-5">name=exit_switch</tspan></text>
             </g>
           </g>
         </g>
@@ -18151,6 +18162,37 @@
            y="330.39636"
            x="2972.4277"
            id="tspan4215-5-6-9-7-62-5-2-8-2-1-4-3">name=level_exit</tspan></text>
+      <g
+         transform="matrix(0.42981847,0,0,0.42985358,2307.6388,-128.59202)"
+         id="g11801-1-1-2">
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.32646847px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           d="m 2013.5252,1056.9446 11.6968,-0.1833 -6.6846,14.2032 z"
+           id="path11727-6-3-5"
+           inkscape:connector-curvature="0" />
+        <text
+           sodipodi:linespacing="125%"
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.74157119px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           x="1890.5609"
+           y="1106.6805"
+           id="text4213-9-3-7-30-8-4"
+           transform="scale(1.0603588,0.94307701)"><tspan
+             id="tspan4215-3-7-7-2-9-2"
+             x="1890.5609"
+             y="1106.6805">type=spawn_point</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.74157095px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           x="1890.7349"
+           y="1111.2356"
+           id="text4213-9-3-7-3-1-2-7"
+           transform="scale(1.0603588,0.94307701)"><tspan
+             id="tspan4215-3-7-7-7-5-4-5"
+             x="1890.7349"
+             y="1111.2356">name=exit_nav_point</tspan></text>
+      </g>
     </g>
     <g
        transform="matrix(-0.00463576,0.99998927,-0.99998923,-0.00463574,5606.7241,386.98769)"
