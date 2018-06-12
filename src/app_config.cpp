@@ -33,7 +33,7 @@ int convert<int>(const string& s) {
 // getArg
 //===========================================
 template<typename T>
-T getArg(const CommandLineArgs& args, int idx, const T& defaultVal) {
+T getArg(const CommandLineArgs& args, unsigned int idx, const T& defaultVal) {
   if (idx < args.size()) {
     return convert<T>(args[idx]);
   }
@@ -45,15 +45,15 @@ T getArg(const CommandLineArgs& args, int idx, const T& defaultVal) {
 //===========================================
 // get*Arg
 //===========================================
-double getDoubleArg(const CommandLineArgs& args, int idx, double defaultVal) {
+double getDoubleArg(const CommandLineArgs& args, unsigned int idx, double defaultVal) {
   return getArg<double>(args, idx, defaultVal);
 }
 
-int getIntArg(const CommandLineArgs& args, int idx, int defaultVal) {
+int getIntArg(const CommandLineArgs& args, unsigned int idx, int defaultVal) {
   return getArg<int>(args, idx, defaultVal);
 }
 
-string getStringArg(const CommandLineArgs& args, int idx, const string& defaultVal) {
+string getStringArg(const CommandLineArgs& args, unsigned int idx, const string& defaultVal) {
   return getArg<string>(args, idx, defaultVal);
 }
 //===========================================

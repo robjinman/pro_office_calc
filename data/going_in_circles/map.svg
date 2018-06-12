@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="615.71183"
-     inkscape:cy="3627.3411"
+     inkscape:zoom="8.0000002"
+     inkscape:cx="3580.1185"
+     inkscape:cy="2393.4484"
      inkscape:window-x="1280"
      inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g5720"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg4960"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -64,7 +64,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -12289,7 +12289,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
         <g
            id="g21322">
           <path
@@ -12331,7 +12331,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9"
                x="-1049.621"
-               y="1350.4236">bottom_texture=grey_stone</tspan></text>
+               y="1350.4236">bottom_texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -12369,7 +12369,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0-3"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
         <g
            id="g21322-6">
           <path
@@ -12411,7 +12411,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-1"
                x="-1049.621"
-               y="1350.4236">bottom_texture=grey_stone</tspan></text>
+               y="1350.4236">bottom_texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -12449,7 +12449,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0-5"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
         <g
            id="g21322-9">
           <path
@@ -12491,7 +12491,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-11"
                x="-1049.621"
-               y="1350.4236">bottom_texture=grey_stone</tspan></text>
+               y="1350.4236">bottom_texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -12529,7 +12529,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0-31"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
         <g
            id="g21322-3">
           <path
@@ -12571,7 +12571,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-8"
                x="-1049.621"
-               y="1350.4236">bottom_texture=grey_stone</tspan></text>
+               y="1350.4236">bottom_texture=metal_wall</tspan></text>
         </g>
       </g>
       <g
@@ -12609,7 +12609,7 @@
              y="1356.6711"
              x="-1109.5801"
              id="tspan4510-5-3-1-9-8-9-6-0-31-2"
-             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
+             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
         <g
            id="g21322-3-3">
           <path
@@ -12651,7 +12651,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-8-9"
                x="-1055.0604"
-               y="1464.0541">bottom_texture=grey_stone</tspan></text>
+               y="1464.0541">bottom_texture=metal_wall</tspan></text>
         </g>
         <g
            id="g22052">
@@ -12687,7 +12687,7 @@
                sodipodi:role="line"
                id="tspan4510-5-3-1-9-8-9-6-0-31-2-9"
                x="-1104.2638"
-               y="1300.3452">floor_texture=grey_stone</tspan></text>
+               y="1300.3452">floor_texture=metal_wall</tspan></text>
           <g
              id="g22045">
             <rect
@@ -12719,7 +12719,7 @@
                transform="scale(1.0603588,0.94307701)"><tspan
                  id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-8-9-1"
                  x="-1053.342"
-                 y="1354.1608">bottom_texture=grey_stone</tspan></text>
+                 y="1354.1608">bottom_texture=metal_wall</tspan></text>
             <g
                id="g22176">
               <path
@@ -19352,6 +19352,18 @@
            y="980.66022"
            x="141.82349"
            id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4-6-9-9-6-9-9-0-4">vending_machine_side=going_in_circles/vending_machine_side.png</tspan></text>
+      <text
+         transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
+         id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-2-9-0-8-2-8-9-0-3-0-5-2-6-6-0-7-7-3-0-3"
+         y="995.42078"
+         x="140.52737"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:46.25099564px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"
+         sodipodi:linespacing="125%"><tspan
+           style="font-size:11.97151279px"
+           y="995.42078"
+           x="140.52737"
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4-6-9-9-6-9-9-0-4-6">metal_wall=common/images/metal_wall.png</tspan></text>
     </g>
   </g>
 </svg>
