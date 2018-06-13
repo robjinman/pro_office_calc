@@ -5,6 +5,7 @@
 #include <memory>
 #include <set>
 #include "raycast/component.hpp"
+#include "raycast/game_event.hpp"
 
 
 class System {

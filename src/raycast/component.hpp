@@ -10,22 +10,6 @@
 typedef long entityId_t;
 
 
-class GameEvent {
-  public:
-    explicit GameEvent(const std::string& name)
-      : name(name) {}
-
-    std::string name;
-
-    virtual ~GameEvent() {}
-};
-
-class EActivateEntity : public GameEvent {
-  public:
-    EActivateEntity()
-      : GameEvent("activate_entity") {}
-};
-
 class Component {
   public:
     static entityId_t getNextId();

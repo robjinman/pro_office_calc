@@ -16,11 +16,20 @@ class CZone;
 class CVRect;
 class EntityManager;
 class AudioService;
+namespace parser { struct Object; }
+class TimeService;
+class SpatialSystem;
+class RenderSystem;
+class AnimationSystem;
+class DamageSystem;
+class BehaviourSystem;
+class InventorySystem;
+class EventHandlerSystem;
 
 class Player {
   public:
-    Player(EntityManager& entityManager, AudioService& audioService, double tallness,
-      CZone& zone, const Matrix& transform);
+    Player(EntityManager& entityManager, AudioService& audioService, TimeService& timeService,
+      const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
 
     bool alive = true;
     double vVelocity = 0;
@@ -60,10 +69,18 @@ class Player {
     const Camera& camera() const;
 
   private:
+    void constructPlayer(const parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform, SpatialSystem& spatialSystem, RenderSystem& renderSystem,
+      AnimationSystem& animationSystem, DamageSystem& damageSystem,
+      BehaviourSystem& behaviourSystem, EventHandlerSystem& eventHandlerSystem);
+    void constructInventory(RenderSystem& renderSystem, InventorySystem& inventorySystem,
+      EventHandlerSystem& eventHandlerSystem, DamageSystem& damageSystem);
+
     CVRect& getBody() const;
 
     EntityManager& m_entityManager;
     AudioService& m_audioService;
+    TimeService& m_timeService;
     std::unique_ptr<Camera> m_camera;
     Debouncer m_shootTimer;
 };

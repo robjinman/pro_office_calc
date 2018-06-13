@@ -22,6 +22,7 @@
 #include "raycast/misc_factory.hpp"
 #include "raycast/sprite_factory.hpp"
 #include "raycast/geometry_factory.hpp"
+#include "raycast/game_event.hpp"
 #include "app_config.hpp"
 
 
@@ -159,9 +160,6 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   configure(rg, m_audioService, config);
 
   m_rootFactory.constructObject("region", -1, rootRegion, -1, Matrix());
-
-  parser::Object tmp(nullptr);
-  m_rootFactory.constructObject("player_inventory", -1, tmp, -1, Matrix());
 }
 
 //===========================================
@@ -249,6 +247,8 @@ void RaycastWidget::keyPressEvent(QKeyEvent* event) {
   else if (event->key() == Qt::Key_Escape) {
     m_cursorCaptured = false;
     setCursor(m_defaultCursor);
+
+    m_entityManager.broadcastEvent(EMouseUncaptured{});
   }
 }
 
@@ -265,6 +265,10 @@ void RaycastWidget::keyReleaseEvent(QKeyEvent* event) {
 void RaycastWidget::mousePressEvent(QMouseEvent* event) {
   if (m_cursorCaptured && event->button() == Qt::LeftButton) {
     m_mouseBtnState = true;
+  }
+
+  if (m_cursorCaptured == false) {
+    m_entityManager.broadcastEvent(EMouseCaptured{});
   }
 
   m_cursorCaptured = true;
