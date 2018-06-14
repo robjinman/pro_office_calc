@@ -50,9 +50,36 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, TimeSer
 }
 
 //===========================================
+// makeTween
+//===========================================
+static Tween makeTween(double frameRate, double duration, COverlay& overlay, double fromY,
+  double toY) {
+
+  double s = toY - fromY;
+  double ds = s / (duration * frameRate);
+
+  return Tween{
+    [=, &overlay](long frame, double elapsed, double frameRate) -> bool {
+
+    overlay.pos.y += ds;
+
+    if (fabs(overlay.pos.y - fromY) >= fabs(s)) {
+      overlay.pos.y = toY;
+      return false;
+    }
+    return true;
+  },
+  [](long frame, double elapsed, double frameRate) {}};
+}
+
+//===========================================
 // Player::setupHudShowHide
 //===========================================
 void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& eventHandlerSystem) {
+  // Transition time
+  const double T = 0.3;
+  double FR = m_timeService.frameRate;
+
   const Size& viewport = renderSystem.rg.viewport;
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
@@ -68,70 +95,22 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
     [=, &gunSprite, &itemsDisplay, &ammoCounter, &healthCounter, &hudBg, &crosshair, &viewport]
     (const GameEvent& e_) {
 
-    m_timeService.removeTween("gunFadeOut");
-    m_timeService.addTween(Tween{
-      [=, &gunSprite](long frame, double elapsed, double frameRate) -> bool {
+    m_timeService.removeTween("gunSlideOut");
+    m_timeService.addTween(makeTween(FR, T, gunSprite, -4.0, 0.0), "gunSlideIn");
 
-      gunSprite.pos.y += 0.2;
-      if (gunSprite.pos.y >= 0.0) {
-        gunSprite.pos.y = 0.0;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "gunFadeIn");
+    m_timeService.removeTween("ammoSlideOut");
+    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y + 0.1, viewport.y - 0.5),
+      "ammoSlideIn");
 
-    m_timeService.removeTween("ammoFadeOut");
-    m_timeService.addTween(Tween{
-      [=, &ammoCounter](long frame, double elapsed, double frameRate) -> bool {
+    m_timeService.removeTween("healthSlideOut");
+    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y + 0.1, viewport.y - 0.5),
+      "healthSlideIn");
 
-      ammoCounter.pos.y -= 0.2;
-      if (ammoCounter.pos.y <= viewport.y - 0.5) {
-        ammoCounter.pos.y = viewport.y - 0.5;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "ammoFadeIn");
+    m_timeService.removeTween("itemsSlideOut");
+    m_timeService.addTween(makeTween(FR, T, itemsDisplay, -viewport.y * 0.1, 0.0), "itemsSlideIn");
 
-    m_timeService.removeTween("healthFadeOut");
-    m_timeService.addTween(Tween{
-      [=, &healthCounter](long frame, double elapsed, double frameRate) -> bool {
-
-      healthCounter.pos.y -= 0.2;
-      if (healthCounter.pos.y <= viewport.y - 0.5) {
-        healthCounter.pos.y = viewport.y - 0.5;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "healthFadeIn");
-
-    m_timeService.removeTween("itemsFadeOut");
-    m_timeService.addTween(Tween{
-      [=, &itemsDisplay](long frame, double elapsed, double frameRate) -> bool {
-
-      itemsDisplay.pos.y += 0.2;
-      if (itemsDisplay.pos.y >= 0.0) {
-        itemsDisplay.pos.y = 0.0;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "itemsFadeIn");
-
-    m_timeService.removeTween("hudBgFadeOut");
-    m_timeService.addTween(Tween{
-      [=, &hudBg, &viewport](long frame, double elapsed, double frameRate) -> bool {
-
-      hudBg.pos.y -= 0.2;
-      if (hudBg.pos.y <= viewport.y - 0.7) {
-        hudBg.pos.y = viewport.y - 0.7;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "hudBgFadeIn");
+    m_timeService.removeTween("hudBgSlideOut");
+    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y, viewport.y - 0.7), "hudBgSlideIn");
 
     crosshair.pos = viewport / 2 - Vec2f(0.5, 0.5) / 2;
   }});
@@ -139,70 +118,22 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
     [=, &gunSprite, &itemsDisplay, &ammoCounter, &healthCounter, &hudBg, &crosshair, &viewport]
     (const GameEvent& e_) {
 
-    m_timeService.removeTween("gunFadeIn");
-    m_timeService.addTween(Tween{
-      [=, &gunSprite](long frame, double elapsed, double frameRate) -> bool {
+    m_timeService.removeTween("gunSlideIn");
+    m_timeService.addTween(makeTween(FR, T, gunSprite, 0.0, -4.0), "gunSlideOut");
 
-      gunSprite.pos.y -= 0.2;
-      if (gunSprite.pos.y <= -4.0) {
-        gunSprite.pos.y = -4.0;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "gunFadeOut");
+    m_timeService.removeTween("ammoSlideIn");
+    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y - 0.5, viewport.y + 0.1),
+      "ammoSlideOut");
 
-    m_timeService.removeTween("ammoFadeIn");
-    m_timeService.addTween(Tween{
-      [=, &ammoCounter](long frame, double elapsed, double frameRate) -> bool {
+    m_timeService.removeTween("healthSlideIn");
+    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y - 0.5, viewport.y + 0.1),
+      "healthSlideOut");
 
-      ammoCounter.pos.y += 0.2;
-      if (ammoCounter.pos.y >= viewport.y) {
-        ammoCounter.pos.y = viewport.y;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "ammoFadeOut");
+    m_timeService.removeTween("itemsSlideIn");
+    m_timeService.addTween(makeTween(FR, T, itemsDisplay, 0.0, -viewport.y * 0.1), "itemsSlideOut");
 
-    m_timeService.removeTween("healthFadeIn");
-    m_timeService.addTween(Tween{
-      [=, &healthCounter](long frame, double elapsed, double frameRate) -> bool {
-
-      healthCounter.pos.y += 0.2;
-      if (healthCounter.pos.y >= viewport.y) {
-        healthCounter.pos.y = viewport.y;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "healthFadeOut");
-
-    m_timeService.removeTween("itemsFadeOut");
-    m_timeService.addTween(Tween{
-      [=, &itemsDisplay, &viewport](long frame, double elapsed, double frameRate) -> bool {
-
-      itemsDisplay.pos.y -= 0.2;
-      if (itemsDisplay.pos.y <= -0.1 * viewport.y) {
-        itemsDisplay.pos.y = -0.1 * viewport.y;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "itemsFadeIn");
-
-    m_timeService.removeTween("hudBgFadeIn");
-    m_timeService.addTween(Tween{
-      [=, &hudBg, &viewport](long frame, double elapsed, double frameRate) -> bool {
-
-      hudBg.pos.y += 0.2;
-      if (hudBg.pos.y >= viewport.y) {
-        hudBg.pos.y = viewport.y;
-        return false;
-      }
-      return true;
-    },
-    [](long frame, double elapsed, double frameRate) {}}, "hudBgFadeOut");
+    m_timeService.removeTween("hudBgSlideIn");
+    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y - 0.7, viewport.y), "hudBgSlideOut");
 
     crosshair.pos = Point(10, 10);
   }});
