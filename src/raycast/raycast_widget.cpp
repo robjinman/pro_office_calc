@@ -268,14 +268,15 @@ void RaycastWidget::mousePressEvent(QMouseEvent* event) {
   }
 
   if (m_cursorCaptured == false) {
+    Point centre(width() / 2, height() / 2);
+    QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
+    m_cursor = centre;
+
+    setCursor(Qt::BlankCursor);
+
     m_entityManager.broadcastEvent(EMouseCaptured{});
+    m_cursorCaptured = true;
   }
-
-  m_cursorCaptured = true;
-  m_cursor.x = width() / 2;
-  m_cursor.y = height() / 2;
-
-  setCursor(Qt::BlankCursor);
 }
 
 //===========================================
