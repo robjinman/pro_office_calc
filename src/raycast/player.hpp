@@ -75,6 +75,7 @@ class Player {
       BehaviourSystem& behaviourSystem, EventHandlerSystem& eventHandlerSystem);
     void constructInventory(RenderSystem& renderSystem, InventorySystem& inventorySystem,
       EventHandlerSystem& eventHandlerSystem, DamageSystem& damageSystem);
+    void setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& eventHandlerSystem);
 
     CVRect& getBody() const;
 
@@ -83,6 +84,11 @@ class Player {
     TimeService& m_timeService;
     std::unique_ptr<Camera> m_camera;
     Debouncer m_shootTimer;
+
+    entityId_t m_ammoId;
+    entityId_t m_healthId;
+    entityId_t m_itemsId;
+    entityId_t m_hudBgId;
 };
 
 

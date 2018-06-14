@@ -46,6 +46,166 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, TimeSer
   constructPlayer(obj, parentId, parentTransform, spatialSystem, renderSystem, animationSystem,
     damageSystem, behaviourSystem, eventHandlerSystem);
   constructInventory(renderSystem, inventorySystem, eventHandlerSystem, damageSystem);
+  setupHudShowHide(renderSystem, eventHandlerSystem);
+}
+
+//===========================================
+// Player::setupHudShowHide
+//===========================================
+void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& eventHandlerSystem) {
+  const Size& viewport = renderSystem.rg.viewport;
+
+  CEventHandler& events = eventHandlerSystem.getComponent(this->body);
+
+  auto& gunSprite = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->sprite));
+  auto& itemsDisplay = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(m_itemsId));
+  auto& ammoCounter = dynamic_cast<CTextOverlay&>(renderSystem.getComponent(m_ammoId));
+  auto& healthCounter = dynamic_cast<CTextOverlay&>(renderSystem.getComponent(m_healthId));
+  auto& hudBg = dynamic_cast<CColourOverlay&>(renderSystem.getComponent(m_hudBgId));
+  auto& crosshair = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->crosshair));
+
+  events.broadcastedEventHandlers.push_back(EventHandler{"mouse_captured",
+    [=, &gunSprite, &itemsDisplay, &ammoCounter, &healthCounter, &hudBg, &crosshair, &viewport]
+    (const GameEvent& e_) {
+
+    m_timeService.removeTween("gunFadeOut");
+    m_timeService.addTween(Tween{
+      [=, &gunSprite](long frame, double elapsed, double frameRate) -> bool {
+
+      gunSprite.pos.y += 0.2;
+      if (gunSprite.pos.y >= 0.0) {
+        gunSprite.pos.y = 0.0;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "gunFadeIn");
+
+    m_timeService.removeTween("ammoFadeOut");
+    m_timeService.addTween(Tween{
+      [=, &ammoCounter](long frame, double elapsed, double frameRate) -> bool {
+
+      ammoCounter.pos.y -= 0.2;
+      if (ammoCounter.pos.y <= viewport.y - 0.5) {
+        ammoCounter.pos.y = viewport.y - 0.5;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "ammoFadeIn");
+
+    m_timeService.removeTween("healthFadeOut");
+    m_timeService.addTween(Tween{
+      [=, &healthCounter](long frame, double elapsed, double frameRate) -> bool {
+
+      healthCounter.pos.y -= 0.2;
+      if (healthCounter.pos.y <= viewport.y - 0.5) {
+        healthCounter.pos.y = viewport.y - 0.5;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "healthFadeIn");
+
+    m_timeService.removeTween("itemsFadeOut");
+    m_timeService.addTween(Tween{
+      [=, &itemsDisplay](long frame, double elapsed, double frameRate) -> bool {
+
+      itemsDisplay.pos.y += 0.2;
+      if (itemsDisplay.pos.y >= 0.0) {
+        itemsDisplay.pos.y = 0.0;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "itemsFadeIn");
+
+    m_timeService.removeTween("hudBgFadeOut");
+    m_timeService.addTween(Tween{
+      [=, &hudBg, &viewport](long frame, double elapsed, double frameRate) -> bool {
+
+      hudBg.pos.y -= 0.2;
+      if (hudBg.pos.y <= viewport.y - 0.7) {
+        hudBg.pos.y = viewport.y - 0.7;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "hudBgFadeIn");
+
+    crosshair.pos = viewport / 2 - Vec2f(0.5, 0.5) / 2;
+  }});
+  events.broadcastedEventHandlers.push_back(EventHandler{"mouse_uncaptured",
+    [=, &gunSprite, &itemsDisplay, &ammoCounter, &healthCounter, &hudBg, &crosshair, &viewport]
+    (const GameEvent& e_) {
+
+    m_timeService.removeTween("gunFadeIn");
+    m_timeService.addTween(Tween{
+      [=, &gunSprite](long frame, double elapsed, double frameRate) -> bool {
+
+      gunSprite.pos.y -= 0.2;
+      if (gunSprite.pos.y <= -4.0) {
+        gunSprite.pos.y = -4.0;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "gunFadeOut");
+
+    m_timeService.removeTween("ammoFadeIn");
+    m_timeService.addTween(Tween{
+      [=, &ammoCounter](long frame, double elapsed, double frameRate) -> bool {
+
+      ammoCounter.pos.y += 0.2;
+      if (ammoCounter.pos.y >= viewport.y) {
+        ammoCounter.pos.y = viewport.y;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "ammoFadeOut");
+
+    m_timeService.removeTween("healthFadeIn");
+    m_timeService.addTween(Tween{
+      [=, &healthCounter](long frame, double elapsed, double frameRate) -> bool {
+
+      healthCounter.pos.y += 0.2;
+      if (healthCounter.pos.y >= viewport.y) {
+        healthCounter.pos.y = viewport.y;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "healthFadeOut");
+
+    m_timeService.removeTween("itemsFadeOut");
+    m_timeService.addTween(Tween{
+      [=, &itemsDisplay, &viewport](long frame, double elapsed, double frameRate) -> bool {
+
+      itemsDisplay.pos.y -= 0.2;
+      if (itemsDisplay.pos.y <= -0.1 * viewport.y) {
+        itemsDisplay.pos.y = -0.1 * viewport.y;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "itemsFadeIn");
+
+    m_timeService.removeTween("hudBgFadeIn");
+    m_timeService.addTween(Tween{
+      [=, &hudBg, &viewport](long frame, double elapsed, double frameRate) -> bool {
+
+      hudBg.pos.y += 0.2;
+      if (hudBg.pos.y >= viewport.y) {
+        hudBg.pos.y = viewport.y;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}}, "hudBgFadeOut");
+
+    crosshair.pos = Point(10, 10);
+  }});
 }
 
 //===========================================
@@ -113,11 +273,10 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
   const Size& viewport = renderSystem.rg.viewport;
 
   Size sz(0.5, 0.5);
-  CImageOverlay* crosshair = new CImageOverlay(this->crosshair, "crosshair",
-    viewport / 2 - sz / 2, sz);
+  CImageOverlay* crosshair = new CImageOverlay(this->crosshair, "crosshair", Point(10, 10), sz);
   renderSystem.addComponent(pCRender_t(crosshair));
 
-  CImageOverlay* gunSprite = new CImageOverlay(this->sprite, "gun", Point(viewport.x * 0.5, 0),
+  CImageOverlay* gunSprite = new CImageOverlay(this->sprite, "gun", Point(viewport.x * 0.5, -4),
     Size(4, 4));
   gunSprite->texRect = QRectF(0, 0, 0.25, 1);
   renderSystem.addComponent(pCRender_t(gunSprite));
@@ -192,20 +351,20 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
 
   renderSystem.rg.textures["items_display"] = Texture{imgItems, Size(0, 0)};
 
-  entityId_t ammoId = Component::getNextId();
-  entityId_t healthId = Component::getNextId();
-  entityId_t itemsId = Component::getNextId();
+  m_ammoId = Component::getNextId();
+  m_healthId = Component::getNextId();
+  m_itemsId = Component::getNextId();
 
-  CImageOverlay* itemsDisplay = new CImageOverlay(itemsId, "items_display",
-    Point(0, 0), Size(itemsDisplayW_wd, itemsDisplayH_wd), 1);
+  CImageOverlay* itemsDisplay = new CImageOverlay(m_itemsId, "items_display",
+    Point(0, -itemsDisplayH_wd), Size(itemsDisplayW_wd, itemsDisplayH_wd), 1);
   renderSystem.addComponent(pComponent_t(itemsDisplay));
 
-  CTextOverlay* ammoCounter = new CTextOverlay(ammoId, "AMMO 0/50", Point(0.1, viewport.y - 0.5),
+  CTextOverlay* ammoCounter = new CTextOverlay(m_ammoId, "AMMO 0/50", Point(0.1, viewport.y + 0.1),
     0.5, Qt::green, 2);
   renderSystem.addComponent(pComponent_t(ammoCounter));
 
-  CTextOverlay* healthCounter = new CTextOverlay(healthId, "HEALTH 10/10",
-    Point(9.5, viewport.y - 0.5), 0.5, Qt::red, 2);
+  CTextOverlay* healthCounter = new CTextOverlay(m_healthId, "HEALTH 10/10",
+    Point(9.5, viewport.y + 0.1), 0.5, Qt::red, 2);
   renderSystem.addComponent(pComponent_t(healthCounter));
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
@@ -295,9 +454,9 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
     }
   }});
 
-  entityId_t bgId = Component::getNextId();
+  m_hudBgId = Component::getNextId();
 
-  CColourOverlay* bg = new CColourOverlay(bgId, QColor(0, 0, 0, 100), Point(0, viewport.y - 0.7),
+  CColourOverlay* bg = new CColourOverlay(m_hudBgId, QColor(0, 0, 0, 100), Point(0, viewport.y),
     Size(viewport.x, 0.7), 1);
 
   renderSystem.addComponent(pComponent_t(bg));

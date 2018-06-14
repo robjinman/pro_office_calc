@@ -37,6 +37,13 @@ void TimeService::addTween(const Tween& tween, const char* name) {
 }
 
 //===========================================
+// TimeService::removeTween
+//===========================================
+void TimeService::removeTween(const string& name) {
+  m_tweens.erase(name);
+}
+
+//===========================================
 // TimeService::deletePending
 //===========================================
 void TimeService::deletePending() {

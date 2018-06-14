@@ -20,6 +20,7 @@ class TimeService {
       : frameRate(frameRate) {}
 
     void addTween(const Tween& tween, const char* name = nullptr);
+    void removeTween(const std::string& name);
     long onTimeout(std::function<void()> fn, double seconds);
     long atIntervals(std::function<bool()> fn, double seconds);
     void cancelTimeout(long id);
