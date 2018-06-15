@@ -196,7 +196,7 @@ void FTroubleshooterDialog::onRunTroubleshooter() {
   tab.wgtRunTroubleshooter->setDisabled(true);
 
   tab.wgtProgressBar->setValue(0);
-  tab.timer->start(300);
+  tab.timer->start(3);
 }
 
 //===========================================
