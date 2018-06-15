@@ -17,8 +17,11 @@ class GameEvent {
 
 class EActivateEntity : public GameEvent {
   public:
-    EActivateEntity()
-      : GameEvent("activate_entity") {}
+    EActivateEntity(entityId_t entityId)
+      : GameEvent("activate_entity"),
+        entityId(entityId) {}
+
+    entityId_t entityId;
 };
 
 struct EMouseCaptured : public GameEvent {

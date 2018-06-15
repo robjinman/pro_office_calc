@@ -1,6 +1,7 @@
 #include "fragments/f_main/f_troubleshooter_dialog/game_logic.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/event_handler_system.hpp"
+#include "raycast/spatial_system.hpp"
 #include "raycast/c_switch_behaviour.hpp"
 #include "event_system.hpp"
 #include "state_ids.hpp"
@@ -25,12 +26,14 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
-  pCEventHandler_t forwardEvent(new CEventHandler(m_entityId));
+  CEventHandler* events = new CEventHandler(m_entityId);
 
-  forwardEvent->broadcastedEventHandlers.push_back(EventHandler{"*",
-    std::bind(&GameLogic::onRaycastEvent, this, std::placeholders::_1)});
+  events->broadcastedEventHandlers.push_back(EventHandler{"switch_activated",
+    std::bind(&GameLogic::onSwitchActivate, this, std::placeholders::_1)});
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+    std::bind(&GameLogic::onChangeZone, this, std::placeholders::_1)});
 
-  eventHandlerSystem.addComponent(std::move(forwardEvent));
+  eventHandlerSystem.addComponent(pComponent_t(events));
 
   m_eventSystem.listen("its_raining_tetrominos", [](const Event& event) {
     // TODO
@@ -38,20 +41,34 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 }
 
 //===========================================
-// GameLogic::onRaycastEvent
+// GameLogic::onChangeZone
 //===========================================
-void GameLogic::onRaycastEvent(const GameEvent& event) {
-  if (event.name == "switch_activated") {
-    const auto& e = dynamic_cast<const ESwitchActivate&>(event);
+void GameLogic::onChangeZone(const GameEvent& e_) {
+  static entityId_t playerId = Component::getIdFromString("player");
+  static entityId_t doorId = Component::getIdFromString("exit_door");
 
-    if (e.state == SwitchState::ON) {
-      // TODO: Cool transition
+  const auto& e = dynamic_cast<const EChangedZone&>(e_);
 
-      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS)));
-    }
-    else {
-      m_entityManager.broadcastEvent(GameEvent("machine_deactivated"));
-    }
+  if (e.entityId == playerId && e.newZone == doorId) {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS)));
+  }
+}
+
+//===========================================
+// GameLogic::onSwitchActivate
+//===========================================
+void GameLogic::onSwitchActivate(const GameEvent& e_) {
+  static entityId_t doorId = Component::getIdFromString("exit_door");
+
+  const auto& e = dynamic_cast<const ESwitchActivate&>(e_);
+
+  if (e.state == SwitchState::ON) {
+    // TODO: Cool transition
+
+    m_entityManager.fireEvent(EActivateEntity{doorId}, {doorId});
+  }
+  else {
+    m_entityManager.broadcastEvent(GameEvent("machine_deactivated"));
   }
 }
 

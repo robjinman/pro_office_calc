@@ -155,8 +155,17 @@ bool MiscFactory::constructDoor(entityId_t entityId, parser::Object& obj, entity
   }
 
   if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
-    BehaviourSystem& behaviourSystem =
-      m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+    auto& behaviourSystem = m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+
+    string caption = getValue(obj.dict, "denied_caption", "");
+
+    if (caption != "") {
+      CFocus* focus = new CFocus(entityId);
+      focus->captionText = caption;
+
+      focusSystem.addComponent(pComponent_t(focus));
+    }
 
     CDoorBehaviour* behaviour = new CDoorBehaviour(entityId, m_entityManager, m_timeService,
       m_audioService);

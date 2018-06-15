@@ -107,7 +107,7 @@ void GameLogic::onButtonPress(const Event& event) {
   if (ss >> value) {
     if (fabs(value - m_targetNumber) < 0.001) {
       entityId_t doorId = Component::getIdFromString("exit_door");
-      EActivateEntity e;
+      EActivateEntity e(doorId);
 
       m_success = true;
       m_entityManager.fireEvent(e, {doorId});

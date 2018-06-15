@@ -1,6 +1,7 @@
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
@@ -117,6 +118,10 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
   };
 
   if (!isPlayerActivated && e.name == "player_activate_entity") {
+    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+    if (focusSystem.hasComponent(entityId())) {
+      focusSystem.showCaption(entityId());
+    }
     return;
   }
 

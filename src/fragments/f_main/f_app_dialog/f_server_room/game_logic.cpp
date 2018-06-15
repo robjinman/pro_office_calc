@@ -72,8 +72,10 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
           if (m_exitDoorInput == exitDoorCode) {
             DBG_PRINT("Correct door code entered. Opening door.\n");
 
-            EActivateEntity e;
-            m_entityManager.fireEvent(e, {Component::getIdFromString("exit_door")});
+            entityId_t doorId = Component::getIdFromString("exit_door");
+
+            EActivateEntity e(doorId);
+            m_entityManager.fireEvent(e, {doorId});
           }
 
           m_exitDoorSelectedNum = '\0';

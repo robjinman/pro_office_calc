@@ -19,7 +19,8 @@ class GameLogic {
     ~GameLogic();
 
   private:
-    void onRaycastEvent(const GameEvent& event);
+    void onSwitchActivate(const GameEvent& event);
+    void onChangeZone(const GameEvent& event);
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
