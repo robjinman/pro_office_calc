@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="326.42857"
+     inkscape:cx="-182.14286"
      inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -58,13 +58,15 @@
        height="300"
        x="41.825054"
        y="94.505058"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001" />
+       inkscape:export-xdpi="9.6000004"
+       inkscape:export-ydpi="9.6000004"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/flag.png" />
     <g
        id="g4279"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001"
-       transform="translate(-169.60349,-83.571419)">
+       inkscape:export-xdpi="9.6000004"
+       inkscape:export-ydpi="9.6000004"
+       transform="translate(-169.60349,-83.571419)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/flag.png">
       <rect
          y="293.33774"
          x="353.52295"
@@ -117,9 +119,9 @@
     <g
        id="g4267"
        transform="matrix(0.92307692,0,0,0.92307692,-481.64245,-224.61052)"
-       inkscape:export-xdpi="13.5"
-       inkscape:export-ydpi="13.5"
-       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/minesweeper.png">
+       inkscape:export-xdpi="12"
+       inkscape:export-ydpi="12"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/mine.png">
       <rect
          y="395.06256"
          x="1130.5637"
@@ -170,13 +172,15 @@
        height="300"
        x="80.396492"
        y="470.21933"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001" />
+       inkscape:export-xdpi="9.6000004"
+       inkscape:export-ydpi="9.6000004"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/no_mine.png" />
     <g
        id="g4267-6"
        transform="matrix(0.92307692,0,0,0.92307692,-825.13518,135.54624)"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001">
+       inkscape:export-xdpi="9.6000004"
+       inkscape:export-ydpi="9.6000004"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/no_mine.png">
       <rect
          y="395.06256"
          x="1130.5637"
@@ -228,8 +232,9 @@
        x="-284.22134"
        y="401.47623"
        transform="matrix(0.70710678,-0.70710678,0.70710678,0.70710678,0,0)"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001" />
+       inkscape:export-xdpi="9.6000004"
+       inkscape:export-ydpi="9.6000004"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/no_mine.png" />
     <rect
        style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1.75;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4138-6-7-5-3-3"
@@ -238,7 +243,8 @@
        x="592.90131"
        y="75.646408"
        transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,0,0)"
-       inkscape:export-xdpi="5.4000001"
-       inkscape:export-ydpi="5.4000001" />
+       inkscape:export-xdpi="9.6000004"
+       inkscape:export-ydpi="9.6000004"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/millennium_bug/no_mine.png" />
   </g>
 </svg>

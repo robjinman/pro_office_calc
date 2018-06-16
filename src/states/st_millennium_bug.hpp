@@ -39,7 +39,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec0.kernelSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
   mainSpec->appDialogSpec1.titleText = "Minesweeper";
-  mainSpec->appDialogSpec1.width = 320;
+  mainSpec->appDialogSpec1.width = 280;
   mainSpec->appDialogSpec1.height = 240;
   mainSpec->appDialogSpec1.showOnEvent = "minesweeperLaunch";
   mainSpec->appDialogSpec1.minesweeperSpec.setEnabled(true);
