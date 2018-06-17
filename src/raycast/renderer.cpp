@@ -338,8 +338,8 @@ void Renderer::castRay(const RenderGraph& rg, const Camera& cam, const SpatialSy
       double floorHeight = spriteX.vRect->zone->floorHeight;
       const Point& pt = spriteX.X->point_rel;
 
-      LineSegment sprite(Point(pt.x, floorHeight + spriteX.vRect->height - cam.height),
-        Point(pt.x, floorHeight + spriteX.vRect->height - cam.height + spriteX.vRect->size.y));
+      LineSegment sprite(Point(pt.x, floorHeight + spriteX.vRect->y - cam.height),
+        Point(pt.x, floorHeight + spriteX.vRect->y - cam.height + spriteX.vRect->size.y));
 
       Point projX0, projX1;
       spriteX.slice = computeSlice(rotProjPlane, sprite, subview0, subview1, projRay0, projRay1,
@@ -712,7 +712,7 @@ void Renderer::drawSprite(const RenderGraph& rg, const Camera& camera, const Spr
   const CZone& zone = *vRect.zone;
 
   QRect srcRect = sampleSpriteTexture(camera, frame, X, vRect.size,
-    zone.floorHeight + vRect.height);
+    zone.floorHeight + vRect.y);
   QRect trgRect(screenX_px, screenSliceTop_px, 1, screenSliceBottom_px - screenSliceTop_px);
 
   drawImage(trgRect, tex.image, srcRect, X.X->distanceFromOrigin);

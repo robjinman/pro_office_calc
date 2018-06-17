@@ -511,6 +511,35 @@ bool GeometryFactory::constructRootRegion(parser::Object& obj) {
 }
 
 //===========================================
+// GeometryFactory::constructVRect
+//===========================================
+bool GeometryFactory::constructVRect(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  CZone& zone = spatialSystem.zone(parentId);
+
+  double width = std::stod(getValue(obj.dict, "width", "0.0"));
+  double height = std::stod(getValue(obj.dict, "height", "0.0"));
+  double y = std::stod(getValue(obj.dict, "y", "0.0"));
+
+  CVRect* vRect = new CVRect(entityId, zone.entityId(), Size(0, 0));
+  Matrix m = transformFromTriangle(obj.path);
+  vRect->setTransform(parentTransform * obj.groupTransform * obj.pathTransform * m);
+  vRect->zone = &zone;
+  vRect->size = Size(width, height);
+  vRect->y = y;
+
+  spatialSystem.addComponent(pComponent_t(vRect));
+
+  return true;
+}
+
+//===========================================
 // GeometryFactory::constructRegion
 //===========================================
 bool GeometryFactory::constructRegion(entityId_t entityId, parser::Object& obj, entityId_t parentId,
@@ -539,6 +568,7 @@ GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entity
 //===========================================
 const set<string>& GeometryFactory::types() const {
   static const set<string> types{
+    "v_rect",
     "region",
     "join",
     "portal",
@@ -557,7 +587,10 @@ const set<string>& GeometryFactory::types() const {
 bool GeometryFactory::constructObject(const string& type, entityId_t entityId,
   parser::Object& obj, entityId_t parentId, const Matrix& parentTransform) {
 
-  if (type == "region") {
+  if (type == "v_rect") {
+    return constructVRect(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "region") {
     return constructRegion(entityId, obj, parentId, parentTransform);
   }
   else if (type == "join") {

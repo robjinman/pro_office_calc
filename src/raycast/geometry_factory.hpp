@@ -33,6 +33,8 @@ class GeometryFactory : public GameObjectFactory {
 
     std::map<Point, bool> m_endpoints;
 
+    bool constructVRect(entityId_t, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
     bool constructWallDecal(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructWalls(parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);

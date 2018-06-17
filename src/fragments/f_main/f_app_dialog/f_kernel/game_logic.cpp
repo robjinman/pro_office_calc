@@ -40,25 +40,31 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
   entityId_t safeCell0Id = Component::getIdFromString("safe_cell_0");
   parser::pObject_t safeCell0Obj(m_objectFactory.objects.at(safeCell0Id)->clone());
 
+  Matrix safeCell0Transform = safeCell0Obj->groupTransform;
+
   entityId_t startCellId = Component::getIdFromString("start_cell");
   parser::pObject_t startCellObj(m_objectFactory.objects.at(startCellId)->clone());
+
+  Point startCellPos = objectFactory.objectPositions.at(startCellId);
+  Point safeCell0Pos = objectFactory.objectPositions.at(safeCell0Id);
 
   m_rootFactory.constructObject("cell", -1, *startCellObj, m_objectFactory.region,
     m_objectFactory.parentTransform);
 
-  for (int i = 0; i < 2; ++i) {
-    for (int j = 0; j < 2; ++j) {
+  for (int i = 0; i < 8; ++i) {
+    for (int j = 0; j < 8; ++j) {
       if (i == 0 && j == 0) {
         continue;
       }
 
-      Matrix m(0, Vec2f(800.0 * j, 800.0 * i));
+      Point targetPos = startCellPos + Vec2f(800.0 * j, 800.0 * i);
+      Matrix m(0, targetPos - safeCell0Pos);
 
       stringstream ss;
       ss << "cell_" << i << "_" << j;
 
       safeCell0Obj->dict["name"] = ss.str();
-      safeCell0Obj->groupTransform = startCellObj->groupTransform * m;
+      safeCell0Obj->groupTransform = safeCell0Transform * m;
 
       m_rootFactory.constructObject("cell", -1, *safeCell0Obj, m_objectFactory.region,
         m_objectFactory.parentTransform);

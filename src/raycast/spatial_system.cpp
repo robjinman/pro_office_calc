@@ -984,8 +984,8 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             X->distanceFromOrigin = pt.x;
             X->distanceAlongTarget = distance(lseg.A, pt);
             X->zoneA = X->zoneB = zone.entityId();
-            X->heightRanges = make_pair(Range(vRect.zone->floorHeight + vRect.height,
-              vRect.zone->floorHeight + vRect.height + vRect.size.y), Range(0, 0));
+            X->heightRanges = make_pair(Range(vRect.zone->floorHeight + vRect.y,
+              vRect.zone->floorHeight + vRect.y + vRect.size.y), Range(0, 0));
             intersections.push_back(std::move(X));
           }
         }
@@ -1270,7 +1270,7 @@ static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const
       assert(vRect.zone != nullptr);
 
       double y1 = zone.floorHeight + heightAboveFloor;
-      double y2 = vRect.zone->floorHeight + vRect.height + 0.5 * vRect.size.y;
+      double y2 = vRect.zone->floorHeight + vRect.y + 0.5 * vRect.size.y;
 
       if (fabs(y1 - y2) <= MAX_VERTICAL_DISTANCE) {
         entities.insert(vRect.entityId());

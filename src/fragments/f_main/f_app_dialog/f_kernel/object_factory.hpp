@@ -30,6 +30,7 @@ class ObjectFactory : public GameObjectFactory {
     entityId_t region;
     Matrix parentTransform;
     std::map<entityId_t, parser::pObject_t> objects;
+    std::map<entityId_t, Point> objectPositions;
     bool firstPassComplete = false;
 
   private:
@@ -37,6 +38,9 @@ class ObjectFactory : public GameObjectFactory {
       const Matrix& parentTransform);
 
     bool constructCell(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
+
+    bool constructCellCorner(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 
     RootFactory& m_rootFactory;

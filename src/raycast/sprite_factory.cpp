@@ -47,7 +47,7 @@ bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, en
   Matrix m = transformFromTriangle(obj.path);
   vRect->setTransform(parentTransform * obj.groupTransform * obj.pathTransform * m);
   vRect->zone = &zone;
-  vRect->height = height;
+  vRect->y = height;
 
   spatialSystem.addComponent(pComponent_t(vRect));
 

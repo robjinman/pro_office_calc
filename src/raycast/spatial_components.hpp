@@ -63,7 +63,7 @@ class CVRect : public CSpatial {
     double angle;
     Size size;
     // Height above floor
-    double height = 0;
+    double y = 0;
 };
 
 typedef std::unique_ptr<CVRect> pCVRect_t;

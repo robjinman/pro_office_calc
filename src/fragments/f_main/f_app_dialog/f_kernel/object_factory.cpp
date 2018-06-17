@@ -33,7 +33,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"computer_screen", "cell"};
+  static const set<string> types{"computer_screen", "cell", "cell_corner"};
   return types;
 }
 
@@ -93,6 +93,32 @@ bool ObjectFactory::constructCell(entityId_t entityId, parser::Object& obj, enti
 }
 
 //===========================================
+// ObjectFactory::constructCellCorner
+//===========================================
+bool ObjectFactory::constructCellCorner(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("v_rect", entityId, obj, parentId, parentTransform)) {
+    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    const CVRect& vRect = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId));
+
+    string cellName = getValue(obj.dict, "cell_name");
+    entityId_t cellId = Component::getIdFromString(cellName);
+
+    DBG_PRINT("Cell '" << cellName << "'" << " is positioned at " << vRect.pos << "\n");
+    objectPositions[cellId] = vRect.pos;
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructObject
 //===========================================
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
@@ -103,6 +129,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "cell") {
     return constructCell(entityId, obj, region, parentTransform);
+  }
+  else if (type == "cell_corner") {
+    return constructCellCorner(entityId, obj, region, parentTransform);
   }
 
   return false;
