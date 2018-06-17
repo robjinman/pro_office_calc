@@ -33,7 +33,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"computer_screen"};
+  static const set<string> types{"computer_screen", "cell"};
   return types;
 }
 
@@ -71,6 +71,28 @@ bool ObjectFactory::constructComputerScreen(entityId_t entityId, parser::Object&
 }
 
 //===========================================
+// ObjectFactory::constructCell
+//===========================================
+bool ObjectFactory::constructCell(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (!firstPassComplete) {
+    region = parentId;
+    this->parentTransform = parentTransform;
+    objects.insert(make_pair(entityId, parser::pObject_t(obj.clone())));
+  }
+  else {
+    return m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform);
+  }
+
+  return true;
+}
+
+//===========================================
 // ObjectFactory::constructObject
 //===========================================
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
@@ -78,6 +100,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
 
   if (type == "computer_screen") {
     return constructComputerScreen(entityId, obj, region, parentTransform);
+  }
+  else if (type == "cell") {
+    return constructCell(entityId, obj, region, parentTransform);
   }
 
   return false;

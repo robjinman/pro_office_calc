@@ -94,7 +94,7 @@ elseif (APPLE)
   include_directories("/usr/local/opt/llvm/include")
   link_directories("/usr/local/opt/llvm/lib")
 else()
-  add_compile_options(-O3 -Wall)
+  add_compile_options(-O0 -Wall)
 endif()
 
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug)

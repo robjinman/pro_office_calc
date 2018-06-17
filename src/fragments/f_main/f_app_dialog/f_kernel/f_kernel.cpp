@@ -47,13 +47,14 @@ void FKernel::reload(const FragmentSpec& spec_) {
   auto& entityManager = m_data.wgtRaycast->entityManager();
   auto& audioService = m_data.wgtRaycast->audioService();
 
-  GameObjectFactory* factory = new millennium_bug::ObjectFactory(rootFactory, entityManager,
-    timeService, audioService);
+  auto factory = new millennium_bug::ObjectFactory(rootFactory, entityManager, timeService,
+    audioService);
 
   m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
   m_data.wgtRaycast->initialise(config::dataPath("millennium_bug/map.svg"));
 
-  m_data.gameLogic.reset(new millennium_bug::GameLogic(commonData.eventSystem, entityManager));
+  m_data.gameLogic.reset(new millennium_bug::GameLogic(commonData.eventSystem, entityManager,
+    m_data.wgtRaycast->rootFactory(), *factory));
 
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 }

@@ -11,14 +11,18 @@ class Event;
 class EntityManager;
 class EventHandlerSystem;
 class GameEvent;
+class RootFactory;
 
 
 namespace millennium_bug {
 
 
+class ObjectFactory;
+
 class GameLogic {
   public:
-    GameLogic(EventSystem& eventSystem, EntityManager& entityManager);
+    GameLogic(EventSystem& eventSystem, EntityManager& entityManager, RootFactory& rootFactory,
+      ObjectFactory& objectFactory);
     GameLogic(const GameLogic& cpy) = delete;
 
     ~GameLogic();
@@ -30,6 +34,8 @@ class GameLogic {
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
+    RootFactory& m_rootFactory;
+    ObjectFactory& m_objectFactory;
 
     entityId_t m_entityId = -1;
 };
