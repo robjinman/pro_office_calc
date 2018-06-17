@@ -57,7 +57,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
         continue;
       }
 
-      Point targetPos = startCellPos + Vec2f(800.0 * j, 800.0 * i);
+      Point targetPos = startCellPos + Vec2f(1600.0 * j, 1600.0 * i);
       Matrix m(0, targetPos - safeCell0Pos);
 
       stringstream ss;
