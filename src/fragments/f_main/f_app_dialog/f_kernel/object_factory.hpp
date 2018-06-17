@@ -43,6 +43,9 @@ class ObjectFactory : public GameObjectFactory {
     bool constructCellCorner(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 
+    bool constructSlime(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
+
     RootFactory& m_rootFactory;
     EntityManager& m_entityManager;
     TimeService& m_timeService;

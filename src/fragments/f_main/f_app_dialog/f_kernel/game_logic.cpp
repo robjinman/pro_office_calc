@@ -74,7 +74,9 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
+  DBG_PRINT("Connecting zones...\n");
   spatialSystem.connectZones();
+  DBG_PRINT("Connecting regions...\n");
   renderSystem.connectRegions();
 
   entityId_t playerId = Component::getIdFromString("player");

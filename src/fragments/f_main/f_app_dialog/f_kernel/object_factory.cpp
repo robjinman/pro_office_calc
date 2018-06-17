@@ -33,7 +33,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"computer_screen", "cell", "cell_corner"};
+  static const set<string> types{"computer_screen", "cell", "cell_corner", "slime"};
   return types;
 }
 
@@ -119,6 +119,27 @@ bool ObjectFactory::constructCellCorner(entityId_t entityId, parser::Object& obj
 }
 
 //===========================================
+// ObjectFactory::constructSlime
+//===========================================
+bool ObjectFactory::constructSlime(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["floor_texture"] = "slime";
+
+  if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
+    // TODO
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructObject
 //===========================================
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
@@ -132,6 +153,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "cell_corner") {
     return constructCellCorner(entityId, obj, region, parentTransform);
+  }
+  else if (type == "slime") {
+    return constructSlime(entityId, obj, region, parentTransform);
   }
 
   return false;
