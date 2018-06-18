@@ -10,6 +10,7 @@
 
 using std::set;
 using std::vector;
+using millennium_bug::Coord;
 
 
 static const int ROWS = 8;
@@ -124,20 +125,18 @@ FMinesweeper::FMinesweeper(Fragment& parent_, FragmentData& parentData_,
 
   m_icons.flag = QIcon(config::dataPath("millennium_bug/flag.png").c_str());
 
-  placeMines();
+  set<Coord> coords = placeMines();
   setNumbers();
+
+  commonData.eventSystem.fire(pEvent_t(new millennium_bug::MinesweeperSetupEvent(coords)));
 }
 
 //===========================================
 // FMinesweeper::placeMines
 //===========================================
-void FMinesweeper::placeMines() {
-  struct Coord {
-    int row;
-    int col;
-  };
-
+set<Coord> FMinesweeper::placeMines() {
   vector<Coord> coords;
+  set<Coord> mineCoords;
 
   for (int i = 0; i < ROWS; ++i) {
     for (int j = 0; j < COLS; ++j) {
@@ -152,7 +151,11 @@ void FMinesweeper::placeMines() {
     int col = coords[i].col;
 
     m_cells[row][col]->setValue(MINE);
+
+    mineCoords.insert(coords[i]);
   }
+
+  return mineCoords;
 }
 
 //===========================================
@@ -204,7 +207,7 @@ void FMinesweeper::setNumbers() {
 }
 
 //===========================================
-// FMinesweeper::clearNeighbours
+// FMinesweeper::clearNeighbours_r
 //===========================================
 void FMinesweeper::clearNeighbours_r(const MinesweeperCell& cell,
   set<const MinesweeperCell*>& visited) {

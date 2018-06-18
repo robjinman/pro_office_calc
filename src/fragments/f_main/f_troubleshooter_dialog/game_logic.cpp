@@ -34,10 +34,6 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     std::bind(&GameLogic::onChangeZone, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
-
-  m_eventSystem.listen("its_raining_tetrominos", [](const Event& event) {
-    // TODO
-  }, m_eventIdx);
 }
 
 //===========================================
@@ -76,7 +72,6 @@ void GameLogic::onSwitchActivate(const GameEvent& e_) {
 // GameLogic::~GameLogic
 //===========================================
 GameLogic::~GameLogic() {
-  m_eventSystem.forget(m_eventIdx);
   m_entityManager.deleteEntity(m_entityId);
 }
 

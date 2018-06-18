@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
+#include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 
 
 class GoodButton : public QPushButton {
@@ -121,7 +122,7 @@ class FMinesweeper : public QWidget, public Fragment {
     void onBtnRightClick(int id);
 
   private:
-    void placeMines();
+    std::set<millennium_bug::Coord> placeMines();
     void setNumbers();
     std::set<MinesweeperCell*> getNeighbours(const MinesweeperCell& cell) const;
     void clearNeighbours_r(const MinesweeperCell& cell, std::set<const MinesweeperCell*>& visited);

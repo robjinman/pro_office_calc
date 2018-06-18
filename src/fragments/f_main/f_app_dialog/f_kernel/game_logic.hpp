@@ -4,6 +4,7 @@
 
 #include <string>
 #include "raycast/component.hpp"
+#include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 
 
 class EventSystem;
@@ -28,6 +29,7 @@ class GameLogic {
     ~GameLogic();
 
   private:
+    void initialise(const std::set<millennium_bug::Coord>& mineCoords);
     void onEntityDestroyed(const GameEvent& event);
     void onEntityChangeZone(const GameEvent& event);
     void setupLarry(EventHandlerSystem& eventHandlerSystem);
@@ -38,6 +40,7 @@ class GameLogic {
     ObjectFactory& m_objectFactory;
 
     entityId_t m_entityId = -1;
+    int m_setupEventId = -1;
 };
 
 
