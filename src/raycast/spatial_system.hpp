@@ -40,15 +40,20 @@ struct Intersection {
 typedef std::unique_ptr<Intersection> pIntersection_t;
 
 struct EChangedZone : public GameEvent {
-  EChangedZone(entityId_t entityId, entityId_t oldZone, entityId_t newZone)
+  EChangedZone(entityId_t entityId, entityId_t oldZone, entityId_t newZone,
+    const std::set<entityId_t>& zonesLeft, const std::set<entityId_t>& zonesEntered)
     : GameEvent("entity_changed_zone"),
       entityId(entityId),
       oldZone(oldZone),
-      newZone(newZone) {}
+      newZone(newZone),
+      zonesLeft(zonesLeft),
+      zonesEntered(zonesEntered) {}
 
   entityId_t entityId;
   entityId_t oldZone;
   entityId_t newZone;
+  std::set<entityId_t> zonesLeft;
+  std::set<entityId_t> zonesEntered;
 };
 
 struct EPlayerMove : public GameEvent {

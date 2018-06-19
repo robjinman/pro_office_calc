@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <map>
 #include "raycast/component.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 
@@ -13,6 +14,7 @@ class EntityManager;
 class EventHandlerSystem;
 class GameEvent;
 class RootFactory;
+class CZone;
 
 
 namespace millennium_bug {
@@ -29,10 +31,8 @@ class GameLogic {
     ~GameLogic();
 
   private:
-    void initialise(const std::set<millennium_bug::Coord>& mineCoords);
-    void onEntityDestroyed(const GameEvent& event);
-    void onEntityChangeZone(const GameEvent& event);
-    void setupLarry(EventHandlerSystem& eventHandlerSystem);
+    void initialise(const std::set<Coord>& mineCoords);
+    void onPlayerChangeZone(const std::set<entityId_t>& zonesEntered);
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
@@ -41,6 +41,8 @@ class GameLogic {
 
     entityId_t m_entityId = -1;
     int m_setupEventId = -1;
+
+    std::map<entityId_t, Coord> m_cellIds;
 };
 
 

@@ -670,7 +670,20 @@ void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entity
     if (removeChildFromComponent(oldZone, c, true)) {
       addChildToComponent(newZone, pCSpatial_t(&c));
 
-      m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId));
+      set<entityId_t> oldZones = getAncestors(oldZoneId);
+      set<entityId_t> newZones = getAncestors(newZoneId);
+
+      set<entityId_t> zonesLeft = { oldZoneId };
+      set<entityId_t> zonesEntered = { newZoneId };
+
+      std::set_difference(oldZones.begin(), oldZones.end(), newZones.begin(), newZones.end(),
+        std::inserter(zonesLeft, zonesLeft.end()));
+
+      std::set_difference(newZones.begin(), newZones.end(), oldZones.begin(), oldZones.end(),
+        std::inserter(zonesEntered, zonesEntered.end()));
+
+      m_entityManager.broadcastEvent(EChangedZone(entityId, oldZoneId, newZoneId, zonesLeft,
+        zonesEntered));
     }
   }
 }

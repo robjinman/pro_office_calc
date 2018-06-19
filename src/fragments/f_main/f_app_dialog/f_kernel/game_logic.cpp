@@ -47,6 +47,25 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
     initialise(e.mineCoords);
   }, m_setupEventId);
+
+  m_entityId = Component::getNextId();
+
+  auto& eventHandlerSystem =
+    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+  CEventHandler* events = new CEventHandler(m_entityId);
+
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+    [this](const GameEvent& e_) {
+
+    auto& e = dynamic_cast<const EChangedZone&>(e_);
+
+    if (e.entityId == Component::getIdFromString("player")) {
+      onPlayerChangeZone(e.zonesEntered);
+    }
+  }});
+
+  eventHandlerSystem.addComponent(pComponent_t(events));
 }
 
 //===========================================
@@ -106,6 +125,8 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
       stringstream ss;
       ss << "cell_" << i << "_" << j;
 
+      m_cellIds[Component::getIdFromString(ss.str())] = Coord{i, j};
+
       cellObj->dict["name"] = ss.str();
       cellObj->groupTransform = cellTransform * m;
 
@@ -128,6 +149,28 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   auto& startPoint = dynamic_cast<const CVRect&>(spatialSystem.getComponent(startPointId));
 
   spatialSystem.relocateEntity(playerId, *startPoint.zone, startPoint.pos);
+}
+
+//===========================================
+// GameLogic::onPlayerChangeZone
+//===========================================
+void GameLogic::onPlayerChangeZone(const set<entityId_t>& zonesEntered) {
+  entityId_t cellId = -1;
+  Coord coord;
+
+  for (entityId_t cell : zonesEntered) {
+    auto it = m_cellIds.find(cell);
+
+    if (it != m_cellIds.end()) {
+      cellId = it->first;
+      coord = it->second;
+      break;
+    }
+  }
+
+  if (cellId != -1) {
+    DBG_PRINT("Player has entered cell " << coord.row << ", " << coord.col << "\n");
+  }
 }
 
 //===========================================
