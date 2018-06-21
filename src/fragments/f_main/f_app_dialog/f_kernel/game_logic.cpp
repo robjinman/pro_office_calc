@@ -76,16 +76,16 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
 
   vector<entityId_t> safeCells = {
     Component::getIdFromString("safe_cell_0"),
-    Component::getIdFromString("safe_cell_1"),
-    Component::getIdFromString("safe_cell_2")
+    //Component::getIdFromString("safe_cell_1"),
+    //Component::getIdFromString("safe_cell_2")
   };
 
   std::uniform_int_distribution<int> randomSafeCell(0, safeCells.size() - 1);
 
   vector<entityId_t> unsafeCells = {
     Component::getIdFromString("unsafe_cell_0"),
-    Component::getIdFromString("unsafe_cell_1"),
-    Component::getIdFromString("unsafe_cell_2")
+    //Component::getIdFromString("unsafe_cell_1"),
+    //Component::getIdFromString("unsafe_cell_2")
   };
 
   std::uniform_int_distribution<int> randomUnsafeCell(0, unsafeCells.size() - 1);
@@ -169,7 +169,7 @@ void GameLogic::onPlayerChangeZone(const set<entityId_t>& zonesEntered) {
   }
 
   if (cellId != -1) {
-    DBG_PRINT("Player has entered cell " << coord.row << ", " << coord.col << "\n");
+    m_eventSystem.fire(pEvent_t(new CellEnteredEvent{coord}));
   }
 }
 

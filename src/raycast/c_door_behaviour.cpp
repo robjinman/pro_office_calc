@@ -31,6 +31,13 @@ CDoorBehaviour::CDoorBehaviour(entityId_t entityId, EntityManager& entityManager
 }
 
 //===========================================
+// CDoorBehaviour::setPauseTime
+//===========================================
+void CDoorBehaviour::setPauseTime(double t) {
+  m_timer = Debouncer{t};
+}
+
+//===========================================
 // CDoorBehaviour::playSound
 //===========================================
 void CDoorBehaviour::playSound() const {
@@ -55,7 +62,7 @@ void CDoorBehaviour::update() {
   Player& player = *spatialSystem.sg.player;
   CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
 
-  double dy = 60.0 / m_timeService.frameRate;
+  double dy = this->speed / m_timeService.frameRate;
 
   switch (m_state) {
     case ST_CLOSED:

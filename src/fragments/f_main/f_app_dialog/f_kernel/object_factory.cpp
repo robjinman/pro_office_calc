@@ -1,10 +1,12 @@
 #include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/animation_system.hpp"
+#include "raycast/behaviour_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/focus_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
+#include "raycast/c_door_behaviour.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
@@ -33,7 +35,14 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"computer_screen", "cell", "cell_corner", "slime"};
+  static const set<string> types{
+    "computer_screen",
+    "cell",
+    "cell_inner",
+    "cell_corner",
+    "cell_door",
+    "slime"};
+
   return types;
 }
 
@@ -119,6 +128,53 @@ bool ObjectFactory::constructCellCorner(entityId_t entityId, parser::Object& obj
 }
 
 //===========================================
+// ObjectFactory::constructCellInner
+//===========================================
+bool ObjectFactory::constructCellInner(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  string type = "region";
+
+  if (getValue(obj.dict, "is_slime_pit", "false") == "true") {
+    type = "slime";
+  }
+
+  if (m_rootFactory.constructObject(type, entityId, obj, parentId, parentTransform)) {
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
+// ObjectFactory::constructCellDoor
+//===========================================
+bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("door", entityId, obj, parentId, parentTransform)) {
+    auto& behaviour =
+      m_entityManager.getComponent<CDoorBehaviour>(entityId, ComponentKind::C_BEHAVIOUR);
+
+    behaviour.speed = 120.0;
+    behaviour.setPauseTime(1.5);
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructSlime
 //===========================================
 bool ObjectFactory::constructSlime(entityId_t entityId, parser::Object& obj, entityId_t parentId,
@@ -150,6 +206,12 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "cell") {
     return constructCell(entityId, obj, region, parentTransform);
+  }
+  else if (type == "cell_inner") {
+    return constructCellInner(entityId, obj, region, parentTransform);
+  }
+  else if (type == "cell_door") {
+    return constructCellDoor(entityId, obj, region, parentTransform);
   }
   else if (type == "cell_corner") {
     return constructCellCorner(entityId, obj, region, parentTransform);

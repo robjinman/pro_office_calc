@@ -63,6 +63,7 @@ struct IconSet {
   QIcon mine;
   QIcon noMine;
   QIcon flag;
+  QIcon player;
 };
 
 class MinesweeperCell : public QWidget {
@@ -93,15 +94,23 @@ class MinesweeperCell : public QWidget {
 
     void setFlagged(bool flagged);
 
+    void onPlayerChangeCell(int row, int col);
+
   private:
+    void render();
+
     const IconSet& m_icons;
 
     int m_value;
     bool m_flagged = false;
 
+    QPixmap m_pixmap;
+
     QtObjPtr<QStackedLayout> m_stackedLayout;
     QtObjPtr<QLabel> m_label;
     QtObjPtr<GoodButton> m_button;
+
+    bool m_hasPlayer = false;
 };
 
 struct FMinesweeperData : public FragmentData {};
@@ -126,12 +135,14 @@ class FMinesweeper : public QWidget, public Fragment {
     void setNumbers();
     std::set<MinesweeperCell*> getNeighbours(const MinesweeperCell& cell) const;
     void clearNeighbours_r(const MinesweeperCell& cell, std::set<const MinesweeperCell*>& visited);
+    void onCellEntered(const Event& e_);
 
     FMinesweeperData m_data;
     QtObjPtr<QGridLayout> m_grid;
     std::array<std::array<QtObjPtr<MinesweeperCell>, 8>, 8> m_cells;
     QtObjPtr<GoodButtonGroup> m_buttonGroup;
     IconSet m_icons;
+    int m_cellEnteredIdx = -1;
 };
 
 

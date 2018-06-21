@@ -19,9 +19,12 @@ class CDoorBehaviour : public CBehaviour {
     virtual void handleBroadcastedEvent(const GameEvent& e) override;
     virtual void handleTargetedEvent(const GameEvent& e) override;
 
+    double speed = 60.0;
     bool isPlayerActivated = true;
     bool closeAutomatically = true;
     std::string openOnEvent = "";
+
+    void setPauseTime(double t);
 
   private:
     enum state_t {

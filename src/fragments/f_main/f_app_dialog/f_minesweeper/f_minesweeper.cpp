@@ -1,3 +1,4 @@
+#include <QPainter>
 #include <random>
 #include <vector>
 #include "fragments/relocatable/widget_frag_data.hpp"
@@ -30,7 +31,8 @@ MinesweeperCell::MinesweeperCell(int row, int col, const IconSet& icons)
   : QWidget(),
     row(row),
     col(col),
-    m_icons(icons) {
+    m_icons(icons),
+    m_pixmap(32, 32) {
 
   QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
@@ -41,6 +43,8 @@ MinesweeperCell::MinesweeperCell(int row, int col, const IconSet& icons)
 
   m_button = makeQtObjPtr<GoodButton>();
   m_button->setSizePolicy(sizePolicy);
+
+  m_label->setPixmap(m_pixmap);
 
   m_stackedLayout = makeQtObjPtr<QStackedLayout>();
   m_stackedLayout->addWidget(m_label.get());
@@ -53,11 +57,91 @@ MinesweeperCell::MinesweeperCell(int row, int col, const IconSet& icons)
 }
 
 //===========================================
+// MinesweeperCell::render
+//===========================================
+void MinesweeperCell::render() {
+  QPainter painter;
+  painter.begin(&m_pixmap);
+
+  QColor bgColour(240, 240, 240);
+
+  m_pixmap.fill(bgColour);
+
+  int cellW = m_pixmap.width();
+  int cellH = m_pixmap.height();
+
+  if (m_value >= 1 && m_value <= 8) {
+    QColor colour;
+    switch (m_value) {
+      case 1: {
+        colour = Qt::blue;
+        break;
+      }
+      case 2: {
+        colour = QColor(0, 128, 0);
+        break;
+      }
+      case 3: {
+        colour = Qt::red;
+        break;
+      }
+      case 4: {
+        colour = Qt::darkBlue;
+        break;
+      }
+      case 5: {
+        colour = QColor(178, 34, 34);
+        break;
+      }
+      case 6: {
+        colour = Qt::darkCyan;
+        break;
+      }
+      case 7: {
+        colour = Qt::magenta;
+        break;
+      }
+      case 8: {
+        colour = Qt::black;
+        break;
+      }
+    }
+
+    int w = 10; // TODO
+    int h = 14;
+
+    QFont font;
+    font.setPixelSize(h);
+
+    painter.setFont(font);
+    painter.setPen(colour);
+    painter.drawText(0.5 * (cellW - w), 0.5 * (cellH + h), std::to_string(m_value).c_str());
+  }
+  else if (m_value == MINE) {
+    int w = 18;
+    int h = 18;
+
+    m_icons.mine.paint(&painter, 0.5 * (cellW - w), 0.5 * (cellH - h), w, h);
+  }
+
+  if (m_hasPlayer) {
+    int w = 18;
+    int h = 18;
+
+    m_icons.player.paint(&painter, 0.5 * (cellW - w), 0.5 * (cellH - h), w, h);
+  }
+
+  painter.end();
+
+  m_label->setPixmap(m_pixmap);
+}
+
+//===========================================
 // MinesweeperCell::setValue
 //===========================================
 void MinesweeperCell::setValue(int val) {
   m_value = val;
-  m_label->setText(std::to_string(val).c_str());
+  render();
 }
 
 //===========================================
@@ -86,6 +170,21 @@ bool MinesweeperCell::hidden() const {
 //===========================================
 void MinesweeperCell::setHidden(bool hidden) {
   m_stackedLayout->setCurrentIndex(hidden ? 1 : 0);
+}
+
+//===========================================
+// MinesweeperCell::onPlayerChangeCell
+//===========================================
+void MinesweeperCell::onPlayerChangeCell(int row, int col) {
+  if (row == this->row && col == this->col) {
+    m_hasPlayer = true;
+    setHidden(false);
+  }
+  else {
+    m_hasPlayer = false;
+  }
+
+  render();
 }
 
 //===========================================
@@ -124,11 +223,32 @@ FMinesweeper::FMinesweeper(Fragment& parent_, FragmentData& parentData_,
   connect(m_buttonGroup.get(), SIGNAL(rightClicked(int)), this, SLOT(onBtnRightClick(int)));
 
   m_icons.flag = QIcon(config::dataPath("millennium_bug/flag.png").c_str());
+  m_icons.mine = QIcon(config::dataPath("millennium_bug/mine.png").c_str());
+  m_icons.noMine = QIcon(config::dataPath("millennium_bug/no_mine.png").c_str());
+  m_icons.player = QIcon(config::dataPath("millennium_bug/player.png").c_str());
 
   set<Coord> coords = placeMines();
   setNumbers();
 
+  commonData.eventSystem.listen("millenniumBug/cellEntered",
+    std::bind(&FMinesweeper::onCellEntered, this, std::placeholders::_1), m_cellEnteredIdx);
+
   commonData.eventSystem.fire(pEvent_t(new millennium_bug::MinesweeperSetupEvent(coords)));
+}
+
+//===========================================
+// FMinesweeper::onCellEntered
+//===========================================
+void FMinesweeper::onCellEntered(const Event& e_) {
+  auto& e = dynamic_cast<const millennium_bug::CellEnteredEvent&>(e_);
+
+  DBG_PRINT("Player has entered cell " << e.coords.row << ", " << e.coords.col << "\n");
+
+  for (int i = 0; i < ROWS; ++i) {
+    for (int j = 0; j < COLS; ++j) {
+      m_cells[i][j]->onPlayerChangeCell(e.coords.row, e.coords.col);
+    }
+  }
 }
 
 //===========================================
@@ -291,6 +411,8 @@ void FMinesweeper::cleanUp() {
 
   auto& parentData = parentFragData<WidgetFragData>();
   parentData.box->removeWidget(this);
+
+  commonData.eventSystem.forget(m_cellEnteredIdx);
 }
 
 //===========================================

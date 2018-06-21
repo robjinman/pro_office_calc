@@ -35,6 +35,14 @@ struct MinesweeperSetupEvent : public Event {
     std::set<Coord> mineCoords;
 };
 
+struct CellEnteredEvent : public Event {
+  CellEnteredEvent(const Coord& coords)
+    : Event("millenniumBug/cellEntered"),
+      coords(coords) {}
+
+    Coord coords;
+};
+
 
 }
 
