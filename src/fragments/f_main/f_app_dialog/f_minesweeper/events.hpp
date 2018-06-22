@@ -3,6 +3,7 @@
 
 
 #include <set>
+#include <ostream>
 #include "event.hpp"
 
 
@@ -13,6 +14,11 @@ struct Coord {
   int row;
   int col;
 };
+
+inline std::ostream& operator<<(std::ostream& out, const Coord& coord) {
+  out << coord.row << ", " << coord.col;
+  return out;
+}
 
 inline bool operator==(const Coord& lhs, const Coord& rhs) {
   return lhs.row == rhs.row && lhs.col == rhs.col;
@@ -38,6 +44,14 @@ struct MinesweeperSetupEvent : public Event {
 struct CellEnteredEvent : public Event {
   CellEnteredEvent(const Coord& coords)
     : Event("millenniumBug/cellEntered"),
+      coords(coords) {}
+
+    Coord coords;
+};
+
+struct InnerCellEnteredEvent : public Event {
+  InnerCellEnteredEvent(const Coord& coords)
+    : Event("millenniumBug/innerCellEntered"),
       coords(coords) {}
 
     Coord coords;

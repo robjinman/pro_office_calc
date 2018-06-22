@@ -1,4 +1,5 @@
 #include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
+#include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/animation_system.hpp"
 #include "raycast/behaviour_system.hpp"
@@ -92,7 +93,7 @@ bool ObjectFactory::constructCell(entityId_t entityId, parser::Object& obj, enti
   if (!firstPassComplete) {
     region = parentId;
     this->parentTransform = parentTransform;
-    objects.insert(make_pair(entityId, parser::pObject_t(obj.clone())));
+    this->objects.insert(make_pair(entityId, parser::pObject_t(obj.clone())));
   }
   else {
     return m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform);
@@ -119,7 +120,7 @@ bool ObjectFactory::constructCellCorner(entityId_t entityId, parser::Object& obj
     entityId_t cellId = Component::getIdFromString(cellName);
 
     DBG_PRINT("Cell '" << cellName << "'" << " is positioned at " << vRect.pos << "\n");
-    objectPositions[cellId] = vRect.pos;
+    this->objectPositions[cellId] = vRect.pos;
 
     return true;
   }
@@ -144,6 +145,21 @@ bool ObjectFactory::constructCellInner(entityId_t entityId, parser::Object& obj,
   }
 
   if (m_rootFactory.constructObject(type, entityId, obj, parentId, parentTransform)) {
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CEventHandler* events = new CEventHandler(entityId);
+    events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+      [this, entityId, parentId](const GameEvent& e_) {
+
+      const auto& e = dynamic_cast<const EChangedZone&>(e_);
+
+      if (e.newZone == entityId) {
+        m_entityManager.broadcastEvent(EPlayerEnterCellInner{parentId});
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
 
     return true;
   }
@@ -161,12 +177,31 @@ bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, 
     entityId = makeIdForObj(obj);
   }
 
+  obj.dict["denied_caption"] = "The door is locked";
+
   if (m_rootFactory.constructObject("door", entityId, obj, parentId, parentTransform)) {
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
     auto& behaviour =
       m_entityManager.getComponent<CDoorBehaviour>(entityId, ComponentKind::C_BEHAVIOUR);
 
     behaviour.speed = 120.0;
     behaviour.setPauseTime(1.5);
+
+    // Cell should be 2 levels up
+    entityId_t cellId = Component::getIdFromString(obj.parent->parent->dict.at("name"));
+
+    this->cellDoors[cellId].push_back(entityId);
+
+    CEventHandler* events = new CEventHandler(entityId);
+    events->targetedEventHandlers.push_back(EventHandler{"door_open_start",
+      [this, cellId](const GameEvent& e_) {
+
+      m_entityManager.broadcastEvent(ECellDoorOpened{cellId});
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
 
     return true;
   }

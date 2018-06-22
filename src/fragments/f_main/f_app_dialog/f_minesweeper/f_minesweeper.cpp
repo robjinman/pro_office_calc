@@ -230,17 +230,18 @@ FMinesweeper::FMinesweeper(Fragment& parent_, FragmentData& parentData_,
   set<Coord> coords = placeMines();
   setNumbers();
 
-  commonData.eventSystem.listen("millenniumBug/cellEntered",
-    std::bind(&FMinesweeper::onCellEntered, this, std::placeholders::_1), m_cellEnteredIdx);
+  commonData.eventSystem.listen("millenniumBug/innerCellEntered",
+    std::bind(&FMinesweeper::onInnerCellEntered, this, std::placeholders::_1),
+    m_innerCellEnteredIdx);
 
   commonData.eventSystem.fire(pEvent_t(new millennium_bug::MinesweeperSetupEvent(coords)));
 }
 
 //===========================================
-// FMinesweeper::onCellEntered
+// FMinesweeper::onInnerCellEntered
 //===========================================
-void FMinesweeper::onCellEntered(const Event& e_) {
-  auto& e = dynamic_cast<const millennium_bug::CellEnteredEvent&>(e_);
+void FMinesweeper::onInnerCellEntered(const Event& e_) {
+  auto& e = dynamic_cast<const millennium_bug::InnerCellEnteredEvent&>(e_);
 
   DBG_PRINT("Player has entered cell " << e.coords.row << ", " << e.coords.col << "\n");
 
@@ -260,6 +261,10 @@ set<Coord> FMinesweeper::placeMines() {
 
   for (int i = 0; i < ROWS; ++i) {
     for (int j = 0; j < COLS; ++j) {
+      if (i == 0 && j == 0) {
+        continue;
+      }
+
       coords.push_back(Coord{i, j});
     }
   }
@@ -412,7 +417,7 @@ void FMinesweeper::cleanUp() {
   auto& parentData = parentFragData<WidgetFragData>();
   parentData.box->removeWidget(this);
 
-  commonData.eventSystem.forget(m_cellEnteredIdx);
+  commonData.eventSystem.forget(m_innerCellEnteredIdx);
 }
 
 //===========================================

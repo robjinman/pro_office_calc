@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
+#include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/root_factory.hpp"
@@ -12,6 +13,7 @@
 #include "raycast/inventory_system.hpp"
 #include "raycast/focus_system.hpp"
 #include "raycast/agent_system.hpp"
+#include "raycast/c_door_behaviour.hpp"
 #include "event_system.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
@@ -54,15 +56,17 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   CEventHandler* events = new CEventHandler(m_entityId);
-
-  events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+  events->broadcastedEventHandlers.push_back(EventHandler{"player_enter_cell_inner",
     [this](const GameEvent& e_) {
 
-    auto& e = dynamic_cast<const EChangedZone&>(e_);
+    auto& e = dynamic_cast<const EPlayerEnterCellInner&>(e_);
+    onPlayerEnterCellInner(e.cellId);
+  }});
+  events->broadcastedEventHandlers.push_back(EventHandler{"cell_door_opened",
+    [this](const GameEvent& e_) {
 
-    if (e.entityId == Component::getIdFromString("player")) {
-      onPlayerChangeZone(e.zonesEntered);
-    }
+    auto& e = dynamic_cast<const ECellDoorOpened&>(e_);
+    onCellDoorOpened(e.cellId);
   }});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
@@ -152,24 +156,66 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
 }
 
 //===========================================
-// GameLogic::onPlayerChangeZone
+// GameLogic::onPlayerEnterCellInner
 //===========================================
-void GameLogic::onPlayerChangeZone(const set<entityId_t>& zonesEntered) {
-  entityId_t cellId = -1;
-  Coord coord;
+void GameLogic::onPlayerEnterCellInner(entityId_t cellId) {
+  Coord coord = m_cellIds[cellId];
+  m_eventSystem.fire(pEvent_t(new InnerCellEnteredEvent{coord}));
+}
 
-  for (entityId_t cell : zonesEntered) {
-    auto it = m_cellIds.find(cell);
+//===========================================
+// GameLogic::onCellDoorOpened
+//===========================================
+void GameLogic::onCellDoorOpened(entityId_t cellId) {
+  if (m_history.newest() != cellId) {
+    m_history.push(cellId);
+  }
 
-    if (it != m_cellIds.end()) {
-      cellId = it->first;
-      coord = it->second;
-      break;
+  lockDoors();
+}
+
+//===========================================
+// GameLogic::lockDoors
+//===========================================
+void GameLogic::lockDoors() {
+#ifdef DEBUG
+  std::cout << "History: ";
+  for (int i = 0; i < m_history.size(); ++i) {
+    std::cout << "(" << m_cellIds[m_history.nthNewest(i)] << ") ";
+  }
+  std::cout << "\n";
+#endif
+
+  if (m_history.size() >= 2) {
+    entityId_t prevCellId = m_history.nthNewest(1);
+    auto& doors = m_objectFactory.cellDoors[prevCellId];
+
+    DBG_PRINT("Locking doors of cell " << m_cellIds[prevCellId] << "\n");
+
+    for (entityId_t door : doors) {
+      DBG_PRINT("Locking door with id " << door << "\n");
+
+      auto& behaviour =
+        m_entityManager.getComponent<CDoorBehaviour>(door, ComponentKind::C_BEHAVIOUR);
+
+      behaviour.isPlayerActivated = false;
     }
   }
 
-  if (cellId != -1) {
-    m_eventSystem.fire(pEvent_t(new CellEnteredEvent{coord}));
+  if (m_history.size() >= 3) {
+    entityId_t prevPrevCellId = m_history.nthNewest(2);
+    auto& doors = m_objectFactory.cellDoors[prevPrevCellId];
+
+    DBG_PRINT("Unlocking doors of cell " << m_cellIds[prevPrevCellId] << "\n");
+
+    for (entityId_t door : doors) {
+      DBG_PRINT("Unlocking door with id " << door << "\n");
+
+      auto& behaviour =
+        m_entityManager.getComponent<CDoorBehaviour>(door, ComponentKind::C_BEHAVIOUR);
+
+      behaviour.isPlayerActivated = true;
+    }
   }
 }
 

@@ -31,6 +31,7 @@ class ObjectFactory : public GameObjectFactory {
     Matrix parentTransform;
     std::map<entityId_t, parser::pObject_t> objects;
     std::map<entityId_t, Point> objectPositions;
+    std::map<entityId_t, std::vector<entityId_t>> cellDoors;
     bool firstPassComplete = false;
 
   private:

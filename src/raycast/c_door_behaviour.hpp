@@ -6,6 +6,38 @@
 #include "raycast/timing.hpp"
 
 
+struct EDoorOpenStart : public GameEvent {
+  explicit EDoorOpenStart(entityId_t entityId)
+    : GameEvent("door_open_start"),
+      entityId(entityId) {}
+
+  entityId_t entityId;
+};
+
+struct EDoorOpenFinish : public GameEvent {
+  explicit EDoorOpenFinish(entityId_t entityId)
+    : GameEvent("door_open_finish"),
+      entityId(entityId) {}
+
+  entityId_t entityId;
+};
+
+struct EDoorCloseStart : public GameEvent {
+  explicit EDoorCloseStart(entityId_t entityId)
+    : GameEvent("door_close_start"),
+      entityId(entityId) {}
+
+  entityId_t entityId;
+};
+
+struct EDoorCloseFinish : public GameEvent {
+  explicit EDoorCloseFinish(entityId_t entityId)
+    : GameEvent("door_close_finish"),
+      entityId(entityId) {}
+
+  entityId_t entityId;
+};
+
 class EntityManager;
 class AudioService;
 class TimeService;

@@ -71,6 +71,9 @@ void CDoorBehaviour::update() {
       if (closeAutomatically && m_timer.ready()) {
         m_state = ST_CLOSING;
         playSound();
+
+        m_entityManager.fireEvent(EDoorCloseStart{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
       }
       return;
     case ST_OPENING:
@@ -79,6 +82,9 @@ void CDoorBehaviour::update() {
       if (zone.ceilingHeight + dy >= m_y1) {
         m_state = ST_OPEN;
         stopSound();
+
+        m_entityManager.fireEvent(EDoorOpenFinish{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorOpenFinish{entityId()});
       }
       else {
         m_timer.reset();
@@ -91,11 +97,15 @@ void CDoorBehaviour::update() {
       if (player.region() == entityId()) {
         if (zone.ceilingHeight - dy <= player.headHeight()) {
           m_state = ST_OPENING;
+          m_entityManager.fireEvent(EDoorOpenStart{entityId()}, { entityId() });
+          m_entityManager.broadcastEvent(EDoorOpenStart{entityId()});
         }
       }
       else if (zone.ceilingHeight - dy <= m_y0) {
         m_state = ST_CLOSED;
         stopSound();
+        m_entityManager.fireEvent(EDoorCloseFinish{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorCloseFinish{entityId()});
       }
 
       break;
@@ -138,15 +148,23 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
     switch (m_state) {
       case ST_CLOSED:
         m_state = ST_OPENING;
+        m_entityManager.fireEvent(EDoorOpenStart{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorOpenStart{entityId()});
         break;
       case ST_OPEN:
         m_state = ST_CLOSING;
+        m_entityManager.fireEvent(EDoorCloseStart{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
         break;
       case ST_OPENING:
         m_state = ST_CLOSING;
+        m_entityManager.fireEvent(EDoorCloseStart{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
         break;
       case ST_CLOSING:
         m_state = ST_OPENING;
+        m_entityManager.fireEvent(EDoorOpenStart{entityId()}, { entityId() });
+        m_entityManager.broadcastEvent(EDoorOpenStart{entityId()});
         break;
     }
   }

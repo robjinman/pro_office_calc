@@ -37,8 +37,9 @@ struct Object {
   std::map<std::string, std::string> dict;
   std::list<pObject_t> children;
 
-  Object* clone() const {
+  Object* clone(const Object* parent = nullptr) const {
     Object* cpy = new Object(nullptr);
+    cpy->parent = parent;
     cpy->groupTransform = groupTransform;
     cpy->pathTransform = pathTransform;
     cpy->path = path;
@@ -46,7 +47,7 @@ struct Object {
     cpy->dict = dict;
 
     for (auto& c: children) {
-      cpy->children.push_back(pObject_t(c->clone()));
+      cpy->children.push_back(pObject_t(c->clone(cpy)));
     }
 
     return cpy;
