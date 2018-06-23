@@ -20,6 +20,9 @@ using std::function;
 using std::make_pair;
 
 
+//===========================================
+// operator<<
+//===========================================
 ostream& operator<<(ostream& os, CRenderKind kind) {
   switch (kind) {
     case CRenderKind::REGION: os << "REGION"; break;
@@ -33,8 +36,31 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
   return os;
 }
 
+//===========================================
+// getSoftEdge
+//===========================================
 static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const CBoundary& b) {
   return dynamic_cast<CSoftEdge&>(spatialSystem.getComponent(b.entityId()));
+}
+
+//===========================================
+// forEachConstCRegion
+//===========================================
+static void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> fn) {
+  fn(region);
+  for_each(region.children.begin(), region.children.end(), [&](const unique_ptr<CRegion>& r) {
+    forEachConstCRegion(*r, fn);
+  });
+}
+
+//===========================================
+// forEachCRegion
+//===========================================
+static void forEachCRegion(CRegion& region, function<void(CRegion&)> fn) {
+  fn(region);
+  for_each(region.children.begin(), region.children.end(), [&](unique_ptr<CRegion>& r) {
+    forEachCRegion(*r, fn);
+  });
 }
 
 //===========================================

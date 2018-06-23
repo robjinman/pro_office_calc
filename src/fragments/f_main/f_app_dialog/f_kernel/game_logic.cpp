@@ -29,6 +29,8 @@ using std::stringstream;
 namespace millennium_bug {
 
 
+static const int ROWS = 8;
+static const int COLS = 8;
 static std::mt19937 randEngine(randomSeed());
 
 
@@ -73,7 +75,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 }
 
 //===========================================
-// GameLogic::coords
+// GameLogic::initialise
 //===========================================
 void GameLogic::initialise(const set<Coord>& mineCoords) {
   m_objectFactory.firstPassComplete = true;
@@ -102,25 +104,27 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   m_rootFactory.constructObject("cell", -1, *startCellObj, m_objectFactory.region,
     m_objectFactory.parentTransform);
 
-  for (int i = 0; i < 8; ++i) {
-    for (int j = 0; j < 8; ++j) {
+  for (int i = 0; i < ROWS; ++i) {
+    for (int j = 0; j < COLS; ++j) {
       if (i == 0 && j == 0) {
+        sealDoor(m_objectFactory.cellDoors[startCellId].north);
+        sealDoor(m_objectFactory.cellDoors[startCellId].west);
         continue;
       }
 
-      entityId_t cellId = -1;
+      entityId_t protoCellId = -1;
 
       if (mineCoords.count(Coord{i, j})) {
-        cellId = unsafeCells[randomUnsafeCell(randEngine)];
+        protoCellId = unsafeCells[randomUnsafeCell(randEngine)];
       }
       else {
-        cellId = safeCells[randomSafeCell(randEngine)];
+        protoCellId = safeCells[randomSafeCell(randEngine)];
       }
 
-      assert(cellId != -1);
+      assert(protoCellId != -1);
 
-      parser::pObject_t cellObj(m_objectFactory.objects.at(cellId)->clone());
-      const Point& cellPos = m_objectFactory.objectPositions.at(cellId);
+      parser::pObject_t cellObj(m_objectFactory.objects.at(protoCellId)->clone());
+      const Point& cellPos = m_objectFactory.objectPositions.at(protoCellId);
       const Matrix& cellTransform = cellObj->groupTransform;
 
       Point targetPos = startCellPos + Vec2f(1600.0 * j, 1600.0 * i);
@@ -129,13 +133,30 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
       stringstream ss;
       ss << "cell_" << i << "_" << j;
 
-      m_cellIds[Component::getIdFromString(ss.str())] = Coord{i, j};
+      entityId_t cellId = Component::getIdFromString(ss.str());
+      m_cellIds[cellId] = Coord{i, j};
 
       cellObj->dict["name"] = ss.str();
       cellObj->groupTransform = cellTransform * m;
 
       m_rootFactory.constructObject("cell", -1, *cellObj, m_objectFactory.region,
         m_objectFactory.parentTransform);
+
+      if (i == 0) {
+        sealDoor(m_objectFactory.cellDoors[cellId].north);
+      }
+
+      if (i + 1 == ROWS) {
+        sealDoor(m_objectFactory.cellDoors[cellId].south);
+      }
+
+      if (j == 0) {
+        sealDoor(m_objectFactory.cellDoors[cellId].west);
+      }
+
+      if (j + 1 == COLS) {
+        sealDoor(m_objectFactory.cellDoors[cellId].east);
+      }
     }
   }
 
@@ -153,6 +174,31 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   auto& startPoint = dynamic_cast<const CVRect&>(spatialSystem.getComponent(startPointId));
 
   spatialSystem.relocateEntity(playerId, *startPoint.zone, startPoint.pos);
+}
+
+//===========================================
+// GameLogic::sealDoor
+//===========================================
+void GameLogic::sealDoor(entityId_t doorId) {
+  auto& region = m_entityManager.getComponent<CRegion>(doorId, ComponentKind::C_RENDER);
+  auto& behaviour =
+    m_entityManager.getComponent<CDoorBehaviour>(doorId, ComponentKind::C_BEHAVIOUR);
+
+  DBG_PRINT("Sealing door with id " << doorId << "\n");
+
+  for (auto& pBoundary : region.boundaries) {
+    if (pBoundary->kind == CRenderKind::JOIN) {
+      CJoin& join = dynamic_cast<CJoin&>(*pBoundary);
+
+      join.topTexture = "slimy_bricks";
+      join.bottomTexture = "slimy_bricks";
+    }
+  }
+
+  behaviour.isPlayerActivated = false;
+
+  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+  focusSystem.removeEntity(doorId);
 }
 
 //===========================================

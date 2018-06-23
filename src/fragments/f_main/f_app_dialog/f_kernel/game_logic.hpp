@@ -81,6 +81,7 @@ class GameLogic {
     void onPlayerEnterCellInner(entityId_t cellId);
     void onCellDoorOpened(entityId_t cellId);
     void lockDoors();
+    void sealDoor(entityId_t doorId);
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;

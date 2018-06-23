@@ -191,9 +191,6 @@ class CRegion : public CRender {
     std::list<pCFloorDecal_t> floorDecals;
 };
 
-void forEachConstCRegion(const CRegion& region, std::function<void(const CRegion&)> fn);
-void forEachCRegion(CRegion& region, std::function<void(CRegion&)> fn);
-
 class CWall : public CBoundary {
   public:
     CWall(entityId_t entityId, entityId_t parentId)

@@ -37,26 +37,6 @@ static inline CHRect& getHRect(const SpatialSystem& spatialSystem, const CFloorD
 }
 
 //===========================================
-// forEachConstCRegion
-//===========================================
-void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> fn) {
-  fn(region);
-  for_each(region.children.begin(), region.children.end(), [&](const unique_ptr<CRegion>& r) {
-    forEachConstCRegion(*r, fn);
-  });
-}
-
-//===========================================
-// forEachCRegion
-//===========================================
-void forEachCRegion(CRegion& region, function<void(CRegion&)> fn) {
-  fn(region);
-  for_each(region.children.begin(), region.children.end(), [&](unique_ptr<CRegion>& r) {
-    forEachCRegion(*r, fn);
-  });
-}
-
-//===========================================
 // blend
 //===========================================
 static inline QRgb blend(const QRgb& A, const QRgb& B, double alphaB) {

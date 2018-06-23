@@ -192,7 +192,19 @@ bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, 
     // Cell should be 2 levels up
     entityId_t cellId = Component::getIdFromString(obj.parent->parent->dict.at("name"));
 
-    this->cellDoors[cellId].push_back(entityId);
+    string pos = GET_VALUE(obj.dict, "position");
+    if (pos == "north") {
+      this->cellDoors[cellId].north = entityId;
+    }
+    else if (pos == "east") {
+      this->cellDoors[cellId].east = entityId;
+    }
+    else if (pos == "south") {
+      this->cellDoors[cellId].south = entityId;
+    }
+    else if (pos == "west") {
+      this->cellDoors[cellId].west = entityId;
+    }
 
     CEventHandler* events = new CEventHandler(entityId);
     events->targetedEventHandlers.push_back(EventHandler{"door_open_start",

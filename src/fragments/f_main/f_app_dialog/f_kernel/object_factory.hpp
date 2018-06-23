@@ -3,6 +3,7 @@
 
 
 #include <map>
+#include <array>
 #include "raycast/game_object_factory.hpp"
 #include "raycast/map_parser.hpp"
 
@@ -27,11 +28,29 @@ class ObjectFactory : public GameObjectFactory {
     bool constructObject(const std::string& type, entityId_t entityId, parser::Object& obj,
       entityId_t region, const Matrix& parentTransform) override;
 
+    struct CellDoors {
+      typedef std::array<entityId_t, 4> idList_t;
+      idList_t ids;
+
+      entityId_t& north = ids[0];
+      entityId_t& east = ids[1];
+      entityId_t& south = ids[2];
+      entityId_t& west = ids[3];
+
+      idList_t::iterator begin() {
+        return ids.begin();
+      }
+
+      idList_t::iterator end() {
+        return ids.end();
+      }
+    };
+
     entityId_t region;
     Matrix parentTransform;
     std::map<entityId_t, parser::pObject_t> objects;
     std::map<entityId_t, Point> objectPositions;
-    std::map<entityId_t, std::vector<entityId_t>> cellDoors;
+    std::map<entityId_t, CellDoors> cellDoors;
     bool firstPassComplete = false;
 
   private:
