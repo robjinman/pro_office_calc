@@ -78,6 +78,9 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 // GameLogic::initialise
 //===========================================
 void GameLogic::initialise(const set<Coord>& mineCoords) {
+  const double cellW = 1600.0;
+  const double cellH = 1600.0;
+
   m_objectFactory.firstPassComplete = true;
 
   vector<entityId_t> safeCells = {
@@ -107,7 +110,7 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   for (int i = 0; i < ROWS; ++i) {
     for (int j = 0; j < COLS; ++j) {
       if (i == 0 && j == 0) {
-        sealDoor(m_objectFactory.cellDoors[startCellId].north);
+        sealDoor(m_objectFactory.cellDoors[startCellId].south);
         sealDoor(m_objectFactory.cellDoors[startCellId].west);
         continue;
       }
@@ -127,7 +130,7 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
       const Point& cellPos = m_objectFactory.objectPositions.at(protoCellId);
       const Matrix& cellTransform = cellObj->groupTransform;
 
-      Point targetPos = startCellPos + Vec2f(1600.0 * j, 1600.0 * i);
+      Point targetPos = startCellPos + Vec2f(cellW * j, -cellH * i);
       Matrix m(0, targetPos - cellPos);
 
       stringstream ss;
@@ -143,11 +146,11 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
         m_objectFactory.parentTransform);
 
       if (i == 0) {
-        sealDoor(m_objectFactory.cellDoors[cellId].north);
+        sealDoor(m_objectFactory.cellDoors[cellId].south);
       }
 
       if (i + 1 == ROWS) {
-        sealDoor(m_objectFactory.cellDoors[cellId].south);
+        sealDoor(m_objectFactory.cellDoors[cellId].north);
       }
 
       if (j == 0) {

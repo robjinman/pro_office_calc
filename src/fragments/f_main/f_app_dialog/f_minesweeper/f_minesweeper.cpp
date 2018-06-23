@@ -211,7 +211,7 @@ FMinesweeper::FMinesweeper(Fragment& parent_, FragmentData& parentData_,
       MinesweeperCell* cell = m_cells[i][j].get();
 
       m_buttonGroup->addGoodButton(&cell->button(), i * COLS + j);
-      m_grid->addWidget(cell, i, j);
+      m_grid->addWidget(cell, ROWS - 1 - i, j);
     }
   }
 
