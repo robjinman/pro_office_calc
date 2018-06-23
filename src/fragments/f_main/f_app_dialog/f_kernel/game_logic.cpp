@@ -111,7 +111,6 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
     for (int j = 0; j < COLS; ++j) {
       if (i == 0 && j == 0) {
         sealDoor(m_objectFactory.cellDoors[startCellId].south);
-        sealDoor(m_objectFactory.cellDoors[startCellId].west);
         continue;
       }
 
@@ -170,13 +169,6 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   spatialSystem.connectZones();
   DBG_PRINT("Connecting regions...\n");
   renderSystem.connectRegions();
-
-  entityId_t playerId = Component::getIdFromString("player");
-  entityId_t startPointId = Component::getIdFromString("minesweeper_start_point");
-
-  auto& startPoint = dynamic_cast<const CVRect&>(spatialSystem.getComponent(startPointId));
-
-  spatialSystem.relocateEntity(playerId, *startPoint.zone, startPoint.pos);
 }
 
 //===========================================
