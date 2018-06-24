@@ -7,7 +7,7 @@
 #include "event.hpp"
 
 
-namespace millennium_bug {
+namespace doomsweeper {
 
 
 struct Coord {
@@ -35,7 +35,7 @@ inline bool operator<(const Coord& lhs, const Coord& rhs) {
 
 struct MinesweeperSetupEvent : public Event {
   MinesweeperSetupEvent(const std::set<Coord>& coords)
-    : Event("millenniumBug/minesweeperSetupComplete"),
+    : Event("doomsweeper/minesweeperSetupComplete"),
       mineCoords(coords) {}
 
     std::set<Coord> mineCoords;
@@ -43,7 +43,7 @@ struct MinesweeperSetupEvent : public Event {
 
 struct CellEnteredEvent : public Event {
   CellEnteredEvent(const Coord& coords)
-    : Event("millenniumBug/cellEntered"),
+    : Event("doomsweeper/cellEntered"),
       coords(coords) {}
 
     Coord coords;
@@ -51,7 +51,7 @@ struct CellEnteredEvent : public Event {
 
 struct InnerCellEnteredEvent : public Event {
   InnerCellEnteredEvent(const Coord& coords)
-    : Event("millenniumBug/innerCellEntered"),
+    : Event("doomsweeper/innerCellEntered"),
       coords(coords) {}
 
     Coord coords;

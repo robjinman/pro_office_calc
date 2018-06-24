@@ -1,11 +1,11 @@
-#ifndef __PROCALC_STATES_ST_MILLENNIUM_BUG_HPP__
-#define __PROCALC_STATES_ST_MILLENNIUM_BUG_HPP__
+#ifndef __PROCALC_STATES_ST_DOOMSWEEPER_HPP__
+#define __PROCALC_STATES_ST_DOOMSWEEPER_HPP__
 
 
 #include "fragments/f_main/f_main_spec.hpp"
 
 
-namespace st_millennium_bug {
+namespace st_doomsweeper {
 
 
 FMainSpec* makeFMainSpec(int stateId) {
@@ -27,9 +27,9 @@ FMainSpec* makeFMainSpec(int stateId) {
     "</div>";
   mainSpec->desktopSpec.setEnabled(true);
   mainSpec->desktopSpec.icons = {
-    {config::dataPath("millennium_bug/file_browser.png"), "File Browser", "fileBrowserLaunch"},
-    {config::dataPath("millennium_bug/minesweeper.png"), "Minesweeper", "minesweeperLaunch"},
-    {config::dataPath("millennium_bug/console.png"), "Terminal", "terminalLaunch"}
+    {config::dataPath("doomsweeper/file_browser.png"), "File Browser", "fileBrowserLaunch"},
+    {config::dataPath("doomsweeper/minesweeper.png"), "Doomsweeper", "doomsweeperLaunch"},
+    {config::dataPath("doomsweeper/console.png"), "Terminal", "terminalLaunch"}
   };
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.titleText = "File Browser";
@@ -38,13 +38,13 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec0.showOnEvent = "fileBrowserLaunch";
   mainSpec->appDialogSpec0.kernelSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
-  mainSpec->appDialogSpec1.titleText = "Minesweeper";
+  mainSpec->appDialogSpec1.titleText = "Doomsweeper";
   mainSpec->appDialogSpec1.width = 280;
   mainSpec->appDialogSpec1.height = 240;
-  mainSpec->appDialogSpec1.showOnEvent = "minesweeperLaunch";
+  mainSpec->appDialogSpec1.showOnEvent = "doomsweeperLaunch";
   mainSpec->appDialogSpec1.minesweeperSpec.setEnabled(true);
   mainSpec->appDialogSpec2.setEnabled(true);
-  mainSpec->appDialogSpec2.titleText = "Minesweeper";
+  mainSpec->appDialogSpec2.titleText = "Terminal";
   mainSpec->appDialogSpec2.width = 320;
   mainSpec->appDialogSpec2.height = 240;
   mainSpec->appDialogSpec2.showOnEvent = "terminalLaunch";

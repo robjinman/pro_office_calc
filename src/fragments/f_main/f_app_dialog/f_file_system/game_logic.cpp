@@ -126,7 +126,7 @@ void GameLogic::onEntityChangeZone(const GameEvent& event) {
 
   if (e.entityId == player.body) {
     if (e.newZone == Component::getIdFromString("level_exit")) {
-      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MILLENNIUM_BUG)));
+      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
     }
   }
 }

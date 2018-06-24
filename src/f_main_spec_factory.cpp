@@ -10,7 +10,7 @@
 #include "states/st_making_progress.hpp"
 #include "states/st_youve_got_mail.hpp"
 #include "states/st_going_in_circles.hpp"
-#include "states/st_millennium_bug.hpp"
+#include "states/st_doomsweeper.hpp"
 #include "states/st_back_to_normal.hpp"
 #include "states/st_test.hpp"
 
@@ -42,8 +42,8 @@ FMainSpec* makeFMainSpec(int stateId) {
       return st_youve_got_mail::makeFMainSpec(stateId);
     case ST_GOING_IN_CIRCLES:
       return st_going_in_circles::makeFMainSpec(stateId);
-    case ST_MILLENNIUM_BUG:
-      return st_millennium_bug::makeFMainSpec(stateId);
+    case ST_DOOMSWEEPER:
+      return st_doomsweeper::makeFMainSpec(stateId);
     case ST_BACK_TO_NORMAL:
       return st_back_to_normal::makeFMainSpec(stateId);
 

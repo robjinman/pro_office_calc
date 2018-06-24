@@ -19,7 +19,7 @@ using std::set;
 using std::string;
 
 
-namespace millennium_bug {
+namespace doomsweeper {
 
 
 //===========================================

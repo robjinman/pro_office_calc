@@ -131,7 +131,7 @@ class FMinesweeper : public QWidget, public Fragment {
     void onBtnRightClick(int id);
 
   private:
-    std::set<millennium_bug::Coord> placeMines();
+    std::set<doomsweeper::Coord> placeMines();
     void setNumbers();
     std::set<MinesweeperCell*> getNeighbours(const MinesweeperCell& cell) const;
     void clearNeighbours_r(const MinesweeperCell& cell, std::set<const MinesweeperCell*>& visited);

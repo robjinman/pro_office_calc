@@ -6,7 +6,7 @@
 #include "raycast/game_event.hpp"
 
 
-namespace millennium_bug {
+namespace doomsweeper {
 
 
 struct EPlayerEnterCellInner : public GameEvent {

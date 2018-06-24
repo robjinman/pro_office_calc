@@ -14,7 +14,7 @@
 struct FKernelData : public FragmentData {
   QtObjPtr<QVBoxLayout> vbox;
   QtObjPtr<RaycastWidget> wgtRaycast;
-  std::unique_ptr<millennium_bug::GameLogic> gameLogic;
+  std::unique_ptr<doomsweeper::GameLogic> gameLogic;
 };
 
 class FKernel : public QWidget, public Fragment {

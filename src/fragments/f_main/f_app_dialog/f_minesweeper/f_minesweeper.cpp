@@ -11,7 +11,7 @@
 
 using std::set;
 using std::vector;
-using millennium_bug::Coord;
+using doomsweeper::Coord;
 
 
 static const int ROWS = 8;
@@ -222,26 +222,26 @@ FMinesweeper::FMinesweeper(Fragment& parent_, FragmentData& parentData_,
   connect(m_buttonGroup.get(), SIGNAL(buttonClicked(int)), this, SLOT(onBtnClick(int)));
   connect(m_buttonGroup.get(), SIGNAL(rightClicked(int)), this, SLOT(onBtnRightClick(int)));
 
-  m_icons.flag = QIcon(config::dataPath("millennium_bug/flag.png").c_str());
-  m_icons.mine = QIcon(config::dataPath("millennium_bug/mine.png").c_str());
-  m_icons.noMine = QIcon(config::dataPath("millennium_bug/no_mine.png").c_str());
-  m_icons.player = QIcon(config::dataPath("millennium_bug/player.png").c_str());
+  m_icons.flag = QIcon(config::dataPath("doomsweeper/flag.png").c_str());
+  m_icons.mine = QIcon(config::dataPath("doomsweeper/mine.png").c_str());
+  m_icons.noMine = QIcon(config::dataPath("doomsweeper/no_mine.png").c_str());
+  m_icons.player = QIcon(config::dataPath("doomsweeper/player.png").c_str());
 
   set<Coord> coords = placeMines();
   setNumbers();
 
-  commonData.eventSystem.listen("millenniumBug/innerCellEntered",
+  commonData.eventSystem.listen("doomsweeper/innerCellEntered",
     std::bind(&FMinesweeper::onInnerCellEntered, this, std::placeholders::_1),
     m_innerCellEnteredIdx);
 
-  commonData.eventSystem.fire(pEvent_t(new millennium_bug::MinesweeperSetupEvent(coords)));
+  commonData.eventSystem.fire(pEvent_t(new doomsweeper::MinesweeperSetupEvent(coords)));
 }
 
 //===========================================
 // FMinesweeper::onInnerCellEntered
 //===========================================
 void FMinesweeper::onInnerCellEntered(const Event& e_) {
-  auto& e = dynamic_cast<const millennium_bug::InnerCellEnteredEvent&>(e_);
+  auto& e = dynamic_cast<const doomsweeper::InnerCellEnteredEvent&>(e_);
 
   DBG_PRINT("Player has entered cell " << e.coords.row << ", " << e.coords.col << "\n");
 

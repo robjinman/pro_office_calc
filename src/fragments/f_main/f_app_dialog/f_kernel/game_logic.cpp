@@ -26,7 +26,7 @@ using std::string;
 using std::stringstream;
 
 
-namespace millennium_bug {
+namespace doomsweeper {
 
 
 static const int ROWS = 8;
@@ -46,7 +46,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  m_eventSystem.listen("millenniumBug/minesweeperSetupComplete", [=](const Event& e_) {
+  m_eventSystem.listen("doomsweeper/minesweeperSetupComplete", [=](const Event& e_) {
     auto& e = dynamic_cast<const MinesweeperSetupEvent&>(e_);
 
     initialise(e.mineCoords);

@@ -19,7 +19,7 @@ class RootFactory;
 class CZone;
 
 
-namespace millennium_bug {
+namespace doomsweeper {
 
 
 class ObjectFactory;

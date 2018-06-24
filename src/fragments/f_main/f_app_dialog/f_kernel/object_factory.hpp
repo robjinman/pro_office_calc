@@ -15,7 +15,7 @@ class Matrix;
 class RootFactory;
 
 
-namespace millennium_bug {
+namespace doomsweeper {
 
 
 class ObjectFactory : public GameObjectFactory {
