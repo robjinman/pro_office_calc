@@ -54,9 +54,6 @@ class ObjectFactory : public GameObjectFactory {
     bool firstPassComplete = false;
 
   private:
-    bool constructComputerScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-
     bool constructCell(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 
