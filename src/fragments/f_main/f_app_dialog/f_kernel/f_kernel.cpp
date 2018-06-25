@@ -54,7 +54,7 @@ void FKernel::reload(const FragmentSpec& spec_) {
   m_data.wgtRaycast->initialise(config::dataPath("doomsweeper/map.svg"));
 
   m_data.gameLogic.reset(new doomsweeper::GameLogic(commonData.eventSystem, entityManager,
-    m_data.wgtRaycast->rootFactory(), *factory));
+    m_data.wgtRaycast->rootFactory(), *factory, timeService));
 
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 }

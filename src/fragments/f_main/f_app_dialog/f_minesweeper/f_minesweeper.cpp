@@ -63,14 +63,13 @@ void MinesweeperCell::render() {
   QPainter painter;
   painter.begin(&m_pixmap);
 
-  QColor bgColour(240, 240, 240);
-
-  m_pixmap.fill(bgColour);
-
   int cellW = m_pixmap.width();
   int cellH = m_pixmap.height();
 
   if (m_value >= 1 && m_value <= 8) {
+    QColor bgColour(240, 240, 240);
+    m_pixmap.fill(bgColour);
+
     QColor colour;
     switch (m_value) {
       case 1: {
@@ -118,6 +117,15 @@ void MinesweeperCell::render() {
     painter.drawText(0.5 * (cellW - w), 0.5 * (cellH + h), std::to_string(m_value).c_str());
   }
   else if (m_value == MINE) {
+    QColor bgColour;
+    if (m_exploded) {
+      bgColour = QColor(255, 0, 0);
+    }
+    else {
+      bgColour = QColor(240, 240, 240);
+    }
+    m_pixmap.fill(bgColour);
+
     int w = 18;
     int h = 18;
 
@@ -125,6 +133,9 @@ void MinesweeperCell::render() {
   }
 
   if (m_hasPlayer) {
+    QColor bgColour(240, 240, 240);
+    m_pixmap.fill(bgColour);
+
     int w = 18;
     int h = 18;
 
@@ -185,6 +196,16 @@ void MinesweeperCell::onPlayerChangeCell(int row, int col) {
   }
 
   render();
+}
+
+//===========================================
+// MinesweeperCell::onPlayerClick
+//===========================================
+void MinesweeperCell::onPlayerClick() {
+  if (m_value == MINE) {
+    m_exploded = true;
+    render();
+  }
 }
 
 //===========================================
@@ -375,7 +396,8 @@ void FMinesweeper::onBtnClick(int id) {
       }
       case MINE: {
         DBG_PRINT("Boom!\n");
-        // TODO
+        cell.onPlayerClick();
+        commonData.eventSystem.fire(pEvent_t(new Event("doomsweeper/clickMine")));
         break;
       }
       default: {

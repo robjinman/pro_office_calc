@@ -16,6 +16,7 @@ class EntityManager;
 class EventHandlerSystem;
 class GameEvent;
 class RootFactory;
+class TimeService;
 class CZone;
 
 
@@ -71,7 +72,7 @@ class FixedSizeList {
 class GameLogic {
   public:
     GameLogic(EventSystem& eventSystem, EntityManager& entityManager, RootFactory& rootFactory,
-      ObjectFactory& objectFactory);
+      ObjectFactory& objectFactory, TimeService& timeService);
     GameLogic(const GameLogic& cpy) = delete;
 
     ~GameLogic();
@@ -81,6 +82,7 @@ class GameLogic {
     void onPlayerEnterCellInner(entityId_t cellId);
     void onCellDoorOpened(entityId_t cellId);
     void onEntityChangeZone(const GameEvent& e_);
+    void onClickMine();
     void lockDoors();
     void sealDoor(entityId_t doorId);
 
@@ -88,9 +90,12 @@ class GameLogic {
     EntityManager& m_entityManager;
     RootFactory& m_rootFactory;
     ObjectFactory& m_objectFactory;
+    TimeService& m_timeService;
 
     entityId_t m_entityId = -1;
+
     int m_setupEventId = -1;
+    int m_clickMineEventId = -1;
 
     std::map<entityId_t, Coord> m_cellIds;
 

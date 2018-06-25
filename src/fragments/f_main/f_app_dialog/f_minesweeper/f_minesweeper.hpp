@@ -95,6 +95,7 @@ class MinesweeperCell : public QWidget {
     void setFlagged(bool flagged);
 
     void onPlayerChangeCell(int row, int col);
+    void onPlayerClick();
 
   private:
     void render();
@@ -103,6 +104,7 @@ class MinesweeperCell : public QWidget {
 
     int m_value;
     bool m_flagged = false;
+    bool m_exploded = false;
 
     QPixmap m_pixmap;
 

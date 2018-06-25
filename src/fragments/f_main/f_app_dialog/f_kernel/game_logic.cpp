@@ -14,6 +14,7 @@
 #include "raycast/focus_system.hpp"
 #include "raycast/agent_system.hpp"
 #include "raycast/c_door_behaviour.hpp"
+#include "raycast/time_service.hpp"
 #include "event_system.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
@@ -38,11 +39,12 @@ static std::mt19937 randEngine(randomSeed());
 // GameLogic::GameLogic
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
-  RootFactory& rootFactory, ObjectFactory& objectFactory)
+  RootFactory& rootFactory, ObjectFactory& objectFactory, TimeService& timeService)
   : m_eventSystem(eventSystem),
     m_entityManager(entityManager),
     m_rootFactory(rootFactory),
-    m_objectFactory(objectFactory) {
+    m_objectFactory(objectFactory),
+    m_timeService(timeService) {
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
@@ -51,6 +53,10 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
     initialise(e.mineCoords);
   }, m_setupEventId);
+
+  m_eventSystem.listen("doomsweeper/clickMine", [this](const Event&) {
+    onClickMine();
+  }, m_clickMineEventId);
 
   m_entityId = Component::getNextId();
 
@@ -205,6 +211,15 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   spatialSystem.connectZones();
   DBG_PRINT("Connecting regions...\n");
   renderSystem.connectRegions();
+}
+
+//===========================================
+// GameLogic::onClickMine
+//===========================================
+void GameLogic::onClickMine() {
+  m_timeService.onTimeout([this]() {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
+  }, 1.0);
 }
 
 //===========================================
