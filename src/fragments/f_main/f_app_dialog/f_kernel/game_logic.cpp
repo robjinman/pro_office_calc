@@ -58,6 +58,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   CEventHandler* events = new CEventHandler(m_entityId);
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+    std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
   events->broadcastedEventHandlers.push_back(EventHandler{"player_enter_cell_inner",
     [this](const GameEvent& e_) {
 
@@ -203,6 +205,22 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   spatialSystem.connectZones();
   DBG_PRINT("Connecting regions...\n");
   renderSystem.connectRegions();
+}
+
+//===========================================
+// GameLogic::onEntityChangeZone
+//===========================================
+void GameLogic::onEntityChangeZone(const GameEvent& e_) {
+  const EChangedZone& e = dynamic_cast<const EChangedZone&>(e_);
+
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+
+  if (e.entityId == player.body) {
+    if (e.newZone == Component::getIdFromString("level_exit")) {
+      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_T_MINUS_TWO_MINUTES)));
+    }
+  }
 }
 
 //===========================================

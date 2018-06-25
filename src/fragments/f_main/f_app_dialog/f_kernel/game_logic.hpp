@@ -80,6 +80,7 @@ class GameLogic {
     void initialise(const std::set<Coord>& mineCoords);
     void onPlayerEnterCellInner(entityId_t cellId);
     void onCellDoorOpened(entityId_t cellId);
+    void onEntityChangeZone(const GameEvent& e_);
     void lockDoors();
     void sealDoor(entityId_t doorId);
 
