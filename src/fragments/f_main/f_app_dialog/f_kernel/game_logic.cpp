@@ -99,6 +99,9 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
 
   std::uniform_int_distribution<int> randomUnsafeCell(0, unsafeCells.size() - 1);
 
+  // Construct start cell
+  //
+
   entityId_t startCellId = Component::getIdFromString("start_cell");
   parser::pObject_t startCellObj(m_objectFactory.objects.at(startCellId)->clone());
 
@@ -107,10 +110,41 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   m_rootFactory.constructObject("cell", -1, *startCellObj, m_objectFactory.region,
     m_objectFactory.parentTransform);
 
+  sealDoor(m_objectFactory.cellDoors[startCellId].south);
+
+  m_cellIds[startCellId] = Coord{0, 0};
+
+  // Construct end cell
+  //
+
+  entityId_t endCellId = Component::getIdFromString("end_cell");
+  parser::pObject_t endCellObj(m_objectFactory.objects.at(endCellId)->clone());
+
+  const Point& endCellPos = m_objectFactory.objectPositions.at(endCellId);
+  const Matrix& endCellTransform = endCellObj->groupTransform;
+
+  Point endCellTargetPos = startCellPos + Vec2f(cellW * (COLS - 1), -cellH * (ROWS - 1));
+  Matrix endCellShift(0, endCellTargetPos - endCellPos);
+
+  endCellObj->groupTransform = endCellTransform * endCellShift;
+
+  m_rootFactory.constructObject("cell", -1, *endCellObj, m_objectFactory.region,
+    m_objectFactory.parentTransform);
+
+  sealDoor(m_objectFactory.cellDoors[endCellId].north);
+
+  m_cellIds[endCellId] = Coord{ROWS - 1, COLS - 1};
+
+  // Construct remaining cells
+  //
+
   for (int i = 0; i < ROWS; ++i) {
     for (int j = 0; j < COLS; ++j) {
       if (i == 0 && j == 0) {
-        sealDoor(m_objectFactory.cellDoors[startCellId].south);
+        continue;
+      }
+
+      if (i == ROWS - 1 && j == COLS - 1) {
         continue;
       }
 

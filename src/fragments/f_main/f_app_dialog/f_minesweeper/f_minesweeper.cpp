@@ -265,6 +265,10 @@ set<Coord> FMinesweeper::placeMines() {
         continue;
       }
 
+      if (i == ROWS - 1 && j == COLS - 1) {
+        continue;
+      }
+
       coords.push_back(Coord{i, j});
     }
   }
