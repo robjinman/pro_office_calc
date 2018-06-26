@@ -27,6 +27,10 @@ void FKernel::reload(const FragmentSpec& spec_) {
 
   auto& parentData = parentFragData<WidgetFragData>();
 
+  if (m_data.vbox) {
+    delete m_data.vbox.release();
+  }
+
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.vbox->setSpacing(0);
   m_data.vbox->setContentsMargins(0, 0, 0, 0);

@@ -332,6 +332,7 @@ void GameLogic::lockDoors() {
 //===========================================
 GameLogic::~GameLogic() {
   m_eventSystem.forget(m_setupEventId);
+  m_eventSystem.forget(m_clickMineEventId);
 }
 
 

@@ -66,10 +66,10 @@ void MinesweeperCell::render() {
   int cellW = m_pixmap.width();
   int cellH = m_pixmap.height();
 
-  if (m_value >= 1 && m_value <= 8) {
-    QColor bgColour(240, 240, 240);
-    m_pixmap.fill(bgColour);
+  QColor bgColour(240, 240, 240);
+  m_pixmap.fill(bgColour);
 
+  if (m_value >= 1 && m_value <= 8) {
     QColor colour;
     switch (m_value) {
       case 1: {
@@ -117,14 +117,9 @@ void MinesweeperCell::render() {
     painter.drawText(0.5 * (cellW - w), 0.5 * (cellH + h), std::to_string(m_value).c_str());
   }
   else if (m_value == MINE) {
-    QColor bgColour;
     if (m_exploded) {
-      bgColour = QColor(255, 0, 0);
+      m_pixmap.fill(Qt::red);
     }
-    else {
-      bgColour = QColor(240, 240, 240);
-    }
-    m_pixmap.fill(bgColour);
 
     int w = 18;
     int h = 18;
@@ -133,9 +128,6 @@ void MinesweeperCell::render() {
   }
 
   if (m_hasPlayer) {
-    QColor bgColour(240, 240, 240);
-    m_pixmap.fill(bgColour);
-
     int w = 18;
     int h = 18;
 
@@ -217,45 +209,6 @@ FMinesweeper::FMinesweeper(Fragment& parent_, FragmentData& parentData_,
     Fragment("FMinesweeper", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FMinesweeper::FMinesweeper\n");
-
-  auto& parentData = parentFragData<WidgetFragData>();
-
-  m_grid = makeQtObjPtr<QGridLayout>();
-  m_grid->setSpacing(0);
-  m_grid->setContentsMargins(0, 0, 0, 0);
-
-  m_buttonGroup = makeQtObjPtr<GoodButtonGroup>();
-
-  for (int i = 0; i < ROWS; ++i) {
-    for (int j = 0; j < COLS; ++j) {
-      m_cells[i][j] = makeQtObjPtr<MinesweeperCell>(i, j, m_icons);
-      MinesweeperCell* cell = m_cells[i][j].get();
-
-      m_buttonGroup->addGoodButton(&cell->button(), i * COLS + j);
-      m_grid->addWidget(cell, ROWS - 1 - i, j);
-    }
-  }
-
-  setLayout(m_grid.get());
-
-  parentData.box->addWidget(this);
-
-  connect(m_buttonGroup.get(), SIGNAL(buttonClicked(int)), this, SLOT(onBtnClick(int)));
-  connect(m_buttonGroup.get(), SIGNAL(rightClicked(int)), this, SLOT(onBtnRightClick(int)));
-
-  m_icons.flag = QIcon(config::dataPath("doomsweeper/flag.png").c_str());
-  m_icons.mine = QIcon(config::dataPath("doomsweeper/mine.png").c_str());
-  m_icons.noMine = QIcon(config::dataPath("doomsweeper/no_mine.png").c_str());
-  m_icons.player = QIcon(config::dataPath("doomsweeper/player.png").c_str());
-
-  set<Coord> coords = placeMines();
-  setNumbers();
-
-  commonData.eventSystem.listen("doomsweeper/innerCellEntered",
-    std::bind(&FMinesweeper::onInnerCellEntered, this, std::placeholders::_1),
-    m_innerCellEnteredIdx);
-
-  commonData.eventSystem.fire(pEvent_t(new doomsweeper::MinesweeperSetupEvent(coords)));
 }
 
 //===========================================
@@ -432,6 +385,48 @@ void FMinesweeper::onBtnRightClick(int id) {
 void FMinesweeper::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FMinesweeper::reload\n");
 
+  auto& parentData = parentFragData<WidgetFragData>();
+
+  if (m_grid) {
+    delete m_grid.get();
+  }
+
+  m_grid = makeQtObjPtr<QGridLayout>();
+  m_grid->setSpacing(0);
+  m_grid->setContentsMargins(0, 0, 0, 0);
+
+  m_buttonGroup = makeQtObjPtr<GoodButtonGroup>();
+
+  for (int i = 0; i < ROWS; ++i) {
+    for (int j = 0; j < COLS; ++j) {
+      m_cells[i][j] = makeQtObjPtr<MinesweeperCell>(i, j, m_icons);
+      MinesweeperCell* cell = m_cells[i][j].get();
+
+      m_buttonGroup->addGoodButton(&cell->button(), i * COLS + j);
+      m_grid->addWidget(cell, ROWS - 1 - i, j);
+    }
+  }
+
+  setLayout(m_grid.get());
+
+  parentData.box->addWidget(this);
+
+  connect(m_buttonGroup.get(), SIGNAL(buttonClicked(int)), this, SLOT(onBtnClick(int)));
+  connect(m_buttonGroup.get(), SIGNAL(rightClicked(int)), this, SLOT(onBtnRightClick(int)));
+
+  m_icons.flag = QIcon(config::dataPath("doomsweeper/flag.png").c_str());
+  m_icons.mine = QIcon(config::dataPath("doomsweeper/mine.png").c_str());
+  m_icons.noMine = QIcon(config::dataPath("doomsweeper/no_mine.png").c_str());
+  m_icons.player = QIcon(config::dataPath("doomsweeper/player.png").c_str());
+
+  set<Coord> coords = placeMines();
+  setNumbers();
+
+  commonData.eventSystem.listen("doomsweeper/innerCellEntered",
+    std::bind(&FMinesweeper::onInnerCellEntered, this, std::placeholders::_1),
+    m_innerCellEnteredIdx);
+
+  commonData.eventSystem.fire(pEvent_t(new doomsweeper::MinesweeperSetupEvent(coords)));
 }
 
 //===========================================

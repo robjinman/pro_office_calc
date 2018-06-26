@@ -60,6 +60,8 @@ void FDesktop::reload(const FragmentSpec& spec_) {
   int row = 0;
   int i = 0;
 
+  m_data.icons.clear();
+
   for (auto& icon : spec.icons) {
     auto wgtIcon = makeQtObjPtr<DesktopIcon>(icon.eventName, icon.image, icon.text);
 

@@ -31,6 +31,8 @@ void FConsole::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
+  delete m_data.vbox.release();
+
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   setLayout(m_data.vbox.get());
 
