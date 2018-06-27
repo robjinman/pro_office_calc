@@ -74,22 +74,20 @@ int main(int argc, char** argv) {
 
     DBG_PRINT("Loading app state " << stateId << "\n");
 
-    EventSystem eventSystem;
+    std::shared_ptr<EventSystem> eventSystem{new EventSystem};
     UpdateLoop updateLoop(50);
 
     unique_ptr<FMainSpec> mainSpec(makeFMainSpec(stateId));
 
-    FMain mainFragment({args, eventSystem, updateLoop});
+    FMain mainFragment({args, *eventSystem, updateLoop});
     mainFragment.rebuild(*mainSpec, false);
     mainFragment.show();
 
-    int quitEventId = -1;
-    eventSystem.listen("quit", [](const Event&) {
+    EventHandle hQuit = eventSystem->listen("quit", [](const Event&) {
       QApplication::exit(0);
-    }, quitEventId);
+    });
 
-    int requestStateChangeEventId = -1;
-    eventSystem.listen("requestStateChange", [&](const Event& e_) {
+    EventHandle hStateChange = eventSystem->listen("requestStateChange", [&](const Event& e_) {
       const RequestStateChangeEvent& e = dynamic_cast<const RequestStateChangeEvent&>(e_);
       stateId = e.stateId;
 
@@ -98,7 +96,7 @@ int main(int argc, char** argv) {
 
       mainSpec.reset(makeFMainSpec(stateId));
       mainFragment.rebuild(*mainSpec, e.hardReset);
-    }, requestStateChangeEventId);
+    });
 
     int code = app.exec();
     persistStateId(stateId);

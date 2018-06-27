@@ -7,10 +7,10 @@
 #include <map>
 #include <list>
 #include "raycast/component.hpp"
+#include "event_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 
 
-class EventSystem;
 class Event;
 class EntityManager;
 class EventHandlerSystem;
@@ -94,8 +94,8 @@ class GameLogic {
 
     entityId_t m_entityId = -1;
 
-    int m_setupEventId = -1;
-    int m_clickMineEventId = -1;
+    EventHandle m_hSetup;
+    EventHandle m_hClickMine;
 
     std::map<entityId_t, Coord> m_cellIds;
 

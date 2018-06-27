@@ -12,6 +12,7 @@
 #include <QStackedLayout>
 #include <QMouseEvent>
 #include "fragment.hpp"
+#include "event_system.hpp"
 #include "qt_obj_ptr.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 
@@ -144,7 +145,7 @@ class FMinesweeper : public QWidget, public Fragment {
     std::array<std::array<QtObjPtr<MinesweeperCell>, 8>, 8> m_cells;
     QtObjPtr<GoodButtonGroup> m_buttonGroup;
     IconSet m_icons;
-    int m_innerCellEnteredIdx = -1;
+    EventHandle m_hInnerCellEntered;
 };
 
 

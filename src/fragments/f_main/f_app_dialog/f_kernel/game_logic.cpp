@@ -15,7 +15,6 @@
 #include "raycast/agent_system.hpp"
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/time_service.hpp"
-#include "event_system.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 #include "utils.hpp"
@@ -48,15 +47,15 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  m_eventSystem.listen("doomsweeper/minesweeperSetupComplete", [=](const Event& e_) {
+  m_hSetup = m_eventSystem.listen("doomsweeper/minesweeperSetupComplete", [=](const Event& e_) {
     auto& e = dynamic_cast<const MinesweeperSetupEvent&>(e_);
 
     initialise(e.mineCoords);
-  }, m_setupEventId);
+  });
 
-  m_eventSystem.listen("doomsweeper/clickMine", [this](const Event&) {
+  m_hClickMine = m_eventSystem.listen("doomsweeper/clickMine", [this](const Event&) {
     onClickMine();
-  }, m_clickMineEventId);
+  });
 
   m_entityId = Component::getNextId();
 
@@ -330,10 +329,7 @@ void GameLogic::lockDoors() {
 //===========================================
 // GameLogic::~GameLogic
 //===========================================
-GameLogic::~GameLogic() {
-  m_eventSystem.forget(m_setupEventId);
-  m_eventSystem.forget(m_clickMineEventId);
-}
+GameLogic::~GameLogic() {}
 
 
 }

@@ -5,7 +5,6 @@
 #include "fragments/f_main/f_app_dialog/f_minesweeper/f_minesweeper.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/f_minesweeper_spec.hpp"
 #include "utils.hpp"
-#include "event_system.hpp"
 #include "app_config.hpp"
 
 
@@ -422,9 +421,8 @@ void FMinesweeper::reload(const FragmentSpec& spec_) {
   set<Coord> coords = placeMines();
   setNumbers();
 
-  commonData.eventSystem.listen("doomsweeper/innerCellEntered",
-    std::bind(&FMinesweeper::onInnerCellEntered, this, std::placeholders::_1),
-    m_innerCellEnteredIdx);
+  m_hInnerCellEntered = commonData.eventSystem.listen("doomsweeper/innerCellEntered",
+    std::bind(&FMinesweeper::onInnerCellEntered, this, std::placeholders::_1));
 
   commonData.eventSystem.fire(pEvent_t(new doomsweeper::MinesweeperSetupEvent(coords)));
 }
@@ -437,8 +435,6 @@ void FMinesweeper::cleanUp() {
 
   auto& parentData = parentFragData<WidgetFragData>();
   parentData.box->removeWidget(this);
-
-  commonData.eventSystem.forget(m_innerCellEnteredIdx);
 }
 
 //===========================================

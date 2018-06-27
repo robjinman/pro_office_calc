@@ -3,9 +3,9 @@
 
 
 #include <string>
+#include "event_system.hpp"
 
 
-class EventSystem;
 class Event;
 class EntityManager;
 
@@ -25,7 +25,7 @@ class GameLogic {
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
-    int m_eventIdx = -1;
+    EventHandle m_hDivByZero;
     char m_exitDoorSelectedNum = '\0';
     std::string m_exitDoorInput;
 };

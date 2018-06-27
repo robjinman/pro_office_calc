@@ -11,7 +11,6 @@
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/events.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
-#include "event_system.hpp"
 #include "utils.hpp"
 #include "evasive_button.hpp"
 #include "exploding_button.hpp"
@@ -48,18 +47,22 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
 
   DBG_PRINT("FPartialCalc::FPartialCalc\n");
 
-  commonData.eventSystem.listen("makingProgress/setupComplete", [this](const Event& event) {
+  m_hSetupComplete = commonData.eventSystem.listen("makingProgress/setupComplete",
+    [this](const Event& event) {
+
     const SetupCompleteEvent& e = dynamic_cast<const SetupCompleteEvent&>(event);
     toggleFeatures(e.features);
-  }, m_setupCompleteIdx);
+  });
 
-  commonData.eventSystem.listen("dialogClosed", [&commonData](const Event& event) {
+  m_hDialogClosed = commonData.eventSystem.listen("dialogClosed",
+    [&commonData](const Event& event) {
+
     const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
 
     if (e.name == "procalcSetup") {
       commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS, true)));
     }
-  }, m_dialogClosedIdx);
+  });
 }
 
 //===========================================
@@ -153,9 +156,6 @@ void FPartialCalc::cleanUp() {
     SLOT(onButtonClick(int)));
   connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonClicked(int)),
     parentData.wgtCalculator.get(), SLOT(onButtonClick(int)));
-
-  commonData.eventSystem.forget(m_setupCompleteIdx);
-  commonData.eventSystem.forget(m_dialogClosedIdx);
 }
 
 //===========================================

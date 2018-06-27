@@ -48,9 +48,9 @@ GameLogic::GameLogic(QDialog& dialog, EventSystem& eventSystem, EntityManager& e
 
   eventHandlerSystem.addComponent(std::move(forwardEvent));
 
-  m_eventSystem.listen("makingProgress/buttonPress", [this](const Event& event) {
+  m_hButtonPress = m_eventSystem.listen("makingProgress/buttonPress", [this](const Event& event) {
     onButtonPress(event);
-  }, m_eventIdx);
+  });
 }
 
 //===========================================
@@ -189,9 +189,7 @@ void GameLogic::onEntityChangeZone(const GameEvent& event) {
 //===========================================
 // GameLogic::~GameLogic
 //===========================================
-GameLogic::~GameLogic() {
-  m_eventSystem.forget(m_eventIdx);
-}
+GameLogic::~GameLogic() {}
 
 
 }

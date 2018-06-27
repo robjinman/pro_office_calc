@@ -4,7 +4,6 @@
 #include "fragments/f_main/f_app_dialog/f_server_room/object_factory.hpp"
 #include "raycast/render_system.hpp"
 #include "utils.hpp"
-#include "event_system.hpp"
 #include "app_config.hpp"
 
 
@@ -25,7 +24,7 @@ FServerRoom::FServerRoom(Fragment& parent_, FragmentData& parentData_,
 void FServerRoom::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FServerRoom::reload\n");
 
-  commonData.eventSystem.listen("launchServerRoom", [this](const Event&) {
+  m_hLaunch = commonData.eventSystem.listen("launchServerRoom", [this](const Event&) {
     auto& parentData = parentFragData<WidgetFragData>();
 
     m_data.vbox = makeQtObjPtr<QVBoxLayout>();
@@ -67,7 +66,7 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
     m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem, entityManager));
 
     m_data.vbox->addWidget(m_data.wgtRaycast.get());
-  }, m_launchEventId);
+  });
 }
 
 //===========================================
@@ -87,8 +86,6 @@ void FServerRoom::cleanUp() {
       wgt->show();
     }
   }
-
-  commonData.eventSystem.forget(m_launchEventId);
 }
 
 //===========================================

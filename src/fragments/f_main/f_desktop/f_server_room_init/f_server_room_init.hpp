@@ -3,6 +3,7 @@
 
 
 #include "fragment.hpp"
+#include "event_system.hpp"
 #include "qt_obj_ptr.hpp"
 
 
@@ -20,7 +21,7 @@ class FServerRoomInit : public Fragment {
   private:
     FServerRoomInitData m_data;
 
-    int m_launchEventId = -1;
+    EventHandle m_hLaunch;
 };
 
 

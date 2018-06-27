@@ -2,7 +2,6 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog_spec.hpp"
-#include "event_system.hpp"
 #include "utils.hpp"
 
 
@@ -31,15 +30,11 @@ void FAppDialog::reload(const FragmentSpec& spec_) {
   setWindowTitle(spec.titleText);
   setFixedSize(spec.width, spec.height);
 
-  if (m_eventIdx != -1) {
-    commonData.eventSystem.forget(m_eventIdx);
-  }
-
   hide();
 
-  commonData.eventSystem.listen(spec.showOnEvent, [this](const Event& event) {
+  m_hShow = commonData.eventSystem.listen(spec.showOnEvent, [this](const Event& event) {
     show();
-  }, m_eventIdx);
+  });
 }
 
 //===========================================
@@ -61,8 +56,6 @@ void FAppDialog::closeEvent(QCloseEvent*) {
 //===========================================
 void FAppDialog::cleanUp() {
   DBG_PRINT("FAppDialog::cleanUp\n");
-
-  commonData.eventSystem.forget(m_eventIdx);
 }
 
 //===========================================

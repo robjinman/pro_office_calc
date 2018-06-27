@@ -6,7 +6,7 @@
 #include <QDialog>
 #include "fragment.hpp"
 #include "fragments/relocatable/widget_frag_data.hpp"
-#include "event.hpp"
+#include "event_system.hpp"
 
 
 class DialogClosedEvent : public Event {
@@ -43,7 +43,7 @@ class FAppDialog : public QDialog, public Fragment {
     FAppDialogData m_data;
 
     std::string m_name;
-    int m_eventIdx = -1;
+    EventHandle m_hShow;
 };
 
 

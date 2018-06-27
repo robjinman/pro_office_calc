@@ -8,11 +8,9 @@
 #include <QLineEdit>
 #include <QMargins>
 #include "fragment.hpp"
-#include "event.hpp"
+#include "event_system.hpp"
 #include "qt_obj_ptr.hpp"
 
-
-class EventSystem;
 
 struct FLoginScreenData : public FragmentData {
   QtObjPtr<QLineEdit> wgtUser;
@@ -50,7 +48,7 @@ class FLoginScreen : public QLabel, public Fragment {
       QMargins margins;
     } m_origParentState;
 
-    int m_pwdGenEventId;
+    EventHandle m_hPwdGen;
 };
 
 

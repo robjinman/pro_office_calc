@@ -3,7 +3,6 @@
 #include "fragments/f_main/f_login_screen/f_login_screen_spec.hpp"
 #include "request_state_change_event.hpp"
 #include "state_ids.hpp"
-#include "event_system.hpp"
 #include "utils.hpp"
 
 
@@ -33,11 +32,11 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
-  commonData.eventSystem.listen("passwordGeneratedEvent", [this](const Event& event_) {
+  m_hPwdGen = commonData.eventSystem.listen("passwordGeneratedEvent", [this](const Event& event_) {
     auto& event = dynamic_cast<const PasswordGeneratedEvent&>(event_);
     DBG_PRINT_VAR(event.password);
     m_data.password = event.password;
-  }, m_pwdGenEventId);
+  });
 
   m_data.wgtUser = makeQtObjPtr<QLineEdit>(this);
   m_data.wgtUser->setGeometry(205, 170, 100, 20);
@@ -76,8 +75,6 @@ void FLoginScreen::cleanUp() {
   parentData.box->setSpacing(m_origParentState.spacing);
   parentData.box->setContentsMargins(m_origParentState.margins);
   parentData.box->removeWidget(this);
-
-  commonData.eventSystem.forget(m_pwdGenEventId);
 }
 
 //===========================================

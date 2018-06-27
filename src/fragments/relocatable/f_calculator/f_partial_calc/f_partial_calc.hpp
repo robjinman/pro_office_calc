@@ -5,6 +5,7 @@
 #include <set>
 #include <QObject>
 #include "fragment.hpp"
+#include "event_system.hpp"
 #include "button_grid.hpp"
 
 
@@ -32,9 +33,8 @@ class FPartialCalc : public QObject, public Fragment {
 
     FPartialCalcData m_data;
 
-    // Event handles
-    int m_setupCompleteIdx = -1;
-    int m_dialogClosedIdx = -1;
+    EventHandle m_hSetupComplete;
+    EventHandle m_hDialogClosed;
 };
 
 

@@ -6,10 +6,10 @@
 #include <QObject>
 #include <QEvent>
 #include "button_grid.hpp"
+#include "event_system.hpp"
 #include "raycast/component.hpp"
 
 
-class EventSystem;
 class Event;
 class EntityManager;
 class GameEvent;
@@ -44,7 +44,7 @@ class GameLogic : public QObject {
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
     entityId_t m_entityId;
-    int m_eventIdx = -1;
+    EventHandle m_hButtonPress;
     QEvent::Type m_raiseDialogEvent;
     double m_targetNumber = 0;
     int m_numKeysPressed = 0;

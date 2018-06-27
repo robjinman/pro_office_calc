@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QMargins>
 #include "fragment.hpp"
+#include "event_system.hpp"
 #include "qt_obj_ptr.hpp"
 
 
@@ -60,8 +61,9 @@ class FMailClient : public QWidget, public Fragment {
     } m_origParentState;
 
     bool m_serverRoomLaunched = false;
-    int m_larryKilledId = -1;
-    int m_serversDestroyedId = -1;
+
+    EventHandle m_hLarryKilled;
+    EventHandle m_hServersDestroyed;
 
     const int ST_INITIAL = 0;
     const int ST_LARRY_DEAD = 1;

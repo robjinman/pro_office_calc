@@ -9,6 +9,7 @@
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
 #include "calculator_widget.hpp"
+#include "event_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/game_logic.hpp"
 
 
@@ -38,7 +39,7 @@ class FServerRoom : public QWidget, public Fragment {
       QMargins margins;
     } m_origParentState;
 
-    int m_launchEventId = -1;
+    EventHandle m_hLaunch;
 };
 
 

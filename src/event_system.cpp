@@ -39,7 +39,7 @@ bool EventSystem::event(QEvent* e) {
 //===========================================
 // EventSystem::listen
 //===========================================
-void EventSystem::listen(const string& name, handlerFunc_t fn, int& id) {
+EventSystem::Handle EventSystem::listen(const string& name, handlerFunc_t fn) {
   static int nextId = 0;
 
   if (m_processingEvent) {
@@ -49,7 +49,7 @@ void EventSystem::listen(const string& name, handlerFunc_t fn, int& id) {
     m_handlers[name][nextId] = fn;
   }
 
-  id = nextId++;
+  return Handle(shared_from_this(), nextId++);
 }
 
 //===========================================
@@ -65,12 +65,12 @@ void EventSystem::forget_(int id) {
 //===========================================
 // EventSystem::forget
 //===========================================
-void EventSystem::forget(int id) {
+void EventSystem::forget(const Handle& handle) {
   if (m_processingEvent) {
-    m_pendingForget.insert(id);
+    m_pendingForget.insert(handle.id);
   }
   else {
-    forget_(id);
+    forget_(handle.id);
   }
 }
 

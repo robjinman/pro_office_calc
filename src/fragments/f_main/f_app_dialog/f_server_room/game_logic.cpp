@@ -32,9 +32,9 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  m_eventSystem.listen("youveGotMail/divByZero", [this](const Event& event) {
+  m_hDivByZero = m_eventSystem.listen("youveGotMail/divByZero", [this](const Event& event) {
     onDivByZero(event);
-  }, m_eventIdx);
+  });
 
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
@@ -183,9 +183,7 @@ void GameLogic::onDivByZero(const Event& event) {
 //===========================================
 // GameLogic::~GameLogic
 //===========================================
-GameLogic::~GameLogic() {
-  m_eventSystem.forget(m_eventIdx);
-}
+GameLogic::~GameLogic() {}
 
 
 }

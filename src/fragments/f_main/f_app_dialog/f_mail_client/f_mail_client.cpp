@@ -6,7 +6,6 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client.hpp"
 #include "fragments/f_main/f_app_dialog/f_mail_client/f_mail_client_spec.hpp"
-#include "event_system.hpp"
 #include "utils.hpp"
 #include "app_config.hpp"
 
@@ -327,18 +326,20 @@ void FMailClient::reload(const FragmentSpec& spec_) {
 
   connect(m_data.wgtTabs.get(), SIGNAL(tabCloseRequested(int)), this, SLOT(onTabClose(int)));
 
-  commonData.eventSystem.listen("youveGotMail/larryKilled", [this](const Event&) {
+  m_hLarryKilled = commonData.eventSystem.listen("youveGotMail/larryKilled", [this](const Event&) {
     m_inboxState = ST_LARRY_DEAD;
     populateInbox();
     enableEmails(0, -1);
-  }, m_larryKilledId);
+  });
 
-  commonData.eventSystem.listen("youveGotMail/serversDestroyed", [this](const Event&) {
+  m_hServersDestroyed = commonData.eventSystem.listen("youveGotMail/serversDestroyed",
+    [this](const Event&) {
+
     m_inboxState = ST_SERVERS_DESTROYED;
     m_data.wgtTabs->removeTab(1);
     populateInbox();
     enableEmails(0, -1);
-  }, m_serversDestroyedId);
+  });
 }
 
 //===========================================
@@ -568,9 +569,6 @@ void FMailClient::cleanUp() {
   parentData.box->setSpacing(m_origParentState.spacing);
   parentData.box->setContentsMargins(m_origParentState.margins);
   parentData.box->removeWidget(this);
-
-  commonData.eventSystem.forget(m_larryKilledId);
-  commonData.eventSystem.forget(m_serversDestroyedId);
 }
 
 //===========================================

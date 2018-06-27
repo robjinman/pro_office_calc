@@ -5,7 +5,6 @@
 #include "fragments/relocatable/f_tetrominos/f_tetrominos.hpp"
 #include "fragments/relocatable/f_tetrominos/f_tetrominos_spec.hpp"
 #include "utils.hpp"
-#include "event_system.hpp"
 
 
 using std::array;
@@ -70,9 +69,9 @@ FTetrominos::FTetrominos(Fragment& parent_, FragmentData& parentData_,
 
   constructTetrominos(1.0, 25.0);
 
-  commonData.eventSystem.listen("increaseTetrominoRain", [this](const Event&) {
+  m_hIncTetroRain = commonData.eventSystem.listen("increaseTetrominoRain", [this](const Event&) {
     constructTetrominos(2.0, 50.0);
-  }, m_incTetroRainId);
+  });
 
   show();
 }
@@ -261,7 +260,6 @@ void FTetrominos::cleanUp() {
   DBG_PRINT("FTetrominos::cleanUp\n");
 
   setParent(nullptr);
-  commonData.eventSystem.forget(m_incTetroRainId);
 }
 
 //===========================================
