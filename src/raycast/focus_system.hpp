@@ -2,6 +2,7 @@
 #define __PROCALC_RAYCAST_FOCUS_SYSTEM_HPP_
 
 
+#include <functional>
 #include <memory>
 #include <map>
 #include "raycast/system.hpp"

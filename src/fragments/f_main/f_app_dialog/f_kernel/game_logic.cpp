@@ -1,6 +1,7 @@
 #include <sstream>
 #include <vector>
 #include <random>
+#include <cassert>
 #include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
