@@ -114,7 +114,15 @@ bool ObjectFactory::constructCellInner(entityId_t entityId, parser::Object& obj,
     auto& eventHandlerSystem =
       m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
-    CEventHandler* events = new CEventHandler(entityId);
+    CEventHandler* events = nullptr;
+    if (eventHandlerSystem.hasComponent(entityId)) {
+      events = &eventHandlerSystem.getComponent(entityId);
+    }
+    else {
+      events = new CEventHandler(entityId);
+      eventHandlerSystem.addComponent(pComponent_t(events));
+    }
+
     events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
       [this, entityId, parentId](const GameEvent& e_) {
 
@@ -124,8 +132,6 @@ bool ObjectFactory::constructCellInner(entityId_t entityId, parser::Object& obj,
         m_entityManager.broadcastEvent(EPlayerEnterCellInner{parentId});
       }
     }});
-
-    eventHandlerSystem.addComponent(pComponent_t(events));
 
     return true;
   }
