@@ -397,21 +397,21 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
 // Player::region
 //===========================================
 entityId_t Player::region() const {
-  return m_entityManager.getComponent<CVRect>(body, ComponentKind::C_SPATIAL).zone->entityId();
+  return getBody().zone->entityId();
 }
 
 //===========================================
 // Player::aboveGround
 //===========================================
-bool Player::aboveGround(const CZone& zone) const {
-  return feetHeight() - 0.1 > zone.floorHeight;
+bool Player::aboveGround() const {
+  return feetHeight() - 0.1 > getBody().zone->floorHeight;
 }
 
 //===========================================
 // Player::belowGround
 //===========================================
-bool Player::belowGround(const CZone& zone) const {
-  return feetHeight() + 0.1 < zone.floorHeight;
+bool Player::belowGround() const {
+  return feetHeight() + 0.1 < getBody().zone->floorHeight;
 }
 
 //===========================================

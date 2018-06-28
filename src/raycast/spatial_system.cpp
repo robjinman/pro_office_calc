@@ -873,7 +873,7 @@ vector<Point> SpatialSystem::shortestPath(const Point& A, const Point& B, double
 // SpatialSystem::jump
 //===========================================
 void SpatialSystem::jump() {
-  if (!sg.player->aboveGround(getCurrentZone())) {
+  if (!sg.player->aboveGround()) {
     sg.player->vVelocity = 220;
   }
 }
@@ -904,7 +904,7 @@ void SpatialSystem::gravity() {
     player.changeHeight(currentZone, dy_);
     moveEntity(player.body, Vec2f(0, 0), player.feetHeight() - currentZone.floorHeight);
 
-    if (!player.aboveGround(currentZone)) {
+    if (!player.aboveGround()) {
       if (player.vVelocity <= -ONE_PT_DAMAGE_SPEED) {
         const double m = ONE_PT_DAMAGE_SPEED;
         const double n = TEN_PT_DAMAGE_SPEED;

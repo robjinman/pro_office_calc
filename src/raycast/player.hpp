@@ -44,8 +44,8 @@ class Player {
 
     entityId_t region() const;
 
-    bool aboveGround(const CZone& zone) const;
-    bool belowGround(const CZone& zone) const;
+    bool aboveGround() const;
+    bool belowGround() const;
 
     double feetHeight() const;
     double headHeight() const;

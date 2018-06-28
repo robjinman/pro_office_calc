@@ -200,7 +200,38 @@ bool ObjectFactory::constructSlime(entityId_t entityId, parser::Object& obj, ent
   obj.dict["floor_texture"] = "slime";
 
   if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
-    // TODO
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    const Player& player = *spatialSystem.sg.player;
+    auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+
+    CAnimation* anim = new CAnimation(entityId);
+    vector<AnimationFrame> frames = constructFrames(1, 3, { 0, 1, 2 });
+    anim->addAnimation(pAnimation_t(new Animation("gurgle", m_timeService.frameRate, 1.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+
+    animationSystem.playAnimation(entityId, "gurgle", true);
+
+    CEventHandler* events = new CEventHandler(entityId);
+    events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+      [=, &damageSystem, &player](const GameEvent& e_) mutable {
+
+      auto& e = dynamic_cast<const EChangedZone&>(e_);
+
+      if (e.newZone == entityId) {
+        m_timeService.atIntervals([=, &player, &damageSystem]() {
+          if (!player.aboveGround()) {
+            damageSystem.damageEntity(player.body, 1);
+          }
+          return player.region() == entityId;
+        }, 0.5);
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
 
     return true;
   }
