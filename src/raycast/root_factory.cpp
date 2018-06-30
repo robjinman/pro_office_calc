@@ -42,19 +42,19 @@ bool RootFactory::constructObject(const string& type, entityId_t entityId, parse
 #ifdef DEBUG
   const string& name = getValue(obj.dict, "name", "");
 
-  DBG_PRINT(string(m_dbgIndentLvl++, '\t') << "Constructing " << type
-    << (name.length() > 0 ? string(" (") + name + ")" : "") << "...\n");
+  //DBG_PRINT(string(m_dbgIndentLvl++, '\t') << "Constructing " << type
+  //  << (name.length() > 0 ? string(" (") + name + ")" : "") << "...\n");
 #endif
 
   auto it = m_factoriesByType.find(type);
   if (it != m_factoriesByType.end()) {
     bool success = it->second->constructObject(type, entityId, obj, parentId, parentTransform);
 
-    DBG_PRINT(string(--m_dbgIndentLvl, '\t') << (success ? "Success\n" : "Fail\n"));
+    //DBG_PRINT(string(--m_dbgIndentLvl, '\t') << (success ? "Success\n" : "Fail\n"));
     return success;
   }
   else {
-    DBG_PRINT("No factory knows how to make object of type '" << type << "'\n");
+    //DBG_PRINT("No factory knows how to make object of type '" << type << "'\n");
   }
 
   return false;

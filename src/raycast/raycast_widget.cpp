@@ -240,6 +240,8 @@ void RaycastWidget::start() {
   m_entityManager.deleteEntity(m_loadingOverlayBg);
   m_entityManager.deleteEntity(m_loadingOverlayText);
 
+  m_eventSystem.fire(pEvent_t{new Event{"raycast/start"}});
+
   m_timer->start(1000 / FRAME_RATE);
 }
 
@@ -289,7 +291,7 @@ void RaycastWidget::mousePressEvent(QMouseEvent* event) {
     m_mouseBtnState = true;
   }
 
-  if (m_cursorCaptured == false) {
+  if (m_cursorCaptured == false && m_timer->isActive()) {
     Point centre(width() / 2, height() / 2);
     QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
     m_cursor = centre;

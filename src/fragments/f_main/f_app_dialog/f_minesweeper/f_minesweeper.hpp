@@ -134,6 +134,8 @@ class FMinesweeper : public QWidget, public Fragment {
     void onBtnRightClick(int id);
 
   private:
+    void constructLoadingPage();
+    void constructMainPage();
     std::set<doomsweeper::Coord> placeMines();
     void setNumbers();
     std::set<MinesweeperCell*> getNeighbours(const MinesweeperCell& cell) const;
@@ -141,11 +143,24 @@ class FMinesweeper : public QWidget, public Fragment {
     void onInnerCellEntered(const Event& e_);
 
     FMinesweeperData m_data;
-    QtObjPtr<QGridLayout> m_grid;
-    std::array<std::array<QtObjPtr<MinesweeperCell>, 8>, 8> m_cells;
-    QtObjPtr<GoodButtonGroup> m_buttonGroup;
+    QtObjPtr<QStackedLayout> m_stackedLayout;
+
+    struct {
+      QtObjPtr<QLabel> widget;
+    } m_loadingPage;
+
+    struct {
+      QtObjPtr<QWidget> widget;
+      QtObjPtr<QGridLayout> grid;
+      std::array<std::array<QtObjPtr<MinesweeperCell>, 8>, 8> cells;
+      QtObjPtr<GoodButtonGroup> buttonGroup;
+    } m_mainPage;
+
     IconSet m_icons;
     EventHandle m_hInnerCellEntered;
+    EventHandle m_hStart;
+
+    bool m_dead = false;
 };
 
 
