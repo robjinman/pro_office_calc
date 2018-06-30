@@ -80,130 +80,131 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 // GameLogic::initialise
 //===========================================
 std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
-  const double cellW = 1600.0;
-  const double cellH = 1600.0;
+  return std::async(std::launch::async, [&, mineCoords]() {
+    const double cellW = 1600.0;
+    const double cellH = 1600.0;
 
-  m_objectFactory.firstPassComplete = true;
+    m_objectFactory.firstPassComplete = true;
 
-  vector<entityId_t> safeCells = {
-    Component::getIdFromString("safe_cell_0"),
-    //Component::getIdFromString("safe_cell_1"),
-    //Component::getIdFromString("safe_cell_2")
-  };
+    vector<entityId_t> safeCells = {
+      Component::getIdFromString("safe_cell_0"),
+      //Component::getIdFromString("safe_cell_1"),
+      //Component::getIdFromString("safe_cell_2")
+    };
 
-  std::uniform_int_distribution<int> randomSafeCell(0, safeCells.size() - 1);
+    std::uniform_int_distribution<int> randomSafeCell(0, safeCells.size() - 1);
 
-  vector<entityId_t> unsafeCells = {
-    Component::getIdFromString("unsafe_cell_0"),
-    //Component::getIdFromString("unsafe_cell_1"),
-    //Component::getIdFromString("unsafe_cell_2")
-  };
+    vector<entityId_t> unsafeCells = {
+      Component::getIdFromString("unsafe_cell_0"),
+      //Component::getIdFromString("unsafe_cell_1"),
+      //Component::getIdFromString("unsafe_cell_2")
+    };
 
-  std::uniform_int_distribution<int> randomUnsafeCell(0, unsafeCells.size() - 1);
+    std::uniform_int_distribution<int> randomUnsafeCell(0, unsafeCells.size() - 1);
 
-  // Construct start cell
-  //
+    // Construct start cell
+    //
 
-  entityId_t startCellId = Component::getIdFromString("start_cell");
-  parser::pObject_t startCellObj(m_objectFactory.objects.at(startCellId)->clone());
+    entityId_t startCellId = Component::getIdFromString("start_cell");
+    parser::pObject_t startCellObj(m_objectFactory.objects.at(startCellId)->clone());
 
-  Point startCellPos = m_objectFactory.objectPositions.at(startCellId);
+    Point startCellPos = m_objectFactory.objectPositions.at(startCellId);
 
-  m_rootFactory.constructObject("cell", -1, *startCellObj, m_objectFactory.region,
-    m_objectFactory.parentTransform);
+    m_rootFactory.constructObject("cell", -1, *startCellObj, m_objectFactory.region,
+      m_objectFactory.parentTransform);
 
-  sealDoor(m_objectFactory.cellDoors[startCellId].south);
+    sealDoor(m_objectFactory.cellDoors[startCellId].south);
 
-  m_cellIds[startCellId] = Coord{0, 0};
+    m_cellIds[startCellId] = Coord{0, 0};
 
-  // Construct end cell
-  //
+    // Construct end cell
+    //
 
-  entityId_t endCellId = Component::getIdFromString("end_cell");
-  parser::pObject_t endCellObj(m_objectFactory.objects.at(endCellId)->clone());
+    entityId_t endCellId = Component::getIdFromString("end_cell");
+    parser::pObject_t endCellObj(m_objectFactory.objects.at(endCellId)->clone());
 
-  const Point& endCellPos = m_objectFactory.objectPositions.at(endCellId);
-  const Matrix& endCellTransform = endCellObj->groupTransform;
+    const Point& endCellPos = m_objectFactory.objectPositions.at(endCellId);
+    const Matrix& endCellTransform = endCellObj->groupTransform;
 
-  Point endCellTargetPos = startCellPos + Vec2f(cellW * (COLS - 1), -cellH * (ROWS - 1));
-  Matrix endCellShift(0, endCellTargetPos - endCellPos);
+    Point endCellTargetPos = startCellPos + Vec2f(cellW * (COLS - 1), -cellH * (ROWS - 1));
+    Matrix endCellShift(0, endCellTargetPos - endCellPos);
 
-  endCellObj->groupTransform = endCellTransform * endCellShift;
+    endCellObj->groupTransform = endCellTransform * endCellShift;
 
-  m_rootFactory.constructObject("cell", -1, *endCellObj, m_objectFactory.region,
-    m_objectFactory.parentTransform);
+    m_rootFactory.constructObject("cell", -1, *endCellObj, m_objectFactory.region,
+      m_objectFactory.parentTransform);
 
-  sealDoor(m_objectFactory.cellDoors[endCellId].north);
+    sealDoor(m_objectFactory.cellDoors[endCellId].north);
 
-  m_cellIds[endCellId] = Coord{ROWS - 1, COLS - 1};
+    m_cellIds[endCellId] = Coord{ROWS - 1, COLS - 1};
 
-  // Construct remaining cells
-  //
+    // Construct remaining cells
+    //
 
-  for (int i = 0; i < ROWS; ++i) {
-    for (int j = 0; j < COLS; ++j) {
-      if (i == 0 && j == 0) {
-        continue;
-      }
+    for (int i = 0; i < ROWS; ++i) {
+      for (int j = 0; j < COLS; ++j) {
+        if (i == 0 && j == 0) {
+          continue;
+        }
 
-      if (i == ROWS - 1 && j == COLS - 1) {
-        continue;
-      }
+        if (i == ROWS - 1 && j == COLS - 1) {
+          continue;
+        }
 
-      entityId_t protoCellId = -1;
+        entityId_t protoCellId = -1;
 
-      if (mineCoords.count(Coord{i, j})) {
-        protoCellId = unsafeCells[randomUnsafeCell(randEngine)];
-      }
-      else {
-        protoCellId = safeCells[randomSafeCell(randEngine)];
-      }
+        if (mineCoords.count(Coord{i, j})) {
+          protoCellId = unsafeCells[randomUnsafeCell(randEngine)];
+        }
+        else {
+          protoCellId = safeCells[randomSafeCell(randEngine)];
+        }
 
-      assert(protoCellId != -1);
+        assert(protoCellId != -1);
 
-      parser::pObject_t cellObj(m_objectFactory.objects.at(protoCellId)->clone());
-      const Point& cellPos = m_objectFactory.objectPositions.at(protoCellId);
-      const Matrix& cellTransform = cellObj->groupTransform;
+        parser::pObject_t cellObj(m_objectFactory.objects.at(protoCellId)->clone());
+        const Point& cellPos = m_objectFactory.objectPositions.at(protoCellId);
+        const Matrix& cellTransform = cellObj->groupTransform;
 
-      Point targetPos = startCellPos + Vec2f(cellW * j, -cellH * i);
-      Matrix m(0, targetPos - cellPos);
+        Point targetPos = startCellPos + Vec2f(cellW * j, -cellH * i);
+        Matrix m(0, targetPos - cellPos);
 
-      stringstream ss;
-      ss << "cell_" << i << "_" << j;
+        stringstream ss;
+        ss << "cell_" << i << "_" << j;
 
-      entityId_t cellId = Component::getIdFromString(ss.str());
-      m_cellIds[cellId] = Coord{i, j};
+        entityId_t cellId = Component::getIdFromString(ss.str());
+        m_cellIds[cellId] = Coord{i, j};
 
-      cellObj->dict["name"] = ss.str();
-      cellObj->groupTransform = cellTransform * m;
+        cellObj->dict["name"] = ss.str();
+        cellObj->groupTransform = cellTransform * m;
 
-      m_rootFactory.constructObject("cell", -1, *cellObj, m_objectFactory.region,
-        m_objectFactory.parentTransform);
+        m_rootFactory.constructObject("cell", -1, *cellObj, m_objectFactory.region,
+          m_objectFactory.parentTransform);
 
-      if (i == 0) {
-        sealDoor(m_objectFactory.cellDoors[cellId].south);
-      }
+        if (i == 0) {
+          sealDoor(m_objectFactory.cellDoors[cellId].south);
+        }
 
-      if (i + 1 == ROWS) {
-        sealDoor(m_objectFactory.cellDoors[cellId].north);
-      }
+        if (i + 1 == ROWS) {
+          sealDoor(m_objectFactory.cellDoors[cellId].north);
+        }
 
-      if (j == 0) {
-        sealDoor(m_objectFactory.cellDoors[cellId].west);
-      }
+        if (j == 0) {
+          sealDoor(m_objectFactory.cellDoors[cellId].west);
+        }
 
-      if (j + 1 == COLS) {
-        sealDoor(m_objectFactory.cellDoors[cellId].east);
+        if (j + 1 == COLS) {
+          sealDoor(m_objectFactory.cellDoors[cellId].east);
+        }
       }
     }
-  }
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  return std::async(std::launch::async, [&]() {
     DBG_PRINT("Connecting zones...\n");
     spatialSystem.connectZones();
+
     DBG_PRINT("Connecting regions...\n");
     renderSystem.connectRegions();
   });
