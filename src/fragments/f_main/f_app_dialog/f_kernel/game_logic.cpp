@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include <cassert>
+#include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
@@ -40,7 +41,8 @@ static std::mt19937 randEngine(randomSeed());
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
   RootFactory& rootFactory, ObjectFactory& objectFactory, TimeService& timeService)
-  : m_eventSystem(eventSystem),
+  : m_initialised(false),
+    m_eventSystem(eventSystem),
     m_entityManager(entityManager),
     m_rootFactory(rootFactory),
     m_objectFactory(objectFactory),
@@ -50,6 +52,13 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
   m_hClickMine = m_eventSystem.listen("doomsweeper/clickMine",
     std::bind(&GameLogic::onClickMine, this, std::placeholders::_1));
+
+  m_hDoomClosed = m_eventSystem.listen("dialogClosed", [this](const Event& e_) {
+    auto& e = dynamic_cast<const DialogClosedEvent&>(e_);
+    if (e.name == "doom") {
+      onDoomWindowClose();
+    }
+  });
 
   m_entityId = Component::getNextId();
 
@@ -208,6 +217,8 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     DBG_PRINT("Connecting regions...\n");
     renderSystem.connectRegions();
+
+    m_initialised = true;
   });
 }
 
@@ -227,6 +238,15 @@ void GameLogic::onClickMine(const Event&) {
   m_timeService.onTimeout([this]() {
     m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
   }, 1.0);
+}
+
+//===========================================
+// GameLogic::onDoomWindowClose
+//===========================================
+void GameLogic::onDoomWindowClose() {
+  if (m_initialised) {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
+  }
 }
 
 //===========================================

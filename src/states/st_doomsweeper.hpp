@@ -27,21 +27,22 @@ FMainSpec* makeFMainSpec(int stateId) {
     "</div>";
   mainSpec->desktopSpec.setEnabled(true);
   mainSpec->desktopSpec.icons = {
-    {config::dataPath("doomsweeper/file_browser.png"), "File Browser", "fileBrowserLaunch"},
-    {config::dataPath("doomsweeper/minesweeper.png"), "Doomsweeper", "doomsweeperLaunch"},
+    {config::dataPath("doomsweeper/skull_crossbones.png"), "Dooom", "doomLaunch"},
+    {config::dataPath("doomsweeper/minesweeper.png"), "Minesweeper", "mineweeperLaunch"},
     {config::dataPath("doomsweeper/console.png"), "Terminal", "terminalLaunch"}
   };
   mainSpec->appDialogSpec0.setEnabled(true);
-  mainSpec->appDialogSpec0.titleText = "File Browser";
+  mainSpec->appDialogSpec0.name = "doom";
+  mainSpec->appDialogSpec0.titleText = "Dooom";
   mainSpec->appDialogSpec0.width = 320;
   mainSpec->appDialogSpec0.height = 240;
-  mainSpec->appDialogSpec0.showOnEvent = "fileBrowserLaunch";
+  mainSpec->appDialogSpec0.showOnEvent = "doomLaunch";
   mainSpec->appDialogSpec0.kernelSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
-  mainSpec->appDialogSpec1.titleText = "Doomsweeper";
+  mainSpec->appDialogSpec1.titleText = "Mineweeper";
   mainSpec->appDialogSpec1.width = 280;
   mainSpec->appDialogSpec1.height = 240;
-  mainSpec->appDialogSpec1.showOnEvent = "doomsweeperLaunch";
+  mainSpec->appDialogSpec1.showOnEvent = "mineweeperLaunch";
   mainSpec->appDialogSpec1.minesweeperSpec.setEnabled(true);
   mainSpec->appDialogSpec2.setEnabled(true);
   mainSpec->appDialogSpec2.titleText = "Terminal";

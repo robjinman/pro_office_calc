@@ -423,7 +423,7 @@ void FMinesweeper::constructMainPage() {
     SLOT(onBtnRightClick(int)));
 
   m_icons.flag = QIcon(config::dataPath("doomsweeper/flag.png").c_str());
-  m_icons.mine = QIcon(config::dataPath("doomsweeper/mine.png").c_str());
+  m_icons.mine = QIcon(config::dataPath("doomsweeper/skull_crossbones.png").c_str());
   m_icons.noMine = QIcon(config::dataPath("doomsweeper/no_mine.png").c_str());
   m_icons.player = QIcon(config::dataPath("doomsweeper/player.png").c_str());
 

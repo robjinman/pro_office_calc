@@ -4,6 +4,7 @@
 
 #include <string>
 #include <future>
+#include <atomic>
 #include <stdexcept>
 #include <map>
 #include <list>
@@ -86,8 +87,11 @@ class GameLogic {
     void onEntityChangeZone(const GameEvent& e_);
     void onPlayerDeath(const GameEvent&);
     void onClickMine(const Event&);
+    void onDoomWindowClose();
     void lockDoors();
     void sealDoor(entityId_t doorId);
+
+    std::atomic<bool> m_initialised;
 
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
@@ -98,6 +102,7 @@ class GameLogic {
     entityId_t m_entityId = -1;
 
     EventHandle m_hClickMine;
+    EventHandle m_hDoomClosed;
 
     std::map<entityId_t, Coord> m_cellIds;
 
