@@ -96,7 +96,7 @@ class GameLogic {
 
     entityId_t m_entityId = -1;
 
-    pEventHandle_t m_hClickMine;
+    EventHandle m_hClickMine;
 
     std::map<entityId_t, Coord> m_cellIds;
 

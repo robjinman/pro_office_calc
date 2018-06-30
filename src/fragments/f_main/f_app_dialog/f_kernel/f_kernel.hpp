@@ -40,7 +40,7 @@ class FKernel : public QWidget, public Fragment {
     } m_origParentState;
 
     std::future<void> m_initFuture;
-    pEventHandle_t m_hSetup;
+    EventHandle m_hSetup;
 };
 
 

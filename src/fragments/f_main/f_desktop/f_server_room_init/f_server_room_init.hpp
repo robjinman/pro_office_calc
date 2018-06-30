@@ -21,7 +21,7 @@ class FServerRoomInit : public Fragment {
   private:
     FServerRoomInitData m_data;
 
-    pEventHandle_t m_hLaunch;
+    EventHandle m_hLaunch;
 };
 
 

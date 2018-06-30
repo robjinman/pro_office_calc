@@ -193,6 +193,8 @@ void FProcalcSetup::setupPage2() {
 
   page.gameLogic = makeQtObjPtr<GameLogic>(dialog, commonData.eventSystem,
     page.wgtRaycast->entityManager());
+
+  page.wgtRaycast->start();
 }
 
 //===========================================

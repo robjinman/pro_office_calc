@@ -134,8 +134,9 @@ void FTroubleshooterDialog::setupTab3() {
   tab.wgtRaycast->initialise(config::dataPath("its_raining_tetrominos/map.svg"));
   tab.gameLogic.reset(new GameLogic(commonData.eventSystem, tab.wgtRaycast->entityManager()));
 
-  tab.vbox->addWidget(tab.wgtRaycast.get());
+  tab.wgtRaycast->start();
 
+  tab.vbox->addWidget(tab.wgtRaycast.get());
   tab.page->setLayout(tab.vbox.get());
 }
 

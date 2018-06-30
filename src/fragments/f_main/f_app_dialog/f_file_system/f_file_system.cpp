@@ -55,6 +55,8 @@ void FFileSystem::reload(const FragmentSpec& spec_) {
 
   m_data.gameLogic.reset(new going_in_circles::GameLogic(commonData.eventSystem, entityManager));
 
+  m_data.wgtRaycast->start();
+
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 }
 

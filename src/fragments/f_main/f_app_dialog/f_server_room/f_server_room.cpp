@@ -65,6 +65,8 @@ void FServerRoom::reload(const FragmentSpec& spec_) {
 
     m_data.gameLogic.reset(new youve_got_mail::GameLogic(commonData.eventSystem, entityManager));
 
+    m_data.wgtRaycast->start();
+
     m_data.vbox->addWidget(m_data.wgtRaycast.get());
   });
 }

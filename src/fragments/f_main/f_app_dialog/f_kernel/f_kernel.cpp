@@ -66,19 +66,16 @@ void FKernel::reload(const FragmentSpec& spec_) {
     [=](const Event& e_) {
 
     auto& e = dynamic_cast<const doomsweeper::MinesweeperSetupEvent&>(e_);
-
-    std::cout << "ONE\n";
     m_initFuture = m_data.gameLogic->initialise(e.mineCoords);
-    std::cout << "TWO\n";
+
+    DBG_PRINT("Initialising game logic...\n");
 
     commonData.updateLoop.add([this]() -> bool {
       return waitForInit();
     }, []() {
-      std::cout << "DONE\n";
+      DBG_PRINT("DONE initialising game logic\n");
     });
   });
-
-  std::cout << "Event id = " << m_hSetup->id << "\n";
 
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 }
@@ -88,8 +85,6 @@ void FKernel::reload(const FragmentSpec& spec_) {
 //===========================================
 bool FKernel::waitForInit() {
   auto status = m_initFuture.wait_for(std::chrono::milliseconds(0));
-
-  std::cout << "waiting...\n";
 
   if (status == std::future_status::ready) {
     m_data.wgtRaycast->start();

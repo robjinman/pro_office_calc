@@ -61,6 +61,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
 #endif
 
   m_data.wgtRaycast->initialise(config::dataPath("youve_got_mail/map.svg"));
+  m_data.wgtRaycast->start();
 }
 
 //===========================================
