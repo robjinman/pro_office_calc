@@ -217,7 +217,12 @@ void RaycastWidget::initialise(const string& mapFile) {
 
   m_timer = makeQtObjPtr<QTimer>(this);
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+}
 
+//===========================================
+// RaycastWidget::start
+//===========================================
+void RaycastWidget::start() {
   m_timer->start(1000 / FRAME_RATE);
 }
 

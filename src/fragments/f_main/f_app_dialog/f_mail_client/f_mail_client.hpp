@@ -62,8 +62,8 @@ class FMailClient : public QWidget, public Fragment {
 
     bool m_serverRoomLaunched = false;
 
-    EventHandle m_hLarryKilled;
-    EventHandle m_hServersDestroyed;
+    pEventHandle_t m_hLarryKilled;
+    pEventHandle_t m_hServersDestroyed;
 
     const int ST_INITIAL = 0;
     const int ST_LARRY_DEAD = 1;

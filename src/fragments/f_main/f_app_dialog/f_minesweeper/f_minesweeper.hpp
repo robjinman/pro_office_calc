@@ -145,7 +145,7 @@ class FMinesweeper : public QWidget, public Fragment {
     std::array<std::array<QtObjPtr<MinesweeperCell>, 8>, 8> m_cells;
     QtObjPtr<GoodButtonGroup> m_buttonGroup;
     IconSet m_icons;
-    EventHandle m_hInnerCellEntered;
+    pEventHandle_t m_hInnerCellEntered;
 };
 
 

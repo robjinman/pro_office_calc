@@ -28,6 +28,7 @@ class RaycastWidget : public QWidget {
     RaycastWidget(EventSystem& eventSystem);
 
     void initialise(const std::string& mapFile);
+    void start();
 
     EntityManager& entityManager() {
       return m_entityManager;

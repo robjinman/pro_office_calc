@@ -1,10 +1,12 @@
+#include <chrono>
 #include "fragments/relocatable/widget_frag_data.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/f_kernel.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/f_kernel_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
+#include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 #include "raycast/render_system.hpp"
 #include "utils.hpp"
-#include "event_system.hpp"
+#include "update_loop.hpp"
 #include "app_config.hpp"
 
 
@@ -60,7 +62,41 @@ void FKernel::reload(const FragmentSpec& spec_) {
   m_data.gameLogic.reset(new doomsweeper::GameLogic(commonData.eventSystem, entityManager,
     m_data.wgtRaycast->rootFactory(), *factory, timeService));
 
+  m_hSetup = commonData.eventSystem.listen("doomsweeper/minesweeperSetupComplete",
+    [=](const Event& e_) {
+
+    auto& e = dynamic_cast<const doomsweeper::MinesweeperSetupEvent&>(e_);
+
+    std::cout << "ONE\n";
+    m_initFuture = m_data.gameLogic->initialise(e.mineCoords);
+    std::cout << "TWO\n";
+
+    commonData.updateLoop.add([this]() -> bool {
+      return waitForInit();
+    }, []() {
+      std::cout << "DONE\n";
+    });
+  });
+
+  std::cout << "Event id = " << m_hSetup->id << "\n";
+
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
+}
+
+//===========================================
+// FKernel::waitForInit
+//===========================================
+bool FKernel::waitForInit() {
+  auto status = m_initFuture.wait_for(std::chrono::milliseconds(0));
+
+  std::cout << "waiting...\n";
+
+  if (status == std::future_status::ready) {
+    m_data.wgtRaycast->start();
+    return false;
+  }
+
+  return true;
 }
 
 //===========================================

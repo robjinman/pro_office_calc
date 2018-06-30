@@ -48,12 +48,6 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  m_hSetup = m_eventSystem.listen("doomsweeper/minesweeperSetupComplete", [=](const Event& e_) {
-    auto& e = dynamic_cast<const MinesweeperSetupEvent&>(e_);
-
-    initialise(e.mineCoords);
-  });
-
   m_hClickMine = m_eventSystem.listen("doomsweeper/clickMine", [this](const Event&) {
     onClickMine();
   });
@@ -85,7 +79,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 //===========================================
 // GameLogic::initialise
 //===========================================
-void GameLogic::initialise(const set<Coord>& mineCoords) {
+std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
   const double cellW = 1600.0;
   const double cellH = 1600.0;
 
@@ -207,10 +201,12 @@ void GameLogic::initialise(const set<Coord>& mineCoords) {
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  DBG_PRINT("Connecting zones...\n");
-  spatialSystem.connectZones();
-  DBG_PRINT("Connecting regions...\n");
-  renderSystem.connectRegions();
+  return std::async(std::launch::async, [&]() {
+    DBG_PRINT("Connecting zones...\n");
+    spatialSystem.connectZones();
+    DBG_PRINT("Connecting regions...\n");
+    renderSystem.connectRegions();
+  });
 }
 
 //===========================================

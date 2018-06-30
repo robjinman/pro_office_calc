@@ -43,7 +43,7 @@ class FAppDialog : public QDialog, public Fragment {
     FAppDialogData m_data;
 
     std::string m_name;
-    EventHandle m_hShow;
+    pEventHandle_t m_hShow;
 };
 
 

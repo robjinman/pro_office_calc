@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <QObject>
+#include <iostream> // TODO
 #include "event.hpp"
 
 
@@ -26,7 +27,7 @@ class EventSystem : public QObject, public std::enable_shared_from_this<EventSys
 
         Handle(const Handle& cpy) = delete;
         Handle& operator=(const Handle& rhs) = delete;
-
+/*
         Handle(Handle&& cpy) {
           id = cpy.id;
           m_eventSystem = cpy.m_eventSystem;
@@ -42,12 +43,14 @@ class EventSystem : public QObject, public std::enable_shared_from_this<EventSys
 
           return *this;
         }
-
+*/
         int id;
 
         ~Handle() {
+          std::cout << "Handle::~Handle()\n";
+
           auto ptr = m_eventSystem.lock();
-          if (ptr && id != -1) {
+          if (ptr) {
             ptr->forget(*this);
           }
         }
@@ -56,8 +59,10 @@ class EventSystem : public QObject, public std::enable_shared_from_this<EventSys
         std::weak_ptr<EventSystem> m_eventSystem;
     };
 
-    Handle listen(const std::string& name, handlerFunc_t fn);
-    void forget(const Handle& handle);
+    typedef std::unique_ptr<Handle> pHandle_t;
+
+    pHandle_t listen(const std::string& name, handlerFunc_t fn);
+    void forget(Handle& handle);
     void fire(pEvent_t event);
 
   private:
@@ -77,7 +82,7 @@ class EventSystem : public QObject, public std::enable_shared_from_this<EventSys
     std::set<int> m_pendingForget;
 };
 
-typedef EventSystem::Handle EventHandle;
+typedef EventSystem::pHandle_t pEventHandle_t;
 
 
 #endif

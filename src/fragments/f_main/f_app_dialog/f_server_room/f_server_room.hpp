@@ -39,7 +39,7 @@ class FServerRoom : public QWidget, public Fragment {
       QMargins margins;
     } m_origParentState;
 
-    EventHandle m_hLaunch;
+    pEventHandle_t m_hLaunch;
 };
 
 

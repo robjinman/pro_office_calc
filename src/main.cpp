@@ -83,11 +83,11 @@ int main(int argc, char** argv) {
     mainFragment.rebuild(*mainSpec, false);
     mainFragment.show();
 
-    EventHandle hQuit = eventSystem->listen("quit", [](const Event&) {
+    pEventHandle_t hQuit = eventSystem->listen("quit", [](const Event&) {
       QApplication::exit(0);
     });
 
-    EventHandle hStateChange = eventSystem->listen("requestStateChange", [&](const Event& e_) {
+    pEventHandle_t hStateChange = eventSystem->listen("requestStateChange", [&](const Event& e_) {
       const RequestStateChangeEvent& e = dynamic_cast<const RequestStateChangeEvent&>(e_);
       stateId = e.stateId;
 

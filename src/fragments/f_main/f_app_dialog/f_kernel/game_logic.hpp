@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <future>
 #include <stdexcept>
 #include <map>
 #include <list>
@@ -75,10 +76,11 @@ class GameLogic {
       ObjectFactory& objectFactory, TimeService& timeService);
     GameLogic(const GameLogic& cpy) = delete;
 
+    std::future<void> initialise(const std::set<Coord>& mineCoords);
+
     ~GameLogic();
 
   private:
-    void initialise(const std::set<Coord>& mineCoords);
     void onPlayerEnterCellInner(entityId_t cellId);
     void onCellDoorOpened(entityId_t cellId);
     void onEntityChangeZone(const GameEvent& e_);
@@ -94,8 +96,7 @@ class GameLogic {
 
     entityId_t m_entityId = -1;
 
-    EventHandle m_hSetup;
-    EventHandle m_hClickMine;
+    pEventHandle_t m_hClickMine;
 
     std::map<entityId_t, Coord> m_cellIds;
 

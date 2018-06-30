@@ -48,7 +48,7 @@ class FLoginScreen : public QLabel, public Fragment {
       QMargins margins;
     } m_origParentState;
 
-    EventHandle m_hPwdGen;
+    pEventHandle_t m_hPwdGen;
 };
 
 

@@ -8,6 +8,7 @@
 #include "raycast/raycast_widget.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
+#include "event_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
 
 
@@ -29,12 +30,17 @@ class FKernel : public QWidget, public Fragment {
     virtual ~FKernel() override;
 
   private:
+    bool waitForInit();
+
     FKernelData m_data;
 
     struct {
       int spacing;
       QMargins margins;
     } m_origParentState;
+
+    std::future<void> m_initFuture;
+    pEventHandle_t m_hSetup;
 };
 
 

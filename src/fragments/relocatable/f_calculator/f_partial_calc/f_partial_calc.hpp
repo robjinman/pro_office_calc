@@ -33,8 +33,8 @@ class FPartialCalc : public QObject, public Fragment {
 
     FPartialCalcData m_data;
 
-    EventHandle m_hSetupComplete;
-    EventHandle m_hDialogClosed;
+    pEventHandle_t m_hSetupComplete;
+    pEventHandle_t m_hDialogClosed;
 };
 
 
