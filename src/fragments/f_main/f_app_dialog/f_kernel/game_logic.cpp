@@ -48,9 +48,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  m_hClickMine = m_eventSystem.listen("doomsweeper/clickMine", [this](const Event&) {
-    onClickMine();
-  });
+  m_hClickMine = m_eventSystem.listen("doomsweeper/clickMine",
+    std::bind(&GameLogic::onClickMine, this, std::placeholders::_1));
 
   m_entityId = Component::getNextId();
 
@@ -72,6 +71,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
     auto& e = dynamic_cast<const ECellDoorOpened&>(e_);
     onCellDoorOpened(e.cellId);
   }});
+  events->broadcastedEventHandlers.push_back(EventHandler{"player_death",
+    std::bind(&GameLogic::onPlayerDeath, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
 }
@@ -211,9 +212,18 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 }
 
 //===========================================
+// GameLogic::onPlayerDeath
+//===========================================
+void GameLogic::onPlayerDeath(const GameEvent&) {
+  m_timeService.onTimeout([this]() {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
+  }, 1.0);
+}
+
+//===========================================
 // GameLogic::onClickMine
 //===========================================
-void GameLogic::onClickMine() {
+void GameLogic::onClickMine(const Event&) {
   m_timeService.onTimeout([this]() {
     m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
   }, 1.0);

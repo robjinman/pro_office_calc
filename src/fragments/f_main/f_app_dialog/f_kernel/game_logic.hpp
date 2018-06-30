@@ -84,7 +84,8 @@ class GameLogic {
     void onPlayerEnterCellInner(entityId_t cellId);
     void onCellDoorOpened(entityId_t cellId);
     void onEntityChangeZone(const GameEvent& e_);
-    void onClickMine();
+    void onPlayerDeath(const GameEvent&);
+    void onClickMine(const Event&);
     void lockDoors();
     void sealDoor(entityId_t doorId);
 

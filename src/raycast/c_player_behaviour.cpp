@@ -79,6 +79,8 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
 
       m_entityManager.deleteEntity(player.sprite);
       m_entityManager.deleteEntity(player.crosshair);
+
+      m_entityManager.broadcastEvent(GameEvent{"player_death"});
     }
   }
 }
