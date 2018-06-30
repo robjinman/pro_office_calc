@@ -254,8 +254,16 @@ bool MiscFactory::constructElevator(entityId_t entityId, parser::Object& obj, en
       return std::stod(s);
     });
 
+    string strInitLevelIdx = getValue(obj.dict, "init_level_idx", "0");
+    int initLevelIdx = std::stod(strInitLevelIdx);
+
     CElevatorBehaviour* behaviour = new CElevatorBehaviour(entityId, m_entityManager,
-      m_timeService.frameRate, levels);
+      m_audioService, m_timeService.frameRate, levels, initLevelIdx);
+
+    string strPlayerActivated = getValue(obj.dict, "player_activated", "");
+    if (strPlayerActivated != "") {
+      behaviour->isPlayerActivated = strPlayerActivated == "true";
+    }
 
     if (contains<string>(obj.dict, "speed")) {
       double speed = std::stod(obj.dict.at("speed"));

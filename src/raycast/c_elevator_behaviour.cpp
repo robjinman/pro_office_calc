@@ -4,6 +4,7 @@
 #include "raycast/c_switch_behaviour.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_components.hpp"
+#include "raycast/audio_service.hpp"
 #include "event.hpp"
 #include "exception.hpp"
 #include "utils.hpp"
@@ -16,9 +17,10 @@ using std::vector;
 // CElevatorBehaviour::CElevatorBehaviour
 //===========================================
 CElevatorBehaviour::CElevatorBehaviour(entityId_t entityId, EntityManager& entityManager,
-  double frameRate, const vector<double>& levels)
+  AudioService& audioService, double frameRate, const vector<double>& levels, int initLevelIdx)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
+    m_audioService(audioService),
     m_frameRate(frameRate),
     m_levels(levels) {
 
@@ -27,6 +29,32 @@ CElevatorBehaviour::CElevatorBehaviour(entityId_t entityId, EntityManager& entit
   }
 
   std::sort(m_levels.begin(), m_levels.end());
+
+  if (initLevelIdx >= static_cast<int>(m_levels.size())) {
+    EXCEPTION("Elevator's initial level index out of range");
+  }
+
+  m_target = initLevelIdx;
+
+  CZone& zone = m_entityManager.getComponent<CZone>(this->entityId(), ComponentKind::C_SPATIAL);
+  zone.floorHeight = m_levels[m_target];
+}
+
+//===========================================
+// CElevatorBehaviour::playSound
+//===========================================
+void CElevatorBehaviour::playSound() const {
+  CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
+  const Point& pos = zone.edges.front()->lseg.A;
+
+  m_audioService.playSoundAtPos("elevator", pos, true);
+}
+
+//===========================================
+// CElevatorBehaviour::stopSound
+//===========================================
+void CElevatorBehaviour::stopSound() const {
+  m_audioService.stopSound("elevator");
 }
 
 //===========================================
@@ -59,6 +87,8 @@ void CElevatorBehaviour::update() {
         zone.floorHeight = targetY;
 
         m_entityManager.broadcastEvent(EElevatorStopped(entityId()));
+
+        stopSound();
       }
 
       break;
@@ -86,5 +116,15 @@ void CElevatorBehaviour::handleTargetedEvent(const GameEvent& e) {
 
     m_target = std::stod(m.str(1));
     m_state = ST_MOVING;
+
+    playSound();
+  }
+  else if (e.name == "player_activate_entity") { // TODO: if player_activated
+    if (m_state == ST_STOPPED) {
+      m_target = (m_target + 1) % m_levels.size();
+    }
+
+    m_state = ST_MOVING;
+    playSound();
   }
 }

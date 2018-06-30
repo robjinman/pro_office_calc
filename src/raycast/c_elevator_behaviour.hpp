@@ -17,11 +17,15 @@ struct EElevatorStopped : public GameEvent {
 };
 
 class EntityManager;
+class AudioService;
 
 class CElevatorBehaviour : public CBehaviour {
   public:
-    CElevatorBehaviour(entityId_t entityId, EntityManager& entityManager, double frameRate,
-      const std::vector<double>& levels);
+    CElevatorBehaviour(entityId_t entityId, EntityManager& entityManager,
+      AudioService& audioService, double frameRate, const std::vector<double>& levels,
+      int initLevelIdx);
+
+    bool isPlayerActivated = false;
 
     virtual void update() override;
     virtual void handleBroadcastedEvent(const GameEvent& e) override {}
@@ -30,12 +34,16 @@ class CElevatorBehaviour : public CBehaviour {
     void setSpeed(double speed);
 
   private:
+    void playSound() const;
+    void stopSound() const;
+
     enum state_t {
       ST_STOPPED,
       ST_MOVING
     };
 
     EntityManager& m_entityManager;
+    AudioService& m_audioService;
     double m_frameRate;
     state_t m_state = ST_STOPPED;
     int m_target = 0;
