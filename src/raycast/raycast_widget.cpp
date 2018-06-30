@@ -217,12 +217,29 @@ void RaycastWidget::initialise(const string& mapFile) {
 
   m_timer = makeQtObjPtr<QTimer>(this);
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+
+  m_loadingOverlayBg = Component::getNextId();
+  m_loadingOverlayText = Component::getNextId();
+
+  Size vp = renderSystem->rg.viewport;
+
+  CColourOverlay* bgOverlay = new CColourOverlay(m_loadingOverlayBg, Qt::black, Point(0, 0), vp,
+    100);
+
+  CTextOverlay* textOverlay = new CTextOverlay(m_loadingOverlayText, "Loading...",
+    Point(vp.x * 0.1, vp.y * 0.45), 1.0, Qt::white, 100);
+
+  renderSystem->addComponent(pComponent_t(bgOverlay));
+  renderSystem->addComponent(pComponent_t(textOverlay));
 }
 
 //===========================================
 // RaycastWidget::start
 //===========================================
 void RaycastWidget::start() {
+  m_entityManager.deleteEntity(m_loadingOverlayBg);
+  m_entityManager.deleteEntity(m_loadingOverlayText);
+
   m_timer->start(1000 / FRAME_RATE);
 }
 
