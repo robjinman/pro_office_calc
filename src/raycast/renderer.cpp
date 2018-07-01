@@ -357,7 +357,7 @@ void Renderer::drawSkySlice(const RenderGraph& rg, const Camera& cam, const Scre
 
   int x = tileSz_px.x * s;
 
-  double maxPitch = DEG_TO_RAD(20.0); // TODO
+  double maxPitch = DEG_TO_RAD(PLAYER_MAX_PITCH);
   double minVAngle = -0.5 * cam.vFov - maxPitch;
   double maxVAngle = 0.5 * cam.vFov + maxPitch;
   double vAngleRange = maxVAngle - minVAngle;

@@ -87,6 +87,8 @@ bool FKernel::waitForInit() {
   auto status = m_initFuture.wait_for(std::chrono::milliseconds(0));
 
   if (status == std::future_status::ready) {
+    m_initFuture.get();
+
     m_data.wgtRaycast->start();
     return false;
   }

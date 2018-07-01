@@ -74,9 +74,6 @@ class RaycastWidget : public QWidget {
     bool m_cursorCaptured;
     Qt::CursorShape m_defaultCursor;
 
-    entityId_t m_loadingOverlayBg = -1;
-    entityId_t m_loadingOverlayText = -1;
-
 #ifdef DEBUG
     std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();
     double m_frameRate = 0;

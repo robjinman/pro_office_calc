@@ -10,7 +10,7 @@
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
-const double PLAYER_JUMP_DELAY = 0.2;
+const double PLAYER_MAX_PITCH = 20.0;
 
 
 class CZone;
@@ -34,7 +34,7 @@ class Player {
 
     bool alive = true;
     double vVelocity = 0;
-    double activationRadius = 50.0;
+    double activationRadius = 80.0;
     double collectionRadius = 50.0;
     bool invincible = false;
 

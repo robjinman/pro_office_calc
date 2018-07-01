@@ -218,28 +218,27 @@ void RaycastWidget::initialise(const string& mapFile) {
   m_timer = makeQtObjPtr<QTimer>(this);
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
 
-  m_loadingOverlayBg = Component::getNextId();
-  m_loadingOverlayText = Component::getNextId();
+  QPainter painter;
+  painter.begin(&m_buffer);
 
-  Size vp = renderSystem->rg.viewport;
+  int h = 20;
 
-  CColourOverlay* bgOverlay = new CColourOverlay(m_loadingOverlayBg, Qt::black, Point(0, 0), vp,
-    100);
+  QFont font;
+  font.setPixelSize(h);
 
-  CTextOverlay* textOverlay = new CTextOverlay(m_loadingOverlayText, "Loading...",
-    Point(vp.x * 0.1, vp.y * 0.45), 1.0, Qt::white, 100);
+  m_buffer.fill(Qt::black);
 
-  renderSystem->addComponent(pComponent_t(bgOverlay));
-  renderSystem->addComponent(pComponent_t(textOverlay));
+  painter.setFont(font);
+  painter.setPen(Qt::white);
+  painter.drawText((SCREEN_WIDTH - 100) / 2, (SCREEN_HEIGHT - h) / 2, "Loading...");
+
+  painter.end();
 }
 
 //===========================================
 // RaycastWidget::start
 //===========================================
 void RaycastWidget::start() {
-  m_entityManager.deleteEntity(m_loadingOverlayBg);
-  m_entityManager.deleteEntity(m_loadingOverlayText);
-
   m_eventSystem.fire(pEvent_t{new Event{"raycast/start"}});
 
   m_timer->start(1000 / FRAME_RATE);
@@ -249,9 +248,10 @@ void RaycastWidget::start() {
 // RaycastWidget::paintEvent
 //===========================================
 void RaycastWidget::paintEvent(QPaintEvent*) {
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  renderSystem.render();
+  if (m_timer->isActive()) {
+    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    renderSystem.render();
+  }
 
   QPainter painter;
   painter.begin(this);
@@ -264,6 +264,10 @@ void RaycastWidget::paintEvent(QPaintEvent*) {
 //===========================================
 void RaycastWidget::keyPressEvent(QKeyEvent* event) {
   m_keyStates[event->key()] = true;
+
+  if (!m_timer->isActive()) {
+    return;
+  }
 
   if (event->key() == Qt::Key_F) {
     DBG_PRINT("Frame rate = " << m_frameRate << "\n");
@@ -291,7 +295,11 @@ void RaycastWidget::mousePressEvent(QMouseEvent* event) {
     m_mouseBtnState = true;
   }
 
-  if (m_cursorCaptured == false && m_timer->isActive()) {
+  if (!m_timer->isActive()) {
+    return;
+  }
+
+  if (m_cursorCaptured == false) {
     Point centre(width() / 2, height() / 2);
     QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
     m_cursor = centre;

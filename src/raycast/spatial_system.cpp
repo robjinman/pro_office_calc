@@ -37,12 +37,7 @@ static const double GRID_CELL_SIZE = 25.0;
 static const double SNAP_DISTANCE = 4.0;
 static const int MAX_ANCESTOR_SEARCH = 2;
 static const double ACCELERATION_DUE_TO_GRAVITY = -600.0;
-
-const double JUMP_V = 220;
-double t1 = -JUMP_V / ACCELERATION_DUE_TO_GRAVITY;
-double s = JUMP_V * t1 + 0.5 * ACCELERATION_DUE_TO_GRAVITY * t1 * t1;
-double t2 = sqrt(2.0 * s / -ACCELERATION_DUE_TO_GRAVITY);
-double JUMP_TIME = t1 + t2;
+static const double JUMP_V = 220;
 
 
 ostream& operator<<(ostream& os, CSpatialKind kind) {
@@ -880,11 +875,8 @@ vector<Point> SpatialSystem::shortestPath(const Point& A, const Point& B, double
 // SpatialSystem::jump
 //===========================================
 void SpatialSystem::jump() {
-  if (m_timeService.now() - m_lastJump > JUMP_TIME + PLAYER_JUMP_DELAY
-    && !sg.player->aboveGround()) {
-
+  if (!sg.player->aboveGround()) {
     sg.player->vVelocity = JUMP_V;
-    m_lastJump = m_timeService.now();
   }
 }
 
@@ -933,10 +925,6 @@ void SpatialSystem::gravity() {
       }
 
       player.vVelocity = 0;
-
-      if (m_timeService.now() - m_lastJump > PLAYER_JUMP_DELAY) {
-        m_lastJump = m_timeService.now() - JUMP_TIME;
-      }
     }
   }
 }

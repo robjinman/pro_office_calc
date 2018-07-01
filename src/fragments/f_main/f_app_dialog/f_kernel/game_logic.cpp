@@ -98,7 +98,7 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     vector<entityId_t> safeCells = {
       Component::getIdFromString("safe_cell_0"),
-      //Component::getIdFromString("safe_cell_1"),
+      Component::getIdFromString("safe_cell_1"),
       //Component::getIdFromString("safe_cell_2")
     };
 
@@ -106,7 +106,7 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     vector<entityId_t> unsafeCells = {
       Component::getIdFromString("unsafe_cell_0"),
-      //Component::getIdFromString("unsafe_cell_1"),
+      Component::getIdFromString("unsafe_cell_1"),
       //Component::getIdFromString("unsafe_cell_2")
     };
 

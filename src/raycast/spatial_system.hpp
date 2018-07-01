@@ -152,7 +152,6 @@ class SpatialSystem : public System {
     std::map<entityId_t, std::set<CSpatial*>> m_entityChildren;
 
     Vec2i m_playerCell;
-    double m_lastJump = 0;
 };
 
 std::ostream& operator<<(std::ostream& os, CSpatialKind kind);

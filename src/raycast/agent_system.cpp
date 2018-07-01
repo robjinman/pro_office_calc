@@ -97,6 +97,10 @@ bool CAgent::hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f
   height = body.zone->floorHeight + body.size.y * 0.5;
   vAngle = atan2(targetHeight - height, length(target_rel));
 
+  if (fabs(vAngle) > DEG_TO_RAD(PLAYER_MAX_PITCH)) {
+    return false;
+  }
+
   vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, ray * 0.1,
     height, ray, vAngle, m);
 
