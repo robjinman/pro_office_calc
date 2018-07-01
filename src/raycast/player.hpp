@@ -33,7 +33,7 @@ class Player {
 
     bool alive = true;
     double vVelocity = 0;
-    double activationRadius = 100.0;
+    double activationRadius = 50.0;
     double collectionRadius = 50.0;
     bool invincible = false;
 

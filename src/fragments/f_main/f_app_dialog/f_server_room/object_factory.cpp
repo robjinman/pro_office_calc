@@ -156,7 +156,16 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
       [=, &animationSystem](const GameEvent& e) {
 
       animationSystem.playAnimation(entityId, "explode", false);
+      m_audioService.playSound("electricity");
       m_entityManager.broadcastEvent(GameEvent("server_destroyed"));
+    }});
+    handlers->targetedEventHandlers.push_back(EventHandler{"animation_finished",
+      [this](const GameEvent& e_) {
+
+      auto& e = dynamic_cast<const EAnimationFinished&>(e_);
+      if (e.animName == "explode") {
+        m_audioService.stopSound("electricity");
+      }
     }});
     eventHandlerSystem.addComponent(pComponent_t(handlers));
 
@@ -264,10 +273,11 @@ bool ObjectFactory::constructCalculator(entityId_t entityId, parser::Object& obj
 // ObjectFactory::ObjectFactory
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-  TimeService& timeService, CalculatorWidget& wgtCalculator)
+  TimeService& timeService, AudioService& audioService, CalculatorWidget& wgtCalculator)
   : m_rootFactory(rootFactory),
     m_entityManager(entityManager),
     m_timeService(timeService),
+    m_audioService(audioService),
     m_wgtCalculator(wgtCalculator) {}
 
 //===========================================

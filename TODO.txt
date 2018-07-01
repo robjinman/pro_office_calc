@@ -1,12 +1,9 @@
 TODO
 - Are You Sure - Background for config maze
-- It's Raining Tetrominos - Replace placeholder textures
-- It's Raining Tetrominos - Make doors narrower and add sound effect
 - Transition from It's Raining Tetrominos to Making Progress
 - Bad guy hurt and death animations
 - Civilian hurt and death animations
 - It's Raining Tetrominos - Add sound effect for machine
-- It's Raining Tetrominos - Add wall decal displaying controls
 - It's Raining Tetrominos - Add name or icon to tab displaying raycast widget
 - Making Progress - Adjust difficulty
 - Transition between Making Progress and You've Got Mail
@@ -15,7 +12,6 @@ TODO
 - Adjust dates wherever they appear
 - Provide font rather than use default
 - Shuffled Keys - Move number to loading screen
-- Set render buffer background to black
 
 Possible engine features
 - Multiple guns
