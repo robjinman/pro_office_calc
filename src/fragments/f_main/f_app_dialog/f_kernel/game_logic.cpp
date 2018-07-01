@@ -218,6 +218,15 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
     DBG_PRINT("Connecting regions...\n");
     renderSystem.connectRegions();
 
+#ifdef DEBUG
+    entityId_t playerId = spatialSystem.sg.player->body;
+    entityId_t dbgPointId = Component::getIdFromString("dbg_point");
+    if (spatialSystem.hasComponent(dbgPointId)) {
+      auto& dbgPoint = dynamic_cast<const CVRect&>(spatialSystem.getComponent(dbgPointId));
+      spatialSystem.relocateEntity(playerId, *dbgPoint.zone, dbgPoint.pos);
+    }
+#endif
+
     m_initialised = true;
   });
 }

@@ -229,7 +229,7 @@ bool ObjectFactory::constructSlime(entityId_t entityId, parser::Object& obj, ent
 
       if (e.newZone == entityId) {
         m_timeService.atIntervals([=, &player, &damageSystem]() {
-          if (!player.aboveGround()) {
+          if (player.region() == e.newZone && !player.aboveGround()) {
             damageSystem.damageEntity(player.body, 1);
           }
           return player.region() == entityId;

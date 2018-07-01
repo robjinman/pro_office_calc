@@ -124,16 +124,6 @@ class SpatialSystem : public System {
     const CZone& constZone(entityId_t entity) const;
 
   private:
-    EntityManager& m_entityManager;
-    TimeService& m_timeService;
-
-    double m_frameRate;
-
-    std::map<entityId_t, CSpatial*> m_components;
-    std::map<entityId_t, std::set<CSpatial*>> m_entityChildren;
-
-    Vec2i m_playerCell;
-
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
     void crossZones(entityId_t entityId, entityId_t oldZone, entityId_t newZone);
@@ -152,6 +142,17 @@ class SpatialSystem : public System {
 
     void buoyancy();
     void gravity();
+
+    EntityManager& m_entityManager;
+    TimeService& m_timeService;
+
+    double m_frameRate;
+
+    std::map<entityId_t, CSpatial*> m_components;
+    std::map<entityId_t, std::set<CSpatial*>> m_entityChildren;
+
+    Vec2i m_playerCell;
+    double m_lastJump = 0;
 };
 
 std::ostream& operator<<(std::ostream& os, CSpatialKind kind);

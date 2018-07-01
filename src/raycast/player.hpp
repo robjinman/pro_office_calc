@@ -10,6 +10,7 @@
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
+const double PLAYER_JUMP_DELAY = 0.2;
 
 
 class CZone;
