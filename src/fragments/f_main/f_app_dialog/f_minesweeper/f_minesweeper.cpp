@@ -44,6 +44,7 @@ MinesweeperCell::MinesweeperCell(int row, int col, const IconSet& icons)
   m_button->setSizePolicy(sizePolicy);
 
   m_label->setPixmap(m_pixmap);
+  m_label->setScaledContents(true);
 
   m_stackedLayout = makeQtObjPtr<QStackedLayout>();
   m_stackedLayout->addWidget(m_label.get());
@@ -127,10 +128,7 @@ void MinesweeperCell::render() {
   }
 
   if (m_hasPlayer) {
-    int w = 18;
-    int h = 18;
-
-    m_icons.player.paint(&painter, 0.5 * (cellW - w), 0.5 * (cellH - h), w, h);
+    m_icons.player.paint(&painter, 0, 0, cellW, cellH);
   }
 
   painter.end();

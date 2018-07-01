@@ -30,7 +30,7 @@ class ObjectFactory : public GameObjectFactory {
 
     struct CellDoors {
       typedef std::array<entityId_t, 4> idList_t;
-      idList_t ids;
+      idList_t ids = {{-1, -1, -1, -1}};
 
       entityId_t& north = ids[0];
       entityId_t& east = ids[1];

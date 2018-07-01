@@ -32,9 +32,6 @@ class ObjectFactory : public GameObjectFactory {
     TimeService& m_timeService;
     AudioService& m_audioService;
 
-    bool constructComputerScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform);
-
     bool constructJeff(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
 };

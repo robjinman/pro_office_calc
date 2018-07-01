@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="8.0000002"
-     inkscape:cx="3580.1185"
-     inkscape:cy="2393.4484"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="224.4269"
+     inkscape:cy="3103.1716"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -19099,7 +19099,7 @@
            style="font-size:11.97151279px"
            y="660.20782"
            x="139.52422"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1">desk_side=going_in_circles/desk_side.png,60,20</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1">desk_side=common/images/desk_side.png,60,20</tspan></text>
       <text
          transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2"
@@ -19111,7 +19111,7 @@
            style="font-size:11.97151279px"
            y="692.00769"
            x="138.07112"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2">computer_side=going_in_circles/computer_side.png,50,40</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2">computer_side=common/images/computer_side.png,50,40</tspan></text>
       <text
          transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-1"
@@ -19123,7 +19123,7 @@
            style="font-size:11.97151279px"
            y="676.3125"
            x="138.08098"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-6">desk_top=going_in_circles/desk_top.png,113,61</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-6">desk_top=common/images/desk_top.png,113,61</tspan></text>
       <text
          transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2"
@@ -19135,7 +19135,7 @@
            style="font-size:11.97151279px"
            y="707.0575"
            x="137.53577"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0">computer_front=going_in_circles/computer_front.png,16,35</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0">computer_front=common/images/computer_front.png,16,35</tspan></text>
       <text
          transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-5"
@@ -19147,7 +19147,7 @@
            style="font-size:11.97151279px"
            y="722.78198"
            x="139.48601"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-6">monitor_front=going_in_circles/monitor_front.png,28,28</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-6">monitor_front=common/images/monitor_front.png,28,28</tspan></text>
       <text
          transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-2-9-0"
@@ -19159,7 +19159,7 @@
            style="font-size:11.97151279px"
            y="737.99664"
            x="139.53494"
-           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3">monitor_side=going_in_circles/monitor_side.png,30,30</tspan></text>
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3">monitor_side=common/images/monitor_side.png,30,30</tspan></text>
       <text
          transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
          id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-2-9-0-8"

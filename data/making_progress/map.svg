@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.9999999"
-     inkscape:cx="920.85769"
-     inkscape:cy="-628.72202"
+     inkscape:zoom="1.4142135"
+     inkscape:cx="1347.6343"
+     inkscape:cy="-647.96985"
      inkscape:document-units="px"
-     inkscape:current-layer="svg4381"
+     inkscape:current-layer="g5484"
      showgrid="false"
      inkscape:window-width="1280"
      inkscape:window-height="999"
@@ -168,6 +168,30 @@
              x="175.79576"
              id="tspan5260-9-0-3-5-2-7-6-2-1"
              sodipodi:role="line">click=common/sfx/click.wav</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text5258-7-2-2-7-9-9-3-1-6-3"
+           y="452.8981"
+           x="177.76619"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-size:12.94190121px"
+             y="452.8981"
+             x="177.76619"
+             id="tspan5260-9-0-3-5-2-7-6-2-1-6"
+             sodipodi:role="line">door=common/sfx/door.wav</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text5258-7-2-2-7-9-9-3-1-6-3-7"
+           y="469.83392"
+           x="175.87955"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-size:12.94190121px"
+             y="469.83392"
+             x="175.87955"
+             id="tspan5260-9-0-3-5-2-7-6-2-1-6-5"
+             sodipodi:role="line">elevator=common/sfx/elevator.wav</tspan></text>
       </g>
       <text
          xml:space="preserve"

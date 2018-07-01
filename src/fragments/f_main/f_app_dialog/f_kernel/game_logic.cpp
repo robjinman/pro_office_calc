@@ -328,6 +328,10 @@ void GameLogic::lockDoors() {
     DBG_PRINT("Locking doors of cell " << m_cellIds[prevCellId] << "\n");
 
     for (entityId_t door : doors) {
+      if (door == -1) {
+        continue;
+      }
+
       DBG_PRINT("Locking door with id " << door << "\n");
 
       auto& behaviour =
@@ -344,6 +348,10 @@ void GameLogic::lockDoors() {
     DBG_PRINT("Unlocking doors of cell " << m_cellIds[prevPrevCellId] << "\n");
 
     for (entityId_t door : doors) {
+      if (door == -1) {
+        continue;
+      }
+
       DBG_PRINT("Unlocking door with id " << door << "\n");
 
       auto& behaviour =
