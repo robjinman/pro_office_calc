@@ -46,7 +46,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->appDialogSpec1.minesweeperSpec.setEnabled(true);
   mainSpec->appDialogSpec2.setEnabled(true);
   mainSpec->appDialogSpec2.titleText = "Terminal";
-  mainSpec->appDialogSpec2.width = 320;
+  mainSpec->appDialogSpec2.width = 400;
   mainSpec->appDialogSpec2.height = 240;
   mainSpec->appDialogSpec2.showOnEvent = "terminalLaunch";
   mainSpec->appDialogSpec2.consoleSpec.setEnabled(true);

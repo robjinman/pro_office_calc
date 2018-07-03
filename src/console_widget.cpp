@@ -1,5 +1,5 @@
 #include <sstream>
-#include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
+#include "console_widget.hpp"
 
 
 using std::vector;

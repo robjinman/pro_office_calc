@@ -8,8 +8,8 @@
 #include <QLabel>
 #include <QStackedLayout>
 #include "fragments/f_main/f_settings_dialog/f_config_maze/are_you_sure_widget.hpp"
-#include "fragments/f_main/f_settings_dialog/f_config_maze/console_widget.hpp"
 #include "fragments/f_main/f_settings_dialog/f_config_maze/config_page.hpp"
+#include "console_widget.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
 

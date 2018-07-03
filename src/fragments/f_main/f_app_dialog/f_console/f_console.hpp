@@ -3,16 +3,16 @@
 
 
 #include <QVBoxLayout>
-#include <QTextBrowser>
 #include <QMargins>
+#include "fragments/relocatable/widget_frag_data.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
-#include "fragments/relocatable/widget_frag_data.hpp"
+#include "console_widget.hpp"
 
 
 struct FConsoleData : public FragmentData {
   QtObjPtr<QVBoxLayout> vbox;
-  QtObjPtr<QTextBrowser> wgtTextBrowser;
+  QtObjPtr<ConsoleWidget> wgtConsole;
 };
 
 class FConsole : public QWidget, public Fragment {

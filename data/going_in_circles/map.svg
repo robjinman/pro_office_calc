@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="224.4269"
-     inkscape:cy="3103.1716"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="3561.0699"
+     inkscape:cy="2280.1411"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -12289,7 +12289,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0"
-             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
+             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
         <g
            id="g21322">
           <path
@@ -12331,7 +12331,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9"
                x="-1049.621"
-               y="1350.4236">bottom_texture=metal_wall</tspan></text>
+               y="1350.4236">bottom_texture=grey_stone</tspan></text>
         </g>
       </g>
       <g
@@ -12369,7 +12369,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0-3"
-             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
+             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
         <g
            id="g21322-6">
           <path
@@ -12411,7 +12411,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-1"
                x="-1049.621"
-               y="1350.4236">bottom_texture=metal_wall</tspan></text>
+               y="1350.4236">bottom_texture=grey_stone</tspan></text>
         </g>
       </g>
       <g
@@ -12449,7 +12449,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0-5"
-             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
+             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
         <g
            id="g21322-9">
           <path
@@ -12491,7 +12491,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-11"
                x="-1049.621"
-               y="1350.4236">bottom_texture=metal_wall</tspan></text>
+               y="1350.4236">bottom_texture=grey_stone</tspan></text>
         </g>
       </g>
       <g
@@ -12529,7 +12529,7 @@
              y="1327.7753"
              x="-1117.1453"
              id="tspan4510-5-3-1-9-8-9-6-0-31"
-             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
+             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
         <g
            id="g21322-3">
           <path
@@ -12571,7 +12571,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-8"
                x="-1049.621"
-               y="1350.4236">bottom_texture=metal_wall</tspan></text>
+               y="1350.4236">bottom_texture=grey_stone</tspan></text>
         </g>
       </g>
       <g
@@ -12609,7 +12609,7 @@
              y="1356.6711"
              x="-1109.5801"
              id="tspan4510-5-3-1-9-8-9-6-0-31-2"
-             sodipodi:role="line">floor_texture=metal_floor</tspan></text>
+             sodipodi:role="line">floor_texture=grey_stone</tspan></text>
         <g
            id="g21322-3-3">
           <path
@@ -12651,7 +12651,7 @@
              transform="scale(1.0603588,0.943077)"><tspan
                id="tspan4215-5-6-9-7-62-5-2-8-2-8-0-9-8-9"
                x="-1055.0604"
-               y="1464.0541">bottom_texture=metal_wall</tspan></text>
+               y="1464.0541">bottom_texture=grey_stone</tspan></text>
         </g>
         <g
            id="g22052">

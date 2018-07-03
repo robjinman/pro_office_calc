@@ -1,7 +1,13 @@
+#include <string>
+#include <vector>
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console_spec.hpp"
 #include "utils.hpp"
+
+
+using std::string;
+using std::vector;
 
 
 //===========================================
@@ -21,7 +27,6 @@ FConsole::FConsole(Fragment& parent_, FragmentData& parentData_,
 void FConsole::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FConsole::reload\n");
 
-  const auto& spec = dynamic_cast<const FConsoleSpec&>(spec_);
   auto& parentData = parentFragData<WidgetFragData>();
 
   m_origParentState.spacing = parentData.box->spacing();
@@ -36,10 +41,30 @@ void FConsole::reload(const FragmentSpec& spec_) {
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   setLayout(m_data.vbox.get());
 
-  m_data.wgtTextBrowser = makeQtObjPtr<QTextBrowser>(this);
-  m_data.vbox->addWidget(m_data.wgtTextBrowser.get());
+  string initialContent =
+    "┌───────────────────────────────────────┐\n"
+    "│ Admin Console v1.1.16                 │\n"
+    "├───────────────────────────────────────┤\n"
+    "│ Date and time    1998/12/14 14:08:15  │\n"
+    "│ Logged in as     rob                  │\n"
+    "│ Logged in since  1998/12/14 11:50:06  │\n"
+    "│                                       │\n"
+    "│ ↑↓ cycle history                      │\n"
+    "└───────────────────────────────────────┘\n"
+    "> ";
 
-  m_data.wgtTextBrowser->setText(spec.content);
+  m_data.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{
+    "yup",
+    "blah"
+  });
+  m_data.wgtConsole->addCommand("logout", [](const ConsoleWidget::ArgList&) {
+    return "An error occurred";
+  });
+  m_data.wgtConsole->addCommand("chpwd", [](const ConsoleWidget::ArgList&) {
+    return "An error occurred";
+  });
+
+  m_data.vbox->addWidget(m_data.wgtConsole.get());
 }
 
 
