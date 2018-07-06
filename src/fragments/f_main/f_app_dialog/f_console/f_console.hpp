@@ -33,6 +33,8 @@ class FConsole : public QWidget, public Fragment {
       int spacing;
       QMargins margins;
     } m_origParentState;
+
+    int m_commandsEntered = 0;
 };
 
 

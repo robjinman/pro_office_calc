@@ -5,7 +5,6 @@ MUST DO
 - Going in Circles - Donald asset
 - Doomsweeper - More safe cells
 - Doomsweeper - More deadly cells
-- Doomsweeper - Terminal window
 - Doomsweeper - Commands hidden in maze
 - Doomsweeper - Enter high score
 - Are You Sure - Backgrounds for config maze

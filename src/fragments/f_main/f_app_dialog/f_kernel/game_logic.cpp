@@ -53,6 +53,9 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
   m_hClickMine = m_eventSystem.listen("doomsweeper/clickMine",
     std::bind(&GameLogic::onClickMine, this, std::placeholders::_1));
 
+  m_hCommandsEntered = m_eventSystem.listen("doomsweeper/commandsEntered",
+    std::bind(&GameLogic::onCommandsEntered, this, std::placeholders::_1));
+
   m_hDoomClosed = m_eventSystem.listen("dialogClosed", [this](const Event& e_) {
     auto& e = dynamic_cast<const DialogClosedEvent&>(e_);
     if (e.name == "doom") {
@@ -148,8 +151,27 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     m_cellIds[endCellId] = Coord{ROWS - 1, COLS - 1};
 
+    // Construct clue cells
+    //
+
+    std::uniform_int_distribution<int> randRow{0, ROWS - 1};
+    std::uniform_int_distribution<int> randCol{0, COLS - 1};
+    set<Coord> clueCellCoords;
+
+    for (int i = 0; i < 3; ++i) {
+      while (true) {
+        Coord c{randRow(randEngine), randCol(randEngine)};
+        if (clueCellCoords.count(c) == 0 && mineCoords.count(c) == 0) {
+          clueCellCoords.insert(c);
+          break;
+        }
+      }
+    }
+
     // Construct remaining cells
     //
+
+    int clueCellIdx = 0;
 
     for (int i = 0; i < ROWS; ++i) {
       for (int j = 0; j < COLS; ++j) {
@@ -162,12 +184,30 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
         }
 
         entityId_t protoCellId = -1;
+        string cellName;
 
         if (mineCoords.count(Coord{i, j})) {
           protoCellId = unsafeCells[randomUnsafeCell(randEngine)];
+
+          stringstream ss;
+          ss << "cell_" << i << "_" << j;
+          cellName = ss.str();
+        }
+        else if (clueCellCoords.count(Coord{i, j})) {
+          protoCellId = Component::getIdFromString("clue_cell");
+
+          stringstream ss;
+          ss << "clue_cell_" << clueCellIdx;
+          cellName = ss.str();
+
+          ++clueCellIdx;
         }
         else {
           protoCellId = safeCells[randomSafeCell(randEngine)];
+
+          stringstream ss;
+          ss << "cell_" << i << "_" << j;
+          cellName = ss.str();
         }
 
         assert(protoCellId != -1);
@@ -179,13 +219,10 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
         Point targetPos = startCellPos + Vec2f(cellW * j, -cellH * i);
         Matrix m(0, targetPos - cellPos);
 
-        stringstream ss;
-        ss << "cell_" << i << "_" << j;
-
-        entityId_t cellId = Component::getIdFromString(ss.str());
+        entityId_t cellId = Component::getIdFromString(cellName);
         m_cellIds[cellId] = Coord{i, j};
 
-        cellObj->dict["name"] = ss.str();
+        cellObj->dict["name"] = cellName;
         cellObj->groupTransform = cellTransform * m;
 
         m_rootFactory.constructObject("cell", -1, *cellObj, m_objectFactory.region,
@@ -208,6 +245,14 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
         }
       }
     }
+
+#ifdef DEBUG
+    std::cout << "Clue cells at: ";
+    for (auto& c : clueCellCoords) {
+      std::cout << c << " ";
+    }
+    std::cout << "\n";
+#endif
 
     auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
     auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
@@ -247,6 +292,13 @@ void GameLogic::onClickMine(const Event&) {
   m_timeService.onTimeout([this]() {
     m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
   }, 1.0);
+}
+
+//===========================================
+// GameLogic::onCommandsEntered
+//===========================================
+void GameLogic::onCommandsEntered(const Event&) {
+  m_entityManager.broadcastEvent(GameEvent{"commands_entered"});
 }
 
 //===========================================

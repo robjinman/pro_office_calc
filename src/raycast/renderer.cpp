@@ -869,7 +869,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
 
 #ifndef SINGLE_THREAD
   #pragma omp parallel for \
-    num_threads(4) \
+    num_threads(8) \
     private(prev)
 #endif
   for (int screenX_px = 0; screenX_px < W; ++screenX_px) {

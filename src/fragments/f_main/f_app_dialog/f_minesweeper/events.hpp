@@ -16,7 +16,7 @@ struct Coord {
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Coord& coord) {
-  out << coord.row << ", " << coord.col;
+  out << "(" << coord.row << ", " << coord.col << ")";
   return out;
 }
 

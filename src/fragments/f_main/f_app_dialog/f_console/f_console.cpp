@@ -3,11 +3,14 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console_spec.hpp"
+#include "event_system.hpp"
 #include "utils.hpp"
 
 
 using std::string;
 using std::vector;
+
+typedef ConsoleWidget::ArgList ArgList;
 
 
 //===========================================
@@ -43,30 +46,58 @@ void FConsole::reload(const FragmentSpec& spec_) {
 
   string initialContent =
     "┌───────────────────────────────────────┐\n"
-    "│ Admin Console v1.1.16                 │\n"
+    "│ Apex OS Terminal                      │\n"
     "├───────────────────────────────────────┤\n"
+    "│ Host name        zpx11                │\n"
     "│ Date and time    1998/12/14 14:08:15  │\n"
-    "│ Logged in as     rob                  │\n"
+    "│ Logged in as     susan                │\n"
     "│ Logged in since  1998/12/14 11:50:06  │\n"
-    "│                                       │\n"
-    "│ ↑↓ cycle history                      │\n"
     "└───────────────────────────────────────┘\n"
     "> ";
 
-  m_data.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{
-    "yup",
-    "blah"
+  m_commandsEntered = 0;
+
+  m_data.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{});
+  m_data.wgtConsole->addCommand("hconf", [this](const ArgList& args) {
+    if (args == ArgList{"update", "-kbr", "auto=false"}) {
+      m_commandsEntered = 1;
+      return "config updated";
+    }
+
+    return "error updating config";
   });
-  m_data.wgtConsole->addCommand("logout", [](const ConsoleWidget::ArgList&) {
-    return "An error occurred";
+  m_data.wgtConsole->addCommand("dopler", [this](const ArgList& args) {
+    if (args == ArgList{"insert-all", "-g", "bin/extra"}
+      && m_commandsEntered == 1) {
+
+      m_commandsEntered = 2;
+      return "OK";
+    }
+
+    return "FAILED";
   });
-  m_data.wgtConsole->addCommand("chpwd", [](const ConsoleWidget::ArgList&) {
-    return "An error occurred";
+  m_data.wgtConsole->addCommand("psched", [this](const ArgList& args) {
+    if (args == ArgList{"ccbuild", "+772"} && m_commandsEntered == 2) {
+      m_commandsEntered = 3;
+      return "action id #7119082 *ccbuild* started";
+    }
+
+    return "bad parameters";
+  });
+  m_data.wgtConsole->addCommand("xiff", [this](const ArgList& args) {
+    if (args == ArgList{"16:2", "--single-pass", "--retry", "10"}
+      && m_commandsEntered == 3) {
+
+      commonData.eventSystem.fire(pEvent_t(new Event{"doomsweeper/commandsEntered"}));
+
+      return "[status a51e] finished";
+    }
+
+    return "invalid options";
   });
 
   m_data.vbox->addWidget(m_data.wgtConsole.get());
 }
-
 
 //===========================================
 // FConsole::cleanUp

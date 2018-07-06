@@ -41,7 +41,8 @@ const set<string>& ObjectFactory::types() const {
     "cell_inner",
     "cell_corner",
     "cell_door",
-    "slime"};
+    "slime",
+    "command_screen"};
 
   return types;
 }
@@ -194,6 +195,31 @@ bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, 
 }
 
 //===========================================
+// ObjectFactory::constructCommandScreen
+//===========================================
+bool ObjectFactory::constructCommandScreen(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  string cellName = obj.parent->parent->parent->dict.at("name");
+
+  if (cellName == "clue_cell_0") {
+    obj.dict["texture"] = "command_0";
+  }
+  else if (cellName == "clue_cell_1") {
+    obj.dict["texture"] = "command_1";
+  }
+  else if (cellName == "clue_cell_2") {
+    obj.dict["texture"] = "command_2";
+  }
+
+  return m_rootFactory.constructObject("wall_decal", entityId, obj, parentId, parentTransform);
+}
+
+//===========================================
 // ObjectFactory::constructSlime
 //===========================================
 bool ObjectFactory::constructSlime(entityId_t entityId, parser::Object& obj, entityId_t parentId,
@@ -265,6 +291,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "slime") {
     return constructSlime(entityId, obj, region, parentTransform);
+  }
+  else if (type == "command_screen") {
+    return constructCommandScreen(entityId, obj, region, parentTransform);
   }
 
   return false;
