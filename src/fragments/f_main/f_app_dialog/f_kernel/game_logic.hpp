@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <map>
 #include <list>
+#include <set>
 #include "raycast/component.hpp"
 #include "event_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
@@ -91,6 +92,7 @@ class GameLogic {
     void onDoomWindowClose();
     void lockDoors();
     void sealDoor(entityId_t doorId);
+    void drawMazeMap(const std::set<Coord>& clueCells);
 
     std::atomic<bool> m_initialised;
 

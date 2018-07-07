@@ -2,6 +2,8 @@
 #include <vector>
 #include <random>
 #include <cassert>
+#include <QPainter>
+#include <QFont>
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
 #include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
@@ -87,6 +89,36 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
     std::bind(&GameLogic::onPlayerDeath, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
+}
+
+//===========================================
+// GameLogic::drawMazeMap
+//===========================================
+void GameLogic::drawMazeMap(const std::set<Coord>& clueCells) {
+  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  QImage& img = renderSystem.rg.textures.at("maze_map").image;
+
+  QPainter painter;
+  painter.begin(&img);
+
+  double x = img.width() * 0.2;
+  double y = img.height() * 0.9;
+  double h = img.height() * 0.1;
+
+  QFont font;
+  font.setPixelSize(h);
+
+  stringstream ss;
+  for (auto& c : clueCells) {
+    ss << static_cast<char>('A' + c.col) << c.row << " ";
+  }
+
+  painter.setFont(font);
+  painter.setPen(Qt::black);
+  painter.drawText(x, y, ss.str().c_str());
+
+  painter.end();
 }
 
 //===========================================
@@ -250,6 +282,8 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
         }
       }
     }
+
+    drawMazeMap(clueCellCoords);
 
 #ifdef DEBUG
     std::cout << "Clue cells at: ";
