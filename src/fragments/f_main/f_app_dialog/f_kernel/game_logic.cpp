@@ -128,7 +128,8 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     sealDoor(m_objectFactory.cellDoors[startCellId].south);
 
-    m_cellIds[startCellId] = Coord{0, 0};
+    Coord startCellCoords{0, 0};
+    m_cellIds[startCellId] = startCellCoords;
 
     // Construct end cell
     //
@@ -149,9 +150,10 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     sealDoor(m_objectFactory.cellDoors[endCellId].north);
 
-    m_cellIds[endCellId] = Coord{ROWS - 1, COLS - 1};
+    Coord endCellCoords = Coord{ROWS - 1, COLS - 1};
+    m_cellIds[endCellId] = endCellCoords;
 
-    // Construct clue cells
+    // Position clue cells
     //
 
     std::uniform_int_distribution<int> randRow{0, ROWS - 1};
@@ -161,7 +163,10 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
     for (int i = 0; i < 3; ++i) {
       while (true) {
         Coord c{randRow(randEngine), randCol(randEngine)};
-        if (clueCellCoords.count(c) == 0 && mineCoords.count(c) == 0) {
+
+        if (clueCellCoords.count(c) == 0 && mineCoords.count(c) == 0
+          && c != startCellCoords && c != endCellCoords) {
+
           clueCellCoords.insert(c);
           break;
         }

@@ -27,17 +27,19 @@ void CPlayerBehaviour::update() {
 //===========================================
 // CPlayerBehaviour::handleTargetedEvent
 //===========================================
-void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
+void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e_) {
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
   Player& player = *spatialSystem.sg.player;
 
-  if (e.name == "entity_damaged") {
+  if (e_.name == "entity_damaged") {
+    auto& e = dynamic_cast<const EEntityDamaged&>(e_);
+
     CDamage& damage = m_entityManager.getComponent<CDamage>(player.body, ComponentKind::C_DAMAGE);
 
     DBG_PRINT("Player health: " << damage.health << "\n");
 
-    if (player.red == -1) {
+    if (e.health < e.prevHealth && player.red == -1) {
       player.red = Component::getNextId();
 
       double maxAlpha = 80;
@@ -60,7 +62,7 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e) {
       }}, "redFade");
     }
   }
-  else if (e.name == "entity_destroyed") {
+  else if (e_.name == "entity_destroyed") {
     if (!player.invincible) {
       player.alive = false;
 

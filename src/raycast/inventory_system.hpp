@@ -85,6 +85,16 @@ struct ItemBucket : public Bucket {
 
 typedef std::unique_ptr<ItemBucket> pItemBucket_t;
 
+struct ECollectableEncountered : public GameEvent {
+  ECollectableEncountered(entityId_t collectorId, const CCollectable& item)
+    : GameEvent("collectable_encountered"),
+      collectorId(collectorId),
+      item(item) {}
+
+  entityId_t collectorId;
+  const CCollectable& item;
+};
+
 struct EBucketCountChange : public GameEvent {
   EBucketCountChange(entityId_t entityId, const std::string& collectableType,
     const CounterBucket& bucket, int prevCount)

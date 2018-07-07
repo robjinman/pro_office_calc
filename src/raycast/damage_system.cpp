@@ -43,10 +43,10 @@ void DamageSystem::removeEntity(entityId_t id) {
 //===========================================
 // fireDamagedEvents
 //===========================================
-static void fireDamagedEvents(const EntityManager& entityManager, entityId_t id,
-  const Point* pt_rel = nullptr, const Point* pt_wld = nullptr) {
+static void fireDamagedEvents(const EntityManager& entityManager, entityId_t id, int health,
+  int prevHealth, const Point* pt_rel = nullptr, const Point* pt_wld = nullptr) {
 
-  EEntityDamaged damaged(id);
+  EEntityDamaged damaged(id, health, prevHealth);
 
   if (pt_rel != nullptr) {
     damaged.point_rel = *pt_rel;
@@ -57,7 +57,7 @@ static void fireDamagedEvents(const EntityManager& entityManager, entityId_t id,
   }
 
   entityManager.fireEvent(damaged, {id});
-  entityManager.broadcastEvent(EEntityDamaged(id));
+  entityManager.broadcastEvent(damaged);
 }
 
 //===========================================
@@ -97,13 +97,18 @@ void DamageSystem::damageEntity(entityId_t entityId, int damage) {
       CDamage& component = *it->second;
 
       if (component.health > 0 || damage < 0) {
+        int prevHealth = component.health;
         component.health -= damage;
 
         if (component.health < 0) {
           component.health = 0;
         }
 
-        fireDamagedEvents(m_entityManager, id);
+        if (component.health > component.maxHealth) {
+          component.health = component.maxHealth;
+        }
+
+        fireDamagedEvents(m_entityManager, id, component.health, prevHealth);
 
         if (component.health == 0) {
           fireDestroyedEvents(m_entityManager, id);
@@ -159,6 +164,7 @@ void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
       CDamage& component = *it->second;
 
       if (component.health > 0) {
+        int prevHealth = component.health;
         component.health -= damage;
 
         if (component.health < 0) {
@@ -166,7 +172,7 @@ void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
         }
 
         Point pt_rel(X.distanceAlongTarget, X.height);
-        fireDamagedEvents(m_entityManager, id, &pt_rel, &X.point_wld);
+        fireDamagedEvents(m_entityManager, id, component.health, prevHealth, &pt_rel, &X.point_wld);
 
         if (component.health == 0) {
           Point pt_rel(X.distanceAlongTarget, X.height);

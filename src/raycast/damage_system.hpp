@@ -22,21 +22,25 @@ struct EEntityDestroyed : public GameEvent {
 };
 
 struct EEntityDamaged : public GameEvent {
-  EEntityDamaged(entityId_t id)
+  EEntityDamaged(entityId_t id, int health, int prevHealth)
     : GameEvent("entity_damaged"),
-      entityId(id) {}
+      entityId(id),
+      health(health),
+      prevHealth(prevHealth) {}
 
   entityId_t entityId;
 
   Point point_wld;
   Point point_rel;
+  int health;
+  int prevHealth;
 };
 
 struct CDamage : public Component {
   CDamage(entityId_t entityId, int maxHealth, int health)
     : Component(entityId, ComponentKind::C_DAMAGE),
       maxHealth(maxHealth),
-      health(health) {}
+      health(smallest(health, maxHealth)) {}
 
   int maxHealth;
   int health;

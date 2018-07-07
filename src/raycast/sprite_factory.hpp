@@ -32,6 +32,8 @@ class SpriteFactory : public GameObjectFactory {
       const Matrix& parentTransform);
     bool constructAmmo(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+    bool constructHealthPack(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
     bool constructBadGuy(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructCivilian(entityId_t entityId, parser::Object& obj, entityId_t parentId,

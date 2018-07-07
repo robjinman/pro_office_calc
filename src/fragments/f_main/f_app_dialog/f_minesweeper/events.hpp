@@ -24,6 +24,10 @@ inline bool operator==(const Coord& lhs, const Coord& rhs) {
   return lhs.row == rhs.row && lhs.col == rhs.col;
 }
 
+inline bool operator!=(const Coord& lhs, const Coord& rhs) {
+  return !(lhs == rhs);
+}
+
 inline bool operator<(const Coord& lhs, const Coord& rhs) {
   if (lhs.row == rhs.row) {
     return lhs.col < rhs.col;

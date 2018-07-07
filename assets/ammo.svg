@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="107.34407"
-     inkscape:cy="745.98389"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="473.15674"
+     inkscape:cy="472.02015"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -122,5 +122,76 @@
        ry="3.1805792"
        inkscape:export-xdpi="30.564928"
        inkscape:export-ydpi="30.564928" />
+    <rect
+       style="opacity:1;fill:#f0f0f0;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4816-3"
+       width="107.16228"
+       height="117.41901"
+       x="509.27478"
+       y="363.4537"
+       inkscape:export-xdpi="30.564928"
+       inkscape:export-ydpi="30.564928"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/common/images/health_pack.png" />
+    <path
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 509.27803,385.44809 107.15837,0 0,2.59014 -107.15837,0 z"
+       id="rect5632-5"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="30.564928"
+       inkscape:export-ydpi="30.564928"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/common/images/health_pack.png" />
+    <path
+       style="opacity:1;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 525.73988,349.64529 75.23176,0 15.46758,13.808 -107.1603,-0.004 z"
+       id="rect5635-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="30.564928"
+       inkscape:export-ydpi="30.564928"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/common/images/health_pack.png" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5638-9"
+       width="13.023602"
+       height="6.4536781"
+       x="556.34412"
+       y="387.88211"
+       ry="3.1805792"
+       inkscape:export-xdpi="30.564928"
+       inkscape:export-ydpi="30.564928"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/common/images/health_pack.png" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5638-5-1"
+       width="13.023602"
+       height="6.4536781"
+       x="556.34412"
+       y="379.28891"
+       ry="3.1805792"
+       inkscape:export-xdpi="30.564928"
+       inkscape:export-ydpi="30.564928"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/common/images/health_pack.png" />
+    <g
+       id="g4212"
+       transform="translate(138.23829,-236.88077)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/common/images/health_pack.png"
+       inkscape:export-xdpi="30.564928"
+       inkscape:export-ydpi="30.564928">
+      <rect
+         y="640.4939"
+         x="417.36761"
+         height="61.292511"
+         width="14.5"
+         id="rect4195"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <rect
+         transform="matrix(0,-1,1,0,0,0)"
+         y="393.97137"
+         x="-678.39014"
+         height="61.292511"
+         width="14.5"
+         id="rect4195-2"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
   </g>
 </svg>

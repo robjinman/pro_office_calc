@@ -88,6 +88,35 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, parser::Object& obj, enti
 }
 
 //===========================================
+// SpriteFactory::constructHealthPack
+//===========================================
+bool SpriteFactory::constructHealthPack(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["texture"] = "health_pack";
+
+  if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
+    InventorySystem& inventorySystem =
+      m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+
+    // Health packs don't have a bucket, but the Player class listens for their collection and
+    // removes them accordingly
+
+    CCollectable* collectable = new CCollectable(entityId, "health_pack");
+    collectable->value = 1;
+    inventorySystem.addComponent(pComponent_t(collectable));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // SpriteFactory::constructCivilian
 //===========================================
 bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, entityId_t parentId,
@@ -267,7 +296,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
       if (event.entityId == entityId) {
         DBG_PRINT("Enemy health: " << damage->health << "\n");
-        animationSystem.playAnimation(entityId, "hurt", false);
+        //animationSystem.playAnimation(entityId, "hurt", false);
 
         if (damage->health == 0) {
           m_audioService.playSoundAtPos("monster_death", vRect.pos);
@@ -313,7 +342,13 @@ SpriteFactory::SpriteFactory(RootFactory& rootFactory, EntityManager& entityMana
 // SpriteFactory::types
 //===========================================
 const set<string>& SpriteFactory::types() const {
-  static const set<string> types{"sprite", "bad_guy", "civilian", "ammo"};
+  static const set<string> types{
+    "sprite",
+    "bad_guy",
+    "civilian",
+    "ammo",
+    "health_pack"};
+
   return types;
 }
 
@@ -334,6 +369,9 @@ bool SpriteFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "ammo") {
     return constructAmmo(entityId, obj, region, parentTransform);
+  }
+  else if (type == "health_pack") {
+    return constructHealthPack(entityId, obj, region, parentTransform);
   }
 
   return false;

@@ -134,11 +134,15 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
     "switch_activated"
   };
 
-  if (!isPlayerActivated && m_state != ST_OPEN && e.name == "player_activate_entity") {
-    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-    if (focusSystem.hasComponent(entityId())) {
-      focusSystem.showCaption(entityId());
+  if (!isPlayerActivated && e.name == "player_activate_entity") {
+    if (m_state != ST_OPEN) {
+      auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+
+      if (focusSystem.hasComponent(entityId())) {
+        focusSystem.showCaption(entityId());
+      }
     }
+
     return;
   }
 

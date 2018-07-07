@@ -125,7 +125,8 @@ void InventorySystem::addToBucket(entityId_t collectorId, const CCollectable& it
 
   auto jt = collector.buckets.find(item.collectableType);
   if (jt == collector.buckets.end()) {
-    EXCEPTION("Entity does not collect items of type '" << item.collectableType << "'");
+    m_entityManager.fireEvent(ECollectableEncountered{collectorId, item}, { collectorId });
+    return;
   }
 
   Bucket& b = *jt->second;
@@ -144,6 +145,7 @@ void InventorySystem::addToBucket(entityId_t collectorId, const CCollectable& it
 
         m_entityManager.fireEvent(EBucketCountChange(collectorId, item.collectableType, bucket,
           prev), { collectorId });
+
         m_entityManager.deleteEntity(item.entityId());
       }
 

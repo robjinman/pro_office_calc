@@ -66,7 +66,8 @@ const set<string>& MiscFactory::types() const {
     "elevator",
     "spawn_point",
     "collectable_item",
-    "computer_screen"
+    "computer_screen",
+    "water"
   };
   return types;
 }
@@ -313,6 +314,35 @@ bool MiscFactory::constructElevator(entityId_t entityId, parser::Object& obj, en
 }
 
 //===========================================
+// MiscFactory::constructWater
+//===========================================
+bool MiscFactory::constructWater(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["floor_texture"] = "water";
+
+  if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
+    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+
+    CAnimation* anim = new CAnimation(entityId);
+    vector<AnimationFrame> frames = constructFrames(1, 3, { 0, 1, 2 });
+    anim->addAnimation(pAnimation_t(new Animation("gurgle", m_timeService.frameRate, 1.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+
+    animationSystem.playAnimation(entityId, "gurgle", true);
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // MiscFactory::constructObject
 //===========================================
 bool MiscFactory::constructObject(const string& type, entityId_t entityId, parser::Object& obj,
@@ -338,6 +368,9 @@ bool MiscFactory::constructObject(const string& type, entityId_t entityId, parse
   }
   else if (type == "computer_screen") {
     return constructComputerScreen(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "water") {
+    return constructWater(entityId, obj, parentId, parentTransform);
   }
 
   return false;

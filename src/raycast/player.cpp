@@ -299,11 +299,10 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
   renderSystem.addComponent(pComponent_t(healthCounter));
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
-
   events.targetedEventHandlers.push_back(EventHandler{"bucket_count_change",
-    [=](const GameEvent& e_) {
+    [=, &damageSystem](const GameEvent& e_) {
 
-    const EBucketCountChange& e = dynamic_cast<const EBucketCountChange&>(e_);
+    auto& e = dynamic_cast<const EBucketCountChange&>(e_);
 
     if (e.collectableType == "ammo") {
       stringstream ss;
@@ -315,7 +314,22 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
       }
     }
   }});
+  events.targetedEventHandlers.push_back(EventHandler{"collectable_encountered",
+    [this, &damageSystem](const GameEvent& e_) {
 
+    auto& e = dynamic_cast<const ECollectableEncountered&>(e_);
+
+    if (e.item.collectableType == "health_pack") {
+      if (damageSystem.getHealth(this->body) < damageSystem.getMaxHealth(this->body)) {
+        DBG_PRINT("Health pack collected\n");
+
+        m_audioService.playSound("health_pack_collect");
+        damageSystem.damageEntity(this->body, -e.item.value);
+
+        m_entityManager.deleteEntity(e.item.entityId());
+      }
+    }
+  }});
   events.targetedEventHandlers.push_back(EventHandler{"bucket_items_change",
     [=, &renderSystem](const GameEvent& e_) {
 
@@ -370,19 +384,14 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
       }
     }
   }});
-
   events.targetedEventHandlers.push_back(EventHandler{"entity_damaged",
     [=, &damageSystem](const GameEvent& e_) {
 
-    const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(e_);
+    const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(this->body));
 
-    if (e.entityId == this->body) {
-      const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(this->body));
-
-      stringstream ss;
-      ss << "HEALTH " << damage.health << "/" << damage.maxHealth;
-      healthCounter->text = ss.str();
-    }
+    stringstream ss;
+    ss << "HEALTH " << damage.health << "/" << damage.maxHealth;
+    healthCounter->text = ss.str();
   }});
 
   m_hudBgId = Component::getNextId();
