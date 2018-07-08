@@ -3,7 +3,7 @@
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console_spec.hpp"
-#include "event_system.hpp"
+#include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 #include "utils.hpp"
 
 
@@ -58,45 +58,42 @@ void FConsole::reload(const FragmentSpec& spec_) {
   m_commandsEntered = 0;
 
   m_data.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{});
-  m_data.wgtConsole->addCommand("hconf", [this](const ArgList& args) {
-    if (args == ArgList{"update", "-kbr", "auto=false"}) {
-      m_commandsEntered = 1;
-      return "config updated";
-    }
-
-    return "error updating config";
-  });
-  m_data.wgtConsole->addCommand("dopler", [this](const ArgList& args) {
-    if (args == ArgList{"insert-all", "-g", "bin/extra"}
-      && m_commandsEntered == 1) {
-
-      m_commandsEntered = 2;
-      return "OK";
-    }
-
-    return "FAILED";
-  });
-  m_data.wgtConsole->addCommand("psched", [this](const ArgList& args) {
-    if (args == ArgList{"ccbuild", "+772"} && m_commandsEntered == 2) {
-      m_commandsEntered = 3;
-      return "action id #7119082 *ccbuild* started";
-    }
-
-    return "bad parameters";
-  });
-  m_data.wgtConsole->addCommand("xiff", [this](const ArgList& args) {
-    if (args == ArgList{"16:2", "--single-pass", "--retry", "10"}
-      && m_commandsEntered == 3) {
-
-      commonData.eventSystem.fire(pEvent_t(new Event{"doomsweeper/commandsEntered"}));
-
-      return "[status a51e] finished";
-    }
-
-    return "invalid options";
-  });
-
   m_data.vbox->addWidget(m_data.wgtConsole.get());
+
+  m_hCommandsGenerated = commonData.eventSystem.listen("doomsweeper/commandsGenerated",
+    [this](const Event& e_) {
+
+    auto& e = dynamic_cast<const doomsweeper::CommandsGeneratedEvent&>(e_);
+    addCommands(e.commands);
+  });
+}
+
+//===========================================
+// FConsole::addCommands
+//===========================================
+void FConsole::addCommands(const vector<vector<string>>& commands) {
+  int numCommands = commands.size();
+
+  for (int i = 0; i < numCommands; ++i) {
+    auto& cmd = commands[i];
+
+    const string& prog = cmd.front();
+    vector<string> parts{cmd.begin() + 1, cmd.end()};
+
+    m_data.wgtConsole->addCommand(prog, [this, parts, i, numCommands](const ArgList& args) {
+      if (args == parts && m_commandsEntered == i) {
+        m_commandsEntered = i + 1;
+
+        if (m_commandsEntered == numCommands) {
+          commonData.eventSystem.fire(pEvent_t(new Event{"doomsweeper/commandsEntered"}));
+        }
+
+        return "Success";
+      }
+
+      return "Failed";
+    });
+  }
 }
 
 //===========================================

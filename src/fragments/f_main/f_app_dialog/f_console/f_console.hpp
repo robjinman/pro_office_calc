@@ -7,6 +7,7 @@
 #include "fragments/relocatable/widget_frag_data.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
+#include "event_system.hpp"
 #include "console_widget.hpp"
 
 
@@ -27,6 +28,8 @@ class FConsole : public QWidget, public Fragment {
     virtual ~FConsole() override;
 
   private:
+    void addCommands(const std::vector<std::vector<std::string>>& commands);
+
     FConsoleData m_data;
 
     struct {
@@ -35,6 +38,7 @@ class FConsole : public QWidget, public Fragment {
     } m_origParentState;
 
     int m_commandsEntered = 0;
+    EventHandle m_hCommandsGenerated;
 };
 
 

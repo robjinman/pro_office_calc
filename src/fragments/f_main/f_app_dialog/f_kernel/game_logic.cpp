@@ -1,6 +1,7 @@
 #include <sstream>
 #include <vector>
 #include <random>
+#include <map>
 #include <cassert>
 #include <QPainter>
 #include <QFont>
@@ -28,6 +29,7 @@ using std::vector;
 using std::set;
 using std::string;
 using std::stringstream;
+using std::map;
 
 
 namespace doomsweeper {
@@ -119,6 +121,132 @@ void GameLogic::drawMazeMap(const std::set<Coord>& clueCells) {
   painter.drawText(x, y, ss.str().c_str());
 
   painter.end();
+}
+
+//===========================================
+// commandPartToImageName
+//===========================================
+static string commandPartToImageName(const string& cmdPart) {
+  static const map<string, string> names = {
+    {"16:2", "16_2"},
+    {"+772", "772"},
+    {"auto=false", "auto_false"},
+    {"bin/extra", "bin_extra"},
+    {"ccbuild", "ccbuild"},
+    {"dopler", "dopler"},
+    {"-g", "g"},
+    {"hconf", "hconf"},
+    {"-kbr", "kbr"},
+    {"&&linkf", "linkf"},
+    {"psched", "psched"},
+    {"purge-all", "purge_all"},
+    {"--retry=10", "retry_10"},
+    {"--single-pass", "single_pass"},
+    {"update", "update"},
+    {"xiff", "xiff"}
+  };
+
+  return names.at(cmdPart);
+}
+
+//===========================================
+// GameLogic::drawCommandScreens
+//===========================================
+void GameLogic::drawCommandScreens(const vector<vector<string>>& commands) const {
+  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  for (unsigned int i = 0; i < commands.size(); ++i) {
+    auto& cmd = commands[i];
+
+    stringstream ss;
+    ss << "command_" << i;
+
+    QImage& whiteboardImg = GET_VALUE(renderSystem.rg.textures, ss.str()).image;
+
+    QPainter painter;
+    painter.begin(&whiteboardImg);
+
+    double gap = whiteboardImg.width() * 0.05;
+
+    ss.str("");
+    ss << i + 1 << "_" << commands.size();
+    string numImgName = ss.str();
+    const QImage& numImg = GET_VALUE(renderSystem.rg.textures, ss.str()).image;
+
+    painter.drawImage(gap, whiteboardImg.height() * 0.2, numImg);
+
+    double x = gap;
+    double y = whiteboardImg.height() * 0.4;
+
+    for (unsigned int j = 0; j < cmd.size(); ++j) {
+      string imgName = commandPartToImageName(cmd[j]);
+      const QImage& cmdPartImg = GET_VALUE(renderSystem.rg.textures, imgName).image;
+
+      painter.drawImage(x, y, cmdPartImg);
+
+      x += cmdPartImg.width() + gap;
+    }
+
+    painter.end();
+  }
+}
+
+//===========================================
+// GameLogic::generateCommands
+//===========================================
+void GameLogic::generateCommands() {
+  DBG_PRINT("Generating commands:\n");
+
+  vector<string> progs{
+    "hconf",
+    "dopler",
+    "psched",
+    "xiff"
+  };
+
+  vector<string> cmdParts{
+    "update",
+    "-kbr",
+    "auto=false",
+    "purge-all",
+    "-g",
+    "bin/extra",
+    "ccbuild",
+    "+772",
+    "16:2",
+    "--single-pass",
+    "--retry=10",
+    "&&linkf"
+  };
+
+  int partsPerCommand = cmdParts.size() / progs.size();
+
+  std::shuffle(progs.begin(), progs.end(), randEngine);
+  std::shuffle(cmdParts.begin(), cmdParts.end(), randEngine);
+
+  vector<vector<string>> commands;
+
+  for (auto& prog : progs) {
+    vector<string> command;
+
+    command.push_back(prog);
+    command.insert(command.end(), cmdParts.begin(), cmdParts.begin() + partsPerCommand);
+
+    cmdParts.erase(cmdParts.begin(), cmdParts.begin() + partsPerCommand);
+
+    commands.push_back(command);
+
+#ifdef DEBUG
+    for (auto& part : command) {
+      std::cout << part << " ";
+    }
+    std::cout << "\n";
+#endif
+  }
+
+  drawCommandScreens(commands);
+
+  m_eventSystem.fire(pEvent_t(new CommandsGeneratedEvent{commands}));
 }
 
 //===========================================
@@ -310,6 +438,8 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
       spatialSystem.relocateEntity(playerId, *dbgPoint.zone, dbgPoint.pos);
     }
 #endif
+
+    generateCommands();
 
     m_initialised = true;
   });

@@ -4,6 +4,7 @@
 
 #include <set>
 #include <ostream>
+#include <vector>
 #include "event.hpp"
 
 
@@ -42,7 +43,7 @@ struct MinesweeperSetupEvent : public Event {
     : Event("doomsweeper/minesweeperSetupComplete"),
       mineCoords(coords) {}
 
-    std::set<Coord> mineCoords;
+  std::set<Coord> mineCoords;
 };
 
 struct CellEnteredEvent : public Event {
@@ -50,7 +51,7 @@ struct CellEnteredEvent : public Event {
     : Event("doomsweeper/cellEntered"),
       coords(coords) {}
 
-    Coord coords;
+  Coord coords;
 };
 
 struct InnerCellEnteredEvent : public Event {
@@ -58,7 +59,15 @@ struct InnerCellEnteredEvent : public Event {
     : Event("doomsweeper/innerCellEntered"),
       coords(coords) {}
 
-    Coord coords;
+  Coord coords;
+};
+
+struct CommandsGeneratedEvent : public Event {
+  CommandsGeneratedEvent(const std::vector<std::vector<std::string>>& commands)
+    : Event("doomsweeper/commandsGenerated"),
+      commands(commands) {}
+
+  std::vector<std::vector<std::string>> commands;
 };
 
 

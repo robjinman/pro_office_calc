@@ -93,6 +93,8 @@ class GameLogic {
     void lockDoors();
     void sealDoor(entityId_t doorId);
     void drawMazeMap(const std::set<Coord>& clueCells);
+    void generateCommands();
+    void drawCommandScreens(const std::vector<std::vector<std::string>>& commands) const;
 
     std::atomic<bool> m_initialised;
 

@@ -221,6 +221,9 @@ void FMinesweeper::onInnerCellEntered(const Event& e_) {
       m_mainPage.cells[i][j]->onPlayerChangeCell(e.coords.row, e.coords.col);
     }
   }
+
+  set<const MinesweeperCell*> visited{};
+  clearNeighbours_r(*m_mainPage.cells[e.coords.row][e.coords.col], visited);
 }
 
 //===========================================
