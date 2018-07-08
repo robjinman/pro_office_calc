@@ -44,23 +44,41 @@ static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const C
 }
 
 //===========================================
-// forEachConstCRegion
+// forEachConstRegion
+//
+// fn can return false to abort the loop
 //===========================================
-static void forEachConstCRegion(const CRegion& region, function<void(const CRegion&)> fn) {
-  fn(region);
-  for_each(region.children.begin(), region.children.end(), [&](const unique_ptr<CRegion>& r) {
-    forEachConstCRegion(*r, fn);
-  });
+static bool forEachConstRegion(const CRegion& region, function<bool(const CRegion&)> fn) {
+  if (fn(region)) {
+    for (auto& child : region.children) {
+      if (!forEachConstRegion(*child, fn)) {
+        break;
+      }
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================
-// forEachCRegion
+// forEachRegion
+//
+// fn can return false to abort the loop
 //===========================================
-static void forEachCRegion(CRegion& region, function<void(CRegion&)> fn) {
-  fn(region);
-  for_each(region.children.begin(), region.children.end(), [&](unique_ptr<CRegion>& r) {
-    forEachCRegion(*r, fn);
-  });
+static bool forEachRegion(CRegion& region, function<bool(CRegion&)> fn) {
+  if (fn(region)) {
+    for (auto& child : region.children) {
+      if (!forEachRegion(*child, fn)) {
+        break;
+      }
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================
@@ -74,39 +92,46 @@ RenderSystem::RenderSystem(EntityManager& entityManager, QImage& target)
 // connectSubregions
 //===========================================
 static void connectSubregions(const SpatialSystem& spatialSystem, CRegion& region) {
-  forEachCRegion(region, [&](CRegion& r) {
+  int i = 0;
+  forEachRegion(region, [&](CRegion& r) {
     for (auto jt = r.boundaries.begin(); jt != r.boundaries.end(); ++jt) {
       if ((*jt)->kind == CRenderKind::JOIN) {
         CJoin* je = dynamic_cast<CJoin*>(*jt);
         assert(je != nullptr);
 
         bool hasTwin = false;
-        forEachCRegion(region, [&](CRegion& r_) {
-          if (!hasTwin) {
-            if (&r_ != &r) {
-              for (auto lt = r_.boundaries.begin(); lt != r_.boundaries.end(); ++lt) {
-                if ((*lt)->kind == CRenderKind::JOIN) {
-                  CJoin* other = dynamic_cast<CJoin*>(*lt);
+        int j = 0;
+        forEachRegion(region, [&](CRegion& r_) {
+          if (&r_ != &r) {
+            for (auto lt = r_.boundaries.begin(); lt != r_.boundaries.end(); ++lt) {
+              if ((*lt)->kind == CRenderKind::JOIN) {
+                CJoin* other = dynamic_cast<CJoin*>(*lt);
 
-                  entityId_t id1 = getSoftEdge(spatialSystem, *je).joinId;
-                  entityId_t id2 = getSoftEdge(spatialSystem, *other).joinId;
+                entityId_t id1 = getSoftEdge(spatialSystem, *je).joinId;
+                entityId_t id2 = getSoftEdge(spatialSystem, *other).joinId;
 
-                  if (id1 == id2) {
-                    hasTwin = true;
+                if (id1 == id2) {
+                  hasTwin = true;
 
-                    je->joinId = other->joinId;
-                    je->regionA = other->regionA = &r;
-                    je->regionB = other->regionB = &r_;
+                  je->joinId = other->joinId;
+                  je->regionA = other->regionA = &r;
+                  je->regionB = other->regionB = &r_;
 
-                    je->mergeIn(*other);
-                    other->mergeIn(*je);
+                  je->mergeIn(*other);
+                  other->mergeIn(*je);
 
-                    break;
-                  }
+                  return false;
                 }
               }
             }
           }
+
+          if (j > i) {
+            return false;
+          }
+
+          ++j;
+          return true;
         });
 
         if (!hasTwin) {
@@ -115,6 +140,9 @@ static void connectSubregions(const SpatialSystem& spatialSystem, CRegion& regio
         }
       }
     }
+
+    ++i;
+    return true;
   });
 }
 

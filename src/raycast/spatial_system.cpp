@@ -55,22 +55,40 @@ ostream& operator<<(ostream& os, CSpatialKind kind) {
 
 //===========================================
 // forEachConstZone
+//
+// fn can return false to abort the loop
 //===========================================
-void forEachConstZone(const CZone& zone, function<void(const CZone&)> fn) {
-  fn(zone);
-  for_each(zone.children.begin(), zone.children.end(), [&](const unique_ptr<CZone>& r) {
-    forEachConstZone(*r, fn);
-  });
+static bool forEachConstZone(const CZone& zone, function<bool(const CZone&)> fn) {
+  if (fn(zone)) {
+    for (auto& child : zone.children) {
+      if (!forEachConstZone(*child, fn)) {
+        break;
+      }
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================
 // forEachZone
+//
+// fn can return false to abort the loop
 //===========================================
-void forEachZone(CZone& zone, function<void(CZone&)> fn) {
-  fn(zone);
-  for_each(zone.children.begin(), zone.children.end(), [&](unique_ptr<CZone>& r) {
-    forEachZone(*r, fn);
-  });
+static bool forEachZone(CZone& zone, function<bool(CZone&)> fn) {
+  if (fn(zone)) {
+    for (auto& child : zone.children) {
+      if (!forEachZone(*child, fn)) {
+        break;
+      }
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 //===========================================
@@ -133,10 +151,12 @@ static bool pathBlocked(const CZone& zone, const Point& pos, double height, cons
       if (lineSegmentIntersect(lseg, edge.lseg, p)) {
         if (!canStepAcrossEdge(zone, height, bodySize, edge)) {
           b = true;
-          return;
+          return false;
         }
       }
     }
+
+    return true;
   });
 
   return b;
@@ -192,6 +212,8 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
         }
       }
     }
+
+    return true;
   });
 
   return collision ? newV : oldV;
@@ -543,6 +565,7 @@ bool SpatialSystem::areTwins(const CSoftEdge& se1, const CSoftEdge& se2) const {
 // SpatialSystem::connectSubzones
 //===========================================
 void SpatialSystem::connectSubzones(CZone& zone) {
+  int i = 0;
   forEachZone(zone, [&](CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
@@ -550,53 +573,67 @@ void SpatialSystem::connectSubzones(CZone& zone) {
         assert(se != nullptr);
 
         bool hasTwin = false;
+        int j = 0;
         forEachZone(zone, [&](CZone& r_) {
-          if (!hasTwin) {
-            for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
-              if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
-                CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(*lt);
+          for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
+            if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
+              CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(*lt);
 
-                if (other != se) {
-                  if (areTwins(*se, *other)) {
-                    hasTwin = true;
+              if (other != se) {
+                if (areTwins(*se, *other)) {
+                  hasTwin = true;
 
-                    se->joinId = other->joinId;
-                    se->zoneA = &r;
-                    se->zoneB = &r_;
-                    se->lseg = other->lseg;
-                    se->twinId = other->entityId();
+                  se->joinId = other->joinId;
+                  se->zoneA = &r;
+                  se->zoneB = &r_;
+                  se->lseg = other->lseg;
+                  se->twinId = other->entityId();
 
-                    break;
-                  }
+                  other->zoneA = &r_;
+                  other->zoneB = &r;
+                  other->twinId = se->entityId();
 
-                  // If they're already joined by id (i.e. portals)
-                  if (se->joinId != -1 && se->joinId == other->joinId) {
-                    hasTwin = true;
+                  return false;
+                }
 
-                    se->zoneA = &r;
-                    se->zoneB = &r_;
-                    se->twinId = other->entityId();
+                // If they're already joined by id (i.e. portals)
+                if (se->joinId != -1 && se->joinId == other->joinId) {
+                  hasTwin = true;
 
-                    double a1 = se->lseg.angle();
-                    double a2 = other->lseg.angle();
-                    double a = a2 - a1;
+                  se->zoneA = &r;
+                  se->zoneB = &r_;
+                  se->twinId = other->entityId();
 
-                    Matrix toOrigin(0, -se->lseg.A);
-                    Matrix rotate(a, Vec2f(0, 0));
-                    Matrix translate(0, other->lseg.A);
-                    Matrix m = translate * rotate * toOrigin;
+                  double a1 = se->lseg.angle();
+                  double a2 = other->lseg.angle();
+                  double a = a2 - a1;
 
-                    other->lseg.A = m * se->lseg.A;
-                    other->lseg.B = m * se->lseg.B;
+                  Matrix toOrigin(0, -se->lseg.A);
+                  Matrix rotate(a, Vec2f(0, 0));
+                  Matrix translate(0, other->lseg.A);
+                  Matrix m = translate * rotate * toOrigin;
 
-                    se->toTwin = m;
+                  se->toTwin = m;
 
-                    break;
-                  }
+                  other->zoneA = &r_;
+                  other->zoneB = &r;
+                  other->twinId = se->entityId();
+                  other->toTwin = m.inverse();
+                  other->lseg.A = m * se->lseg.A;
+                  other->lseg.B = m * se->lseg.B;
+
+                  return false;
                 }
               }
             }
           }
+
+          if (j > i) {
+            return false;
+          }
+
+          ++j;
+          return true;
         });
 
         if (!hasTwin) {
@@ -607,6 +644,9 @@ void SpatialSystem::connectSubzones(CZone& zone) {
         }
       }
     }
+
+    ++i;
+    return true;
   });
 }
 
@@ -732,12 +772,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
       vector<const CSoftEdge*> edgesToCross;
       LineSegment lseg(body.pos, body.pos + dv);
 
-      bool abort = false;
       forEachConstZone(nthAncestor(*body.zone, MAX_ANCESTOR_SEARCH), [&](const CZone& r) {
-        if (abort) {
-          return;
-        }
-
         for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
           const CEdge& edge = **it;
 
@@ -747,19 +782,16 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
               // TODO: Find out how this is possible and prevent it
 
               DBG_PRINT("Warning: Crossed edge is not soft edge\n");
-              abort = true;
-              return;
+              return false;
             }
 
             const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
             edgesToCross.push_back(&se);
           }
         }
-      });
 
-      if (abort) {
-        return;
-      }
+        return true;
+      });
 
       Matrix m;
       map<entityId_t, bool> crossed;

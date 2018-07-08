@@ -108,9 +108,6 @@ class CZone : public CSpatial {
     CZone* parent = nullptr;
 };
 
-void forEachConstZone(const CZone& zone, std::function<void(const CZone&)> fn);
-void forEachZone(CZone& zone, std::function<void(CZone&)> fn);
-
 class CHardEdge : public CEdge {
   public:
     CHardEdge(entityId_t entityId, entityId_t parentId)
