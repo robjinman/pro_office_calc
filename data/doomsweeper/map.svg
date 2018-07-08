@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="11.313709"
-     inkscape:cx="14498.136"
-     inkscape:cy="4667.4876"
+     inkscape:zoom="22.627417"
+     inkscape:cx="14944.647"
+     inkscape:cy="4436.2641"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -19989,7 +19989,7 @@
                sodipodi:linespacing="125%"><tspan
                  y="31436.42"
                  x="2581.1675"
-                 id="tspan4215-5-0-2-6">name=dbg_point_</tspan></text>
+                 id="tspan4215-5-0-2-6">name=dbg_point</tspan></text>
           </g>
           <g
              id="g24226">
@@ -20855,7 +20855,7 @@
              transform="scale(1.0603588,0.94307701)"><tspan
                id="tspan4219-5-7-0"
                x="4515.6841"
-               y="5739.4624">floor_height=-1000</tspan></text>
+               y="5739.4624">floor_height=-200</tspan></text>
           <text
              sodipodi:linespacing="125%"
              xml:space="preserve"

@@ -490,7 +490,7 @@ void GameLogic::onEntityChangeZone(const GameEvent& e_) {
 
   if (e.entityId == player.body) {
     if (e.newZone == Component::getIdFromString("level_exit")) {
-      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_T_MINUS_TWO_MINUTES)));
+      m_eventSystem.fire(pEvent_t(new Event{"doomsweeper/levelComplete"}));
     }
   }
 }

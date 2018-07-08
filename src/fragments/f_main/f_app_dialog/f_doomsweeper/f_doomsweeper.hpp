@@ -4,7 +4,9 @@
 
 #include <QWidget>
 #include <QMargins>
-#include <QVBoxLayout>
+#include <QTableWidget>
+#include <QStackedLayout>
+#include <QPushButton>
 #include "raycast/raycast_widget.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
@@ -13,9 +15,19 @@
 
 
 struct FDoomsweeperData : public FragmentData {
-  QtObjPtr<QVBoxLayout> vbox;
-  QtObjPtr<RaycastWidget> wgtRaycast;
-  std::unique_ptr<doomsweeper::GameLogic> gameLogic;
+  QtObjPtr<QStackedLayout> stackedLayout;
+
+  struct {
+    QtObjPtr<RaycastWidget> wgtRaycast;
+    std::unique_ptr<doomsweeper::GameLogic> gameLogic;
+  } raycastPage;
+
+  struct {
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<QTableWidget> wgtTable;
+    QtObjPtr<QPushButton> wgtContinue;
+  } highScorePage;
 };
 
 class FDoomsweeper : public QWidget, public Fragment {
@@ -29,7 +41,12 @@ class FDoomsweeper : public QWidget, public Fragment {
 
     virtual ~FDoomsweeper() override;
 
+  private slots:
+    void onContinueClick();
+
   private:
+    void setupRaycastPage();
+    void setupHighScorePage();
     bool waitForInit();
 
     FDoomsweeperData m_data;
@@ -41,6 +58,7 @@ class FDoomsweeper : public QWidget, public Fragment {
 
     std::future<void> m_initFuture;
     EventHandle m_hSetup;
+    EventHandle m_hLevelComplete;
 };
 
 

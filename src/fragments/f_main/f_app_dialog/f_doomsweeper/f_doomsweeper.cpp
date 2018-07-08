@@ -1,4 +1,5 @@
 #include <chrono>
+#include <QHeaderView>
 #include "fragments/relocatable/widget_frag_data.hpp"
 #include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper.hpp"
 #include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper_spec.hpp"
@@ -8,6 +9,8 @@
 #include "utils.hpp"
 #include "update_loop.hpp"
 #include "app_config.hpp"
+#include "request_state_change_event.hpp"
+#include "state_ids.hpp"
 
 
 //===========================================
@@ -29,15 +32,13 @@ void FDoomsweeper::reload(const FragmentSpec& spec_) {
 
   auto& parentData = parentFragData<WidgetFragData>();
 
-  if (m_data.vbox) {
-    delete m_data.vbox.release();
+  if (m_data.stackedLayout) {
+    delete m_data.stackedLayout.release();
   }
 
-  m_data.vbox = makeQtObjPtr<QVBoxLayout>();
-  m_data.vbox->setSpacing(0);
-  m_data.vbox->setContentsMargins(0, 0, 0, 0);
+  m_data.stackedLayout = makeQtObjPtr<QStackedLayout>();
 
-  setLayout(m_data.vbox.get());
+  setLayout(m_data.stackedLayout.get());
 
   m_origParentState.spacing = parentData.box->spacing();
   m_origParentState.margins = parentData.box->contentsMargins();
@@ -46,27 +47,43 @@ void FDoomsweeper::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
-  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
+  setupRaycastPage();
+  setupHighScorePage();
 
-  auto& rootFactory = m_data.wgtRaycast->rootFactory();
-  auto& timeService = m_data.wgtRaycast->timeService();
-  auto& entityManager = m_data.wgtRaycast->entityManager();
-  auto& audioService = m_data.wgtRaycast->audioService();
+  m_hLevelComplete = commonData.eventSystem.listen("doomsweeper/levelComplete",
+    [this](const Event&) {
+
+    m_data.stackedLayout->setCurrentIndex(1);
+  });
+}
+
+//===========================================
+// FDoomsweeper::setupRaycastPage
+//===========================================
+void FDoomsweeper::setupRaycastPage() {
+  auto& page = m_data.raycastPage;
+
+  page.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
+
+  auto& rootFactory = page.wgtRaycast->rootFactory();
+  auto& timeService = page.wgtRaycast->timeService();
+  auto& entityManager = page.wgtRaycast->entityManager();
+  auto& audioService = page.wgtRaycast->audioService();
 
   auto factory = new doomsweeper::ObjectFactory(rootFactory, entityManager, timeService,
     audioService);
 
-  m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
-  m_data.wgtRaycast->initialise(config::dataPath("doomsweeper/map.svg"));
+  page.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
+  page.wgtRaycast->initialise(config::dataPath("doomsweeper/map.svg"));
 
-  m_data.gameLogic.reset(new doomsweeper::GameLogic(commonData.eventSystem, entityManager,
-    m_data.wgtRaycast->rootFactory(), *factory, timeService));
+  page.gameLogic.reset(new doomsweeper::GameLogic(commonData.eventSystem,
+    entityManager, page.wgtRaycast->rootFactory(), *factory, timeService));
 
   m_hSetup = commonData.eventSystem.listen("doomsweeper/minesweeperSetupComplete",
     [=](const Event& e_) {
 
     auto& e = dynamic_cast<const doomsweeper::MinesweeperSetupEvent&>(e_);
-    m_initFuture = m_data.gameLogic->initialise(e.mineCoords);
+    m_initFuture = m_data.raycastPage.gameLogic->initialise(e.mineCoords);
 
     DBG_PRINT("Initialising game logic...\n");
 
@@ -77,7 +94,72 @@ void FDoomsweeper::reload(const FragmentSpec& spec_) {
     });
   });
 
-  m_data.vbox->addWidget(m_data.wgtRaycast.get());
+  m_data.stackedLayout->addWidget(page.wgtRaycast.get());
+}
+
+//===========================================
+// constructTableItem
+//===========================================
+static QTableWidgetItem* constructTableItem(const QString& text, bool editable = false) {
+  Qt::ItemFlags disableFlags;
+
+  if (editable) {
+    disableFlags = Qt::ItemIsSelectable | Qt::ItemIsEditable;
+  }
+
+  QTableWidgetItem* item = new QTableWidgetItem(text);
+  item->setFlags(item->flags() & ~disableFlags);
+
+  return item;
+}
+
+//===========================================
+// FDoomsweeper::setupHighScorePage
+//===========================================
+void FDoomsweeper::setupHighScorePage() {
+  auto& page = m_data.highScorePage;
+
+  page.widget = makeQtObjPtr<QWidget>();
+  page.vbox = makeQtObjPtr<QVBoxLayout>();
+
+  page.widget->setLayout(page.vbox.get());
+
+  page.wgtTable = makeQtObjPtr<QTableWidget>(4, 2);
+
+  page.wgtTable->setShowGrid(true);
+  page.wgtTable->setContextMenuPolicy(Qt::NoContextMenu);
+  page.wgtTable->setHorizontalHeaderLabels({"Name", "Score"});
+  page.wgtTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+  page.wgtTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+  page.wgtTable->verticalHeader()->setVisible(true);
+
+  page.wgtTable->setItem(0, 0, constructTableItem("Dave Smith"));
+  page.wgtTable->setItem(0, 1, constructTableItem("4412"));
+
+  page.wgtTable->setItem(1, 0, constructTableItem("YOUR FULL NAME"));
+  page.wgtTable->setItem(1, 1, constructTableItem("4052", true));
+
+  page.wgtTable->setItem(2, 0, constructTableItem("James Pilch"));
+  page.wgtTable->setItem(2, 1, constructTableItem("3787"));
+
+  page.wgtTable->setItem(3, 0, constructTableItem("Herman Lewis"));
+  page.wgtTable->setItem(3, 1, constructTableItem("3110"));
+
+  page.wgtContinue = makeQtObjPtr<QPushButton>("Continue");
+
+  page.vbox->addWidget(page.wgtTable.get());
+  page.vbox->addWidget(page.wgtContinue.get());
+
+  m_data.stackedLayout->addWidget(page.widget.get());
+
+  connect(page.wgtContinue.get(), SIGNAL(clicked()), this, SLOT(onContinueClick()));
+}
+
+//===========================================
+// FDoomsweeper::onContinueClick
+//===========================================
+void FDoomsweeper::onContinueClick() {
+  commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_T_MINUS_TWO_MINUTES)));
 }
 
 //===========================================
@@ -89,7 +171,7 @@ bool FDoomsweeper::waitForInit() {
   if (status == std::future_status::ready) {
     m_initFuture.get();
 
-    m_data.wgtRaycast->start();
+    m_data.raycastPage.wgtRaycast->start();
     return false;
   }
 
