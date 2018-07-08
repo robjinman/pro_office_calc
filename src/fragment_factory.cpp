@@ -20,7 +20,7 @@
 #include "fragments/f_main/f_app_dialog/f_file_system/f_file_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/f_minesweeper.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/f_kernel.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper.hpp"
 #include "fragments/f_main/f_maze_3d/f_maze_3d.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
 #include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
@@ -96,8 +96,8 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   else if (name == "FConsole") {
     return new FConsole(parent, parentData, commonData);
   }
-  else if (name == "FKernel") {
-    return new FKernel(parent, parentData, commonData);
+  else if (name == "FDoomsweeper") {
+    return new FDoomsweeper(parent, parentData, commonData);
   }
   else if (name == "FProcalcSetup") {
     return new FProcalcSetup(parent, parentData, commonData);

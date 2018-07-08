@@ -6,9 +6,9 @@
 #include <QPainter>
 #include <QFont>
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/game_logic.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/game_events.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/object_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/spatial_system.hpp"
@@ -104,7 +104,7 @@ void GameLogic::drawMazeMap(const std::set<Coord>& clueCells) {
   QPainter painter;
   painter.begin(&img);
 
-  double x = img.width() * 0.2;
+  double x = img.width() * 0.25;
   double y = img.height() * 0.9;
   double h = img.height() * 0.1;
 

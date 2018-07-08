@@ -1,5 +1,5 @@
-#include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/game_events.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/object_factory.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/game_events.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/animation_system.hpp"
 #include "raycast/behaviour_system.hpp"

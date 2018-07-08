@@ -1,8 +1,8 @@
 #include <chrono>
 #include "fragments/relocatable/widget_frag_data.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/f_kernel.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/f_kernel_spec.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/object_factory.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/object_factory.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 #include "raycast/render_system.hpp"
 #include "utils.hpp"
@@ -11,21 +11,21 @@
 
 
 //===========================================
-// FKernel::FKernel
+// FDoomsweeper::FDoomsweeper
 //===========================================
-FKernel::FKernel(Fragment& parent_, FragmentData& parentData_,
+FDoomsweeper::FDoomsweeper(Fragment& parent_, FragmentData& parentData_,
   const CommonFragData& commonData)
   : QWidget(nullptr),
-    Fragment("FKernel", parent_, parentData_, m_data, commonData) {
+    Fragment("FDoomsweeper", parent_, parentData_, m_data, commonData) {
 
-  DBG_PRINT("FKernel::FKernel\n");
+  DBG_PRINT("FDoomsweeper::FDoomsweeper\n");
 }
 
 //===========================================
-// FKernel::reload
+// FDoomsweeper::reload
 //===========================================
-void FKernel::reload(const FragmentSpec& spec_) {
-  DBG_PRINT("FKernel::reload\n");
+void FDoomsweeper::reload(const FragmentSpec& spec_) {
+  DBG_PRINT("FDoomsweeper::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();
 
@@ -81,9 +81,9 @@ void FKernel::reload(const FragmentSpec& spec_) {
 }
 
 //===========================================
-// FKernel::waitForInit
+// FDoomsweeper::waitForInit
 //===========================================
-bool FKernel::waitForInit() {
+bool FDoomsweeper::waitForInit() {
   auto status = m_initFuture.wait_for(std::chrono::milliseconds(0));
 
   if (status == std::future_status::ready) {
@@ -97,10 +97,10 @@ bool FKernel::waitForInit() {
 }
 
 //===========================================
-// FKernel::cleanUp
+// FDoomsweeper::cleanUp
 //===========================================
-void FKernel::cleanUp() {
-  DBG_PRINT("FKernel::cleanUp\n");
+void FDoomsweeper::cleanUp() {
+  DBG_PRINT("FDoomsweeper::cleanUp\n");
 
   auto& parentData = parentFragData<WidgetFragData>();
 
@@ -109,8 +109,8 @@ void FKernel::cleanUp() {
 }
 
 //===========================================
-// FKernel::~FKernel
+// FDoomsweeper::~FDoomsweeper
 //===========================================
-FKernel::~FKernel() {
-  DBG_PRINT("FKernel::~FKernel\n");
+FDoomsweeper::~FDoomsweeper() {
+  DBG_PRINT("FDoomsweeper::~FDoomsweeper\n");
 }

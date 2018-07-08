@@ -1,5 +1,5 @@
-#ifndef __PROCALC_FRAGMENTS_F_KERNEL_HPP__
-#define __PROCALC_FRAGMENTS_F_KERNEL_HPP__
+#ifndef __PROCALC_FRAGMENTS_F_DOOMSWEEPER_HPP__
+#define __PROCALC_FRAGMENTS_F_DOOMSWEEPER_HPP__
 
 
 #include <QWidget>
@@ -9,30 +9,30 @@
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
 #include "event_system.hpp"
-#include "fragments/f_main/f_app_dialog/f_kernel/game_logic.hpp"
+#include "fragments/f_main/f_app_dialog/f_doomsweeper/game_logic.hpp"
 
 
-struct FKernelData : public FragmentData {
+struct FDoomsweeperData : public FragmentData {
   QtObjPtr<QVBoxLayout> vbox;
   QtObjPtr<RaycastWidget> wgtRaycast;
   std::unique_ptr<doomsweeper::GameLogic> gameLogic;
 };
 
-class FKernel : public QWidget, public Fragment {
+class FDoomsweeper : public QWidget, public Fragment {
   Q_OBJECT
 
   public:
-    FKernel(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
+    FDoomsweeper(Fragment& parent, FragmentData& parentData, const CommonFragData& commonData);
 
     virtual void reload(const FragmentSpec& spec) override;
     virtual void cleanUp() override;
 
-    virtual ~FKernel() override;
+    virtual ~FDoomsweeper() override;
 
   private:
     bool waitForInit();
 
-    FKernelData m_data;
+    FDoomsweeperData m_data;
 
     struct {
       int spacing;

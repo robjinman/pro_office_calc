@@ -15,7 +15,7 @@ using doomsweeper::Coord;
 
 static const int ROWS = 8;
 static const int COLS = 8;
-static const int MINES = 20;
+static const int MINES = 24;
 
 // Value used to represent a mine
 static const int MINE = 10;
