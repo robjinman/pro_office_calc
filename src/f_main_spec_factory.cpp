@@ -12,6 +12,7 @@
 #include "states/st_youve_got_mail.hpp"
 #include "states/st_going_in_circles.hpp"
 #include "states/st_doomsweeper.hpp"
+#include "states/st_t_minus_two_minutes.hpp"
 #include "states/st_back_to_normal.hpp"
 #include "states/st_test.hpp"
 
@@ -45,6 +46,8 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
       return st_going_in_circles::makeFMainSpec(appConfig);
     case ST_DOOMSWEEPER:
       return st_doomsweeper::makeFMainSpec(appConfig);
+    case ST_T_MINUS_TWO_MINUTES:
+      return st_t_minus_two_minutes::makeFMainSpec(appConfig);
     case ST_BACK_TO_NORMAL:
       return st_back_to_normal::makeFMainSpec(appConfig);
 

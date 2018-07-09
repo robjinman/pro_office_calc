@@ -6,7 +6,6 @@
 #include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger.hpp"
 #include "fragments/relocatable/f_calculator/f_normal_calc_trigger/f_normal_calc_trigger_spec.hpp"
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
-#include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 #include "event_system.hpp"
 #include "update_loop.hpp"

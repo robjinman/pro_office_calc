@@ -1,4 +1,4 @@
-#include <fstream>
+#include <tinyxml2.h>
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include "app_config.hpp"
@@ -6,9 +6,9 @@
 
 
 using std::string;
-using std::ifstream;
-using std::ofstream;
 using CommandLineArgs = AppConfig::CommandLineArgs;
+using tinyxml2::XMLDocument;
+using tinyxml2::XMLElement;
 
 
 //===========================================
@@ -52,16 +52,89 @@ AppConfig::AppConfig(int argc, char** argv) {
     this->args.push_back(argv[i]);
   }
 
+  loadState();
+
   if (this->args.size() > 0) {
     this->stateId = getIntArg(0, 0);
   }
-  else {
-    ifstream fin(saveDataPath("procalc.dat"), ifstream::binary);
+}
 
-    if (fin.good()) {
-      fin.read(reinterpret_cast<char*>(&this->stateId), sizeof(this->stateId));
+//===========================================
+// AppConfig::loadState
+//===========================================
+void AppConfig::loadState() {
+  string filePath = saveDataPath("procalc.dat");
+
+  XMLDocument doc;
+  doc.LoadFile(filePath.c_str());
+
+  if (!doc.Error()) {
+    XMLElement* root = doc.FirstChildElement("config");
+    XMLElement* e = root->FirstChildElement();
+
+    while (e != nullptr) {
+      string tagName(e->Name());
+
+      m_params[tagName] = e->GetText();
+
+      DBG_PRINT("Loaded param " << tagName << "=" << e->GetText() << "\n");
+
+      e = e->NextSiblingElement();
     }
+
+    this->stateId = convert<int>(GET_VALUE(m_params, "state-id"));
+    m_params.erase("state-id");
   }
+  else {
+    DBG_PRINT("Could not load procalc.dat\n");
+  }
+}
+
+//===========================================
+// AppConfig::persistState
+//===========================================
+void AppConfig::persistState() {
+  DBG_PRINT("Persisting state id " << this->stateId << "\n");
+
+  string filePath = saveDataPath("procalc.dat");
+
+  XMLDocument doc;
+  XMLElement* root = doc.NewElement("config");
+
+  doc.InsertEndChild(root);
+
+  XMLElement* e = doc.NewElement("state-id");
+  e->SetText(this->stateId);
+
+  root->InsertEndChild(e);
+
+  for (auto it = m_params.begin(); it != m_params.end(); ++it) {
+    auto& name = it->first;
+    auto& value = it->second;
+
+    DBG_PRINT("Persisting param " << name << "=" << value << "\n");
+
+    XMLElement* e = doc.NewElement(name.c_str());
+    e->SetText(value.c_str());
+
+    root->InsertEndChild(e);
+  }
+
+  doc.SaveFile(filePath.c_str());
+}
+
+//===========================================
+// AppConfig::getParam
+//===========================================
+const string& AppConfig::getParam(const string& name) const {
+  return GET_VALUE(m_params, name);
+}
+
+//===========================================
+// AppConfig::setParam
+//===========================================
+void AppConfig::setParam(const string& name, const string& value) {
+  m_params[name] = value;
 }
 
 //===========================================
@@ -83,16 +156,6 @@ int AppConfig::getIntArg( unsigned int idx, int defaultVal) const {
 //===========================================
 string AppConfig::getStringArg(unsigned int idx, const string& defaultVal) const {
   return getArg<string>(this->args, idx, defaultVal);
-}
-
-//===========================================
-// AppConfig::persistState
-//===========================================
-void AppConfig::persistState() {
-  DBG_PRINT("Persisting state id " << this->stateId << "\n");
-
-  ofstream fout(saveDataPath("procalc.dat"), ofstream::binary | ofstream::trunc);
-  fout.write(reinterpret_cast<const char*>(&this->stateId), sizeof(this->stateId));
 }
 
 //===========================================

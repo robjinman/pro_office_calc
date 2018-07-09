@@ -9,7 +9,6 @@
 #include "fragments/relocatable/f_calculator/f_calculator.hpp"
 #include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/events.hpp"
-#include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 #include "utils.hpp"
 #include "evasive_button.hpp"

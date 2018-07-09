@@ -11,7 +11,6 @@
 #include "utils.hpp"
 #include "update_loop.hpp"
 #include "app_config.hpp"
-#include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 
 
@@ -193,14 +192,14 @@ void FDoomsweeper::onTableEdit() {
   auto& page = m_data.highScorePage;
 
   auto item = dynamic_cast<const QLineEdit*>(page.wgtTable->cellWidget(1, 0));
-  string name = item->text().toStdString();
+  m_playerName = item->text().toStdString();
 
   std::regex rxName{"^[a-zA-Z]+(?:\\s[a-zA-Z]+)+$"};
   std::smatch m;
 
-  if (name != "ENTER YOUR NAME"
-    && name.size() >= MIN_SZ && name.size() <= MAX_SZ
-    && std::regex_match(name, m, rxName)) {
+  if (m_playerName != "ENTER YOUR NAME"
+    && m_playerName.size() >= MIN_SZ && m_playerName.size() <= MAX_SZ
+    && std::regex_match(m_playerName, m, rxName)) {
 
     page.wgtContinue->setDisabled(false);
   }
@@ -213,7 +212,8 @@ void FDoomsweeper::onTableEdit() {
 // FDoomsweeper::onContinueClick
 //===========================================
 void FDoomsweeper::onContinueClick() {
-  commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_T_MINUS_TWO_MINUTES)));
+  commonData.eventSystem.fire(pEvent_t(new SetConfigParamEvent{"player-name", m_playerName}));
+  commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent{ST_T_MINUS_TWO_MINUTES}));
 }
 
 //===========================================

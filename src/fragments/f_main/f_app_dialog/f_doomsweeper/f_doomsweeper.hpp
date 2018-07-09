@@ -62,6 +62,7 @@ class FDoomsweeper : public QWidget, public Fragment {
     std::future<void> m_initFuture;
     EventHandle m_hSetup;
     EventHandle m_hLevelComplete;
+    std::string m_playerName;
 };
 
 

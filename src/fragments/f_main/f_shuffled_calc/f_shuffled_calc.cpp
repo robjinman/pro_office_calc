@@ -8,7 +8,6 @@
 #include "update_loop.hpp"
 #include "effects.hpp"
 #include "strings.hpp"
-#include "request_state_change_event.hpp"
 #include "state_ids.hpp"
 #include "utils.hpp"
 #include "effects.hpp"

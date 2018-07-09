@@ -9,7 +9,6 @@
 #include "update_loop.hpp"
 #include "platform.hpp"
 #include "utils.hpp"
-#include "request_state_change_event.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 
@@ -47,6 +46,11 @@ int main(int argc, char** argv) {
 
     EventHandle hQuit = eventSystem->listen("quit", [](const Event&) {
       QApplication::exit(0);
+    });
+
+    EventHandle hSetConfigParam = eventSystem->listen("setConfigParam", [&](const Event& e_) {
+      auto& e = dynamic_cast<const SetConfigParamEvent&>(e_);
+      appConfig.setParam(e.name, e.value);
     });
 
     EventHandle hStateChange = eventSystem->listen("requestStateChange", [&](const Event& e_) {
