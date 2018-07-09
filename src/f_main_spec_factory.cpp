@@ -1,5 +1,6 @@
 #include "f_main_spec_factory.hpp"
 #include "exception.hpp"
+#include "app_config.hpp"
 #include "fragments/f_main/f_main_spec.hpp"
 #include "state_ids.hpp"
 #include "states/st_normal_calc.hpp"
@@ -15,8 +16,8 @@
 #include "states/st_test.hpp"
 
 
-FMainSpec* makeFMainSpec(int stateId) {
-  switch (stateId) {
+FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
+  switch (appConfig.stateId) {
     case ST_NORMAL_CALCULATOR_0:
     case ST_NORMAL_CALCULATOR_1:
     case ST_NORMAL_CALCULATOR_2:
@@ -27,28 +28,28 @@ FMainSpec* makeFMainSpec(int stateId) {
     case ST_NORMAL_CALCULATOR_7:
     case ST_NORMAL_CALCULATOR_8:
     case ST_NORMAL_CALCULATOR_9:
-      return st_normal_calc::makeFMainSpec(stateId);
+      return st_normal_calc::makeFMainSpec(appConfig);
     case ST_DANGER_INFINITY:
-      return st_danger_infinity::makeFMainSpec(stateId);
+      return st_danger_infinity::makeFMainSpec(appConfig);
     case ST_SHUFFLED_KEYS:
-      return st_shuffled_keys::makeFMainSpec(stateId);
+      return st_shuffled_keys::makeFMainSpec(appConfig);
     case ST_ARE_YOU_SURE:
-      return st_are_you_sure::makeFMainSpec(stateId);
+      return st_are_you_sure::makeFMainSpec(appConfig);
     case ST_ITS_RAINING_TETROMINOS:
-      return st_its_raining_tetrominos::makeFMainSpec(stateId);
+      return st_its_raining_tetrominos::makeFMainSpec(appConfig);
     case ST_MAKING_PROGRESS:
-      return st_making_progress::makeFMainSpec(stateId);
+      return st_making_progress::makeFMainSpec(appConfig);
     case ST_YOUVE_GOT_MAIL:
-      return st_youve_got_mail::makeFMainSpec(stateId);
+      return st_youve_got_mail::makeFMainSpec(appConfig);
     case ST_GOING_IN_CIRCLES:
-      return st_going_in_circles::makeFMainSpec(stateId);
+      return st_going_in_circles::makeFMainSpec(appConfig);
     case ST_DOOMSWEEPER:
-      return st_doomsweeper::makeFMainSpec(stateId);
+      return st_doomsweeper::makeFMainSpec(appConfig);
     case ST_BACK_TO_NORMAL:
-      return st_back_to_normal::makeFMainSpec(stateId);
+      return st_back_to_normal::makeFMainSpec(appConfig);
 
     case ST_TEST:
-      return st_test::makeFMainSpec(stateId);
+      return st_test::makeFMainSpec(appConfig);
     default:
       EXCEPTION("Unrecognised state id");
   }

@@ -44,16 +44,17 @@ const double PLAYER_SPEED = 350.0;
 //===========================================
 // RaycastWidget::RaycastWidget
 //===========================================
-RaycastWidget::RaycastWidget(EventSystem& eventSystem)
+RaycastWidget::RaycastWidget(const AppConfig& appConfig, EventSystem& eventSystem)
   : QWidget(nullptr),
+    m_appConfig(appConfig),
     m_eventSystem(eventSystem),
     m_timeService(FRAME_RATE),
     m_audioService(m_entityManager) {}
 
 //===========================================
-// loadTextures
+// RaycastWidget::loadTextures
 //===========================================
-static void loadTextures(RenderGraph& rg, const parser::Object& obj) {
+void RaycastWidget::loadTextures(RenderGraph& rg, const parser::Object& obj) {
   for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
     string name = it->first;
     string details = it->second;
@@ -77,40 +78,40 @@ static void loadTextures(RenderGraph& rg, const parser::Object& obj) {
       sz.y = std::stod(m.str(3));
     }
 
-    rg.textures[name] = Texture{QImage(config::dataPath(path).c_str()), sz};
+    rg.textures[name] = Texture{QImage(m_appConfig.dataPath(path).c_str()), sz};
   }
 }
 
 //===========================================
-// loadMusicAssets
+// RaycastWidget::loadMusicAssets
 //===========================================
-static void loadMusicAssets(AudioService& audioService, const parser::Object& obj) {
+void RaycastWidget::loadMusicAssets(const parser::Object& obj) {
   for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
-    audioService.addMusicTrack(it->first, config::dataPath(it->second));
+    m_audioService.addMusicTrack(it->first, m_appConfig.dataPath(it->second));
   }
 }
 
 //===========================================
-// loadSoundAssets
+// RaycastWidget::loadSoundAssets
 //===========================================
-static void loadSoundAssets(AudioService& audioService, const parser::Object& obj) {
+void RaycastWidget::loadSoundAssets(const parser::Object& obj) {
   for (auto it = obj.dict.begin(); it != obj.dict.end(); ++it) {
-    audioService.addSound(it->first, config::dataPath(it->second));
+    m_audioService.addSound(it->first, m_appConfig.dataPath(it->second));
   }
 }
 
 //===========================================
-// configureAudioService
+// RaycastWidget::configureAudioService
 //===========================================
-static void configureAudioService(AudioService& audioService, const parser::Object& obj) {
+void RaycastWidget::configureAudioService(const parser::Object& obj) {
   parser::Object* pObj = firstObjectOfType(obj.children, "music_assets");
   if (pObj != nullptr) {
-    loadMusicAssets(audioService, *pObj);
+    loadMusicAssets(*pObj);
   }
 
   pObj = firstObjectOfType(obj.children, "sound_assets");
   if (pObj != nullptr) {
-    loadSoundAssets(audioService, *pObj);
+    loadSoundAssets(*pObj);
   }
 
   string musicTrack = getValue(obj.dict, "music_track", "");
@@ -121,15 +122,15 @@ static void configureAudioService(AudioService& audioService, const parser::Obje
   bool loop = getValue(obj.dict, "loop", "true") == "true";
 
   if (musicTrack.length() > 0) {
-    audioService.playMusic(musicTrack, loop);
-    audioService.setMusicVolume(musicVolume);
+    m_audioService.playMusic(musicTrack, loop);
+    m_audioService.setMusicVolume(musicVolume);
   }
 }
 
 //===========================================
-// configure
+// RaycastWidget::configure
 //===========================================
-static void configure(RenderGraph& rg, AudioService& audioService, const parser::Object& config) {
+void RaycastWidget::configure(RenderGraph& rg, const parser::Object& config) {
   parser::Object* pObj = firstObjectOfType(config.children, "texture_assets");
   if (pObj != nullptr) {
     loadTextures(rg, *pObj);
@@ -137,7 +138,7 @@ static void configure(RenderGraph& rg, AudioService& audioService, const parser:
 
   pObj = firstObjectOfType(config.children, "audio_config");
   if (pObj != nullptr) {
-    configureAudioService(audioService, *pObj);
+    configureAudioService(*pObj);
   }
 }
 
@@ -157,7 +158,7 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
   parser::Object& config = *firstObjectOfType(objects, "config");
   parser::Object& rootRegion = *firstObjectOfType(objects, "region");
 
-  configure(rg, m_audioService, config);
+  configure(rg, config);
 
   m_rootFactory.constructObject("region", -1, rootRegion, -1, Matrix());
 }

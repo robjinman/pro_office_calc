@@ -38,11 +38,11 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
 
   setLayout(m_data.vbox.get());
 
-  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
+  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
 #if PROFILING_ON
-  double profileDuration = config::getDoubleArg(commonData.commandLineArgs, 1, -1);
+  double profileDuration = commonData.appConfig.getDoubleArg(commonData.commandLineArgs, 1, -1);
 
   DBG_PRINT("Profile duration = " << profileDuration << " seconds...\n");
 
@@ -60,7 +60,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   }
 #endif
 
-  m_data.wgtRaycast->initialise(config::dataPath("youve_got_mail/map.svg"));
+  m_data.wgtRaycast->initialise(commonData.appConfig.dataPath("youve_got_mail/map.svg"));
   m_data.wgtRaycast->start();
 }
 

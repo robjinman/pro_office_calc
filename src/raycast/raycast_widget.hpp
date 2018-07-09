@@ -19,13 +19,16 @@
 
 
 class QPaintEvent;
+class AppConfig;
 class EventSystem;
+class RenderGraph;
+namespace parser { struct Object; }
 
 class RaycastWidget : public QWidget {
   Q_OBJECT
 
   public:
-    RaycastWidget(EventSystem& eventSystem);
+    RaycastWidget(const AppConfig& appConfig, EventSystem& eventSystem);
 
     void initialise(const std::string& mapFile);
     void start();
@@ -60,6 +63,14 @@ class RaycastWidget : public QWidget {
     void tick();
 
   private:
+    void loadMap(const std::string& mapFilePath);
+    void configure(RenderGraph& rg, const parser::Object& config);
+    void configureAudioService(const parser::Object& obj);
+    void loadSoundAssets(const parser::Object& obj);
+    void loadMusicAssets(const parser::Object& obj);
+    void loadTextures(RenderGraph& rg, const parser::Object& obj);
+
+    const AppConfig& m_appConfig;
     EventSystem& m_eventSystem;
 
     EntityManager m_entityManager;
@@ -79,8 +90,6 @@ class RaycastWidget : public QWidget {
     double m_frameRate = 0;
     long m_frame = 0;
 #endif
-
-    void loadMap(const std::string& mapFilePath);
 };
 
 

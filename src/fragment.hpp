@@ -19,7 +19,7 @@ class UpdateLoop;
 
 class CommonFragData {
   public:
-    config::CommandLineArgs& commandLineArgs;
+    AppConfig& appConfig;
     EventSystem& eventSystem;
     UpdateLoop& updateLoop;
 };

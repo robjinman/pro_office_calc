@@ -12,7 +12,7 @@
 namespace st_shuffled_keys {
 
 
-FMainSpec* makeFMainSpec(int stateId) {
+FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   srand(time(nullptr));
 
   std::stringstream ss;
@@ -37,7 +37,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->aboutDialogTitle = "A͞b̶out";
   mainSpec->aboutDialogText = QString() +
     "<div>"
-    "  <img src='" + config::dataPath("common/images/apex.png").c_str() + "'>"
+    "  <img src='" + appConfig.dataPath("common/images/apex.png").c_str() + "'>"
     "  <p align='center'><big>P̸ro͡ ͏Office͟ ̀Ca͘l̶cu҉l̴at͘or̛</big>"
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>" + targetValue.c_str() + "</p>"
@@ -47,7 +47,7 @@ FMainSpec* makeFMainSpec(int stateId) {
   mainSpec->settingsDialogSpec.width = 400;
   mainSpec->settingsDialogSpec.height = 300;
   mainSpec->settingsDialogSpec.backgroundImage =
-    config::dataPath("shuffled_keys/loading.png").c_str();
+    appConfig.dataPath("shuffled_keys/loading.png").c_str();
   mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loadingScreenSpec.setEnabled(true);
 

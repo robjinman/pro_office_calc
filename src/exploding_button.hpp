@@ -8,13 +8,15 @@
 #include "qt_obj_ptr.hpp"
 
 
+class AppConfig;
 class UpdateLoop;
 
 class ExplodingButton : public QPushButton {
   Q_OBJECT
 
   public:
-    ExplodingButton(QWidget* parent, const QString& caption, UpdateLoop& updateLoop);
+    ExplodingButton(QWidget* parent, const QString& caption, const AppConfig& appConfig,
+      UpdateLoop& updateLoop);
 
     ~ExplodingButton() override;
 

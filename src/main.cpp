@@ -1,7 +1,5 @@
 #include <iostream>
-#include <fstream>
 #include <memory>
-#include <vector>
 #include <QDir>
 #include "application.hpp"
 #include "exception.hpp"
@@ -16,36 +14,9 @@
 #include "fragments/f_main/f_main_spec.hpp"
 
 
-using std::ifstream;
-using std::ofstream;
 using std::cerr;
 using std::unique_ptr;
-using std::vector;
 
-
-//===========================================
-// loadStateId
-//===========================================
-int loadStateId() {
-  int id = 0;
-  ifstream fin(config::saveDataPath("procalc.dat"), ifstream::binary);
-
-  if (fin.good()) {
-    fin.read(reinterpret_cast<char*>(&id), sizeof(id));
-  }
-
-  return id;
-}
-
-//===========================================
-// persistStateId
-//===========================================
-void persistStateId(int id) {
-  DBG_PRINT("Persisting state id " << id << "\n");
-
-  ofstream fout(config::saveDataPath("procalc.dat"), ofstream::binary | ofstream::trunc);
-  fout.write(reinterpret_cast<const char*>(&id), sizeof(id));
-}
 
 //===========================================
 // main
@@ -61,25 +32,16 @@ int main(int argc, char** argv) {
     QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
 #endif
 
-    config::CommandLineArgs args = config::getArgs(argc, argv);
+    AppConfig appConfig{argc, argv};
 
-    int stateId = 0;
-
-    if (args.size() > 0) {
-      stateId = config::getIntArg(args, 0, 0);
-    }
-    else {
-      stateId = loadStateId();
-    }
-
-    DBG_PRINT("Loading app state " << stateId << "\n");
+    DBG_PRINT("Loading app state " << appConfig.stateId << "\n");
 
     std::shared_ptr<EventSystem> eventSystem{new EventSystem};
     UpdateLoop updateLoop(50);
 
-    unique_ptr<FMainSpec> mainSpec(makeFMainSpec(stateId));
+    unique_ptr<FMainSpec> mainSpec(makeFMainSpec(appConfig));
 
-    FMain mainFragment({args, *eventSystem, updateLoop});
+    FMain mainFragment({appConfig, *eventSystem, updateLoop});
     mainFragment.rebuild(*mainSpec, false);
     mainFragment.show();
 
@@ -89,17 +51,17 @@ int main(int argc, char** argv) {
 
     EventHandle hStateChange = eventSystem->listen("requestStateChange", [&](const Event& e_) {
       const RequestStateChangeEvent& e = dynamic_cast<const RequestStateChangeEvent&>(e_);
-      stateId = e.stateId;
+      appConfig.stateId = e.stateId;
 
       updateLoop.finishAll();
       app.processEvents();
 
-      mainSpec.reset(makeFMainSpec(stateId));
+      mainSpec.reset(makeFMainSpec(appConfig));
       mainFragment.rebuild(*mainSpec, e.hardReset);
     });
 
     int code = app.exec();
-    persistStateId(stateId);
+    appConfig.persistState();
 
     return code;
   }

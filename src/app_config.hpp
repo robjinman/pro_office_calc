@@ -6,22 +6,25 @@
 #include <vector>
 
 
-namespace config {
+class AppConfig {
+  public:
+    typedef std::vector<std::string> CommandLineArgs;
 
+    AppConfig(int argc, char** argv);
 
-std::string dataPath(const std::string& relPath);
-std::string saveDataPath(const std::string& relPath);
+    void persistState();
 
-typedef std::vector<std::string> CommandLineArgs;
+    int stateId;
+    std::string playerName;
+    CommandLineArgs args;
 
-CommandLineArgs getArgs(int argc, char** argv);
+    std::string dataPath(const std::string& relPath) const;
+    std::string saveDataPath(const std::string& relPath) const;
 
-std::string getStringArg(const CommandLineArgs& args, unsigned int idx, std::string defaultVal);
-double getDoubleArg(const CommandLineArgs& args, unsigned int idx, double defaultVal);
-int getIntArg(const CommandLineArgs& args, unsigned int idx, int defaultVal);
-
-
-}
+    std::string getStringArg(unsigned int idx, const std::string& defaultVal) const;
+    double getDoubleArg(unsigned int idx, double defaultVal) const;
+    int getIntArg(unsigned int idx, int defaultVal) const;
+};
 
 
 #endif

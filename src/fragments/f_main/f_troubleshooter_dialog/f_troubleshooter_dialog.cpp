@@ -116,7 +116,7 @@ void FTroubleshooterDialog::setupTab2() {
   tab.vbox->addWidget(tab.wgtTextBrowser.get());
 
   tab.wgtTextBrowser->setSearchPaths(QStringList()
-    << config::dataPath("its_raining_tetrominos").c_str());
+    << commonData.appConfig.dataPath("its_raining_tetrominos").c_str());
   tab.wgtTextBrowser->setSource(QUrl("troubleshooter1.html"));
 
   tab.page->setLayout(tab.vbox.get());
@@ -130,8 +130,8 @@ void FTroubleshooterDialog::setupTab3() {
 
   tab.page = makeQtObjPtr<QWidget>();
   tab.vbox = makeQtObjPtr<QVBoxLayout>();
-  tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
-  tab.wgtRaycast->initialise(config::dataPath("its_raining_tetrominos/map.svg"));
+  tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
+  tab.wgtRaycast->initialise(commonData.appConfig.dataPath("its_raining_tetrominos/map.svg"));
   tab.gameLogic.reset(new GameLogic(commonData.eventSystem, tab.wgtRaycast->entityManager()));
 
   tab.wgtRaycast->start();

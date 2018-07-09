@@ -119,7 +119,7 @@ static inline int numNegatives(const string& str) {
 //===========================================
 // AreYouSureWidget::AreYouSureWidget
 //===========================================
-AreYouSureWidget::AreYouSureWidget()
+AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   : QWidget(nullptr) {
 
   setMouseTracking(true);
@@ -135,9 +135,10 @@ AreYouSureWidget::AreYouSureWidget()
   m_page1.grid = makeQtObjPtr<QGridLayout>();
   m_page1.widget->setLayout(m_page1.grid.get());
 
+  QPixmap pixmap{appConfig.dataPath("common/images/warning.png").c_str()};
   m_page1.wgtWarning = makeQtObjPtr<QLabel>();
   m_page1.wgtWarning->setMouseTracking(true);
-  m_page1.wgtWarning->setPixmap(QPixmap(config::dataPath("common/images/warning.png").c_str()));
+  m_page1.wgtWarning->setPixmap(pixmap);
 
   m_page1.wgtPrompt = makeQtObjPtr<QLabel>();
   m_page1.wgtPrompt->setWordWrap(true);
@@ -166,9 +167,10 @@ AreYouSureWidget::AreYouSureWidget()
   m_page2.grid = makeQtObjPtr<QGridLayout>();
   m_page2.widget->setLayout(m_page2.grid.get());
 
+  pixmap = QPixmap{appConfig.dataPath("common/images/console.png").c_str()};
   m_page2.wgtConsole = makeQtObjPtr<QLabel>();
   m_page2.wgtConsole->setMouseTracking(true);
-  m_page2.wgtConsole->setPixmap(QPixmap(config::dataPath("common/images/console.png").c_str()));
+  m_page2.wgtConsole->setPixmap(pixmap);
 
   m_page2.wgtPrompt = makeQtObjPtr<QLabel>("The admin console is for advanced users only. "
     "Enter at your own risk.");

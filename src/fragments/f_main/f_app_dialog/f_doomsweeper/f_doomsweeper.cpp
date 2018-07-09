@@ -55,7 +55,7 @@ void FDoomsweeper::reload(const FragmentSpec& spec_) {
   setupRaycastPage();
   setupHighScorePage();
 
-  m_data.stackedLayout->setCurrentIndex(0);
+  m_data.stackedLayout->setCurrentIndex(1);
 
   m_hLevelComplete = commonData.eventSystem.listen("doomsweeper/levelComplete",
     [this](const Event&) {
@@ -70,7 +70,7 @@ void FDoomsweeper::reload(const FragmentSpec& spec_) {
 void FDoomsweeper::setupRaycastPage() {
   auto& page = m_data.raycastPage;
 
-  page.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
+  page.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
 
   auto& rootFactory = page.wgtRaycast->rootFactory();
   auto& timeService = page.wgtRaycast->timeService();
@@ -81,7 +81,7 @@ void FDoomsweeper::setupRaycastPage() {
     audioService);
 
   page.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
-  page.wgtRaycast->initialise(config::dataPath("doomsweeper/map.svg"));
+  page.wgtRaycast->initialise(commonData.appConfig.dataPath("doomsweeper/map.svg"));
 
   page.gameLogic.reset(new doomsweeper::GameLogic(commonData.eventSystem,
     entityManager, page.wgtRaycast->rootFactory(), *factory, timeService));

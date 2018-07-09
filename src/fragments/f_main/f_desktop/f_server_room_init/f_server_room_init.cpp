@@ -25,7 +25,7 @@ void FServerRoomInit::reload(const FragmentSpec& spec_) {
   m_hLaunch = commonData.eventSystem.listen("launchServerRoom", [this](const Event&) {
     auto& parentData = parentFragData<FDesktopData>();
 
-    QPixmap pix(config::dataPath("youve_got_mail/procalc_dark.png").c_str());
+    QPixmap pix(commonData.appConfig.dataPath("youve_got_mail/procalc_dark.png").c_str());
     parentData.icons[0]->wgtButton->setIcon(pix);
   });
 }

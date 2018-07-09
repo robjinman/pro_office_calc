@@ -122,8 +122,8 @@ void FPartialCalc::reload(const FragmentSpec& spec_) {
   auto& wgtButtonGrid = *parentData.wgtCalculator->wgtButtonGrid;
 
   for (auto it = EXPLODING_BTNS.begin(); it != EXPLODING_BTNS.end(); ++it) {
-    addButton(new ExplodingButton(&wgtButtonGrid, it->second.text, commonData.updateLoop),
-      wgtButtonGrid, it->first, it->second);
+    addButton(new ExplodingButton(&wgtButtonGrid, it->second.text, commonData.appConfig,
+      commonData.updateLoop), wgtButtonGrid, it->first, it->second);
   }
 
   for (auto it = EVASIVE_BTNS.begin(); it != EVASIVE_BTNS.end(); ++it) {

@@ -1,12 +1,14 @@
+#include <fstream>
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include "app_config.hpp"
+#include "utils.hpp"
 
 
 using std::string;
-
-
-namespace config {
+using std::ifstream;
+using std::ofstream;
+using CommandLineArgs = AppConfig::CommandLineArgs;
 
 
 //===========================================
@@ -43,38 +45,60 @@ T getArg(const CommandLineArgs& args, unsigned int idx, const T& defaultVal) {
 }
 
 //===========================================
-// get*Arg
+// AppConfig::AppConfig
 //===========================================
-double getDoubleArg(const CommandLineArgs& args, unsigned int idx, double defaultVal) {
-  return getArg<double>(args, idx, defaultVal);
-}
-
-int getIntArg(const CommandLineArgs& args, unsigned int idx, int defaultVal) {
-  return getArg<int>(args, idx, defaultVal);
-}
-
-string getStringArg(const CommandLineArgs& args, unsigned int idx, const string& defaultVal) {
-  return getArg<string>(args, idx, defaultVal);
-}
-//===========================================
-
-//===========================================
-// getArgs
-//===========================================
-CommandLineArgs getArgs(int argc, char** argv) {
-  CommandLineArgs args;
-
+AppConfig::AppConfig(int argc, char** argv) {
   for (int i = 1; i < argc; ++i) {
-    args.push_back(argv[i]);
+    this->args.push_back(argv[i]);
   }
 
-  return args;
+  if (this->args.size() > 0) {
+    this->stateId = getIntArg(0, 0);
+  }
+  else {
+    ifstream fin(saveDataPath("procalc.dat"), ifstream::binary);
+
+    if (fin.good()) {
+      fin.read(reinterpret_cast<char*>(&this->stateId), sizeof(this->stateId));
+    }
+  }
 }
 
 //===========================================
-// dataPath
+// AppConfig::getDoubleArg
 //===========================================
-string dataPath(const string& relPath) {
+double AppConfig::getDoubleArg(unsigned int idx, double defaultVal) const {
+  return getArg<double>(this->args, idx, defaultVal);
+}
+
+//===========================================
+// AppConfig::getIntArg
+//===========================================
+int AppConfig::getIntArg( unsigned int idx, int defaultVal) const {
+  return getArg<int>(this->args, idx, defaultVal);
+}
+
+//===========================================
+// AppConfig::getStringArg
+//===========================================
+string AppConfig::getStringArg(unsigned int idx, const string& defaultVal) const {
+  return getArg<string>(this->args, idx, defaultVal);
+}
+
+//===========================================
+// AppConfig::persistState
+//===========================================
+void AppConfig::persistState() {
+  DBG_PRINT("Persisting state id " << this->stateId << "\n");
+
+  ofstream fout(saveDataPath("procalc.dat"), ofstream::binary | ofstream::trunc);
+  fout.write(reinterpret_cast<const char*>(&this->stateId), sizeof(this->stateId));
+}
+
+//===========================================
+// AppConfig::dataPath
+//===========================================
+string AppConfig::dataPath(const string& relPath) const {
 // Windows
 #ifdef WIN32
   return QCoreApplication::applicationDirPath().toStdString() + "/data/" + relPath;
@@ -92,9 +116,9 @@ string dataPath(const string& relPath) {
 }
 
 //===========================================
-// saveDataPath
+// AppConfig::saveDataPath
 //===========================================
-string saveDataPath(const string& relPath) {
+string AppConfig::saveDataPath(const string& relPath) const {
 #ifdef DEBUG
   return QCoreApplication::applicationDirPath().toStdString() + "/" + relPath;
 #else
@@ -109,7 +133,4 @@ string saveDataPath(const string& relPath) {
 
   return dir + "/" + relPath;
 #endif
-}
-
-
 }

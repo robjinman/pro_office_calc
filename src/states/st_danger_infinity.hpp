@@ -8,7 +8,7 @@
 namespace st_danger_infinity {
 
 
-FMainSpec* makeFMainSpec(int stateId) {
+FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->aboutDialogText += "<p align='center'><big>Pro Office Calculator</big>"
     "<br>Version 1.0.0</p>"

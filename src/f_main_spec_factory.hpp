@@ -4,9 +4,10 @@
 
 
 struct FMainSpec;
+class AppConfig;
 
 
-FMainSpec* makeFMainSpec(int stateId);
+FMainSpec* makeFMainSpec(const AppConfig& appConfig);
 
 
 #endif

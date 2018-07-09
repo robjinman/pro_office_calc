@@ -88,7 +88,7 @@ void FConfigMaze::constructConsoleLaunchPage() {
 //===========================================
 void FConfigMaze::constructAreYouSurePage() {
   m_data.consoleAreYouSurePage.widget = makeQtObjPtr<QWidget>();
-  m_data.consoleAreYouSurePage.wgtAreYouSure = makeQtObjPtr<AreYouSureWidget>();
+  m_data.consoleAreYouSurePage.wgtAreYouSure = makeQtObjPtr<AreYouSureWidget>(commonData.appConfig);
   m_data.consoleAreYouSurePage.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.consoleAreYouSurePage.vbox->addWidget(m_data.consoleAreYouSurePage.wgtAreYouSure.get());
   m_data.consoleAreYouSurePage.widget->setLayout(m_data.consoleAreYouSurePage.vbox.get());
@@ -166,8 +166,9 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
   m_data.pages[14] = makeQtObjPtr<ConfigPage>(symbols[14], vector<int>{ 9, 13 });
   m_data.pages[15] = makeQtObjPtr<ConfigPage>(symbols[15], vector<int>{ 11, 100 });
 
+  QPixmap pixmap{commonData.appConfig.dataPath("are_you_sure/config_maze.png").c_str()};
   m_data.wgtMap = makeQtObjPtr<QLabel>();
-  m_data.wgtMap->setPixmap(QPixmap(config::dataPath("are_you_sure/config_maze.png").c_str()));
+  m_data.wgtMap->setPixmap(pixmap);
 
   m_data.pages[1]->grid->addWidget(m_data.wgtMap.get(), 0, 1);
 

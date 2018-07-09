@@ -8,28 +8,28 @@
 namespace st_doomsweeper {
 
 
-FMainSpec* makeFMainSpec(int stateId) {
+FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
   mainSpec->glitchSpec.setEnabled(true);
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
-  mainSpec->backgroundImage = config::dataPath("common/images/bliss.png").c_str();
+  mainSpec->backgroundImage = appConfig.dataPath("common/images/bliss.png").c_str();
   mainSpec->helpLabel = "H͠e͘l͢p";
   mainSpec->aboutLabel = "A͡b҉ou͞t̵";
   mainSpec->aboutDialogTitle = "A͞b̶out";
   mainSpec->aboutDialogText = QString() +
     "<div>"
-    "  <img src='" + config::dataPath("common/images/apex.png").c_str() + "'>"
+    "  <img src='" + appConfig.dataPath("common/images/apex.png").c_str() + "'>"
     "  <p align='center'><big>P̸ro͡ ͏Office͟ ̀Ca͘l̶cu҉l̴at͘or̛</big>"
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
   mainSpec->desktopSpec.setEnabled(true);
   mainSpec->desktopSpec.icons = {
-    {config::dataPath("doomsweeper/skull_crossbones.png"), "Dooom", "doomLaunch"},
-    {config::dataPath("doomsweeper/minesweeper.png"), "Minesweeper", "mineweeperLaunch"},
-    {config::dataPath("doomsweeper/console.png"), "Terminal", "terminalLaunch"}
+    {appConfig.dataPath("doomsweeper/skull_crossbones.png"), "Dooom", "doomLaunch"},
+    {appConfig.dataPath("doomsweeper/minesweeper.png"), "Minesweeper", "mineweeperLaunch"},
+    {appConfig.dataPath("doomsweeper/console.png"), "Terminal", "terminalLaunch"}
   };
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.name = "doom";

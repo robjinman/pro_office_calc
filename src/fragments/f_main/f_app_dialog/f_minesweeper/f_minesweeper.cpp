@@ -423,10 +423,10 @@ void FMinesweeper::constructMainPage() {
   connect(m_mainPage.buttonGroup.get(), SIGNAL(rightClicked(int)), this,
     SLOT(onBtnRightClick(int)));
 
-  m_icons.flag = QIcon(config::dataPath("doomsweeper/flag.png").c_str());
-  m_icons.mine = QIcon(config::dataPath("doomsweeper/skull_crossbones.png").c_str());
-  m_icons.noMine = QIcon(config::dataPath("doomsweeper/no_mine.png").c_str());
-  m_icons.player = QIcon(config::dataPath("doomsweeper/player.png").c_str());
+  m_icons.flag = QIcon(commonData.appConfig.dataPath("doomsweeper/flag.png").c_str());
+  m_icons.mine = QIcon(commonData.appConfig.dataPath("doomsweeper/skull_crossbones.png").c_str());
+  m_icons.noMine = QIcon(commonData.appConfig.dataPath("doomsweeper/no_mine.png").c_str());
+  m_icons.player = QIcon(commonData.appConfig.dataPath("doomsweeper/player.png").c_str());
 
   set<Coord> coords = placeMines();
   setNumbers();

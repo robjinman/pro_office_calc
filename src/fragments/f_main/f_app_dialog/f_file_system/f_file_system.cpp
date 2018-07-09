@@ -40,7 +40,7 @@ void FFileSystem::reload(const FragmentSpec& spec_) {
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
 
-  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.eventSystem);
+  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
 
   auto& rootFactory = m_data.wgtRaycast->rootFactory();
   auto& timeService = m_data.wgtRaycast->timeService();
@@ -51,7 +51,7 @@ void FFileSystem::reload(const FragmentSpec& spec_) {
     timeService, audioService);
 
   m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
-  m_data.wgtRaycast->initialise(config::dataPath("going_in_circles/map.svg"));
+  m_data.wgtRaycast->initialise(commonData.appConfig.dataPath("going_in_circles/map.svg"));
 
   m_data.gameLogic.reset(new going_in_circles::GameLogic(commonData.eventSystem, entityManager));
 

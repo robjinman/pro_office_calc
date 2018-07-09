@@ -12,11 +12,13 @@
 #include "qt_obj_ptr.hpp"
 
 
+class AppConfig;
+
 class AreYouSureWidget : public QWidget {
   Q_OBJECT
 
   public:
-    AreYouSureWidget();
+    AreYouSureWidget(const AppConfig& appConfig);
 
     void restart();
 

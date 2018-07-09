@@ -543,7 +543,7 @@ void FMailClient::setupInboxTab() {
   tab.wgtTable->setContextMenuPolicy(Qt::NoContextMenu);
   tab.wgtTable->setHorizontalHeaderLabels({"Subject", "", "From", "Date"});
   tab.wgtTable->horizontalHeaderItem(1)
-    ->setIcon(QIcon(config::dataPath("youve_got_mail/attachment.png").c_str()));
+    ->setIcon(QIcon(commonData.appConfig.dataPath("youve_got_mail/attachment.png").c_str()));
   tab.wgtTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
   tab.wgtTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
   tab.wgtTable->verticalHeader()->setVisible(false);
