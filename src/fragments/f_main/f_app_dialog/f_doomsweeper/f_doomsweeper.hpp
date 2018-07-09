@@ -4,6 +4,7 @@
 
 #include <QWidget>
 #include <QMargins>
+#include <QLabel>
 #include <QTableWidget>
 #include <QStackedLayout>
 #include <QPushButton>
@@ -23,8 +24,9 @@ struct FDoomsweeperData : public FragmentData {
   } raycastPage;
 
   struct {
-    QtObjPtr<QWidget> widget;
     QtObjPtr<QVBoxLayout> vbox;
+    QtObjPtr<QWidget> widget;
+    QtObjPtr<QLabel> wgtLabel;
     QtObjPtr<QTableWidget> wgtTable;
     QtObjPtr<QPushButton> wgtContinue;
   } highScorePage;
@@ -43,6 +45,7 @@ class FDoomsweeper : public QWidget, public Fragment {
 
   private slots:
     void onContinueClick();
+    void onTableEdit();
 
   private:
     void setupRaycastPage();
