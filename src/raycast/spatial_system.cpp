@@ -1131,16 +1131,20 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             Matrix mat = matrix;
             double cullNearerThan_ = cullNearerThan;
 
+            set<entityId_t> visited_{se.joinId};
+            set<entityId_t>* pVisited = &visited;
+
             if (se.isPortal) {
               mat = (se.toTwin * invMatrix).inverse();
               cullNearerThan_ = X->distanceFromOrigin;
               cullFartherThan = 10000;
+              pVisited = &visited_;
             }
 
             intersections.push_back(std::move(X));
 
             if (visited.count(next.entityId()) == 0 || se.isPortal) {
-              findIntersections_r(point, dir, mat, next, next, intersections, visited,
+              findIntersections_r(point, dir, mat, next, next, intersections, *pVisited,
                 cullNearerThan_, cullFartherThan);
             }
           }

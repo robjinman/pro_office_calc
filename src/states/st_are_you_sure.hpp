@@ -18,7 +18,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->glitchSpec.setEnabled(true);
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
-  mainSpec->backgroundImage = appConfig.dataPath("are_your_sure/login.png").c_str();
+  mainSpec->backgroundImage = appConfig.dataPath("are_you_sure/login.png").c_str();
   mainSpec->helpLabel = "H͠e͘l͢p";
   mainSpec->aboutLabel = "A͡b҉ou͞t̵";
   mainSpec->aboutDialogTitle = "A͞b̶out";
