@@ -47,10 +47,12 @@ class Renderer {
     };
 
     struct XWrapper {
-      XWrapper(XWrapperKind kind)
-        : kind(kind) {}
+      XWrapper(XWrapperKind kind, pIntersection_t X)
+        : kind(kind),
+          X(std::move(X)) {}
 
       XWrapperKind kind;
+      pIntersection_t X;
 
       virtual ~XWrapper() {}
     };
@@ -63,10 +65,8 @@ class Renderer {
 
     struct JoinX : public XWrapper {
       JoinX(pIntersection_t X)
-        : XWrapper(XWrapperKind::JOIN),
-          X(std::move(X)) {}
+        : XWrapper(XWrapperKind::JOIN, std::move(X)) {}
 
-      pIntersection_t X;
       const CSoftEdge* softEdge = nullptr;
       const CJoin* join = nullptr;
       Slice slice0;
@@ -79,10 +79,8 @@ class Renderer {
 
     struct WallX : public XWrapper {
       WallX(pIntersection_t X)
-        : XWrapper(XWrapperKind::WALL),
-          X(std::move(X)) {}
+        : XWrapper(XWrapperKind::WALL, std::move(X)) {}
 
-      pIntersection_t X;
       const CHardEdge* hardEdge = nullptr;
       const CWall* wall = nullptr;
       Slice slice;
@@ -93,10 +91,8 @@ class Renderer {
 
     struct SpriteX : public XWrapper {
       SpriteX(pIntersection_t X)
-        : XWrapper(XWrapperKind::SPRITE),
-          X(std::move(X)) {}
+        : XWrapper(XWrapperKind::SPRITE, std::move(X)) {}
 
-      pIntersection_t X;
       const CVRect* vRect = nullptr;
       const CSprite* sprite = nullptr;
       Slice slice;

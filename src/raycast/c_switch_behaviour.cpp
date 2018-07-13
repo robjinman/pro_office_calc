@@ -18,12 +18,11 @@ using std::map;
 // CSwitchBehaviour::CSwitchBehaviour
 //===========================================
 CSwitchBehaviour::CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager,
-  TimeService& timeService, entityId_t target, const string& message, SwitchState initialState,
-  bool toggleable, double toggleDelay)
+  TimeService& timeService, const string& message, SwitchState initialState, bool toggleable,
+  double toggleDelay)
   : CBehaviour(entityId),
     m_entityManager(entityManager),
     m_timeService(timeService),
-    m_target(target),
     m_message(message),
     m_state(initialState),
     m_toggleable(toggleable),
@@ -94,7 +93,10 @@ void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e_) {
         setDecal();
 
         ESwitchActivate eActivate(entityId(), m_state, m_message);
-        m_entityManager.fireEvent(eActivate, {m_target});
+
+        if (this->target != -1) {
+          m_entityManager.fireEvent(eActivate, {this->target});
+        }
         m_entityManager.broadcastEvent(eActivate);
       }
     }

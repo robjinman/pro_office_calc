@@ -378,6 +378,12 @@ Point lineIntersect(const Line& l0, const Line& l1, int depth = 0);
 bool lineSegmentCircleIntersect(const Circle& circle, const LineSegment& lseg);
 
 inline bool lineSegmentIntersect(const LineSegment& l0, const LineSegment& l1, Point& p) {
+  if (largest(l0.A.x, l0.B.x) < smallest(l1.A.x, l1.B.x)
+    || largest(l0.A.y, l0.B.y) < smallest(l1.A.y, l1.B.y)) {
+
+    return false;
+  }
+
   p = lineIntersect(l0.line(), l1.line());
   return (isBetween(p.x, l0.A.x, l0.B.x) && isBetween(p.x, l1.A.x, l1.B.x))
     && (isBetween(p.y, l0.A.y, l0.B.y) && isBetween(p.y, l1.A.y, l1.B.y));

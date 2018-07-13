@@ -203,7 +203,13 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
       m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
     FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
-    entityId_t target = Component::getIdFromString(getValue(obj.dict, "target"));
+    string strTarget = getValue(obj.dict, "target", "");
+    entityId_t target = -1;
+
+    if (strTarget != "") {
+      target = Component::getIdFromString(strTarget);
+    }
+
     bool toggleable = getValue(obj.dict, "toggleable", "false") == "true";
     double toggleDelay = std::stod(getValue(obj.dict, "toggle_delay", "0.0"));
 
@@ -215,8 +221,9 @@ bool MiscFactory::constructSwitch(entityId_t entityId, parser::Object& obj, enti
     string message = getValue(obj.dict, "message", "");
 
     CSwitchBehaviour* behaviour = new CSwitchBehaviour(entityId, m_entityManager, m_timeService,
-      target, message, initialState, toggleable, toggleDelay);
+      message, initialState, toggleable, toggleDelay);
 
+    behaviour->target = target;
     behaviour->requiredItemType = getValue(obj.dict, "required_item_type", "");
     behaviour->requiredItemName = getValue(obj.dict, "required_item_name", "");
 

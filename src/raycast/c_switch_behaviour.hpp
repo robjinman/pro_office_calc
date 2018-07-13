@@ -31,11 +31,12 @@ class ESwitchActivate : public GameEvent {
 class CSwitchBehaviour : public CBehaviour {
   public:
     CSwitchBehaviour(entityId_t entityId, EntityManager& entityManager, TimeService& TimeService,
-      entityId_t target, const std::string& message, SwitchState initialState, bool toggleable,
-      double toggleDelay);
+      const std::string& message, SwitchState initialState, bool toggleable, double toggleDelay);
 
     std::string requiredItemType;
     std::string requiredItemName;
+
+    entityId_t target = -1;
 
     void update() override;
     void handleBroadcastedEvent(const GameEvent& event) override {}
@@ -46,7 +47,6 @@ class CSwitchBehaviour : public CBehaviour {
   private:
     EntityManager& m_entityManager;
     TimeService& m_timeService;
-    entityId_t m_target = -1;
     std::string m_message;
     SwitchState m_state;
     bool m_toggleable;
