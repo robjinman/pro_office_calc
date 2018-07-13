@@ -53,7 +53,8 @@ void FFileSystem::reload(const FragmentSpec& spec_) {
   m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
   m_data.wgtRaycast->initialise(commonData.appConfig.dataPath("going_in_circles/map.svg"));
 
-  m_data.gameLogic.reset(new going_in_circles::GameLogic(commonData.eventSystem, entityManager));
+  m_data.gameLogic.reset(new going_in_circles::GameLogic(commonData.eventSystem, audioService,
+    timeService, entityManager));
 
   m_data.wgtRaycast->start();
 

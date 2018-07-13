@@ -37,6 +37,21 @@ CSwitchBehaviour::CSwitchBehaviour(entityId_t entityId, EntityManager& entityMan
 void CSwitchBehaviour::update() {}
 
 //===========================================
+// CSwitchBehaviour::setState
+//===========================================
+void CSwitchBehaviour::setState(SwitchState state) {
+  m_state = state;
+  setDecal();
+}
+
+//===========================================
+// CSwitchBehaviour::getState
+//===========================================
+SwitchState CSwitchBehaviour::getState() const {
+  return m_state;
+}
+
+//===========================================
 // CSwitchBehaviour::setDecal
 //===========================================
 void CSwitchBehaviour::setDecal() {
@@ -63,6 +78,10 @@ void CSwitchBehaviour::setDecal() {
 void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e_) {
   if (e_.name == "player_activate_entity") {
     const EPlayerActivateEntity& e = dynamic_cast<const EPlayerActivateEntity&>(e_);
+
+    if (this->disabled) {
+      return;
+    }
 
     if (m_toggleable || m_state == SwitchState::OFF) {
       if (m_timer.ready()) {

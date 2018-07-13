@@ -7,6 +7,9 @@
 #include "raycast/inventory_system.hpp"
 #include "raycast/focus_system.hpp"
 #include "raycast/agent_system.hpp"
+#include "raycast/c_switch_behaviour.hpp"
+#include "raycast/audio_service.hpp"
+#include "raycast/time_service.hpp"
 #include "event_system.hpp"
 #include "state_ids.hpp"
 #include "utils.hpp"
@@ -19,11 +22,17 @@ using std::string;
 namespace going_in_circles {
 
 
+static const double TIME_LIMIT = 4.8;
+
+
 //===========================================
 // GameLogic::GameLogic
 //===========================================
-GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
+GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeService& timeService,
+  EntityManager& entityManager)
   : m_eventSystem(eventSystem),
+    m_audioService(audioService),
+    m_timeService(timeService),
     m_entityManager(entityManager) {
 
   DBG_PRINT("GameLogic::GameLogic\n");
@@ -44,8 +53,11 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
   eventHandlerSystem.addComponent(pComponent_t(events));
+  events->broadcastedEventHandlers.push_back(EventHandler{"switch_activated",
+    std::bind(&GameLogic::onSwitchActivated, this, std::placeholders::_1)});
 
   setupLarry(eventHandlerSystem);
+  resetSwitches();
 }
 
 //===========================================
@@ -87,6 +99,74 @@ void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
 
     agentSystem.navigateTo(larryId, vRect.pos);
   }});
+}
+
+//===========================================
+// GameLogic::getSwitch
+//===========================================
+CSwitchBehaviour& GameLogic::getSwitch(entityId_t id) const {
+  auto& behaviourSystem = m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+  return dynamic_cast<CSwitchBehaviour&>(behaviourSystem.getComponent(id));
+}
+
+//===========================================
+// GameLogic::resetSwitches
+//===========================================
+void GameLogic::resetSwitches() {
+  static const entityId_t switch0Id = Component::getIdFromString("switch0");
+  static const entityId_t switch1Id = Component::getIdFromString("switch1");
+  static const entityId_t switch2Id = Component::getIdFromString("switch2");
+  static const entityId_t switch3Id = Component::getIdFromString("switch3");
+
+  auto& switch0 = getSwitch(switch0Id);
+  auto& switch1 = getSwitch(switch1Id);
+  auto& switch2 = getSwitch(switch2Id);
+  auto& switch3 = getSwitch(switch3Id);
+
+  switch0.setState(SwitchState::OFF);
+  switch1.setState(SwitchState::OFF);
+  switch2.setState(SwitchState::OFF);
+  switch3.setState(SwitchState::OFF);
+
+  switch0.disabled = false;
+  switch1.disabled = true;
+  switch2.disabled = true;
+  switch3.disabled = true;
+}
+
+//===========================================
+// GameLogic::onSwitchActivated
+//===========================================
+void GameLogic::onSwitchActivated(const GameEvent& e_) {
+  auto& e = dynamic_cast<const ESwitchActivate&>(e_);
+
+  static const entityId_t switch0Id = Component::getIdFromString("switch0");
+  static const entityId_t switch1Id = Component::getIdFromString("switch1");
+  static const entityId_t switch2Id = Component::getIdFromString("switch2");
+  static const entityId_t switch3Id = Component::getIdFromString("switch3");
+
+  auto& switch1 = getSwitch(switch1Id);
+  auto& switch2 = getSwitch(switch2Id);
+  auto& switch3 = getSwitch(switch3Id);
+
+  if (e.switchEntityId == switch0Id) {
+    switch1.disabled = false;
+    m_audioService.playSound("tick");
+
+    m_timeService.onTimeout([this]() {
+      resetSwitches();
+      m_audioService.stopSound("tick");
+    }, TIME_LIMIT);
+  }
+  else if (e.switchEntityId == switch1Id) {
+    switch2.disabled = false;
+  }
+  else if (e.switchEntityId == switch2Id) {
+    switch3.disabled = false;
+  }
+  else if (e.switchEntityId == switch3Id) {
+    m_audioService.stopSound("tick");
+  }
 }
 
 //===========================================

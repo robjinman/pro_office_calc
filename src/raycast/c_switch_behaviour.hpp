@@ -35,12 +35,16 @@ class CSwitchBehaviour : public CBehaviour {
 
     std::string requiredItemType;
     std::string requiredItemName;
+    bool disabled = false;
 
     entityId_t target = -1;
 
     void update() override;
     void handleBroadcastedEvent(const GameEvent& event) override {}
     void handleTargetedEvent(const GameEvent& event) override;
+
+    void setState(SwitchState state);
+    SwitchState getState() const;
 
     ~CSwitchBehaviour() override {}
 

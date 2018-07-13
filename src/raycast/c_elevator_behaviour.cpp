@@ -119,7 +119,7 @@ void CElevatorBehaviour::handleTargetedEvent(const GameEvent& e) {
 
     playSound();
   }
-  else if (e.name == "player_activate_entity") { // TODO: if player_activated
+  else if (e.name == "player_activate_entity" && this->isPlayerActivated) {
     if (m_state == ST_STOPPED) {
       m_target = (m_target + 1) % m_levels.size();
     }
