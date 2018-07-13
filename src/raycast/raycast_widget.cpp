@@ -270,6 +270,8 @@ void RaycastWidget::keyPressEvent(QKeyEvent* event) {
     return;
   }
 
+  m_entityManager.broadcastEvent(EKeyPressed{event->key()});
+
   if (event->key() == Qt::Key_F) {
     DBG_PRINT("Frame rate = " << m_frameRate << "\n");
   }

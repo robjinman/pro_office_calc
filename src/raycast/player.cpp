@@ -271,8 +271,8 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
   inventory->buckets["item"] = pBucket_t(new ItemBucket(5));
   inventorySystem.addComponent(pComponent_t(inventory));
 
-  double itemsDisplayH_wd = viewport.y * 0.1;
-  double itemsDisplayW_wd = viewport.x * 0.5;
+  double itemsDisplayH_wd = viewport.y * 0.12;
+  double itemsDisplayW_wd = viewport.x * 0.6;
   double itemsDisplayAspectRatio = itemsDisplayW_wd / itemsDisplayH_wd;
   double itemsDisplayH_px = 50;
   double itemsDisplayW_px = itemsDisplayH_px * itemsDisplayAspectRatio;
@@ -343,7 +343,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
       painter.begin(&target);
 
       int i = 0;
-      for (auto it = e.bucket.items.begin(); it != e.bucket.items.end(); ++it) {
+      for (auto it = e.bucket.items.rbegin(); it != e.bucket.items.rend(); ++it) {
         entityId_t id = it->second;
         const CRender& c = dynamic_cast<const CRender&>(renderSystem.getComponent(id));
 
@@ -355,13 +355,13 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
           double slotW = itemsDisplayW_px / e.bucket.capacity;
           double slotX = slotW * i;
           double slotY = 0;
-          double margin = slotH * 0.2;
+          double margin = slotH * 0.1;
           double aspectRatio = static_cast<double>(img.width()) / img.height();
           double maxH = slotH - margin * 2;
           double maxW = slotW - margin * 2;
           double h = maxH;
           double w = h * aspectRatio;
-          double s = maxW / w;
+          double s = smallest(maxH / h, maxW / w);
           h *= s;
           w *= s;
 
@@ -502,6 +502,13 @@ void Player::changeHeight(const CZone& zone, double deltaH) {
 //===========================================
 const Point& Player::pos() const {
   return getBody().pos;
+}
+
+//===========================================
+// Player::dir
+//===========================================
+Vec2f Player::dir() const {
+  return Vec2f(cos(getBody().angle), sin(getBody().angle));
 }
 
 //===========================================

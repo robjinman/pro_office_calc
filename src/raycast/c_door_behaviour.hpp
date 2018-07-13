@@ -54,7 +54,7 @@ class CDoorBehaviour : public CBehaviour {
     double speed = 100.0;
     bool isPlayerActivated = true;
     bool closeAutomatically = true;
-    std::string openOnEvent = "";
+    std::string openOnEvent;
 
     void setPauseTime(double t);
 

@@ -24,6 +24,14 @@ class EActivateEntity : public GameEvent {
     entityId_t entityId;
 };
 
+struct EKeyPressed : public GameEvent {
+  EKeyPressed(int key)
+    : GameEvent("key_pressed"),
+      key(key) {}
+
+  int key = -1;
+};
+
 struct EMouseCaptured : public GameEvent {
   EMouseCaptured()
     : GameEvent("mouse_captured") {}

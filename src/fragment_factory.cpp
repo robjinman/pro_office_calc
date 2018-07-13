@@ -18,6 +18,7 @@
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup.hpp"
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system/f_file_system.hpp"
+#include "fragments/f_main/f_app_dialog/f_file_system_2/f_file_system_2.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/f_minesweeper.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console.hpp"
 #include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper.hpp"
@@ -89,6 +90,9 @@ Fragment* constructFragment(const string& name, Fragment& parent, FragmentData& 
   }
   else if (name == "FFileSystem") {
     return new FFileSystem(parent, parentData, commonData);
+  }
+  else if (name == "FFileSystem2") {
+    return new FFileSystem2(parent, parentData, commonData);
   }
   else if (name == "FMinesweeper") {
     return new FMinesweeper(parent, parentData, commonData);

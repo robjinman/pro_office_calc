@@ -12,6 +12,7 @@
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/f_procalc_setup_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_text_editor/f_text_editor_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system/f_file_system_spec.hpp"
+#include "fragments/f_main/f_app_dialog/f_file_system_2/f_file_system_2_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/f_minesweeper_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_console/f_console_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_doomsweeper/f_doomsweeper_spec.hpp"
@@ -27,6 +28,7 @@ struct FAppDialogSpec : public FragmentSpec {
         &procalcSetupSpec,
         &textEditorSpec,
         &fileSystemSpec,
+        &fileSystem2Spec,
         &minesweeperSpec,
         &kernelSpec,
         &consoleSpec
@@ -39,6 +41,7 @@ struct FAppDialogSpec : public FragmentSpec {
   FProcalcSetupSpec procalcSetupSpec;
   FTextEditorSpec textEditorSpec;
   FFileSystemSpec fileSystemSpec;
+  FFileSystem2Spec fileSystem2Spec;
   FMinesweeperSpec minesweeperSpec;
   FDoomsweeperSpec kernelSpec;
   FConsoleSpec consoleSpec;

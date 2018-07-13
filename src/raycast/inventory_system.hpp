@@ -95,6 +95,16 @@ struct ECollectableEncountered : public GameEvent {
   const CCollectable& item;
 };
 
+struct EItemCollected : public GameEvent {
+  EItemCollected(entityId_t collectorId, const CCollectable& item)
+    : GameEvent("item_collected"),
+      collectorId(collectorId),
+      item(item) {}
+
+  entityId_t collectorId;
+  const CCollectable& item;
+};
+
 struct EBucketCountChange : public GameEvent {
   EBucketCountChange(entityId_t entityId, const std::string& collectableType,
     const CounterBucket& bucket, int prevCount)

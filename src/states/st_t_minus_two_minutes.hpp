@@ -26,6 +26,16 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
   mainSpec->desktopSpec.setEnabled(true);
+  mainSpec->desktopSpec.icons = {
+    {appConfig.dataPath("t_minus_two_minutes/file_browser.png"), "File Browser",
+      "fileBrowser2Launch"},
+  };
+  mainSpec->appDialogSpec0.setEnabled(true);
+  mainSpec->appDialogSpec0.titleText = "File Browser";
+  mainSpec->appDialogSpec0.width = 320;
+  mainSpec->appDialogSpec0.height = 240;
+  mainSpec->appDialogSpec0.showOnEvent = "fileBrowser2Launch";
+  mainSpec->appDialogSpec0.fileSystem2Spec.setEnabled(true);
 
   return mainSpec;
 }

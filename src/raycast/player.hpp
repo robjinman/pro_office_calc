@@ -62,6 +62,8 @@ class Player {
     const Point& pos() const;
     void setPosition(const Point& pos);
 
+    Vec2f dir() const;
+
     void hRotate(double da);
     void vRotate(double da);
 

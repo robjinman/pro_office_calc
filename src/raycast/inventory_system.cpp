@@ -162,8 +162,10 @@ void InventorySystem::addToBucket(entityId_t collectorId, const CCollectable& it
         int prevCount = bucket.items.size();
         bucket.items[item.name] = item.entityId();
 
-        m_entityManager.fireEvent(EBucketItemsChange(collectorId, item.collectableType, bucket,
-          prevCount), { collectorId });
+        m_entityManager.fireEvent(EBucketItemsChange{collectorId, item.collectableType, bucket,
+          prevCount}, { collectorId });
+
+        m_entityManager.fireEvent(EItemCollected{collectorId, item}, { item.entityId() });
 
         CSpatial& spatial = m_entityManager.getComponent<CSpatial>(item.entityId(),
           ComponentKind::C_SPATIAL);
