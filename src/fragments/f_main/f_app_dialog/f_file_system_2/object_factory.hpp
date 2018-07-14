@@ -30,6 +30,12 @@ class ObjectFactory : public GameObjectFactory {
     bool constructCovfefe(entityId_t entityId, parser::Object& obj, entityId_t region,
       const Matrix& parentTransform);
 
+    bool constructCog(entityId_t entityId, parser::Object& obj, entityId_t region,
+      const Matrix& parentTransform);
+
+    bool constructSmoke(entityId_t entityId, parser::Object& obj, entityId_t region,
+      const Matrix& parentTransform);
+
     RootFactory& m_rootFactory;
     EntityManager& m_entityManager;
     TimeService& m_timeService;

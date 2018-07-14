@@ -3,6 +3,7 @@
 #include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/inventory_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
 #include "event_system.hpp"
@@ -13,6 +14,7 @@
 
 using std::string;
 using std::map;
+using std::set;
 using std::vector;
 
 
@@ -33,8 +35,14 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
 
   auto& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
 
   m_entityId = Component::getNextId();
+
+  CFocus* focus = new CFocus(m_entityId);
+  focus->captionText = "The covfefe has jammed the machine";
+
+  focusSystem.addComponent(pComponent_t(focus));
 
   CEventHandler* events = new CEventHandler(m_entityId);
   events->broadcastedEventHandlers.push_back(EventHandler{"key_pressed",
@@ -44,6 +52,14 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
     if (e.key == Qt::Key_C) {
       useCovfefe();
     }
+  }});
+  events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
+    [this, &focusSystem](const GameEvent&) {
+
+    DBG_PRINT("Machine jammed\n");
+
+    m_entityManager.deleteEntity(Component::getIdFromString("covfefe"));
+    focusSystem.showCaption(m_entityId);
   }});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
@@ -80,6 +96,12 @@ void GameLogic::useCovfefe() {
     }
 
     spatialSystem.relocateEntity(covfefeId, *playerBody.zone, pos);
+
+    double heightAboveFloor = 50.0;
+
+    set<entityId_t> entities = spatialSystem.entitiesInRadius(*playerBody.zone, pos, 50.0,
+      heightAboveFloor);
+    m_entityManager.fireEvent(GameEvent{"t_minus_two_minutes/covfefe_impact"}, entities);
   }
 }
 

@@ -33,7 +33,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"covfefe"};
+  static const set<string> types{"covfefe", "cog", "smoke"};
   return types;
 }
 
@@ -81,6 +81,101 @@ bool ObjectFactory::constructCovfefe(entityId_t entityId, parser::Object& obj, e
 }
 
 //===========================================
+// ObjectFactory::constructCog
+//===========================================
+bool ObjectFactory::constructCog(entityId_t entityId, parser::Object& obj, entityId_t region,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["texture"] = "cog";
+
+  if (m_rootFactory.constructObject("wall_decal", entityId, obj, region, parentTransform)) {
+    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CAnimation* anim = new CAnimation(entityId);
+
+    // Number of frames in sprite sheet
+    const int W = 1;
+    const int H = 8;
+
+    vector<AnimationFrame> frames = constructFrames(W, H, { 0, 1, 2, 3, 4, 5, 6, 7 });
+    anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+
+    animationSystem.playAnimation(entityId, "idle", true);
+
+    CEventHandler* events = new CEventHandler(entityId);
+    events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
+      [entityId, &animationSystem](const GameEvent& e_) {
+
+      animationSystem.stopAnimation(entityId);
+    }});
+    events->targetedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/covfefe_impact",
+      [this](const GameEvent&) {
+
+      m_entityManager.broadcastEvent(GameEvent{"t_minus_two_minutes/machine_jammed"});
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
+// ObjectFactory::constructSmoke
+//===========================================
+bool ObjectFactory::constructSmoke(entityId_t entityId, parser::Object& obj, entityId_t region,
+  const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["texture"] = "smoke";
+
+  if (m_rootFactory.constructObject("sprite", entityId, obj, region, parentTransform)) {
+    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CAnimation* anim = new CAnimation(entityId);
+
+    // Number of frames in sprite sheet
+    const int W = 1;
+    const int H = 3;
+
+    vector<AnimationFrame> frames = constructFrames(W, H, { 0, 1, 2 });
+    anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
+
+    animationSystem.playAnimation(entityId, "idle", true);
+
+    CEventHandler* events = new CEventHandler(entityId);
+    events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
+      [this, entityId](const GameEvent&) {
+
+      m_entityManager.deleteEntity(entityId);
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructObject
 //===========================================
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
@@ -88,6 +183,12 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
 
   if (type == "covfefe") {
     return constructCovfefe(entityId, obj, region, parentTransform);
+  }
+  else if (type == "cog") {
+    return constructCog(entityId, obj, region, parentTransform);
+  }
+  else if (type == "smoke") {
+    return constructSmoke(entityId, obj, region, parentTransform);
   }
 
   return false;

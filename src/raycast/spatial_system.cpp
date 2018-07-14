@@ -1279,7 +1279,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray, doub
 }
 
 //===========================================
-// entitiesInRadius
+// entitiesInRadius_r
 //===========================================
 static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const Circle& circle,
   double heightAboveFloor, set<entityId_t>& entities) {
