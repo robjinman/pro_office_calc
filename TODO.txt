@@ -1,6 +1,5 @@
 MUST DO
 - Adjust dates wherever they appear
-- Provide font rather than use default
 - Shuffled Keys - Move number to loading screen
 - Going in Circles - Donald asset
 - Are You Sure - Backgrounds for config maze

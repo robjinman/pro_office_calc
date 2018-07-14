@@ -187,7 +187,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   BehaviourSystem* behaviourSystem = new BehaviourSystem;
   m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
 
-  RenderSystem* renderSystem = new RenderSystem(m_entityManager, m_buffer);
+  RenderSystem* renderSystem = new RenderSystem(m_appConfig, m_entityManager, m_buffer);
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderSystem));
 
   SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, m_timeService, FRAME_RATE);
@@ -211,7 +211,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   AgentSystem* agentSystem = new AgentSystem(m_entityManager, m_timeService, m_audioService);
   m_entityManager.addSystem(ComponentKind::C_AGENT, pSystem_t(agentSystem));
 
-  FocusSystem* focusSystem = new FocusSystem(m_entityManager, m_timeService);
+  FocusSystem* focusSystem = new FocusSystem(m_appConfig, m_entityManager, m_timeService);
   m_entityManager.addSystem(ComponentKind::C_FOCUS, pSystem_t(focusSystem));
 
   loadMap(mapFile);

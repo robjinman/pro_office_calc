@@ -22,10 +22,11 @@ typedef std::unique_ptr<CFocus> pCFocus_t;
 
 class EntityManager;
 class TimeService;
+class AppConfig;
 
 class FocusSystem : public System {
   public:
-    FocusSystem(EntityManager& entityManager, TimeService& timeService);
+    FocusSystem(const AppConfig& appConfig, EntityManager& entityManager, TimeService& timeService);
 
     void update() override;
     void handleEvent(const GameEvent& event) override {}
@@ -42,6 +43,7 @@ class FocusSystem : public System {
     void initialise();
     void deleteCaption();
 
+    const AppConfig& m_appConfig;
     EntityManager& m_entityManager;
     TimeService& m_timeService;
     bool m_initialised = false;

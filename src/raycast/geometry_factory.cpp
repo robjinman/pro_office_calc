@@ -483,9 +483,6 @@ bool GeometryFactory::constructRootRegion(parser::Object& obj) {
     EXCEPTION("Root region already exists");
   }
 
-  rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
-  rg.viewport.y = 10.0;
-
   m_endpoints.clear();
   Matrix m;
 

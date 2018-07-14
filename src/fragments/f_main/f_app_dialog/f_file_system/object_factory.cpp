@@ -172,7 +172,7 @@ bool ObjectFactory::constructDonald(entityId_t entityId, parser::Object& obj, en
 
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = "Donald";
-    focus->captionText = "Have you seen my product? It's a great product. The best.";
+    focus->captionText = "You seen my product? Great product. The best.";
     focusSystem.addComponent(pComponent_t(focus));
 
     CEventHandler* events = new CEventHandler(entityId);

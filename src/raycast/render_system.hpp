@@ -9,10 +9,11 @@
 class QImage;
 class EntityManager;
 class Player;
+class AppConfig;
 
 class RenderSystem : public System {
   public:
-    RenderSystem(EntityManager& entityManager, QImage& target);
+    RenderSystem(const AppConfig& appConfig, EntityManager& entityManager, QImage& target);
 
     RenderGraph rg;
 

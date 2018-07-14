@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <QFont>
 #include "event.hpp"
 
 
@@ -38,6 +39,9 @@ class AppConfig {
 
     int stateId = 0;
     CommandLineArgs args;
+
+    QFont normalFont;
+    QFont monoFont;
 
     const std::string& getParam(const std::string& name) const;
     void setParam(const std::string& name, const std::string& value);

@@ -17,6 +17,11 @@ struct RenderGraph {
   Size viewport;
   std::map<std::string, Texture> textures;
 
+  Size viewport_px;
+
+  double hWorldUnit_px;
+  double vWorldUnit_px;
+
   pCRegion_t rootRegion;
   std::list<pCBoundary_t> boundaries;
   std::multiset<pCOverlay_t> overlays;

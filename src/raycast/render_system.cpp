@@ -84,9 +84,18 @@ static bool forEachRegion(CRegion& region, function<bool(CRegion&)> fn) {
 //===========================================
 // RenderSystem::RenderSystem
 //===========================================
-RenderSystem::RenderSystem(EntityManager& entityManager, QImage& target)
+RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityManager, QImage& target)
   : m_entityManager(entityManager),
-    m_renderer(entityManager, target) {}
+    m_renderer(appConfig, entityManager, target) {
+
+  rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
+  rg.viewport.y = 10.0;
+
+  rg.viewport_px = Size(target.width(), target.height());
+
+  rg.hWorldUnit_px = rg.viewport_px.x / rg.viewport.x;
+  rg.vWorldUnit_px = rg.viewport_px.y / rg.viewport.y;
+}
 
 //===========================================
 // connectSubregions

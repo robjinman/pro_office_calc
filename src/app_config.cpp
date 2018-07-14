@@ -1,6 +1,8 @@
 #include <tinyxml2.h>
 #include <QStandardPaths>
+#include <QFontDatabase>
 #include <QCoreApplication>
+#include <QApplication>
 #include "app_config.hpp"
 #include "utils.hpp"
 
@@ -57,6 +59,15 @@ AppConfig::AppConfig(int argc, char** argv) {
   if (this->args.size() > 0) {
     this->stateId = getIntArg(0, 0);
   }
+
+  QFontDatabase::addApplicationFont(dataPath("common/fonts/UbuntuMono-R.ttf").c_str());
+  QFontDatabase::addApplicationFont(dataPath("common/fonts/UbuntuMono-R.ttf").c_str());
+
+  this->normalFont = QFont{"Ubuntu Mono"};
+  this->monoFont = QFont{"Ubuntu Mono"};
+
+  this->normalFont.setPointSize(12);
+  QApplication::setFont(this->normalFont);
 }
 
 //===========================================

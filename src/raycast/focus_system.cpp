@@ -5,6 +5,7 @@
 #include "raycast/render_system.hpp"
 #include "raycast/time_service.hpp"
 #include "exception.hpp"
+#include "app_config.hpp"
 #include "utils.hpp"
 
 
@@ -14,8 +15,10 @@ using std::vector;
 //===========================================
 // FocusSystem::FocusSystem
 //===========================================
-FocusSystem::FocusSystem(EntityManager& entityManager, TimeService& timeService)
-  : m_entityManager(entityManager),
+FocusSystem::FocusSystem(const AppConfig& appConfig, EntityManager& entityManager,
+  TimeService& timeService)
+  : m_appConfig(appConfig),
+    m_entityManager(entityManager),
     m_timeService(timeService) {}
 
 //===========================================
@@ -95,13 +98,26 @@ void FocusSystem::showCaption(entityId_t entityId) {
   deleteCaption();
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  const Size& vp = renderSystem.rg.viewport;
+  const Size& vp_wld = renderSystem.rg.viewport;
+  const Size& vp_px = renderSystem.rg.viewport_px;
+
+  double pxH = vp_wld.y / vp_px.y;
+  double pxW = vp_wld.x / vp_px.x;
+
+  double chH = 0.5;
+  double chH_px = chH / pxH;
+
+  QFont font = m_appConfig.monoFont;
+  font.setPixelSize(chH_px);
 
   double margin = 0.2;
-  double chH = 0.6;
-  double chW = 0.3;
-  Size sz(2.0 * margin + chW * c.captionText.length(), 2.0 * margin + chH);
-  Point bgPos(0.5 * (vp.x - sz.x), 0.75 * (vp.y - sz.y));
+
+  QFontMetrics fm(font);
+  double textW_px = fm.size(Qt::TextSingleLine, c.captionText.c_str()).width();
+  double textW = textW_px * pxW;
+
+  Size sz(2.0 * margin + textW, 2.0 * margin + chH);
+  Point bgPos(0.5 * (vp_wld.x - sz.x), 0.75 * (vp_wld.y - sz.y));
   Point textPos = bgPos + Vec2f(margin, margin);
 
   QColor bgColour(0, 0, 0, 120);

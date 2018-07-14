@@ -8,6 +8,7 @@
 #include <QPainter>
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_graph.hpp"
+#include "app_config.hpp"
 
 
 class QImage;
@@ -15,10 +16,9 @@ class EntityManager;
 class Camera;
 class RenderSystem;
 
-
 class Renderer {
   public:
-    Renderer(EntityManager& entityManager, QImage& target);
+    Renderer(const AppConfig& appConfig, EntityManager& entityManager, QImage& target);
 
     void renderScene(const RenderGraph& rg, const Camera& cam);
 
@@ -100,8 +100,8 @@ class Renderer {
       virtual ~SpriteX() override {}
     };
 
+    AppConfig m_appConfig;
     EntityManager& m_entityManager;
-
     QImage& m_target;
 
     const double ATAN_MIN = -10.0;
@@ -112,11 +112,6 @@ class Renderer {
 
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
-
-    double m_vWorldUnit_px;
-    double m_hWorldUnit_px;
-
-    Size m_viewport_px;
 
     void drawImage(const QRect& trgRect, const QImage& tex, const QRect& srcRect,
       double distance = 0) const;
@@ -152,9 +147,10 @@ class Renderer {
     void drawTextOverlay(const RenderGraph& rg, QPainter& painter,
       const CTextOverlay& overlay) const;
 
-    void sampleWallTexture(const Camera& cam, double screenX_px, double texAnchor_wd,
-      double distanceAlongTarget, const Slice& slice, const Size& texSz, const QRectF& frameRect,
-      const Size& tileSz_wd, std::vector<QRect>& trgRects, std::vector<QRect>& srcRects) const;
+    void sampleWallTexture(const RenderGraph& rg, const Camera& cam, double screenX_px,
+      double texAnchor_wd, double distanceAlongTarget, const Slice& slice, const Size& texSz,
+      const QRectF& frameRect, const Size& tileSz_wd, std::vector<QRect>& trgRects,
+      std::vector<QRect>& srcRects) const;
 
     QRect sampleSpriteTexture(const Camera& cam, const QRect& rect, const SpriteX& X,
       const Size& size_wd, double y_wd) const;
@@ -169,7 +165,7 @@ class Renderer {
     void castRay(const RenderGraph& rg, const Camera& cam, const SpatialSystem& spatialSystem,
       const RenderSystem& renderSystem, const Vec2f& dir, CastResult& result) const;
 
-    inline double projToScreenY(double y) const;
+    inline double projToScreenY(const RenderGraph& rg, double y) const;
     inline double fastTan_rp(double a) const;
     inline double fastATan(double x) const;
 };
@@ -177,8 +173,8 @@ class Renderer {
 //===========================================
 // Renderer::projToScreenY
 //===========================================
-inline double Renderer::projToScreenY(double y) const {
-  return m_viewport_px.y - (y * m_vWorldUnit_px);
+inline double Renderer::projToScreenY(const RenderGraph& rg, double y) const {
+  return rg.viewport_px.y - (y * rg.vWorldUnit_px);
 }
 
 //===========================================
