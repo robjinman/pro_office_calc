@@ -5,6 +5,8 @@
 #include <vector>
 #include <ostream>
 #include <functional>
+#include <QFont>
+#include <QFontMetrics>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QBrush>
@@ -790,12 +792,15 @@ void Renderer::drawImageOverlay(const RenderGraph& rg, QPainter& painter,
 void Renderer::drawTextOverlay(const RenderGraph& rg, QPainter& painter,
   const CTextOverlay& overlay) const {
 
-  double x = (overlay.pos.x / rg.viewport.x) * rg.viewport_px.x;
-  double y = (1.0 - overlay.pos.y / rg.viewport.y) * rg.viewport_px.y;
-  double h = (overlay.height / rg.viewport.y) * rg.viewport_px.y;
+  double x = overlay.pos.x * rg.hWorldUnit_px;
+  double y = (rg.viewport.y - overlay.pos.y) * rg.vWorldUnit_px;
+  double h = overlay.height * rg.vWorldUnit_px;
 
   QFont font = m_appConfig.monoFont;
   font.setPixelSize(h);
+
+  QFontMetrics fm{font};
+  y -= fm.descent();
 
   painter.setFont(font);
   painter.setPen(overlay.colour);

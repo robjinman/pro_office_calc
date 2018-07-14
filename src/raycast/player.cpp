@@ -23,6 +23,10 @@ using std::stringstream;
 const double FOREHEAD_SIZE = 15.0;
 const double COLLISION_RADIUS = 10.0;
 
+const double HUD_H = 1.0;
+const double INVENTORY_H = 1.2;
+const double V_MARGIN = 0.15;
+
 
 //===========================================
 // Player::Player
@@ -99,18 +103,18 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
     m_timeService.addTween(makeTween(FR, T, gunSprite, -4.0, 0.0), "gunSlideIn");
 
     m_timeService.removeTween("ammoSlideOut");
-    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y + 0.1, viewport.y - 0.5),
-      "ammoSlideIn");
+    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y + V_MARGIN,
+      viewport.y - HUD_H + V_MARGIN), "ammoSlideIn");
 
     m_timeService.removeTween("healthSlideOut");
-    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y + 0.1, viewport.y - 0.5),
-      "healthSlideIn");
+    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y + V_MARGIN,
+      viewport.y - HUD_H + V_MARGIN), "healthSlideIn");
 
     m_timeService.removeTween("itemsSlideOut");
-    m_timeService.addTween(makeTween(FR, T, itemsDisplay, -viewport.y * 0.1, 0.0), "itemsSlideIn");
+    m_timeService.addTween(makeTween(FR, T, itemsDisplay, -INVENTORY_H, 0.0), "itemsSlideIn");
 
     m_timeService.removeTween("hudBgSlideOut");
-    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y, viewport.y - 0.7), "hudBgSlideIn");
+    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y, viewport.y - HUD_H), "hudBgSlideIn");
 
     crosshair.pos = viewport / 2 - Vec2f(0.5, 0.5) / 2;
   }});
@@ -122,18 +126,19 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
     m_timeService.addTween(makeTween(FR, T, gunSprite, 0.0, -4.0), "gunSlideOut");
 
     m_timeService.removeTween("ammoSlideIn");
-    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y - 0.5, viewport.y + 0.1),
-      "ammoSlideOut");
+    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y - HUD_H + V_MARGIN,
+      viewport.y + V_MARGIN), "ammoSlideOut");
 
     m_timeService.removeTween("healthSlideIn");
-    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y - 0.5, viewport.y + 0.1),
-      "healthSlideOut");
+    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y - HUD_H + V_MARGIN,
+      viewport.y + V_MARGIN), "healthSlideOut");
 
     m_timeService.removeTween("itemsSlideIn");
-    m_timeService.addTween(makeTween(FR, T, itemsDisplay, 0.0, -viewport.y * 0.1), "itemsSlideOut");
+    m_timeService.addTween(makeTween(FR, T, itemsDisplay, 0.0, -INVENTORY_H), "itemsSlideOut");
 
     m_timeService.removeTween("hudBgSlideIn");
-    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y - 0.7, viewport.y), "hudBgSlideOut");
+    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y - HUD_H, viewport.y),
+      "hudBgSlideOut");
 
     crosshair.pos = Point(10, 10);
   }});
@@ -264,17 +269,17 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
 void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inventorySystem,
   EventHandlerSystem& eventHandlerSystem, DamageSystem& damageSystem) {
 
-  const Size& viewport = renderSystem.rg.viewport;
+  const RenderGraph& rg = renderSystem.rg;
+  const Size& viewport = rg.viewport;
 
   CCollector* inventory = new CCollector(this->body);
   inventory->buckets["ammo"] = pBucket_t(new CounterBucket(50));
   inventory->buckets["item"] = pBucket_t(new ItemBucket(5));
   inventorySystem.addComponent(pComponent_t(inventory));
 
-  double itemsDisplayH_wd = viewport.y * 0.12;
-  double itemsDisplayW_wd = viewport.x * 0.6;
-  double itemsDisplayAspectRatio = itemsDisplayW_wd / itemsDisplayH_wd;
-  double itemsDisplayH_px = 50;
+  const double INVENTORY_W = 6.0;
+  double itemsDisplayAspectRatio = INVENTORY_W / INVENTORY_H;
+  double itemsDisplayH_px = INVENTORY_H * rg.hWorldUnit_px;
   double itemsDisplayW_px = itemsDisplayH_px * itemsDisplayAspectRatio;
 
   QImage imgItems(itemsDisplayW_px, itemsDisplayH_px, QImage::Format_ARGB32);
@@ -286,16 +291,19 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
   m_healthId = Component::getNextId();
   m_itemsId = Component::getNextId();
 
+  // Start everything off-screen
+  //
+
   CImageOverlay* itemsDisplay = new CImageOverlay(m_itemsId, "items_display",
-    Point(0, -itemsDisplayH_wd), Size(itemsDisplayW_wd, itemsDisplayH_wd), 1);
+    Point(0, -INVENTORY_H), Size(INVENTORY_W, INVENTORY_H), 1);
   renderSystem.addComponent(pComponent_t(itemsDisplay));
 
-  CTextOverlay* ammoCounter = new CTextOverlay(m_ammoId, "AMMO 0/50", Point(0.1, viewport.y + 0.1),
-    0.5, Qt::green, 2);
+  CTextOverlay* ammoCounter = new CTextOverlay(m_ammoId, "AMMO 0/50",
+    Point(0.15, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::green, 2);
   renderSystem.addComponent(pComponent_t(ammoCounter));
 
   CTextOverlay* healthCounter = new CTextOverlay(m_healthId, "HEALTH 10/10",
-    Point(9.5, viewport.y + 0.1), 0.5, Qt::red, 2);
+    Point(9.0, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::red, 2);
   renderSystem.addComponent(pComponent_t(healthCounter));
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
@@ -331,7 +339,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
     }
   }});
   events.targetedEventHandlers.push_back(EventHandler{"bucket_items_change",
-    [=, &renderSystem](const GameEvent& e_) {
+    [=, &renderSystem, &rg](const GameEvent& e_) {
 
     const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
 
@@ -351,14 +359,15 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
           const CSprite& sprite = dynamic_cast<const CSprite&>(c);
           const QImage& img = renderSystem.rg.textures.at(sprite.texture).image;
 
-          double slotH = itemsDisplayH_px;
+          double slotH = itemsDisplayW_px;
           double slotW = itemsDisplayW_px / e.bucket.capacity;
           double slotX = slotW * i;
           double slotY = 0;
-          double margin = slotH * 0.1;
+          double vMargin = V_MARGIN * rg.hWorldUnit_px;
+          double hMargin = 0.1 * rg.hWorldUnit_px;
           double aspectRatio = static_cast<double>(img.width()) / img.height();
-          double maxH = slotH - margin * 2;
-          double maxW = slotW - margin * 2;
+          double maxH = slotH - vMargin * 2.0;
+          double maxW = slotW - hMargin * 2.0;
           double h = maxH;
           double w = h * aspectRatio;
           double s = smallest(maxH / h, maxW / w);
@@ -366,7 +375,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
           w *= s;
 
           QRect srcRect(0, 0, img.width(), img.height());
-          QRect trgRect(slotX + margin, slotY + margin, w, h);
+          QRect trgRect(slotX + hMargin, slotY + vMargin, w, h);
 
           painter.setBrush(QColor(0, 0, 0, 100));
           painter.setPen(Qt::NoPen);
@@ -397,7 +406,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
   m_hudBgId = Component::getNextId();
 
   CColourOverlay* bg = new CColourOverlay(m_hudBgId, QColor(0, 0, 0, 100), Point(0, viewport.y),
-    Size(viewport.x, 0.7), 1);
+    Size(viewport.x, HUD_H), 1);
 
   renderSystem.addComponent(pComponent_t(bg));
 }

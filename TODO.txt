@@ -1,7 +1,6 @@
 MUST DO
 - Adjust dates wherever they appear
 - Shuffled Keys - Move number to loading screen
-- Going in Circles - Donald asset
 - Are You Sure - Backgrounds for config maze
 - Bad guy hurt and death animations
 - Civilian hurt and death animations
