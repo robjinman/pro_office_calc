@@ -28,9 +28,9 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="1"
-     inkscape:cx="2983.9586"
-     inkscape:cy="1347.2689"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="2995.6717"
+     inkscape:cy="1348.497"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -690,7 +690,7 @@
       </g>
       <g
          id="g4703"
-         transform="translate(186.52164,-75.30388)">
+         transform="translate(185.69322,-65.877479)">
         <path
            inkscape:connector-curvature="0"
            id="path4611-6"
@@ -21969,7 +21969,7 @@
        id="g5720">
       <g
          id="g5484"
-         transform="translate(407.69124,-217.77687)">
+         transform="translate(407.69124,-177.77687)">
         <text
            sodipodi:linespacing="125%"
            id="text5258-7-2-2-7"
@@ -22103,6 +22103,33 @@
            x="503.29352"
            y="98.130363"
            style="font-size:12.94190121px">type=audio_config</tspan></text>
+      <g
+         id="g8410">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="544.08179"
+           y="113.79828"
+           id="text5258-7-2-2-7-3"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5260-9-0-3-5-6"
+             x="544.08179"
+             y="113.79828"
+             style="font-size:12.94190121px">type=music_assets</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="582.08179"
+           y="128.79828"
+           id="text5258-7-2-2-7-3-7"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5260-9-0-3-5-6-5"
+             x="582.08179"
+             y="128.79828"
+             style="font-size:12.94190121px">birds=common/music/birds.mp3</tspan></text>
+      </g>
     </g>
     <g
        id="g5746">

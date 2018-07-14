@@ -192,6 +192,8 @@ void GameLogic::onEntityDestroyed(const GameEvent& event) {
 
     spatialSystem.relocateEntity(player.body, *spawnPoint.zone, spawnPoint.pos);
     player.setFeetHeight(0);
+
+    m_audioService.playMusic("birds", true);
   }
 }
 
