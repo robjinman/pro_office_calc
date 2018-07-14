@@ -34,6 +34,9 @@ class ObjectFactory : public GameObjectFactory {
 
     bool constructJeff(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+
+    bool constructDonald(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
 };
 
 

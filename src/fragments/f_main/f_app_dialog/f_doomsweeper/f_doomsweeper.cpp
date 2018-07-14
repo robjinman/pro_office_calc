@@ -54,7 +54,7 @@ void FDoomsweeper::reload(const FragmentSpec& spec_) {
   setupRaycastPage();
   setupHighScorePage();
 
-  m_data.stackedLayout->setCurrentIndex(1);
+  m_data.stackedLayout->setCurrentIndex(0);
 
   m_hLevelComplete = commonData.eventSystem.listen("doomsweeper/levelComplete",
     [this](const Event&) {

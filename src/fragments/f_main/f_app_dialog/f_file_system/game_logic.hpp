@@ -30,8 +30,8 @@ class GameLogic {
   private:
     void onEntityDestroyed(const GameEvent& event);
     void onEntityChangeZone(const GameEvent& event);
-    void setupLarry(EventHandlerSystem& eventHandlerSystem);
     void onSwitchActivated(const GameEvent& event);
+    void setupLarry(EventHandlerSystem& eventHandlerSystem);
     void resetSwitches();
     CSwitchBehaviour& getSwitch(entityId_t) const;
 

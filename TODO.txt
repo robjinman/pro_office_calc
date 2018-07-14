@@ -3,17 +3,12 @@ MUST DO
 - Provide font rather than use default
 - Shuffled Keys - Move number to loading screen
 - Going in Circles - Donald asset
-- Doomsweeper - More safe cells
-- Doomsweeper - More deadly cells
-- Doomsweeper - Commands hidden in maze
-- Doomsweeper - Enter high score
 - Are You Sure - Backgrounds for config maze
 - Bad guy hurt and death animations
 - Civilian hurt and death animations
 - It's Raining Tetrominos - Add name or icon to tab displaying raycast widget
 - Making Progress - Adjust difficulty
 - T Minus Two Minutes - Create map
-- Back to Normal - Display player's name in credits
 
 NICE TO HAVE
 - Transition from It's Raining Tetrominos to Making Progress

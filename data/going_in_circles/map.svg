@@ -28,13 +28,13 @@
      id="namedview22"
      showgrid="true"
      inkscape:snap-text-baseline="false"
-     inkscape:zoom="0.088388348"
-     inkscape:cx="4014.6196"
-     inkscape:cy="2354.8847"
+     inkscape:zoom="4"
+     inkscape:cx="3526.1669"
+     inkscape:cy="3772.4299"
      inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g4741"
+     inkscape:current-layer="svg4960"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -66,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -687,35 +687,6 @@
                x="374.89276"
                id="tspan4215-5-6-9-7-6-0-0-6-4-6-3-4">texture=home_dir</tspan></text>
         </g>
-      </g>
-      <g
-         id="g4703"
-         transform="translate(178.62214,-53.206234)">
-        <path
-           inkscape:connector-curvature="0"
-           id="path4611-6"
-           d="m 269.57042,974.18162 3.22364,10.85721 -6.79214,0.0535 z"
-           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <text
-           sodipodi:linespacing="125%"
-           id="text4613-7"
-           y="960.91064"
-           x="260.64661"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="960.91064"
-             x="260.64661"
-             id="tspan4615-5">type=player</tspan></text>
-        <text
-           sodipodi:linespacing="125%"
-           id="text5515-3"
-           y="967.92365"
-           x="261.02319"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="967.92365"
-             x="261.02319"
-             id="tspan4507-5">tallness=50</tspan></text>
       </g>
     </g>
     <g
@@ -13660,6 +13631,35 @@
              x="-1243.9976"
              id="tspan4215-5-6-9-7-62-5-2-8-9-3-7">texture=grey_bricks</tspan></text>
       </g>
+      <g
+         id="g4703"
+         transform="matrix(1.4565298,0,0,1.4565124,-2170.2468,64.278465)">
+        <path
+           inkscape:connector-curvature="0"
+           id="path4611-6"
+           d="m 269.57042,974.18162 3.22364,10.85721 -6.79214,0.0535 z"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text4613-7"
+           y="960.91064"
+           x="260.64661"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="960.91064"
+             x="260.64661"
+             id="tspan4615-5">type=player</tspan></text>
+        <text
+           sodipodi:linespacing="125%"
+           id="text5515-3"
+           y="967.92365"
+           x="261.02319"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             y="967.92365"
+             x="261.02319"
+             id="tspan4507-5">tallness=50</tspan></text>
+      </g>
     </g>
     <g
        id="g9668"
@@ -15066,6 +15066,26 @@
              x="-800.99182"
              id="tspan22392"
              sodipodi:role="line">top_texture=light_bricks</tspan></text>
+      </g>
+      <g
+         id="g20245-3"
+         transform="translate(209.1401,38.63212)">
+        <path
+           style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#ff00ff;stroke-width:1.45652103;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.45652105, 1.45652105;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+           d="m -1304.8441,395.20296 9.5,0 -5.5,12 z"
+           id="path20239-6"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.5px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="-1323.8441"
+           y="387.29535"
+           id="text20241-7"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan20243-5"
+             x="-1323.8441"
+             y="387.29535">type=donald</tspan></text>
       </g>
     </g>
     <g
@@ -22767,6 +22787,18 @@
            y="995.42078"
            x="140.52737"
            id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4-6-9-9-6-9-9-0-4-6">metal_wall=common/images/metal_wall.png</tspan></text>
+      <text
+         transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
+         id="text5258-7-8-5-3-1-6-2-3-3-7-3-1-6-5-4-2-2-2-9-0-8-2-8-9-0-3-0-5-2-6-6-0-7-7-3-0-3-6"
+         y="1010.1318"
+         x="141.02646"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:46.25099564px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"
+         sodipodi:linespacing="125%"><tspan
+           style="font-size:11.97151279px"
+           y="1010.1318"
+           x="141.02646"
+           id="tspan5260-9-4-0-6-0-3-0-6-6-5-5-1-0-7-1-2-0-2-7-3-0-3-5-0-6-0-4-4-6-9-9-6-9-9-0-4-6-2">donald=going_in_circles/donald.png,70,70</tspan></text>
     </g>
   </g>
 </svg>

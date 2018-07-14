@@ -33,7 +33,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"jeff"};
+  static const set<string> types{"jeff", "donald"};
   return types;
 }
 
@@ -135,6 +135,63 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
 }
 
 //===========================================
+// ObjectFactory::constructDonald
+//===========================================
+bool ObjectFactory::constructDonald(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+  const Matrix& parentTransform) {
+
+  string name = obj.dict["name"] = "donald";
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  obj.dict["texture"] = "donald";
+
+  if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
+    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
+
+    double W = 8.0;
+    double dW = 1.0 / W;
+
+    sprite.texViews = {
+      QRectF(dW * 0.0, 0, dW, 1),
+      QRectF(dW * 1.0, 0, dW, 1),
+      QRectF(dW * 2.0, 0, dW, 1),
+      QRectF(dW * 3.0, 0, dW, 1),
+      QRectF(dW * 4.0, 0, dW, 1),
+      QRectF(dW * 5.0, 0, dW, 1),
+      QRectF(dW * 6.0, 0, dW, 1),
+      QRectF(dW * 7.0, 0, dW, 1)
+    };
+
+    CFocus* focus = new CFocus(entityId);
+    focus->hoverText = "Donald";
+    focus->captionText = "Have you seen my product? It's a great product. The best.";
+    focusSystem.addComponent(pComponent_t(focus));
+
+    CEventHandler* events = new CEventHandler(entityId);
+
+    events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
+      [=, &focusSystem](const GameEvent& e) {
+
+      focusSystem.showCaption(entityId);
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructObject
 //===========================================
 bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
@@ -142,6 +199,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
 
   if (type == "jeff") {
     return constructJeff(entityId, obj, region, parentTransform);
+  }
+  else if (type == "donald") {
+    return constructDonald(entityId, obj, region, parentTransform);
   }
 
   return false;
