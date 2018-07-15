@@ -31,7 +31,10 @@ class RenderSystem : public System {
 
     inline const std::set<entityId_t>& children(entityId_t entityId) const;
 
+    void centreTextOverlay(CTextOverlay& overlay) const;
+
   private:
+    const AppConfig& m_appConfig;
     EntityManager& m_entityManager;
     Renderer m_renderer;
 

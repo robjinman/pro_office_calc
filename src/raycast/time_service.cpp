@@ -125,6 +125,8 @@ long TimeService::onTimeout(function<void()> fn, double seconds) {
 
 //===========================================
 // TimeService::atIntervals
+//
+// fn should return true to continue the interval, false to cancel
 //===========================================
 long TimeService::atIntervals(function<bool()> fn, double seconds) {
   m_intervals[nextId] = Interval{fn, seconds, m_frame};

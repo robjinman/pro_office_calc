@@ -117,7 +117,7 @@ void FocusSystem::showCaption(entityId_t entityId) {
   double textW = textW_px * pxW;
 
   Size sz(2.0 * margin + textW, 2.0 * margin + chH);
-  Point bgPos(0.5 * (vp_wld.x - sz.x), 0.75 * (vp_wld.y - sz.y));
+  Point bgPos(0.5 * (vp_wld.x - sz.x), 0.70 * (vp_wld.y - sz.y));
   Point textPos = bgPos + Vec2f(margin, margin);
 
   QColor bgColour(0, 0, 0, 120);

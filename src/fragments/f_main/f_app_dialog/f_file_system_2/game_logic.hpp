@@ -28,6 +28,8 @@ class GameLogic {
 
   private:
     void useCovfefe();
+    void setupTimer();
+    void updateTimer();
 
     EventSystem& m_eventSystem;
     AudioService& m_audioService;
@@ -35,6 +37,8 @@ class GameLogic {
     EntityManager& m_entityManager;
 
     entityId_t m_entityId = -1;
+    long m_timerHandle = -1;
+    int m_timeRemaining = 120;
 };
 
 

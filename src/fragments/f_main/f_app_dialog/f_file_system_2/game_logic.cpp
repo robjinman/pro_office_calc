@@ -1,9 +1,12 @@
+#include <sstream>
+#include <iomanip>
 #include "fragments/f_main/f_app_dialog/f_file_system_2/game_logic.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/inventory_system.hpp"
 #include "raycast/focus_system.hpp"
+#include "raycast/render_system.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
 #include "event_system.hpp"
@@ -16,6 +19,7 @@ using std::string;
 using std::map;
 using std::set;
 using std::vector;
+using std::stringstream;
 
 
 namespace t_minus_two_minutes {
@@ -63,6 +67,51 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
   }});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
+
+  setupTimer();
+}
+
+//===========================================
+// GameLogic::updateTimer
+//===========================================
+void GameLogic::updateTimer() {
+  static auto fnFormatTimePart = [](int n) {
+    stringstream ss;
+    ss << std::setw(2) << std::setfill('0') << n;
+    return ss.str();
+  };
+
+  int minutes = m_timeRemaining / 60;
+  int seconds = m_timeRemaining % 60;
+
+  std::stringstream ss;
+  ss << fnFormatTimePart(minutes) << ":" << fnFormatTimePart(seconds);
+
+  auto& overlay = m_entityManager.getComponent<CTextOverlay>(m_entityId, ComponentKind::C_RENDER);
+  overlay.text = ss.str();
+}
+
+//===========================================
+// GameLogic::setupTimer
+//===========================================
+void GameLogic::setupTimer() {
+  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  m_timeRemaining = 120;
+
+  m_timerHandle = m_timeService.atIntervals([this]() -> bool {
+    m_timeRemaining--;
+    updateTimer();
+
+    return m_timeRemaining > 0;
+  }, 1.0);
+
+  CTextOverlay* overlay = new CTextOverlay(m_entityId, "02:00", Point{0.0, 7.5}, 1.0, Qt::green, 1);
+  renderSystem.centreTextOverlay(*overlay);
+
+  renderSystem.addComponent(pComponent_t(overlay));
+
+  updateTimer();
 }
 
 //===========================================
@@ -109,7 +158,7 @@ void GameLogic::useCovfefe() {
 // GameLogic::~GameLogic
 //===========================================
 GameLogic::~GameLogic() {
-
+  m_timeService.cancelTimeout(m_timerHandle);
 }
 
 

@@ -85,7 +85,8 @@ static bool forEachRegion(CRegion& region, function<bool(CRegion&)> fn) {
 // RenderSystem::RenderSystem
 //===========================================
 RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityManager, QImage& target)
-  : m_entityManager(entityManager),
+  : m_appConfig(appConfig),
+    m_entityManager(entityManager),
     m_renderer(appConfig, entityManager, target) {
 
   rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
@@ -95,6 +96,24 @@ RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityMana
 
   rg.hWorldUnit_px = rg.viewport_px.x / rg.viewport.x;
   rg.vWorldUnit_px = rg.viewport_px.y / rg.viewport.y;
+}
+
+//===========================================
+// RenderSystem::centreTextOverlay
+//===========================================
+void RenderSystem::centreTextOverlay(CTextOverlay& overlay) const {
+  double h = overlay.height * rg.vWorldUnit_px;
+
+  QFont font = m_appConfig.monoFont;
+  font.setPixelSize(h);
+
+  QFontMetrics fm{font};
+
+  double textW_px = fm.size(Qt::TextSingleLine, overlay.text.c_str()).width();
+  double textW = textW_px / rg.hWorldUnit_px;
+
+  double x = 0.5 * (rg.viewport.x - textW);
+  overlay.pos.x = x;
 }
 
 //===========================================
