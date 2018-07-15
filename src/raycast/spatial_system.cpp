@@ -1208,7 +1208,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const
   intersections.reserve(20);
 
   vector<entityId_t> visited;
-  visited.reserve(500);
+  visited.reserve(30);
 
   double cullFartherThan = distance;
 
