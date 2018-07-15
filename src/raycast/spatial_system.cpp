@@ -52,6 +52,17 @@ ostream& operator<<(ostream& os, CSpatialKind kind) {
   return os;
 }
 
+//===========================================
+// contains
+//===========================================
+static bool contains(vector<entityId_t>& vec, entityId_t id) {
+  for (entityId_t i : vec) {
+    if (i == id) {
+      return true;
+    }
+  }
+  return false;
+}
 
 //===========================================
 // forEachConstZone
@@ -1005,12 +1016,12 @@ void SpatialSystem::connectZones() {
 //===========================================
 void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, const Matrix& matrix,
   const CZone& zone, const CSpatial& parent, vector<pIntersection_t>& intersections,
-  set<entityId_t>& visited, double cullNearerThan, double& cullFartherThan) const {
+  vector<entityId_t>& visited, double cullNearerThan, double& cullFartherThan) const {
 
   Matrix invMatrix = matrix.inverse();
 
   LineSegment ray(point + Vec2f(0.01, 0), 10000.0 * dir);
-  visited.insert(parent.entityId());
+  visited.push_back(parent.entityId());
 
   auto& children = GET_VALUE(m_entityChildren, parent.entityId());
   for (const CSpatial* pChild : children) {
@@ -1018,7 +1029,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
     switch (c.kind) {
       case CSpatialKind::ZONE: {
-        if (visited.count(c.entityId()) == 0) {
+        if (!contains(visited, c.entityId())) {
           findIntersections_r(point, dir, matrix, DYNAMIC_CAST<const CZone&>(c), c, intersections,
             visited, cullNearerThan, cullFartherThan);
         }
@@ -1110,7 +1121,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             cullFartherThan = pt.x + 1.0;
           }
 
-          if (visited.count(c.entityId()) == 0) {
+          if (!contains(visited, c.entityId())) {
             findIntersections_r(point, dir, matrix, zone, c, intersections, visited, cullNearerThan,
               cullFartherThan);
           }
@@ -1133,11 +1144,11 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             const CSoftEdge& se = DYNAMIC_CAST<const CSoftEdge&>(edge);
             const CZone& next = se.zoneA == &zone ? *se.zoneB : *se.zoneA;
 
-            if (visited.count(se.joinId) > 0) {
+            if (contains(visited, se.joinId)) {
               continue;
             }
 
-            visited.insert(se.joinId);
+            visited.push_back(se.joinId);
 
             X->zoneB = next.entityId();
             X->heightRanges = make_pair(Range(se.zoneA->floorHeight, se.zoneB->floorHeight),
@@ -1146,8 +1157,8 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
             Matrix mat = matrix;
             double cullNearerThan_ = cullNearerThan;
 
-            set<entityId_t> visited_{se.joinId};
-            set<entityId_t>* pVisited = &visited;
+            vector<entityId_t> visited_{se.joinId};
+            vector<entityId_t>* pVisited = &visited;
 
             if (se.isPortal) {
               mat = (se.toTwin * invMatrix).inverse();
@@ -1158,7 +1169,7 @@ void SpatialSystem::findIntersections_r(const Point& point, const Vec2f& dir, co
 
             intersections.push_back(std::move(X));
 
-            if (visited.count(next.entityId()) == 0 || se.isPortal) {
+            if (!contains(visited, next.entityId()) || se.isPortal) {
               findIntersections_r(point, dir, mat, next, next, intersections, *pVisited,
                 cullNearerThan_, cullFartherThan);
             }
@@ -1196,7 +1207,9 @@ vector<pIntersection_t> SpatialSystem::entitiesAlongRay(const CZone& zone, const
   vector<pIntersection_t> intersections;
   intersections.reserve(20);
 
-  set<entityId_t> visited;
+  vector<entityId_t> visited;
+  visited.reserve(500);
+
   double cullFartherThan = distance;
 
   findIntersections_r(pos, dir, matrix, zone, zone, intersections, visited, 0, cullFartherThan);

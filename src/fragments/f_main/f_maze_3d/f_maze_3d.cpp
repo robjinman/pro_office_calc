@@ -42,7 +42,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
 #if PROFILING_ON
-  double profileDuration = commonData.appConfig.getDoubleArg(commonData.commandLineArgs, 1, -1);
+  double profileDuration = commonData.appConfig.getDoubleArg(1, -1);
 
   DBG_PRINT("Profile duration = " << profileDuration << " seconds...\n");
 

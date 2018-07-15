@@ -31,6 +31,7 @@ class CElevatorBehaviour : public CBehaviour {
     virtual void handleBroadcastedEvent(const GameEvent& e) override {}
     virtual void handleTargetedEvent(const GameEvent& e) override;
 
+    void move(int level);
     void setSpeed(double speed);
 
   private:

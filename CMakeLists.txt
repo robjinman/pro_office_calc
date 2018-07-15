@@ -75,10 +75,10 @@ if (PROFILING_ON)
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed -lprofiler -Wl,--as-needed")
 endif()
 
-file(GLOB_RECURSE srcs src/*.cpp)
-list(REMOVE_ITEM srcs "src/main.cpp")
+file(GLOB_RECURSE srcs "${CMAKE_SOURCE_DIR}/src/*.cpp")
+list(REMOVE_ITEM srcs "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
-include_directories(src)
+include_directories("${CMAKE_SOURCE_DIR}/src")
 include_directories("${PROCALC_DEPENDENCIES_DIR}/include")
 include_directories("${QT_DIR}/include")
 include_directories("${TINYXML2_INCLUDE_DIRS}")

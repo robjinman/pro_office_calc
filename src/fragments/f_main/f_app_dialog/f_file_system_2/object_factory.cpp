@@ -5,6 +5,7 @@
 #include "raycast/focus_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
+#include "raycast/c_elevator_behaviour.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/time_service.hpp"
@@ -93,6 +94,8 @@ bool ObjectFactory::constructBridgeSection(entityId_t entityId, parser::Object& 
   if (m_rootFactory.constructObject("elevator", entityId, obj, region, parentTransform)) {
     auto& eventHandlerSystem =
       m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+    auto& behaviour = m_entityManager.getComponent<CElevatorBehaviour>(entityId,
+      ComponentKind::C_BEHAVIOUR);
 
     CEventHandler* events = nullptr;
     if (eventHandlerSystem.hasComponent(entityId)) {
@@ -104,9 +107,9 @@ bool ObjectFactory::constructBridgeSection(entityId_t entityId, parser::Object& 
     }
 
     events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
-      [this, entityId](const GameEvent&) {
+      [&behaviour](const GameEvent&) {
 
-      m_entityManager.fireEvent(GameEvent{"level0"}, { entityId });
+      behaviour.move(0);
     }});
 
     return true;

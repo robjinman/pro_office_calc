@@ -97,6 +97,16 @@ void CElevatorBehaviour::update() {
 }
 
 //===========================================
+// CElevatorBehaviour::move
+//===========================================
+void CElevatorBehaviour::move(int level) {
+  m_target = level;
+  m_state = ST_MOVING;
+
+  playSound();
+}
+
+//===========================================
 // CElevatorBehaviour::handleTargetedEvent
 //===========================================
 void CElevatorBehaviour::handleTargetedEvent(const GameEvent& e) {
@@ -114,10 +124,7 @@ void CElevatorBehaviour::handleTargetedEvent(const GameEvent& e) {
       EXCEPTION("Error parsing message '" << event.message << "' from switch");
     }
 
-    m_target = std::stod(m.str(1));
-    m_state = ST_MOVING;
-
-    playSound();
+    move(std::stod(m.str(1)));
   }
   else if (e.name == "player_activate_entity" && this->isPlayerActivated) {
     if (m_state == ST_STOPPED) {
