@@ -180,8 +180,11 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
 
   assert(zone.parent != nullptr);
 
-  bool collision = false;
   Vec2f newV(9999, 9999); // Value closest to oldV
+
+  bool collision = false;
+  bool newVFound = false;
+
   Circle circle{pos + oldV, radius};
 
   forEachConstZone(nthConstAncestor(zone, MAX_ANCESTOR_SEARCH), [&](const CZone& r) {
@@ -209,6 +212,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
           && length(v - oldV) < length(newV - oldV)) {
 
           newV = v;
+          newVFound = true;
         }
       }
     }
@@ -216,7 +220,18 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
     return true;
   });
 
-  return collision ? newV : oldV;
+  if (collision) {
+    if (newVFound) {
+      return newV;
+    }
+    else {
+      DBG_PRINT("Warning: Couldn't find good collision delta\n");
+      return Vec2f{0, 0};
+    }
+  }
+  else {
+    return oldV;
+  }
 }
 
 //===========================================
@@ -779,9 +794,9 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
           Point X;
           if (lineSegmentIntersect(lseg, edge.lseg, X)) {
             if (edge.kind != CSpatialKind::SOFT_EDGE) {
-              // TODO: Find out how this is possible and prevent it
-
               DBG_PRINT("Warning: Crossed edge is not soft edge\n");
+              DBG_PRINT_VAR(dv);
+
               return false;
             }
 

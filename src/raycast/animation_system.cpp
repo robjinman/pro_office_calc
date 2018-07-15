@@ -89,8 +89,6 @@ bool Animation::update() {
 // AnimationSystem::playAnimation
 //===========================================
 void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name, bool loop) {
-  DBG_PRINT("Playing animation " << name << " for entity " << entityId << "\n");
-
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CAnimation& component = *it->second;
@@ -123,8 +121,6 @@ void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name
 // AnimationSystem::stopAnimation
 //===========================================
 void AnimationSystem::stopAnimation(entityId_t entityId, bool recurseIntoChildren) {
-  DBG_PRINT("Stopping animation for entity " << entityId << "\n");
-
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CAnimation& component = *it->second;
