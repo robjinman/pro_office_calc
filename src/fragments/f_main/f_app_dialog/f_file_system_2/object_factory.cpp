@@ -33,7 +33,7 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
 // ObjectFactory::types
 //===========================================
 const set<string>& ObjectFactory::types() const {
-  static const set<string> types{"covfefe", "cog", "smoke"};
+  static const set<string> types{"covfefe", "cog", "smoke", "bridge_section"};
   return types;
 }
 
@@ -81,6 +81,41 @@ bool ObjectFactory::constructCovfefe(entityId_t entityId, parser::Object& obj, e
 }
 
 //===========================================
+// ObjectFactory::constructBridgeSection
+//===========================================
+bool ObjectFactory::constructBridgeSection(entityId_t entityId, parser::Object& obj,
+  entityId_t region, const Matrix& parentTransform) {
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  if (m_rootFactory.constructObject("elevator", entityId, obj, region, parentTransform)) {
+    auto& eventHandlerSystem =
+      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+    CEventHandler* events = nullptr;
+    if (eventHandlerSystem.hasComponent(entityId)) {
+      events = &dynamic_cast<CEventHandler&>(eventHandlerSystem.getComponent(entityId));
+    }
+    else {
+      events = new CEventHandler(entityId);
+      eventHandlerSystem.addComponent(pComponent_t(events));
+    }
+
+    events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
+      [this, entityId](const GameEvent&) {
+
+      m_entityManager.fireEvent(GameEvent{"level0"}, { entityId });
+    }});
+
+    return true;
+  }
+
+  return false;
+}
+
+//===========================================
 // ObjectFactory::constructCog
 //===========================================
 bool ObjectFactory::constructCog(entityId_t entityId, parser::Object& obj, entityId_t region,
@@ -109,6 +144,8 @@ bool ObjectFactory::constructCog(entityId_t entityId, parser::Object& obj, entit
     animationSystem.addComponent(pComponent_t(anim));
 
     animationSystem.playAnimation(entityId, "idle", true);
+
+    std::cout << "playing idle animation for cog with id=" << entityId << "\n";
 
     CEventHandler* events = new CEventHandler(entityId);
     events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
@@ -160,6 +197,8 @@ bool ObjectFactory::constructSmoke(entityId_t entityId, parser::Object& obj, ent
 
     animationSystem.playAnimation(entityId, "idle", true);
 
+    std::cout << "playing idle animation for smoke with id=" << entityId << "\n";
+
     CEventHandler* events = new CEventHandler(entityId);
     events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
       [this, entityId](const GameEvent&) {
@@ -189,6 +228,9 @@ bool ObjectFactory::constructObject(const string& type, entityId_t entityId,
   }
   else if (type == "smoke") {
     return constructSmoke(entityId, obj, region, parentTransform);
+  }
+  else if (type == "bridge_section") {
+    return constructBridgeSection(entityId, obj, region, parentTransform);
   }
 
   return false;

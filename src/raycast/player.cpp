@@ -17,6 +17,7 @@
 
 
 using std::vector;
+using std::string;
 using std::stringstream;
 
 
@@ -56,24 +57,30 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, TimeSer
 //===========================================
 // makeTween
 //===========================================
-static Tween makeTween(double frameRate, double duration, COverlay& overlay, double fromY,
-  double toY) {
+static void makeTween(RenderSystem& renderSystem, TimeService& timeService, const string& name,
+  double duration, entityId_t overlayId, double fromY, double toY) {
 
-  double s = toY - fromY;
-  double ds = s / (duration * frameRate);
+  if (renderSystem.hasComponent(overlayId)) {
+    auto& overlay = dynamic_cast<COverlay&>(renderSystem.getComponent(overlayId));
 
-  return Tween{
-    [=, &overlay](long frame, double elapsed, double frameRate) -> bool {
+    double s = toY - fromY;
+    double ds = s / (duration * timeService.frameRate);
 
-    overlay.pos.y += ds;
+    Tween tween{
+      [=, &overlay](long frame, double elapsed, double frameRate) -> bool {
 
-    if (fabs(overlay.pos.y - fromY) >= fabs(s)) {
-      overlay.pos.y = toY;
-      return false;
-    }
-    return true;
-  },
-  [](long frame, double elapsed, double frameRate) {}};
+      overlay.pos.y += ds;
+
+      if (fabs(overlay.pos.y - fromY) >= fabs(s)) {
+        overlay.pos.y = toY;
+        return false;
+      }
+      return true;
+    },
+    [](long frame, double elapsed, double frameRate) {}};
+
+    timeService.addTween(tween);
+  }
 }
 
 //===========================================
@@ -82,65 +89,61 @@ static Tween makeTween(double frameRate, double duration, COverlay& overlay, dou
 void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& eventHandlerSystem) {
   // Transition time
   const double T = 0.3;
-  double FR = m_timeService.frameRate;
 
   const Size& viewport = renderSystem.rg.viewport;
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
-
-  auto& gunSprite = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->sprite));
-  auto& itemsDisplay = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(m_itemsId));
-  auto& ammoCounter = dynamic_cast<CTextOverlay&>(renderSystem.getComponent(m_ammoId));
-  auto& healthCounter = dynamic_cast<CTextOverlay&>(renderSystem.getComponent(m_healthId));
-  auto& hudBg = dynamic_cast<CColourOverlay&>(renderSystem.getComponent(m_hudBgId));
-  auto& crosshair = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->crosshair));
-
   events.broadcastedEventHandlers.push_back(EventHandler{"mouse_captured",
-    [=, &gunSprite, &itemsDisplay, &ammoCounter, &healthCounter, &hudBg, &crosshair, &viewport]
-    (const GameEvent& e_) {
+    [=, &renderSystem, &viewport] (const GameEvent& e_) {
 
     m_timeService.removeTween("gunSlideOut");
-    m_timeService.addTween(makeTween(FR, T, gunSprite, -4.0, 0.0), "gunSlideIn");
+    makeTween(renderSystem, m_timeService, "gunSlideIn", T, this->sprite, -4.0, 0.0);
 
     m_timeService.removeTween("ammoSlideOut");
-    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y + V_MARGIN,
-      viewport.y - HUD_H + V_MARGIN), "ammoSlideIn");
+    makeTween(renderSystem, m_timeService, "ammoSlideId", T, m_ammoId, viewport.y + V_MARGIN,
+      viewport.y - HUD_H + V_MARGIN);
 
     m_timeService.removeTween("healthSlideOut");
-    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y + V_MARGIN,
-      viewport.y - HUD_H + V_MARGIN), "healthSlideIn");
+    makeTween(renderSystem, m_timeService, "healthSlideIn", T, m_healthId, viewport.y + V_MARGIN,
+      viewport.y - HUD_H + V_MARGIN);
 
     m_timeService.removeTween("itemsSlideOut");
-    m_timeService.addTween(makeTween(FR, T, itemsDisplay, -INVENTORY_H, 0.0), "itemsSlideIn");
+    makeTween(renderSystem, m_timeService, "itemsSlideIn", T, m_itemsId, -INVENTORY_H, 0.0);
 
     m_timeService.removeTween("hudBgSlideOut");
-    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y, viewport.y - HUD_H), "hudBgSlideIn");
+    makeTween(renderSystem, m_timeService, "hudBgSlideIn", T, m_hudBgId, viewport.y,
+      viewport.y - HUD_H);
 
-    crosshair.pos = viewport / 2 - Vec2f(0.5, 0.5) / 2;
+    if (renderSystem.hasComponent(this->crosshair)) {
+      auto& crosshair = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->crosshair));
+      crosshair.pos = viewport / 2 - Vec2f(0.5, 0.5) / 2;
+    }
   }});
   events.broadcastedEventHandlers.push_back(EventHandler{"mouse_uncaptured",
-    [=, &gunSprite, &itemsDisplay, &ammoCounter, &healthCounter, &hudBg, &crosshair, &viewport]
-    (const GameEvent& e_) {
+    [=, &renderSystem, &viewport](const GameEvent& e_) {
 
     m_timeService.removeTween("gunSlideIn");
-    m_timeService.addTween(makeTween(FR, T, gunSprite, 0.0, -4.0), "gunSlideOut");
+    makeTween(renderSystem, m_timeService, "gunSlideOut", T, this->sprite, 0.0, -4.0);
 
     m_timeService.removeTween("ammoSlideIn");
-    m_timeService.addTween(makeTween(FR, T, ammoCounter, viewport.y - HUD_H + V_MARGIN,
-      viewport.y + V_MARGIN), "ammoSlideOut");
+    makeTween(renderSystem, m_timeService, "ammoSlideOut", T, m_ammoId,
+      viewport.y - HUD_H + V_MARGIN, viewport.y + V_MARGIN);
 
     m_timeService.removeTween("healthSlideIn");
-    m_timeService.addTween(makeTween(FR, T, healthCounter, viewport.y - HUD_H + V_MARGIN,
-      viewport.y + V_MARGIN), "healthSlideOut");
+    makeTween(renderSystem, m_timeService, "healthSlideOut", T, m_healthId,
+      viewport.y - HUD_H + V_MARGIN, viewport.y + V_MARGIN);
 
     m_timeService.removeTween("itemsSlideIn");
-    m_timeService.addTween(makeTween(FR, T, itemsDisplay, 0.0, -INVENTORY_H), "itemsSlideOut");
+    makeTween(renderSystem, m_timeService, "itemsSlideOut", T, m_itemsId, 0.0, -INVENTORY_H);
 
     m_timeService.removeTween("hudBgSlideIn");
-    m_timeService.addTween(makeTween(FR, T, hudBg, viewport.y - HUD_H, viewport.y),
-      "hudBgSlideOut");
+    makeTween(renderSystem, m_timeService, "hudBgSlideOut", T, m_hudBgId, viewport.y - HUD_H,
+      viewport.y);
 
-    crosshair.pos = Point(10, 10);
+    if (renderSystem.hasComponent(this->crosshair)) {
+      auto& crosshair = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->crosshair));
+      crosshair.pos = Point(10, 10);
+    }
   }});
 }
 

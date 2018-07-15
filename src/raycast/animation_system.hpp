@@ -102,7 +102,7 @@ class AnimationSystem : public System {
       : m_entityManager(entityManager) {}
 
     void playAnimation(entityId_t entityId, const std::string& anim, bool loop);
-    void stopAnimation(entityId_t entityId);
+    void stopAnimation(entityId_t entityId, bool recurseIntoChildren = true);
 
     inline AnimState animationState(entityId_t entityId, const std::string& name) const;
 

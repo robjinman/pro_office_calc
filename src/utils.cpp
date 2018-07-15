@@ -29,7 +29,7 @@ long randomSeed() {
 static std::random_device rd;
 
 long randomSeed() {
-  return rd();
+  return 0;//rd();
 }
 #endif
 

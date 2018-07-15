@@ -89,7 +89,7 @@ bool Animation::update() {
 // AnimationSystem::playAnimation
 //===========================================
 void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name, bool loop) {
-  stopAnimation(entityId);
+  DBG_PRINT("Playing animation " << name << " for entity " << entityId << "\n");
 
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
@@ -98,6 +98,8 @@ void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name
     auto jt = component.m_animations.find(name);
     if (jt != component.m_animations.end()) {
       pair<pAnimation_t, pAnimation_t>& anims = jt->second;
+
+      stopAnimation(entityId, false);
 
       if (anims.first) {
         anims.first->start(loop);
@@ -120,7 +122,9 @@ void AnimationSystem::playAnimation(entityId_t entityId, const std::string& name
 //===========================================
 // AnimationSystem::stopAnimation
 //===========================================
-void AnimationSystem::stopAnimation(entityId_t entityId) {
+void AnimationSystem::stopAnimation(entityId_t entityId, bool recurseIntoChildren) {
+  DBG_PRINT("Stopping animation for entity " << entityId << "\n");
+
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CAnimation& component = *it->second;
@@ -136,10 +140,12 @@ void AnimationSystem::stopAnimation(entityId_t entityId) {
     }
   }
 
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  auto& children = renderSystem.children(entityId);
-  for (entityId_t child : children) {
-    stopAnimation(child);
+  if (recurseIntoChildren) {
+    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    auto& children = renderSystem.children(entityId);
+    for (entityId_t child : children) {
+      stopAnimation(child, recurseIntoChildren);
+    }
   }
 }
 
