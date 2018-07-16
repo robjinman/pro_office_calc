@@ -28,8 +28,10 @@ void CSoundSourceBehaviour::handleBroadcastedEvent(const GameEvent& e_) {
       }
     }
     else {
-      DBG_PRINT("Stopping sound " << this->name << " from source " << entityId() << "\n");
-      m_audioService.stopSound(this->name, m_soundId);
+      if (m_audioService.soundIsPlaying(this->name, m_soundId)) {
+        DBG_PRINT("Stopping sound " << this->name << " from source " << entityId() << "\n");
+        m_audioService.stopSound(this->name, m_soundId);
+      }
     }
   }
 }

@@ -148,8 +148,6 @@ bool ObjectFactory::constructCog(entityId_t entityId, parser::Object& obj, entit
 
     animationSystem.playAnimation(entityId, "idle", true);
 
-    std::cout << "playing idle animation for cog with id=" << entityId << "\n";
-
     CEventHandler* events = new CEventHandler(entityId);
     events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
       [entityId, &animationSystem](const GameEvent& e_) {
@@ -199,8 +197,6 @@ bool ObjectFactory::constructSmoke(entityId_t entityId, parser::Object& obj, ent
     animationSystem.addComponent(pComponent_t(anim));
 
     animationSystem.playAnimation(entityId, "idle", true);
-
-    std::cout << "playing idle animation for smoke with id=" << entityId << "\n";
 
     CEventHandler* events = new CEventHandler(entityId);
     events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
