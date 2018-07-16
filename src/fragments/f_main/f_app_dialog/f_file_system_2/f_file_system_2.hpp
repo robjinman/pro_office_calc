@@ -8,6 +8,7 @@
 #include "raycast/raycast_widget.hpp"
 #include "fragment.hpp"
 #include "qt_obj_ptr.hpp"
+#include "event_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system_2/game_logic.hpp"
 
 
@@ -35,6 +36,8 @@ class FFileSystem2 : public QWidget, public Fragment {
       int spacing;
       QMargins margins;
     } m_origParentState;
+
+    EventHandle m_hDialogClosed;
 };
 
 

@@ -69,6 +69,7 @@ class RaycastWidget : public QWidget {
     void loadSoundAssets(const parser::Object& obj);
     void loadMusicAssets(const parser::Object& obj);
     void loadTextures(RenderGraph& rg, const parser::Object& obj);
+    void uncaptureCursor();
 
     const AppConfig& m_appConfig;
     EventSystem& m_eventSystem;
@@ -84,6 +85,8 @@ class RaycastWidget : public QWidget {
     Point m_cursor;
     bool m_cursorCaptured;
     Qt::CursorShape m_defaultCursor;
+    entityId_t m_entityId;
+    bool m_playerImmobilised = false;
 
 #ifdef DEBUG
     std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();

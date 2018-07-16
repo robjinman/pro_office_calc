@@ -1,11 +1,12 @@
 #include "fragments/relocatable/widget_frag_data.hpp"
+#include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system_2/f_file_system_2.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system_2/f_file_system_2_spec.hpp"
 #include "fragments/f_main/f_app_dialog/f_file_system_2/object_factory.hpp"
 #include "raycast/render_system.hpp"
 #include "utils.hpp"
-#include "event_system.hpp"
 #include "app_config.hpp"
+#include "state_ids.hpp"
 
 
 //===========================================
@@ -17,6 +18,17 @@ FFileSystem2::FFileSystem2(Fragment& parent_, FragmentData& parentData_,
     Fragment("FFileSystem2", parent_, parentData_, m_data, commonData) {
 
   DBG_PRINT("FFileSystem2::FFileSystem2\n");
+
+  m_hDialogClosed = commonData.eventSystem.listen("dialogClosed",
+    [&commonData](const Event& event) {
+
+    const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
+
+    if (e.name == "fileBrowser") {
+      commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_T_MINUS_TWO_MINUTES,
+        true)));
+    }
+  });
 }
 
 //===========================================
@@ -26,6 +38,10 @@ void FFileSystem2::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FFileSystem2::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();
+
+  if (m_data.vbox) {
+    delete m_data.vbox.release();
+  }
 
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   m_data.vbox->setSpacing(0);

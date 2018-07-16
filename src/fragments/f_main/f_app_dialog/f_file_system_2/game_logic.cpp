@@ -9,6 +9,7 @@
 #include "raycast/render_system.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
+#include "raycast/c_switch_behaviour.hpp"
 #include "event_system.hpp"
 #include "state_ids.hpp"
 #include "utils.hpp"
@@ -65,10 +66,60 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
     m_entityManager.deleteEntity(Component::getIdFromString("covfefe"));
     focusSystem.showCaption(m_entityId);
   }});
+  events->broadcastedEventHandlers.push_back(EventHandler{"switch_activated",
+    [this](const GameEvent& e_) {
+
+    auto& e = dynamic_cast<const ESwitchActivate&>(e_);
+    if (e.switchEntityId == Component::getIdFromString("final_switch")) {
+      DBG_PRINT("Mission accomplished!\n");
+      m_missionAccomplished = true;
+      fadeToBlack();
+    }
+  }});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
 
   setupTimer();
+}
+
+//===========================================
+// GameLogic::fadeToBlack
+//===========================================
+void GameLogic::fadeToBlack() {
+  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
+  entityId_t entityId = Component::getNextId();
+
+  CColourOverlay* overlay = new CColourOverlay(entityId, QColor{0, 0, 0, 0}, Point{0, 0},
+    renderSystem.rg.viewport, 1);
+
+  renderSystem.addComponent(pComponent_t(overlay));
+
+  double alpha = 0;
+  int nFrames = 20;
+  double t = 3.0;
+  double delta = 255.0 / nFrames;
+
+  m_fadeOutHandle = m_timeService.atIntervals([=]() mutable -> bool {
+    alpha += delta;
+    overlay->colour = QColor{0, 0, 0, static_cast<int>(alpha)};
+
+    return alpha < 255.0;
+  }, t / nFrames);
+
+  m_entityManager.broadcastEvent(GameEvent{"immobilise_player"});
+}
+
+//===========================================
+// GameLogic::onMidnight
+//===========================================
+void GameLogic::onMidnight() {
+  if (m_missionAccomplished) {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_BACK_TO_NORMAL)));
+  }
+  else {
+    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_T_MINUS_TWO_MINUTES)));
+  }
 }
 
 //===========================================
@@ -85,7 +136,13 @@ void GameLogic::updateTimer() {
   int seconds = m_timeRemaining % 60;
 
   std::stringstream ss;
-  ss << fnFormatTimePart(minutes) << ":" << fnFormatTimePart(seconds);
+
+  if (m_timeRemaining > -1) {
+    ss << "23:" << fnFormatTimePart(59 - minutes) << ":" << fnFormatTimePart(59 - seconds);
+  }
+  else {
+    ss << "00:00:00";
+  }
 
   auto& overlay = m_entityManager.getComponent<CTextOverlay>(m_entityId, ComponentKind::C_RENDER);
   overlay.text = ss.str();
@@ -101,12 +158,17 @@ void GameLogic::setupTimer() {
 
   m_timerHandle = m_timeService.atIntervals([this]() -> bool {
     m_timeRemaining--;
-    updateTimer();
 
-    return m_timeRemaining > 0;
+    updateTimer();
+    if (m_timeRemaining == -1) {
+      onMidnight();
+    }
+
+    return m_timeRemaining > -1;
   }, 1.0);
 
-  CTextOverlay* overlay = new CTextOverlay(m_entityId, "02:00", Point{0.0, 7.5}, 1.0, Qt::green, 1);
+  CTextOverlay* overlay = new CTextOverlay(m_entityId, "00:00:00", Point{0.0, 7.5}, 1.0, Qt::green,
+    2);
   renderSystem.centreTextOverlay(*overlay);
 
   renderSystem.addComponent(pComponent_t(overlay));
@@ -159,6 +221,7 @@ void GameLogic::useCovfefe() {
 //===========================================
 GameLogic::~GameLogic() {
   m_timeService.cancelTimeout(m_timerHandle);
+  m_timeService.cancelTimeout(m_fadeOutHandle);
 }
 
 

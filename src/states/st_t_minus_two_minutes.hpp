@@ -31,6 +31,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
       "fileBrowser2Launch"},
   };
   mainSpec->appDialogSpec0.setEnabled(true);
+  mainSpec->appDialogSpec0.name = "fileBrowser";
   mainSpec->appDialogSpec0.titleText = "File Browser";
   mainSpec->appDialogSpec0.width = 320;
   mainSpec->appDialogSpec0.height = 240;

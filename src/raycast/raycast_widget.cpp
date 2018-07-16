@@ -234,6 +234,19 @@ void RaycastWidget::initialise(const string& mapFile) {
   painter.drawText((SCREEN_WIDTH - 100) / 2, (SCREEN_HEIGHT - h) / 2, "Loading...");
 
   painter.end();
+
+  m_playerImmobilised = false;
+
+  m_entityId = Component::getNextId();
+  CEventHandler* events = new CEventHandler(m_entityId);
+  events->broadcastedEventHandlers.push_back(EventHandler{"immobilise_player",
+    [this](const GameEvent&) {
+
+    m_playerImmobilised = true;
+    uncaptureCursor();
+  }});
+
+  eventHandlerSystem->addComponent(pComponent_t(events));
 }
 
 //===========================================
@@ -276,11 +289,18 @@ void RaycastWidget::keyPressEvent(QKeyEvent* event) {
     DBG_PRINT("Frame rate = " << m_frameRate << "\n");
   }
   else if (event->key() == Qt::Key_Escape) {
-    m_cursorCaptured = false;
-    setCursor(m_defaultCursor);
-
-    m_entityManager.broadcastEvent(EMouseUncaptured{});
+    uncaptureCursor();
   }
+}
+
+//===========================================
+// RaycastWidget::uncaptureCursor
+//===========================================
+void RaycastWidget::uncaptureCursor() {
+  m_cursorCaptured = false;
+  setCursor(m_defaultCursor);
+
+  m_entityManager.broadcastEvent(EMouseUncaptured{});
 }
 
 //===========================================
@@ -298,7 +318,7 @@ void RaycastWidget::mousePressEvent(QMouseEvent* event) {
     m_mouseBtnState = true;
   }
 
-  if (!m_timer->isActive()) {
+  if (!m_timer->isActive() || m_playerImmobilised) {
     return;
   }
 
@@ -352,7 +372,7 @@ void RaycastWidget::tick() {
 
   m_timeService.update();
 
-  if (spatialSystem.sg.player->alive) {
+  if (spatialSystem.sg.player->alive && !m_playerImmobilised) {
     if (m_keyStates[Qt::Key_E]) {
       spatialSystem.jump();
     }
