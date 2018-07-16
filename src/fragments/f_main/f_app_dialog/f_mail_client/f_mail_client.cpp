@@ -41,11 +41,11 @@ const std::array<Email, 11> EMAILS = {{
     "Meeting to discuss y2k issue",
     "Brian Williams",
     "devteam",
-    "11/03/95 12:55:36",
+    "11/03/96 12:55:36",
 
     "M̨e̴eti͟ng ҉to d͜i̵sc̛u̕ss̀ y2ḱ i̛ssúe̸",
     "B̡r̸i̶a͘n ̨W̢iļl̸i̕a͠m҉s",
-    "11͟/̧03̧/̛95̷ ͠1̢2:͝5̷5̀:͏3͏6҉",
+    "11͟/̧03̧/̛96̷ ͠1̢2:͝5̷5̀:͏3͏6҉",
 
     // Message body
     //
@@ -63,11 +63,11 @@ const std::array<Email, 11> EMAILS = {{
     "Potentially dangerous app - remove ASAP",
     "Alan Shand",
     "devteam",
-    "12/03/95 13:06:44",
+    "12/03/96 13:06:44",
 
     "Pǫt̡entia҉l̵ly̕ ̢dangero͢u̵s̴ ͏app̡ ̕-͝ re̛m̴o͜vę A̕SAP",
     "Al̛a̕n S̵han̡ḑ",
-    "1̵2/͞0͜3̸/̛95͡ ́13:͘0͠6:4͜4",
+    "1̵2/͞0͜3̸/̛96͡ ́13:͘0͠6:4͜4",
 
     // Message body
     //
@@ -91,7 +91,7 @@ const std::array<Email, 11> EMAILS = {{
     "Quick question",
     "Alan Shand",
     "devteam",
-    "12/03/95 13:08:17",
+    "12/03/96 13:08:17",
 
     "Q͏uic͟k̢ q̷u͝e̛sţio͝ņ",
     "Àl͞a̴n̨ Sha̕nd",
@@ -113,11 +113,11 @@ const std::array<Email, 11> EMAILS = {{
     "Please Read",
     "Rob Jinman",
     "larry",
-    "12/03/95 13:22:20",
+    "12/03/96 13:22:20",
 
     "Please Read",
     "Rob Jinman",
-    "12/03/95 13:22:20",
+    "12/03/96 13:22:20",
 
     // Message body
     //
@@ -132,11 +132,11 @@ const std::array<Email, 11> EMAILS = {{
     "Mail server outage",
     "Richard Nelms",
     "all",
-    "12/03/95 14:01:23",
+    "12/03/96 14:01:23",
 
     "Mail server outage",
     "Richard Nelms",
-    "12/03/95 14:01:23",
+    "12/03/96 14:01:23",
 
     // Message body
     //
@@ -152,11 +152,11 @@ const std::array<Email, 11> EMAILS = {{
     "Larry?",
     "Daniel Bright",
     "Me",
-    "12/03/95 13:09:25",
+    "12/03/96 13:09:25",
 
     "L͝a͡rry̢?̛",
     "Dani̴el̨ B̀r̴ig̸h̸t̡",
-    "12/03́/͢9͡5҉ 13:̀09:̕25̶",
+    "12/03́/͢9͡6҉ 13:̀09:̕25̶",
 
     // Message body
     //
@@ -172,11 +172,11 @@ const std::array<Email, 11> EMAILS = {{
     "Re: Quick question",
     "Paul Gresham",
     "devteam",
-    "12/03/95 14:04:35",
+    "12/03/96 14:04:35",
 
     "Ŗe: ̨Q͟uick ̴q̛u̸esti͝ón̨",
     "Paul͢ ̨Gr͘es̵ham̷",
-    "12/̴03̧/95͢ 1̢4:0̕4̵:͝3̢5",
+    "12/̴03̧/96͢ 1̢4:0̕4̵:͝3̢5",
 
     // Message body
     //
@@ -194,11 +194,11 @@ const std::array<Email, 11> EMAILS = {{
     "Latest regarding Pro Office Calc",
     "Brian Williams",
     "devteam",
-    "12/03/95 16:20:09",
+    "12/03/96 16:20:09",
 
     "La̧tes҉t r͟eg̴ard͢iǹg Pr̡o ͏Of̕fíc͏e ͞Cal̛ç",
     "B̀ri̧a͘n̢ ̷W̷i̢l̕l̨i͞a̕ms̢",
-    "12/̧0҉3͢/̡9̶5 ̶1́6:̧2̨0͟:0̧9",
+    "12/̧0҉3͢/̡9̶6 ̶1́6:̧2̨0͟:0̧9",
 
     // Message body
     //
@@ -216,11 +216,11 @@ const std::array<Email, 11> EMAILS = {{
     "re: Latest regarding Pro Office Calc",
     "Michael Considine",
     "devteam",
-    "12/03/95 16:38:12",
+    "12/03/96 16:38:12",
 
     "r͟e͏: ҉Latest r͏e͞ga͢r͞dińg ͝P̛ro͠ O͡f̴fic͏e̴ ͝C͟a͝l͠c̀",
     "M̀i̧çha͜e͟l͡ ̵Con͢s͡id͜i҉n͡e",
-    "12/͡0͏3̧/95͘ ͠16:38:̀12",
+    "12/͡0͏3̧/96͘ ͠16:38:̀12",
 
     // Message body
     //
@@ -235,11 +235,11 @@ const std::array<Email, 11> EMAILS = {{
     "re: re: Latest regarding Pro Office Calc",
     "Brian Williams",
     "devteam",
-    "12/03/95 16:42:19",
+    "12/03/96 16:42:19",
 
     "re: re:͘ ̡Ļate̡s̢t ̴r̴e̶gar̴d͝ing̛ ͞P͠r͏ó O̴f҉f͜ice̴ Ca̵lc",
     "Br̨i̵an W̛i̴l͜l̴i̕am̷s͢",
-    "1̴2/0̀3/͡95̀ ́16:42:19",
+    "1̴2/0̀3/͡96̀ ́16:42:19",
 
     // Message body
     //
@@ -254,11 +254,11 @@ const std::array<Email, 11> EMAILS = {{
     "y2k issue",
     "Brian Williams",
     "devteam",
-    "12/03/95 17:10:58",
+    "12/03/96 17:10:58",
 
     "y2k issue",
     "Brian Williams",
-    "12/03/95 17:10:58",
+    "12/03/96 17:10:58",
 
     // Message body
     //
@@ -313,6 +313,10 @@ void FMailClient::reload(const FragmentSpec& spec_) {
   parentData.box->setSpacing(0);
   parentData.box->setContentsMargins(0, 0, 0, 0);
   parentData.box->addWidget(this);
+
+  QFont font = commonData.appConfig.normalFont;
+  font.setPointSize(11);
+  setFont(font);
 
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
   setLayout(m_data.vbox.get());

@@ -34,7 +34,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->troubleshooterDialogSpec.width = 400;
   mainSpec->troubleshooterDialogSpec.height = 300;
   //mainSpec->troubleshooterDialogSpec.glitchSpec.setEnabled(true);
-  //mainSpec->troubleshooterDialogSpec.tetrominosSpec.setEnabled(true);
+  mainSpec->troubleshooterDialogSpec.tetrominosSpec.setEnabled(true);
 
   return mainSpec;
 }

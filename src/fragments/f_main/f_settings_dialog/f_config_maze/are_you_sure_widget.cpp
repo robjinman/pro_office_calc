@@ -133,7 +133,7 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page1.widget->setMouseTracking(true);
 
   QFont font = appConfig.normalFont;
-  font.setPixelSize(14);
+  font.setPointSize(11);
   m_page1.widget->setFont(font);
 
   m_page1.grid = makeQtObjPtr<QGridLayout>();

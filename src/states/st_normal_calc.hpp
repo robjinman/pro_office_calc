@@ -14,7 +14,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->aboutDialogText = "";
   mainSpec->aboutDialogText += "<p align='center'><big>Pro Office Calculator</big>"
     "<br>Version 1.0.0</p>"
-    "<p align='center'>Copyright (c) 2017 Rob Jinman. All rights reserved.</p>"
+    "<p align='center'>Copyright (c) 2018 Rob Jinman. All rights reserved.</p>"
     "<i>" + QString::number(10 - appConfig.stateId) + "</i>";
   mainSpec->countdownToStartSpec.setEnabled(true);
   mainSpec->countdownToStartSpec.stateId = appConfig.stateId;

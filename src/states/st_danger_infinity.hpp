@@ -12,7 +12,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   FMainSpec* mainSpec = new FMainSpec;
   mainSpec->aboutDialogText += "<p align='center'><big>Pro Office Calculator</big>"
     "<br>Version 1.0.0</p>"
-    "<p align='center'>Copyright (c) 2017 Rob Jinman. All rights reserved.</p>"
+    "<p align='center'>Copyright (c) 2018 Rob Jinman. All rights reserved.</p>"
     "<font size=6>⚠∞</font>";
   mainSpec->calculatorSpec.setEnabled(true);
   mainSpec->calculatorSpec.normalCalcTriggerSpec.setEnabled(true);
