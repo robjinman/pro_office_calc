@@ -41,6 +41,7 @@ class GameLogic {
     EntityManager& m_entityManager;
 
     entityId_t m_entityId = -1;
+    int m_switchSoundId = -1;
 };
 
 

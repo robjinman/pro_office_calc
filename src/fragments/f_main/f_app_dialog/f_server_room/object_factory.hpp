@@ -34,6 +34,8 @@ class ObjectFactory : public GameObjectFactory {
     AudioService& m_audioService;
     CalculatorWidget& m_wgtCalculator;
 
+    int m_electricitySoundId = -1;
+
     bool constructBigScreen(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
     bool constructCalculator(entityId_t entityId, parser::Object& obj, entityId_t parentId,

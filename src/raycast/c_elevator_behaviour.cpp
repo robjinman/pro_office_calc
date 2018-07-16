@@ -43,18 +43,18 @@ CElevatorBehaviour::CElevatorBehaviour(entityId_t entityId, EntityManager& entit
 //===========================================
 // CElevatorBehaviour::playSound
 //===========================================
-void CElevatorBehaviour::playSound() const {
+void CElevatorBehaviour::playSound() {
   CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
   const Point& pos = zone.edges.front()->lseg.A;
 
-  m_audioService.playSoundAtPos("elevator", pos, true);
+  m_soundId = m_audioService.playSoundAtPos("elevator", pos, true);
 }
 
 //===========================================
 // CElevatorBehaviour::stopSound
 //===========================================
 void CElevatorBehaviour::stopSound() const {
-  m_audioService.stopSound("elevator");
+  m_audioService.stopSound("elevator", m_soundId);
 }
 
 //===========================================

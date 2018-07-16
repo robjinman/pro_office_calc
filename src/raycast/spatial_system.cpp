@@ -892,6 +892,7 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
     inRadius.insert(player.body);
 
     m_entityManager.fireEvent(e, inRadius);
+    m_entityManager.broadcastEvent(e);
   }
 }
 

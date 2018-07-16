@@ -35,7 +35,7 @@ class CElevatorBehaviour : public CBehaviour {
     void setSpeed(double speed);
 
   private:
-    void playSound() const;
+    void playSound();
     void stopSound() const;
 
     enum state_t {
@@ -50,6 +50,7 @@ class CElevatorBehaviour : public CBehaviour {
     int m_target = 0;
     double m_speed = 60.0;
     std::vector<double> m_levels;
+    int m_soundId = -1;
 };
 
 

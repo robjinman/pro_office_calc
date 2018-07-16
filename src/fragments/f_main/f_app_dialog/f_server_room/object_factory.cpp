@@ -156,7 +156,7 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
       [=, &animationSystem](const GameEvent& e) {
 
       animationSystem.playAnimation(entityId, "explode", false);
-      m_audioService.playSound("electricity");
+      m_electricitySoundId = m_audioService.playSound("electricity");
       m_entityManager.broadcastEvent(GameEvent("server_destroyed"));
     }});
     handlers->targetedEventHandlers.push_back(EventHandler{"animation_finished",
@@ -164,7 +164,7 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
 
       auto& e = dynamic_cast<const EAnimationFinished&>(e_);
       if (e.animName == "explode") {
-        m_audioService.stopSound("electricity");
+        m_audioService.stopSound("electricity", m_electricitySoundId);
       }
     }});
     eventHandlerSystem.addComponent(pComponent_t(handlers));

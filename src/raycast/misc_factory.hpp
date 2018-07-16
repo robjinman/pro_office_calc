@@ -43,6 +43,8 @@ class MiscFactory : public GameObjectFactory {
       const Matrix& parentTransform);
     bool constructWater(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+    bool constructSoundSource(entityId_t entityId, parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
 };
 
 

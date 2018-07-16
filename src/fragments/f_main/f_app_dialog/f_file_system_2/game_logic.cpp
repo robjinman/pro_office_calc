@@ -65,6 +65,9 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
 
     m_entityManager.deleteEntity(Component::getIdFromString("covfefe"));
     focusSystem.showCaption(m_entityId);
+
+    m_entityManager.fireEvent(GameEvent{"disable_sound_source"},
+      { Component::getIdFromString("machine_sound") });
   }});
   events->broadcastedEventHandlers.push_back(EventHandler{"switch_activated",
     [this](const GameEvent& e_) {

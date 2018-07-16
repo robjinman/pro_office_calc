@@ -9,6 +9,24 @@
 using std::make_pair;
 using std::string;
 using std::unique_ptr;
+using std::array;
+
+
+static int nextId = 0;
+
+
+//===========================================
+// indexForId
+//===========================================
+static int indexForId(const array<int, CONCURRENT_SOUNDS>& ids, int id) {
+  for (int i = 0; i < CONCURRENT_SOUNDS; ++i) {
+    if (ids[i] == id) {
+      return i;
+    }
+  }
+
+  return -1;
+}
 
 
 //===========================================
@@ -25,14 +43,29 @@ AudioService::AudioService(EntityManager& entityManager, TimeService& timeServic
 }
 
 //===========================================
+// AudioService::nextAvailable
+//===========================================
+int AudioService::nextAvailable(const array<QSoundEffect, CONCURRENT_SOUNDS>& sounds) {
+  for (int i = 0; i < CONCURRENT_SOUNDS; ++i) {
+    if (!sounds[i].isPlaying()) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+//===========================================
 // AudioService::addSound
 //===========================================
 void AudioService::addSound(const string& name, const string& resourcePath) {
   pSoundEffect_t sound(new SoundEffect);
 
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
-  sound->sound[0].setSource(QUrl::fromLocalFile(absPath));
-  sound->sound[1].setSource(QUrl::fromLocalFile(absPath));
+
+  for (int i = 0; i < CONCURRENT_SOUNDS; ++i) {
+    sound->sound[i].setSource(QUrl::fromLocalFile(absPath));
+  }
 
   m_sounds.insert(make_pair(name, std::move(sound)));
 }
@@ -40,12 +73,15 @@ void AudioService::addSound(const string& name, const string& resourcePath) {
 //===========================================
 // AudioService::soundIsPlaying
 //===========================================
-bool AudioService::soundIsPlaying(const string& name) const {
+bool AudioService::soundIsPlaying(const string& name, int id) const {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    return sound.sound[0].isPlaying() || sound.sound[1].isPlaying();
+    int idx = indexForId(sound.soundIds, id);
+    if (idx != -1) {
+      return sound.sound[idx].isPlaying();
+    }
   }
 
   return false;
@@ -62,36 +98,46 @@ void AudioService::addMusicTrack(const string& name, const string& resourcePath)
 //===========================================
 // AudioService::playSound
 //===========================================
-void AudioService::playSound(const string& name, bool loop) {
+int AudioService::playSound(const string& name, bool loop) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    int i = sound.sound[0].isPlaying() ? 1 : 0;
+    int i = nextAvailable(sound.sound);
 
-    sound.sound[i].setVolume(m_masterVolume * sound.volume);
-    sound.sound[i].setLoopCount(loop ? QSoundEffect::Infinite : 0);
-    sound.sound[i].play();
+    if (i != -1) {
+      sound.sound[i].setVolume(m_masterVolume * sound.volume);
+      sound.sound[i].setLoopCount(loop ? QSoundEffect::Infinite : 0);
+      sound.sound[i].play();
+
+      long id = ++nextId;
+      sound.soundIds[i] = id;
+      return id;
+    }
   }
+
+  return -1;
 }
 
 //===========================================
 // AudioService::stopSound
 //===========================================
-void AudioService::stopSound(const string& name) {
+void AudioService::stopSound(const string& name, int id) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
 
-    sound.sound[0].stop();
-    sound.sound[1].stop();
+    int idx = indexForId(sound.soundIds, id);
+    if (idx != -1) {
+      sound.sound[idx].stop();
+    }
   }
 }
 
 //===========================================
 // AudioService::playSoundAtPos
 //===========================================
-void AudioService::playSoundAtPos(const string& name, const Point& pos, bool loop) {
+int AudioService::playSoundAtPos(const string& name, const Point& pos, bool loop) {
   auto it = m_sounds.find(name);
   if (it != m_sounds.end()) {
     SoundEffect& sound = *it->second;
@@ -102,12 +148,20 @@ void AudioService::playSoundAtPos(const string& name, const Point& pos, bool loo
     double d = distance(spatialSystem.sg.player->pos(), pos);
     double v = 1.0 - clipNumber(d, Range(0, 2000)) / 2000;
 
-    int i = sound.sound[0].isPlaying() ? 1 : 0;
+    int i = nextAvailable(sound.sound);
 
-    sound.sound[i].setVolume(m_masterVolume * sound.volume * v);
-    sound.sound[i].setLoopCount(loop ? QSoundEffect::Infinite : 0);
-    sound.sound[i].play();
+    if (i != -1) {
+      sound.sound[i].setVolume(m_masterVolume * sound.volume * v);
+      sound.sound[i].setLoopCount(loop ? QSoundEffect::Infinite : 0);
+      sound.sound[i].play();
+
+      long id = ++nextId;
+      sound.soundIds[i] = id;
+      return id;
+    }
   }
+
+  return -1;
 }
 
 //===========================================

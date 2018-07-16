@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <array>
+#include <map>
 #include <QSoundEffect>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -12,8 +13,14 @@
 #include "raycast/geometry.hpp"
 
 
+// Number of instances of each sound effect
+const int CONCURRENT_SOUNDS = 8;
+
+
 struct SoundEffect {
-  std::array<QSoundEffect, 2> sound;
+  std::array<QSoundEffect, CONCURRENT_SOUNDS> sound;
+  std::array<int, CONCURRENT_SOUNDS> soundIds;
+
   double volume = 1.0;
 };
 
@@ -29,10 +36,10 @@ class AudioService {
     void addSound(const std::string& name, const std::string& resourcePath);
     void addMusicTrack(const std::string& name, const std::string& resourcePath);
 
-    void playSound(const std::string& name, bool loop = false);
-    void playSoundAtPos(const std::string& name, const Point& pos, bool loop = false);
-    void stopSound(const std::string& name);
-    bool soundIsPlaying(const std::string& name) const;
+    int playSound(const std::string& name, bool loop = false);
+    int playSoundAtPos(const std::string& name, const Point& pos, bool loop = false);
+    void stopSound(const std::string& name, int id);
+    bool soundIsPlaying(const std::string& name, int id) const;
 
     void playMusic(const std::string& name, bool loop, double fadeDuration = -1);
     void stopMusic(double fadeDuration = -1);
@@ -41,6 +48,8 @@ class AudioService {
     void setMasterVolume(double volume);
 
   private:
+    int nextAvailable(const std::array<QSoundEffect, CONCURRENT_SOUNDS>& sounds);
+
     EntityManager& m_entityManager;
     TimeService& m_timeService;
     QMediaPlayer m_mediaPlayer;

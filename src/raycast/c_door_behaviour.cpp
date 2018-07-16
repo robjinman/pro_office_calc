@@ -40,18 +40,18 @@ void CDoorBehaviour::setPauseTime(double t) {
 //===========================================
 // CDoorBehaviour::playSound
 //===========================================
-void CDoorBehaviour::playSound() const {
+void CDoorBehaviour::playSound() {
   CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
   const Point& pos = zone.edges.front()->lseg.A;
 
-  m_audioService.playSoundAtPos("door", pos, true);
+  m_soundId = m_audioService.playSoundAtPos("door", pos, true);
 }
 
 //===========================================
 // CDoorBehaviour::stopSound
 //===========================================
 void CDoorBehaviour::stopSound() const {
-  m_audioService.stopSound("door");
+  m_audioService.stopSound("door", m_soundId);
 }
 
 //===========================================

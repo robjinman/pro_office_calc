@@ -151,11 +151,11 @@ void GameLogic::onSwitchActivated(const GameEvent& e_) {
 
   if (e.switchEntityId == switch0Id) {
     switch1.disabled = false;
-    m_audioService.playSound("tick");
+    m_switchSoundId = m_audioService.playSound("tick");
 
     m_timeService.onTimeout([this]() {
       resetSwitches();
-      m_audioService.stopSound("tick");
+      m_audioService.stopSound("tick", m_switchSoundId);
     }, TIME_LIMIT);
   }
   else if (e.switchEntityId == switch1Id) {
@@ -165,7 +165,7 @@ void GameLogic::onSwitchActivated(const GameEvent& e_) {
     switch3.disabled = false;
   }
   else if (e.switchEntityId == switch3Id) {
-    m_audioService.stopSound("tick");
+    m_audioService.stopSound("tick", m_switchSoundId);
   }
 }
 

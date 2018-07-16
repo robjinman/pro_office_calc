@@ -17,6 +17,7 @@
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/c_elevator_behaviour.hpp"
 #include "raycast/c_switch_behaviour.hpp"
+#include "raycast/c_sound_source_behaviour.hpp"
 #include "raycast/audio_service.hpp"
 #include "raycast/time_service.hpp"
 #include "exception.hpp"
@@ -67,7 +68,8 @@ const set<string>& MiscFactory::types() const {
     "spawn_point",
     "collectable_item",
     "computer_screen",
-    "water"
+    "water",
+    "sound_source"
   };
   return types;
 }
@@ -350,6 +352,33 @@ bool MiscFactory::constructWater(entityId_t entityId, parser::Object& obj, entit
 }
 
 //===========================================
+// MiscFactory::constructSoundSource
+//===========================================
+bool MiscFactory::constructSoundSource(entityId_t entityId, parser::Object& obj,
+  entityId_t parentId, const Matrix& parentTransform) {
+
+  auto& behaviourSystem = m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
+
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  string name = GET_VALUE(obj.dict, "sound");
+  double radius = std::stod(GET_VALUE(obj.dict, "radius"));
+
+  Matrix m = transformFromTriangle(obj.path);
+  Matrix worldM = parentTransform * obj.groupTransform * obj.pathTransform * m;
+
+  Point pos{worldM.tx(), worldM.ty()};
+
+  CSoundSourceBehaviour* behaviour = new CSoundSourceBehaviour(entityId, name, pos, radius,
+    m_audioService);
+  behaviourSystem.addComponent(pComponent_t(behaviour));
+
+  return true;
+}
+
+//===========================================
 // MiscFactory::constructObject
 //===========================================
 bool MiscFactory::constructObject(const string& type, entityId_t entityId, parser::Object& obj,
@@ -378,6 +407,9 @@ bool MiscFactory::constructObject(const string& type, entityId_t entityId, parse
   }
   else if (type == "water") {
     return constructWater(entityId, obj, parentId, parentTransform);
+  }
+  else if (type == "sound_source") {
+    return constructSoundSource(entityId, obj, parentId, parentTransform);
   }
 
   return false;

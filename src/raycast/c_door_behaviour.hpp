@@ -73,8 +73,9 @@ class CDoorBehaviour : public CBehaviour {
     double m_y0;
     double m_y1;
     Debouncer m_timer;
+    int m_soundId = -1;
 
-    void playSound() const;
+    void playSound();
     void stopSound() const;
 };
 
