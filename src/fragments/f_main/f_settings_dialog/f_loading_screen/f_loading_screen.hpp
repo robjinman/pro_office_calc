@@ -6,9 +6,12 @@
 #include <QLabel>
 #include <QMargins>
 #include "fragment.hpp"
+#include "qt_obj_ptr.hpp"
 
 
-struct FLoadingScreenData : public FragmentData {};
+struct FLoadingScreenData : public FragmentData {
+  QtObjPtr<QLabel> label;
+};
 
 class FLoadingScreen : public QLabel, public Fragment {
   Q_OBJECT

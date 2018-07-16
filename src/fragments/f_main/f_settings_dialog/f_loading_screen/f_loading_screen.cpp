@@ -21,6 +21,8 @@ FLoadingScreen::FLoadingScreen(Fragment& parent_, FragmentData& parentData_,
 void FLoadingScreen::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FLoadingScreen::reload\n");
 
+  auto& spec = dynamic_cast<const FLoadingScreenSpec&>(spec_);
+
   auto& parentData = parentFragData<FSettingsDialogData>();
 
   m_origParentState.spacing = parentData.vbox->spacing();
@@ -29,6 +31,21 @@ void FLoadingScreen::reload(const FragmentSpec& spec_) {
   parentData.vbox->setSpacing(0);
   parentData.vbox->setContentsMargins(0, 0, 0, 0);
   parentData.vbox->addWidget(this);
+
+  updateGeometry();
+
+  m_data.label = makeQtObjPtr<QLabel>(this);
+  m_data.label->setText(spec.targetValue.c_str());
+
+  QPalette p = m_data.label->palette();
+  p.setColor(QPalette::WindowText, Qt::white);
+  m_data.label->setPalette(p);
+
+  QFont font = m_data.label->font();
+  font.setPixelSize(20);
+  m_data.label->setFont(font);
+
+  m_data.label->move(168, 59);
 }
 
 //===========================================

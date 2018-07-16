@@ -40,7 +40,6 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
     "  <img src='" + appConfig.dataPath("common/images/apex.png").c_str() + "'>"
     "  <p align='center'><big>P̸ro͡ ͏Office͟ ̀Ca͘l̶cu҉l̴at͘or̛</big>"
     "  <br>V̧e̶r̷s̷i͡o̕n 9̸.͘99͠.͞9̴9͘9̨</p>"
-    "  <p align='center'>" + targetValue.c_str() + "</p>"
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
   mainSpec->settingsDialogSpec.setEnabled(true);
@@ -50,6 +49,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
     appConfig.dataPath("shuffled_keys/loading.png").c_str();
   mainSpec->settingsDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->settingsDialogSpec.loadingScreenSpec.setEnabled(true);
+  mainSpec->settingsDialogSpec.loadingScreenSpec.targetValue = targetValue;
 
   return mainSpec;
 }
