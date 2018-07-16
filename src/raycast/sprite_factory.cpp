@@ -155,7 +155,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
     // Number of frames in sprite sheet
     const int W = 8;
-    const int H = 13;
+    const int H = 14;
 
     CAnimation* anim = new CAnimation(entityId);
 
@@ -166,6 +166,14 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     frames = constructFrames(W, H, { 0 });
     anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0, frames)));
 
+    frames = {{
+      AnimationFrame{{QRectF{0.0 / W, 13.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{1.0 / W, 13.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{2.0 / W, 13.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{3.0 / W, 13.0 / H, 1.0 / W, 1.0 / H}}},
+    }};
+    anim->addAnimation(pAnimation_t(new Animation("death", m_timeService.frameRate, 0.5, frames)));
+
     animationSystem.addComponent(pComponent_t(anim));
     animationSystem.playAnimation(entityId, "idle", true);
 
@@ -174,9 +182,9 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
     CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
 
-    CEventHandler* takeDamage = new CEventHandler(entityId);
-    takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &spatialSystem, &vRect](const GameEvent&) {
+    CEventHandler* events = new CEventHandler(entityId);
+    events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
+      [=, &animationSystem, &spatialSystem, &agentSystem, &vRect](const GameEvent&) {
 
       DBG_PRINT("Civilian health: " << damage->health << "\n");
       //animationSystem.playAnimation(entityId, "hurt", false);
@@ -191,13 +199,23 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
           spatialSystem.relocateEntity(itemId, *body.zone, body.pos);
         }
 
-        m_entityManager.deleteEntity(entityId);
+        agentSystem.removeEntity(entityId);
+        animationSystem.playAnimation(entityId, "death", false);
       }
       else {
         m_audioService.playSoundAtPos("civilian_hurt", vRect.pos);
       }
     }});
-    eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+    events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
+      [this, entityId](const GameEvent& e_) {
+
+      auto& e = dynamic_cast<const EAnimationFinished&>(e_);
+      if (e.animName == "death") {
+        m_entityManager.deleteEntity(entityId);
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
 
     CAgent* agent = new CAgent(entityId);
     agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
@@ -253,7 +271,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     // Number of frames in sprite sheet
     const int W = 8;
-    const int H = 14;
+    const int H = 15;
 
     CAnimation* anim = new CAnimation(entityId);
 
@@ -266,6 +284,14 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     frames = constructFrames(W, H, { 0 });
     anim->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0, frames)));
+
+    frames = {{
+      AnimationFrame{{QRectF{0.0 / W, 14.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{1.0 / W, 14.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{2.0 / W, 14.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{3.0 / W, 14.0 / H, 1.0 / W, 1.0 / H}}},
+    }};
+    anim->addAnimation(pAnimation_t(new Animation("death", m_timeService.frameRate, 0.5, frames)));
 
     animationSystem.addComponent(pComponent_t(anim));
     animationSystem.playAnimation(entityId, "idle", true);
@@ -288,9 +314,9 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
     CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
 
-    CEventHandler* takeDamage = new CEventHandler(entityId);
-    takeDamage->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &vRect](const GameEvent& e) {
+    CEventHandler* events = new CEventHandler(entityId);
+    events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
+      [=, &animationSystem, &agentSystem, &vRect](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
 
@@ -300,18 +326,27 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 
         if (damage->health == 0) {
           m_audioService.playSoundAtPos("monster_death", vRect.pos);
-          m_entityManager.deleteEntity(entityId);
+          agentSystem.removeEntity(entityId);
+          animationSystem.playAnimation(entityId, "death", false);
         }
         else {
           m_audioService.playSoundAtPos("monster_hurt", vRect.pos);
         }
       }
     }});
-    eventHandlerSystem.addComponent(pComponent_t(takeDamage));
+    events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
+      [this, entityId](const GameEvent& e_) {
+
+      auto& e = dynamic_cast<const EAnimationFinished&>(e_);
+      if (e.animName == "death") {
+        m_entityManager.deleteEntity(entityId);
+      }
+    }});
+    eventHandlerSystem.addComponent(pComponent_t(events));
 
     CAgent* agent = new CAgent(entityId);
 
-    agent->isHostile = true;
+    agent->isHostile = false;
     agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
     agent->stChasingTrigger = getValue(obj.dict, "st_chasing_trigger", "");
 

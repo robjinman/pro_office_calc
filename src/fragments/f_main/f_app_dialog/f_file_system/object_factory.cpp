@@ -62,19 +62,21 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
 
     CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
 
+    double H = 2.0;
     double W = 8.0;
     double dW = 1.0 / W;
 
-    sprite.texViews = {
-      QRectF(dW * 0.0, 0, dW, 1),
-      QRectF(dW * 1.0, 0, dW, 1),
-      QRectF(dW * 2.0, 0, dW, 1),
-      QRectF(dW * 3.0, 0, dW, 1),
-      QRectF(dW * 4.0, 0, dW, 1),
-      QRectF(dW * 5.0, 0, dW, 1),
-      QRectF(dW * 6.0, 0, dW, 1),
-      QRectF(dW * 7.0, 0, dW, 1)
+    vector<QRectF> texViews = {
+      QRectF(dW * 0.0, 0, dW, 1.0 / H),
+      QRectF(dW * 1.0, 0, dW, 1.0 / H),
+      QRectF(dW * 2.0, 0, dW, 1.0 / H),
+      QRectF(dW * 3.0, 0, dW, 1.0 / H),
+      QRectF(dW * 4.0, 0, dW, 1.0 / H),
+      QRectF(dW * 5.0, 0, dW, 1.0 / H),
+      QRectF(dW * 6.0, 0, dW, 1.0 / H),
+      QRectF(dW * 7.0, 0, dW, 1.0 / H)
     };
+    sprite.texViews = texViews;
 
     CDamage* damage = new CDamage(entityId, 2, 2);
     damageSystem.addComponent(pComponent_t(damage));
@@ -82,6 +84,18 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = name.replace(0, 1, 1, asciiToUpper(name[0]));
     focusSystem.addComponent(pComponent_t(focus));
+
+    CAnimation* anim = new CAnimation(entityId);
+
+    vector<AnimationFrame> frames{{
+      AnimationFrame{{QRectF{0.0 / W, 1.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{1.0 / W, 1.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{2.0 / W, 1.0 / H, 1.0 / W, 1.0 / H}}},
+      AnimationFrame{{QRectF{3.0 / W, 1.0 / H, 1.0 / W, 1.0 / H}}},
+    }};
+    anim->addAnimation(pAnimation_t(new Animation("death", m_timeService.frameRate, 0.5, frames)));
+
+    animationSystem.addComponent(pComponent_t(anim));
 
     CEventHandler* events = new CEventHandler(entityId);
 
@@ -111,18 +125,27 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
       CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId));
 
       DBG_PRINT("Jeff health: " << damage->health << "\n");
-      animationSystem.playAnimation(entityId, "hurt", false);
+      //animationSystem.playAnimation(entityId, "hurt", false);
 
       if (damage->health == 0) {
         m_audioService.playSoundAtPos("civilian_death", body.pos);
+        animationSystem.playAnimation(entityId, "death", false);
+      }
+      else {
+        m_audioService.playSoundAtPos("civilian_hurt", body.pos);
+      }
+    }});
+    events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
+      [=, &spatialSystem, &sprite](const GameEvent& e_) {
 
+      auto& e = dynamic_cast<const EAnimationFinished&>(e_);
+      if (e.animName == "death") {
         entityId_t spawnPointId = Component::getIdFromString("jeff_spawn_point");
         CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
 
         spatialSystem.relocateEntity(entityId, *spawnPoint.zone, spawnPoint.pos);
-      }
-      else {
-        m_audioService.playSoundAtPos("civilian_hurt", body.pos);
+
+        sprite.texViews = texViews;
       }
     }});
 
@@ -172,7 +195,7 @@ bool ObjectFactory::constructDonald(entityId_t entityId, parser::Object& obj, en
 
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = "Donald";
-    focus->captionText = "You seen my product? Great product. The best.";
+    focus->captionText = "Have you seen my product? It's a great product.";
     focusSystem.addComponent(pComponent_t(focus));
 
     CEventHandler* events = new CEventHandler(entityId);
