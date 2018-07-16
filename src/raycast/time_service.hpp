@@ -10,6 +10,7 @@
 
 struct Tween {
   // Args: frame, elapsed, frameRate
+  // Returns true to continue, false to finish
   std::function<bool(long, double, double)> tick;
   std::function<void(long, double, double)> finish;
 };

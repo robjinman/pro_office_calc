@@ -49,7 +49,7 @@ RaycastWidget::RaycastWidget(const AppConfig& appConfig, EventSystem& eventSyste
     m_appConfig(appConfig),
     m_eventSystem(eventSystem),
     m_timeService(FRAME_RATE),
-    m_audioService(m_entityManager) {}
+    m_audioService(m_entityManager, m_timeService) {}
 
 //===========================================
 // RaycastWidget::loadTextures

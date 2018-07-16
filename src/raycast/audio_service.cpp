@@ -3,6 +3,7 @@
 #include "raycast/audio_service.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
+#include "raycast/time_service.hpp"
 
 
 using std::make_pair;
@@ -13,8 +14,9 @@ using std::unique_ptr;
 //===========================================
 // AudioService::AudioService
 //===========================================
-AudioService::AudioService(EntityManager& entityManager)
-  : m_entityManager(entityManager) {
+AudioService::AudioService(EntityManager& entityManager, TimeService& timeService)
+  : m_entityManager(entityManager),
+    m_timeService(timeService) {
 
   m_musicVolume = 0.5;
   setMasterVolume(0.5);
@@ -111,7 +113,9 @@ void AudioService::playSoundAtPos(const string& name, const Point& pos, bool loo
 //===========================================
 // AudioService::playMusic
 //===========================================
-void AudioService::playMusic(const string& name, bool loop) {
+void AudioService::playMusic(const string& name, bool loop, double fadeDuration) {
+  // TODO: Fade
+
   auto it = m_musicTracks.find(name);
 
   if (it != m_musicTracks.end()) {
@@ -126,8 +130,22 @@ void AudioService::playMusic(const string& name, bool loop) {
 //===========================================
 // AudioService::stopMusic
 //===========================================
-void AudioService::stopMusic() {
-  m_mediaPlayer.stop();
+void AudioService::stopMusic(double fadeDuration) {
+  if (fadeDuration <= 0.0) {
+    m_mediaPlayer.stop();
+    return;
+  }
+
+  double delta = m_musicVolume / (fadeDuration * m_timeService.frameRate);
+
+  Tween tween{[this, delta](long, double, double) -> bool {
+    setMusicVolume(m_musicVolume - delta);
+    return m_musicVolume > 0.0;
+  }, [this](long, double, double) {
+    m_mediaPlayer.stop();
+  }};
+
+  m_timeService.addTween(std::move(tween));
 }
 
 //===========================================

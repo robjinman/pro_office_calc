@@ -20,10 +20,11 @@ struct SoundEffect {
 typedef std::unique_ptr<SoundEffect> pSoundEffect_t;
 
 class EntityManager;
+class TimeService;
 
 class AudioService {
   public:
-    AudioService(EntityManager& entityManager);
+    AudioService(EntityManager& entityManager, TimeService& timeService);
 
     void addSound(const std::string& name, const std::string& resourcePath);
     void addMusicTrack(const std::string& name, const std::string& resourcePath);
@@ -33,14 +34,15 @@ class AudioService {
     void stopSound(const std::string& name);
     bool soundIsPlaying(const std::string& name) const;
 
-    void playMusic(const std::string& name, bool loop = true);
-    void stopMusic();
+    void playMusic(const std::string& name, bool loop, double fadeDuration = -1);
+    void stopMusic(double fadeDuration = -1);
     void setMusicVolume(double volume);
 
     void setMasterVolume(double volume);
 
   private:
     EntityManager& m_entityManager;
+    TimeService& m_timeService;
     QMediaPlayer m_mediaPlayer;
     QMediaPlaylist m_playlist;
     std::map<std::string, pSoundEffect_t> m_sounds;

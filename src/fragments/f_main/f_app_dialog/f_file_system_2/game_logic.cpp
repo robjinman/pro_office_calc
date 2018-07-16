@@ -164,6 +164,10 @@ void GameLogic::setupTimer() {
       onMidnight();
     }
 
+    if (m_timeRemaining == 4) {
+      m_audioService.stopMusic(4);
+    }
+
     return m_timeRemaining > -1;
   }, 1.0);
 
