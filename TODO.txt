@@ -1,7 +1,6 @@
 MUST DO
 - Adjust dates wherever they appear
 - Are You Sure - Backgrounds for config maze
-- Making Progress - Adjust difficulty
 
 NICE TO HAVE
 - Transition from It's Raining Tetrominos to Making Progress

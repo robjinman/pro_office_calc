@@ -132,6 +132,10 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page1.widget = makeQtObjPtr<QWidget>();
   m_page1.widget->setMouseTracking(true);
 
+  QFont font = appConfig.normalFont;
+  font.setPixelSize(14);
+  m_page1.widget->setFont(font);
+
   m_page1.grid = makeQtObjPtr<QGridLayout>();
   m_page1.widget->setLayout(m_page1.grid.get());
 
@@ -234,10 +238,15 @@ void AreYouSureWidget::nextQuestion() {
   if (m_count < NUM_QUESTIONS) {
     string question;
 
-    while (question.length() == 0 || question.length() > 300) {
-      question = m_templates.at("question").generate(m_templates, 6 + m_count);
-      question.pop_back();
-      question.push_back('?');
+    if (m_count == 0) {
+      question = "Are you sure you want to continue?";
+    }
+    else {
+      while (question.length() == 0 || question.length() > 300) {
+        question = m_templates.at("question").generate(m_templates, 6 + m_count);
+        question.pop_back();
+        question.push_back('?');
+      }
     }
 
     DBG_PRINT((numNegatives(question) % 2 ? "N\n" : "Y\n"));

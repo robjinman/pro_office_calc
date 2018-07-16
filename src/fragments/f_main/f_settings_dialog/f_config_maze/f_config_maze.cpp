@@ -177,7 +177,10 @@ void FConfigMaze::reload(const FragmentSpec& spec_) {
     m_data.stackedLayout->addWidget(m_data.pages[i].get());
   }
 
-  m_data.stackedLayout->setCurrentIndex(m_layoutIdxOfFirstConfigPage + 1);
+  // Skipping the config maze because it's boring
+  //
+  //m_data.stackedLayout->setCurrentIndex(m_layoutIdxOfFirstConfigPage + 1);
+  m_data.stackedLayout->setCurrentIndex(m_layoutIdxOfConsoleLaunchPage);
 }
 
 //===========================================
