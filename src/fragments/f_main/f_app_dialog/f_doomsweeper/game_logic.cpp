@@ -87,8 +87,6 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
     auto& e = dynamic_cast<const ECellDoorOpened&>(e_);
     onCellDoorOpened(e.cellId);
   }});
-  events->broadcastedEventHandlers.push_back(EventHandler{"player_death",
-    std::bind(&GameLogic::onPlayerDeath, this, std::placeholders::_1)});
 
   eventHandlerSystem.addComponent(pComponent_t(events));
 }
@@ -443,15 +441,6 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
 
     m_initialised = true;
   });
-}
-
-//===========================================
-// GameLogic::onPlayerDeath
-//===========================================
-void GameLogic::onPlayerDeath(const GameEvent&) {
-  m_timeService.onTimeout([this]() {
-    m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_DOOMSWEEPER)));
-  }, 1.0);
 }
 
 //===========================================

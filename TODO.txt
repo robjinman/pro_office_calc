@@ -6,14 +6,12 @@ MUST DO
 - Civilian hurt and death animations
 - It's Raining Tetrominos - Add name or icon to tab displaying raycast widget
 - Making Progress - Adjust difficulty
-- T Minus Two Minutes - Create map
 
 NICE TO HAVE
 - Transition from It's Raining Tetrominos to Making Progress
 - It's Raining Tetrominos - Add sound effect for machine
 - Transition between Making Progress and You've Got Mail
 - You've Got Mail - Extend the area leading the Larry's computer, and make it clearer that you're looking through his screen.
-- You've Got Mail - Display Larry's name somewhere
 
 
 Possible engine features
@@ -22,4 +20,3 @@ Possible engine features
 - Ceiling decals
 - Translucent walls & walls with holes
 - Sprite projectiles, e.g. fire balls
-
