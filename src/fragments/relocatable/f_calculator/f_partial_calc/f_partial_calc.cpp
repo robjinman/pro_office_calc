@@ -33,8 +33,8 @@ static const std::map<buttonId_t, BtnDesc> EVASIVE_BTNS = {
 
 static const std::map<buttonId_t, BtnDesc> EXPLODING_BTNS = {
   { BTN_THREE, { "3", 3, 3, 2 } },
+  { BTN_MINUS, { "-", 11, 3, 3 } },
   { BTN_POINT, { ".", 14, 4, 1 } },
-  { BTN_DIVIDE, { "/", 13, 1, 3 } }
 };
 
 //===========================================

@@ -114,8 +114,8 @@ void FProcalcSetup::populateListWidget() {
   addCheckableItem(wgtList, "Number 8", BTN_EIGHT);
   addCheckableItem(wgtList, "Number 9", BTN_NINE);
   addCheckableItem(wgtList, "Addition operator", BTN_PLUS);
-  addCheckableItem(wgtList, "Subtraction operator", BTN_MINUS);
   addCheckableItem(wgtList, "Multiplication operator", BTN_TIMES);
+  addCheckableItem(wgtList, "Division operator", BTN_DIVIDE);
   addCheckableItem(wgtList, "Clear button", BTN_CLEAR);
   addSpaceItem(wgtList);
   addHeaderItem(wgtList, "Advanced features");
@@ -123,8 +123,8 @@ void FProcalcSetup::populateListWidget() {
   addSpaceItem(wgtList);
   addHeaderItem(wgtList, "Experimental features");
   addCheckableItem(wgtList, "Number 3", BTN_THREE);
+  addCheckableItem(wgtList, "Subtraction operator", BTN_MINUS);
   addCheckableItem(wgtList, "Decimal point", BTN_POINT);
-  addCheckableItem(wgtList, "Division operator", BTN_DIVIDE);
 }
 
 //===========================================

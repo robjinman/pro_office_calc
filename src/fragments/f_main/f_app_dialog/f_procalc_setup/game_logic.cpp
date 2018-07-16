@@ -146,8 +146,8 @@ void GameLogic::setElevatorSpeed() {
   CElevatorBehaviour& elevator =
     m_entityManager.getComponent<CElevatorBehaviour>(elevatorId, ComponentKind::C_BEHAVIOUR);
 
-  const double MIN_SPEED = 2;
-  const double MAX_SPEED = 12;
+  const double MIN_SPEED = 6;
+  const double MAX_SPEED = 30;
   const double MAX_FEATURES = 17;
   double delta = (MAX_SPEED - MIN_SPEED) / MAX_FEATURES;
 

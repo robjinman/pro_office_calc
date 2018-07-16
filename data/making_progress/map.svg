@@ -25,15 +25,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710675"
-     inkscape:cx="1980.446"
-     inkscape:cy="-1229.2644"
+     inkscape:zoom="11.313708"
+     inkscape:cx="1861.8939"
+     inkscape:cy="-2176.816"
      inkscape:document-units="px"
-     inkscape:current-layer="g8458"
+     inkscape:current-layer="g4837"
      showgrid="false"
      inkscape:window-width="1280"
-     inkscape:window-height="975"
-     inkscape:window-x="0"
+     inkscape:window-height="999"
+     inkscape:window-x="1280"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      showguides="false" />
@@ -192,6 +192,18 @@
              x="175.87955"
              id="tspan5260-9-0-3-5-2-7-6-2-1-6-5"
              sodipodi:role="line">elevator=common/sfx/elevator.wav</tspan></text>
+        <text
+           transform="matrix(0.99298671,0.00314961,-0.00319421,1.0070527,0,0)"
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:46.25099564px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="179.85751"
+           y="479.58679"
+           id="text5258-7-2-2-7-9-9-3-1-6-3-8"
+           sodipodi:linespacing="125%"><tspan
+             id="tspan5260-9-0-3-5-2-7-6-2-1-6-6"
+             x="179.85751"
+             y="479.58679"
+             style="font-size:11.9715147px">health_pack_collect=common/sfx/health_pack_collect.wav</tspan></text>
       </g>
       <text
          xml:space="preserve"
@@ -530,6 +542,18 @@
            x="135.68358"
            y="523.81403"
            style="font-size:12.94190121px">plant=common/images/office_plant.png,21,25</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="135.54648"
+         y="541.26508"
+         id="text5258-7-8-5-3-1-7-6-4-7-6-9-5-1-0-6-4-1-5-3-3-8-3-8-3"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5260-9-4-0-6-0-5-1-7-1-4-7-9-3-0-8-8-2-8-8-3-7-1-0-6"
+           x="135.54648"
+           y="541.26508"
+           style="font-size:12.94190121px">health_pack=common/images/health_pack.png,18,22</tspan></text>
     </g>
   </g>
   <g
@@ -4839,7 +4863,7 @@
            sodipodi:nodetypes="cc"
            inkscape:connector-curvature="0"
            id="path13672-2"
-           d="m 1921.9702,3574.9585 100.4419,0.3883"
+           d="m 2022.4121,3575.3468 -100.4419,-0.3883"
            style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.59727752;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:6.38911068, 1.59727766;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
         <text
            transform="scale(1.0603588,0.94307701)"
@@ -4868,7 +4892,7 @@
            id="g12736-1">
           <path
              style="fill:none;fill-rule:evenodd;stroke:#00ff00;stroke-width:1.59727764px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-             d="m 1923.4169,3575.2766 98.1117,-0.3993"
+             d="m 2021.5286,3574.8773 -98.1117,0.3993"
              id="path13388"
              inkscape:connector-curvature="0"
              sodipodi:nodetypes="cc" />
@@ -5637,7 +5661,7 @@
              y="1263.5948">bottom_texture=white_paint</tspan></text>
       </g>
       <g
-         transform="matrix(1.0264353,0,0,1,744.07479,-874.86072)"
+         transform="matrix(1.0264353,0,0,1,744.07479,-828.54128)"
          id="g4808-5-6-5">
         <path
            sodipodi:nodetypes="cccc"
@@ -5659,7 +5683,7 @@
              y="2072.366">type=ammo</tspan></text>
       </g>
       <g
-         transform="matrix(1.0264353,0,0,1,744.36462,-820.64921)"
+         transform="matrix(1.0264353,0,0,1,744.36462,-774.32977)"
          id="g4808-5-6-5-5">
         <path
            sodipodi:nodetypes="cccc"
@@ -5712,6 +5736,28 @@
              x="2923.7666"
              id="tspan4174-0-9-5-1-3"
              sodipodi:role="line">texture=white_paint</tspan></text>
+      </g>
+      <g
+         transform="matrix(1.0264353,0,0,1,744.07478,-884.44405)"
+         id="g4808-5-6-5-7">
+        <path
+           sodipodi:nodetypes="cccc"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.59727764px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           d="m 2115.0741,2051.9377 -9.9261,0.3564 4.6024,16.9102 z"
+           id="path4798-0-8-6-5"
+           inkscape:connector-curvature="0" />
+        <text
+           transform="scale(1.0116731,0.98846156)"
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.33518434px;line-height:125%;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           x="2076.1768"
+           y="2072.366"
+           id="text4172-1-2-3-0-9-1-3"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan4174-0-0-6-6-2-1-5"
+             x="2076.1768"
+             y="2072.366">type=health_pack</tspan></text>
       </g>
     </g>
   </g>

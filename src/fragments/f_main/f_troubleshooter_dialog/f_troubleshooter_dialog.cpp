@@ -174,7 +174,7 @@ void FTroubleshooterDialog::onTick() {
     tab.wgtProgressBar->setVisible(false);
     tab.wgtGroupbox->setVisible(true);
     tab.wgtRunTroubleshooter->setDisabled(false);
-    m_data.wgtTabs->addTab(m_data.tab3.page.get(), "");
+    m_data.wgtTabs->addTab(m_data.tab3.page.get(), "⚙");
 
     commonData.eventSystem.fire(pEvent_t(new Event("increaseTetrominoRain")));
   }
@@ -197,7 +197,7 @@ void FTroubleshooterDialog::onRunTroubleshooter() {
   tab.wgtRunTroubleshooter->setDisabled(true);
 
   tab.wgtProgressBar->setValue(0);
-  tab.timer->start(3);
+  tab.timer->start(300);
 }
 
 //===========================================

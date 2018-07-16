@@ -38,10 +38,10 @@ void FLoginScreen::reload(const FragmentSpec& spec_) {
   });
 
   m_data.wgtUser = makeQtObjPtr<QLineEdit>(this);
-  m_data.wgtUser->setGeometry(205, 170, 100, 20);
+  m_data.wgtUser->setGeometry(205, 160, 100, 20);
 
   m_data.wgtPassword = makeQtObjPtr<QLineEdit>(this);
-  m_data.wgtPassword->setGeometry(205, 195, 100, 20);
+  m_data.wgtPassword->setGeometry(205, 185, 100, 20);
 
   connect(m_data.wgtPassword.get(), SIGNAL(returnPressed()), this, SLOT(onLoginAttempt()));
 }

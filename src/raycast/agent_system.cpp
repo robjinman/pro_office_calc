@@ -220,7 +220,7 @@ void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
       // Move ray randomly to simulate inaccurate aim
       //
 
-      std::normal_distribution<double> dist(0, DEG_TO_RAD(1));
+      std::normal_distribution<double> dist(0, DEG_TO_RAD(1.4));
 
       double vDa = dist(randEngine);
       double hDa = dist(randEngine);
