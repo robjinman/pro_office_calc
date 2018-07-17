@@ -60,11 +60,11 @@ AppConfig::AppConfig(int argc, char** argv) {
     this->stateId = getIntArg(0, 0);
   }
 
-  QFontDatabase::addApplicationFont(dataPath("common/fonts/UbuntuMono-R.ttf").c_str());
-  QFontDatabase::addApplicationFont(dataPath("common/fonts/UbuntuMono-R.ttf").c_str());
+  QFontDatabase::addApplicationFont(dataPath("common/fonts/DejaVuSans.ttf").c_str());
+  QFontDatabase::addApplicationFont(dataPath("common/fonts/DejaVuSansMono.ttf").c_str());
 
-  this->normalFont = QFont{"Ubuntu Mono"};
-  this->monoFont = QFont{"Ubuntu Mono"};
+  this->normalFont = QFont{"DejaVu Sans"};
+  this->monoFont = QFont{"DejaVu Sans Mono"};
 
   this->normalFont.setPointSize(12);
   QApplication::setFont(this->normalFont);

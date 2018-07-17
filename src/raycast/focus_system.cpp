@@ -139,7 +139,7 @@ void FocusSystem::showCaption(entityId_t entityId) {
   double pxH = vp_wld.y / vp_px.y;
   double pxW = vp_wld.x / vp_px.x;
 
-  double chH = 0.5;
+  double chH = 0.45;
   double chH_px = chH / pxH;
 
   QFont font = m_appConfig.monoFont;
