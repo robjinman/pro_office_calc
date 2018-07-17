@@ -4,6 +4,7 @@
 #include "raycast/root_factory.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
+#include "raycast/focus_system.hpp"
 #include "raycast/animation_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
@@ -68,8 +69,11 @@ bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, en
 bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem&>(ComponentKind::C_RENDER);
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  auto& renderSystem = m_entityManager.system<RenderSystem&>(ComponentKind::C_RENDER);
+  auto& focusSystem = m_entityManager.system<FocusSystem&>(ComponentKind::C_FOCUS);
+  auto& eventHandlerSystem =
+    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   const CEdge& edge = dynamic_cast<const CEdge&>(spatialSystem.getComponent(parentId));
   const LineSegment& wall = edge.lseg;
@@ -129,6 +133,30 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
   decal->zIndex = zIndex;
 
   renderSystem.addComponent(pComponent_t(decal));
+
+  string hoverText = getValue(obj.dict, "hover_text", "");
+  string captionText = getValue(obj.dict, "caption_text", "");
+
+  if (hoverText != "" || captionText != "") {
+    CFocus* focus = new CFocus(entityId);
+    focus->hoverText = hoverText;
+    focus->captionText = captionText;
+    focusSystem.addComponent(pComponent_t(focus));
+
+    CEventHandler* events = new CEventHandler(entityId);
+
+    events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
+      [=, &focusSystem](const GameEvent& e_) {
+
+      auto& e = dynamic_cast<const EPlayerActivateEntity&>(e_);
+
+      if (e.lookingAt.count(entityId)) {
+        focusSystem.showCaption(entityId);
+      }
+    }});
+
+    eventHandlerSystem.addComponent(pComponent_t(events));
+  }
 
   return true;
 }

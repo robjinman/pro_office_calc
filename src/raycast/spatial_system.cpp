@@ -698,8 +698,18 @@ void SpatialSystem::handleEvent(const GameEvent& event) {
 
     double y = sg.player->feetHeight() - zone.floorHeight + 0.5 * body.size.y;
 
-    m_entityManager.fireEvent(e, entitiesInRadius(zone, sg.player->pos(),
-      sg.player->activationRadius, y));
+    e.inRadius = entitiesInRadius(zone, sg.player->pos(), sg.player->activationRadius, y);
+
+    auto vec = entitiesAlong3dRay(Vec2f{1, 0}, 0.0, sg.player->activationRadius);
+    for (auto& pX : vec) {
+      e.lookingAt.insert(pX->entityId);
+    }
+
+    set<entityId_t> entities;
+    entities.insert(e.inRadius.begin(), e.inRadius.end());
+    entities.insert(e.lookingAt.begin(), e.lookingAt.end());
+
+    m_entityManager.fireEvent(e, entities);
   }
 }
 
@@ -1313,7 +1323,7 @@ vector<pIntersection_t> SpatialSystem::entitiesAlong3dRay(const Vec2f& ray, doub
 static void entitiesInRadius_r(const CZone& searchZone, const CZone& zone, const Circle& circle,
   double heightAboveFloor, set<entityId_t>& entities) {
 
-  const double MAX_VERTICAL_DISTANCE = 20.0;
+  const double MAX_VERTICAL_DISTANCE = 40.0;
 
   for (auto it = searchZone.edges.begin(); it != searchZone.edges.end(); ++it) {
     const CEdge& edge = **it;

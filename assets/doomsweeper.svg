@@ -18,6 +18,104 @@
    sodipodi:docname="doomsweeper.svg">
   <defs
      id="defs23908">
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Sstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4856"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4850"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#ff0000;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5252"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5254"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) rotate(180) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5211"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5214"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5179"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) rotate(180) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Send"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5122"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5101"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#ff0000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
     <inkscape:path-effect
        effect="powerstroke"
        id="path-effect7141"
@@ -125,15 +223,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="4435.6049"
-     inkscape:cy="2254.9529"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="2409.0553"
+     inkscape:cy="2152.9753"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1280"
-     inkscape:window-height="999"
-     inkscape:window-x="1280"
+     inkscape:window-height="975"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1">
     <inkscape:grid
@@ -4925,15 +5023,15 @@
        inkscape:export-xdpi="40"
        inkscape:export-ydpi="40" />
     <rect
-       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:#a0a0a0;stroke-width:14;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:14.00000095;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="rect14987-3-6-8-9"
-       width="886"
-       height="436"
-       x="2494.5234"
-       y="-1731.4253"
-       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/blank_whiteboard.png"
-       inkscape:export-xdpi="40"
-       inkscape:export-ydpi="40" />
+       width="836.37567"
+       height="557.5838"
+       x="2048.4226"
+       y="-1736.5844"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
     <path
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:30;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="path5930-9-0"
@@ -5038,5 +5136,240 @@
        inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/commands/linkf.png"
        inkscape:export-xdpi="30"
        inkscape:export-ydpi="30" />
-  </g>
+    <ellipse
+       id="path4834"
+       style="fill:#000000;stroke:none"
+       cx="2316.5166"
+       cy="-1576.8236"
+       rx="0.13656446"
+       ry="0.13642021"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Arrow1Sstart);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2320.1956,-1626.9571 0,347.2161"
+       id="path4836"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Send);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2320.1149,-1278.7051 468.7283,0"
+       id="path4838"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2323.8743,-1283.0219 c 189.3562,-18.9086 342.9728,-126.6217 404.9127,-307.3867"
+       id="path5572"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5574"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:'DejaVu Sans Mono';font-style:normal;font-weight:normal;font-size:25px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr;"><flowRegion
+         id="flowRegion5576"><rect
+           id="rect5578"
+           width="239.40616"
+           height="126.26907"
+           x="2160.7163"
+           y="-1373.014"
+           style="font-size:25px;" /></flowRegion><flowPara
+         id="flowPara5580"></flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5582"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(-65.659916,-18.415534)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5584"><rect
+           id="rect5586"
+           width="419.21332"
+           height="291.93408"
+           x="2153.6453"
+           y="-1456.8567"
+           style="font-size:25px" /></flowRegion><flowPara
+         id="flowPara5588">Human imbecile</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5582-3"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(74.798525,112.3069)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5584-6"><rect
+           id="rect5586-7"
+           width="419.21332"
+           height="291.93408"
+           x="2153.6453"
+           y="-1456.8567"
+           style="font-size:25px" /></flowRegion><flowPara
+         id="flowPara5588-5">Mouse</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5582-3-3"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(80.798406,62.707896)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5584-6-5"><rect
+           id="rect5586-7-6"
+           width="419.21332"
+           height="291.93408"
+           x="2153.6453"
+           y="-1456.8567"
+           style="font-size:25px" /></flowRegion><flowPara
+         id="flowPara5588-5-2">Dog</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5582-9"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(-34.519962,-43.10486)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5584-1"><rect
+           id="rect5586-2"
+           width="419.21332"
+           height="291.93408"
+           x="2153.6453"
+           y="-1456.8567"
+           style="font-size:25px" /></flowRegion><flowPara
+         id="flowPara5588-7">Human genius</flowPara></flowRoot>    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8.00000014, 8.00000014;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2319.3104,-1482.3433 474.7717,0"
+       id="path5662"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8.00000014, 8.00000014;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2319.3104,-1473.2519 474.7717,0"
+       id="path5662-0"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8.00000014, 8.00000014;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2319.3104,-1378.1663 474.7717,0"
+       id="path5662-0-9"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8.00000014, 8.00000014;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2319.3104,-1327.5571 474.7717,0"
+       id="path5662-0-9-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5777"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:'DejaVu Sans Mono';font-style:normal;font-weight:normal;font-size:5px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr"><flowRegion
+         id="flowRegion5779"><rect
+           id="rect5781"
+           width="390"
+           height="60"
+           x="2311.4285"
+           y="-1187.6378" /></flowRegion><flowPara
+         id="flowPara5783"></flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5785"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30.19995117px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0,0.87577074,-0.87577074,0,1336.5169,-3241.254)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5787"><rect
+           id="rect5789"
+           width="3192.5662"
+           height="1527.2546"
+           x="2260.9856"
+           y="-1212.6254" /></flowRegion><flowPara
+         id="flowPara5791">2010</flowPara></flowRoot>    <flowRoot
+       transform="matrix(0,0.87577074,-0.87577074,0,1489.0262,-3241.254)"
+       xml:space="preserve"
+       id="flowRoot5785-6"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30.19995117px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5787-0"><rect
+           id="rect5789-6"
+           width="3192.5662"
+           height="1527.2546"
+           x="2260.9856"
+           y="-1212.6254" /></flowRegion><flowPara
+         id="flowPara5791-2">2020</flowPara></flowRoot>    <flowRoot
+       transform="matrix(0,0.87577074,-0.87577074,0,1681.7267,-3241.254)"
+       xml:space="preserve"
+       id="flowRoot5785-6-6"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30.19995117px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5787-0-1"><rect
+           id="rect5789-6-8"
+           width="3192.5662"
+           height="1527.2546"
+           x="2260.9856"
+           y="-1212.6254" /></flowRegion><flowPara
+         id="flowPara5791-2-7">2034</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5582-9-9"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(101.19429,-150.70824)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5584-1-2"><rect
+           id="rect5586-2-0"
+           width="419.21332"
+           height="291.93408"
+           x="2153.6453"
+           y="-1456.8567"
+           style="font-size:25px" /></flowRegion><flowPara
+         id="flowPara5588-7-2">???</flowPara></flowRoot>    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8.00000016, 8.00000016;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2319.3104,-1592.3433 411.1321,0"
+       id="path5662-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <path
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8.00000006, 8.00000005999999786;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 2728.6135,-1590.1165 0,307.8145"
+       id="path5662-3-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5919"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:46.29853821px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.74284351,0,0,0.74284351,804.70641,-773.79751)"
+       inkscape:export-filename="/home/rob/code/projects/pro_office_calc/data/doomsweeper/singularity.png"
+       inkscape:export-xdpi="64.564293"
+       inkscape:export-ydpi="64.564293"><flowRegion
+         id="flowRegion5921"><rect
+           id="rect5923"
+           width="3016.019"
+           height="793.68921"
+           x="2077.8193"
+           y="-1264.5626" /></flowRegion><flowPara
+         id="flowPara5925">Future of AI</flowPara></flowRoot>  </g>
 </svg>

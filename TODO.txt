@@ -1,5 +1,4 @@
 MUST DO
-- Adjust dates wherever they appear
 - Are You Sure - Backgrounds for config maze
 
 NICE TO HAVE

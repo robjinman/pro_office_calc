@@ -70,6 +70,8 @@ struct EPlayerActivateEntity : public GameEvent {
       player(player) {}
 
   const Player& player;
+  std::set<entityId_t> inRadius;
+  std::set<entityId_t> lookingAt;
 };
 
 class EntityManager;

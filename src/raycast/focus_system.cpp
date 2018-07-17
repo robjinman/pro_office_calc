@@ -39,6 +39,26 @@ void FocusSystem::initialise() {
 }
 
 //===========================================
+// isWallDecal
+//===========================================
+static bool isWallDecal(const RenderSystem& renderSystem, const Intersection& X) {
+  if (renderSystem.hasComponent(X.entityId)) {
+    const CRender& c = renderSystem.getComponent(X.entityId);
+    return c.kind == CRenderKind::WALL_DECAL;
+  }
+
+  return false;
+}
+
+//===========================================
+// getZIndex
+//===========================================
+static int getZIndex(const RenderSystem& renderSystem, const Intersection& X) {
+  const CWallDecal& decal = DYNAMIC_CAST<const CWallDecal&>(renderSystem.getComponent(X.entityId));
+  return decal.zIndex;
+}
+
+//===========================================
 // FocusSystem::update
 //===========================================
 void FocusSystem::update() {
@@ -56,7 +76,22 @@ void FocusSystem::update() {
     m_focusDistance);
 
   if (intersections.size() > 0) {
-    pIntersection_t& X = intersections.front();
+    auto first = intersections.begin();
+
+    int highestZ = -9999;
+    for (auto it = intersections.begin(); it != intersections.end(); ++it) {
+      if (!isWallDecal(renderSystem, **it)) {
+        break;
+      }
+
+      int z = getZIndex(renderSystem, **it);
+      if (z > highestZ) {
+        highestZ = z;
+        first = it;
+      }
+    }
+
+    pIntersection_t& X = *first;
 
     auto it = m_components.find(X->entityId);
     if (it != m_components.end()) {
