@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <thread>
 #include <QDir>
 #include "application.hpp"
 #include "exception.hpp"
@@ -32,6 +33,8 @@ int main(int argc, char** argv) {
 #endif
 
     AppConfig appConfig{argc, argv};
+
+    DBG_PRINT("Hardware concurrency: " << std::thread::hardware_concurrency() << "\n");
 
     DBG_PRINT("Loading app state " << appConfig.stateId << "\n");
 

@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cassert>
+#include <thread>
 #include <limits>
 #include <set>
 #include <vector>
@@ -855,25 +856,16 @@ static vector<CWallDecal*> getWallDecals(const SpatialSystem& spatialSystem, con
 }
 
 //===========================================
-// Renderer::renderScene
+// Renderer::renderColumns
 //===========================================
-void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
+void Renderer::renderColumns(const RenderGraph& rg, const Camera& cam, int from, int to) const {
   const SpatialSystem& spatialSystem = m_entityManager
     .system<SpatialSystem>(ComponentKind::C_SPATIAL);
   const RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  QPainter painter;
-  painter.begin(&m_target);
-
-  const int W = rg.viewport_px.x;
   CastResult prev;
 
-#ifndef SINGLE_THREAD
-  #pragma omp parallel for \
-    num_threads(8) \
-    private(prev)
-#endif
-  for (int screenX_px = 0; screenX_px < W; ++screenX_px) {
+  for (int screenX_px = from; screenX_px < to; ++screenX_px) {
     double projX_wd = static_cast<double>(screenX_px - rg.viewport_px.x / 2) / rg.hWorldUnit_px;
 
     Vec2f ray(cam.F, projX_wd);
@@ -970,6 +962,48 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
 
     prev = std::move(result);
   }
+}
+
+//===========================================
+// Renderer::renderScene
+//===========================================
+void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
+  const int W = rg.viewport_px.x;
+
+#ifdef SINGLE_THREAD
+  renderColumns(rg, cam, 0, W);
+#else
+  int n = std::thread::hardware_concurrency();
+
+  if (n == 0) {
+    renderColumns(rg, cam, 0, W);
+  }
+  else {
+    int perThread = W / n;
+    int remainder = W % n;
+
+    std::vector<std::thread> threads;
+    threads.reserve(n);
+
+    for (int i = 0; i < n; ++i) {
+      int from = i * perThread;
+      int to = from + perThread;
+      if (i == n - 1) {
+        to += remainder;
+      }
+
+      std::thread t{&Renderer::renderColumns, this, std::ref(rg), cam, from, to};
+      threads.push_back(std::move(t));
+    }
+
+    for (auto& t : threads) {
+      t.join();
+    }
+  }
+#endif
+
+  QPainter painter;
+  painter.begin(&m_target);
 
   for (auto it = rg.overlays.begin(); it != rg.overlays.end(); ++it) {
     const COverlay& overlay = **it;
