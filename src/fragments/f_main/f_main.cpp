@@ -28,6 +28,7 @@ FMain::FMain(const CommonFragData& commonData)
 
   m_data.wgtCentral->setLayout(m_data.box.get());
 
+  menuBar()->setNativeMenuBar(false);
   m_data.mnuFile = makeQtObjPtrFromRawPtr(menuBar()->addMenu("File"));
   m_data.actQuit = makeQtObjPtr<QAction>("Quit", this);
   m_data.mnuFile->addAction(m_data.actQuit.get());
