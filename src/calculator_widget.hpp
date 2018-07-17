@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QLineEdit>
+#include <QLabel>
 #include "button_grid.hpp"
 #include "calculator.hpp"
 #include "qt_obj_ptr.hpp"
@@ -34,6 +35,7 @@ class CalculatorWidget : public QWidget {
     Calculator calculator;
     QtObjPtr<QVBoxLayout> vbox;
     QtObjPtr<QLineEdit> wgtDigitDisplay;
+    QtObjPtr<QLabel> wgtOpDisplay;
     QtObjPtr<ButtonGrid> wgtButtonGrid;
 
     virtual ~CalculatorWidget() override;

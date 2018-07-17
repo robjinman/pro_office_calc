@@ -76,10 +76,16 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   m_wgtDigitDisplay->setAlignment(Qt::AlignRight);
   m_wgtDigitDisplay->setReadOnly(true);
 
+  m_wgtOpDisplay = makeQtObjPtr<QLabel>(this);
+  m_wgtOpDisplay->setFixedHeight(18);
+  m_wgtOpDisplay->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
   m_wgtButtonGrid = makeQtObjPtr<ButtonGrid>(this);
 
   m_vbox = makeQtObjPtr<QVBoxLayout>();
+  m_vbox->setSpacing(0);
   m_vbox->addWidget(m_wgtDigitDisplay.get());
+  m_vbox->addWidget(m_wgtOpDisplay.get());
   m_vbox->addWidget(m_wgtButtonGrid.get());
   setLayout(m_vbox.get());
 
@@ -163,22 +169,31 @@ QString FShuffledCalc::translateToSymbols(const QString& str) const {
 // FShuffledCalc::onButtonClick
 //===========================================
 void FShuffledCalc::onButtonClick(int id) {
+  m_wgtOpDisplay->setText("");
+
   if (id <= 9) {
     m_calculator.number(id);
   }
   else {
+    auto btn = dynamic_cast<const QPushButton*>(m_wgtButtonGrid->buttonGroup->button(id));
+    QString symbol = btn->text();
+
     switch (id) {
       case BTN_PLUS:
         m_calculator.plus();
+        m_wgtOpDisplay->setText(symbol);
         break;
       case BTN_MINUS:
         m_calculator.minus();
+        m_wgtOpDisplay->setText(symbol);
         break;
       case BTN_TIMES:
         m_calculator.times();
+        m_wgtOpDisplay->setText(symbol);
         break;
       case BTN_DIVIDE:
         m_calculator.divide();
+        m_wgtOpDisplay->setText(symbol);
         break;
       case BTN_POINT:
         m_calculator.point();

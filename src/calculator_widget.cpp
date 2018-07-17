@@ -1,3 +1,5 @@
+#include <QButtonGroup>
+#include <QPushButton>
 #include "calculator_widget.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
@@ -21,10 +23,18 @@ CalculatorWidget::CalculatorWidget(EventSystem& eventSystem)
 
   wgtButtonGrid = makeQtObjPtr<ButtonGrid>(this);
 
-  delete vbox.get();
+  wgtOpDisplay = makeQtObjPtr<QLabel>(this);
+  wgtOpDisplay->setFixedHeight(18);
+  wgtOpDisplay->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+  if (vbox) {
+    delete vbox.release();
+  }
 
   vbox = makeQtObjPtr<QVBoxLayout>();
+  vbox->setSpacing(0);
   vbox->addWidget(wgtDigitDisplay.get());
+  vbox->addWidget(wgtOpDisplay.get());
   vbox->addWidget(wgtButtonGrid.get());
   setLayout(vbox.get());
 
@@ -35,22 +45,31 @@ CalculatorWidget::CalculatorWidget(EventSystem& eventSystem)
 // CalculatorWidget::onButtonClick
 //===========================================
 void CalculatorWidget::onButtonClick(int id) {
+  wgtOpDisplay->setText("");
+
   if (id <= 9) {
     calculator.number(id);
   }
   else {
+    auto btn = dynamic_cast<const QPushButton*>(wgtButtonGrid->buttonGroup->button(id));
+    QString symbol = btn->text();
+
     switch (id) {
       case BTN_PLUS:
         calculator.plus();
+        wgtOpDisplay->setText(symbol);
         break;
       case BTN_MINUS:
         calculator.minus();
+        wgtOpDisplay->setText(symbol);
         break;
       case BTN_TIMES:
         calculator.times();
+        wgtOpDisplay->setText(symbol);
         break;
       case BTN_DIVIDE:
         calculator.divide();
+        wgtOpDisplay->setText(symbol);
         break;
       case BTN_POINT:
         calculator.point();

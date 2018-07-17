@@ -44,6 +44,7 @@ class FShuffledCalc : public QWidget, public Fragment {
     Calculator m_calculator;
     QtObjPtr<QVBoxLayout> m_vbox;
     QtObjPtr<QLineEdit> m_wgtDigitDisplay;
+    QtObjPtr<QLabel> m_wgtOpDisplay;
     QtObjPtr<ButtonGrid> m_wgtButtonGrid;
 
     std::string m_targetValue;
