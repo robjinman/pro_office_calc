@@ -22,7 +22,7 @@ using std::string;
 namespace going_in_circles {
 
 
-static const double TIME_LIMIT = 4.8;
+static const double TIME_LIMIT = 5.2;
 
 
 //===========================================

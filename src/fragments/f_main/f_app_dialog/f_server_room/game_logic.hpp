@@ -26,6 +26,7 @@ class GameLogic {
     EventSystem& m_eventSystem;
     EntityManager& m_entityManager;
     EventHandle m_hDivByZero;
+    EventHandle m_hDialogClosed;
     char m_exitDoorSelectedNum = '\0';
     std::string m_exitDoorInput;
 };

@@ -1,4 +1,5 @@
 #include <random>
+#include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "fragments/f_main/f_app_dialog/f_server_room/game_logic.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
@@ -36,6 +37,16 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     onDivByZero(event);
   });
 
+  m_hDialogClosed = m_eventSystem.listen("dialogClosed",
+    [this](const Event& event) {
+
+    const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
+
+    if (e.name == "procalc") {
+      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_YOUVE_GOT_MAIL, true)));
+    }
+  });
+
   EventHandlerSystem& eventHandlerSystem =
     m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
@@ -45,8 +56,8 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 
   entityId_t entityId = Component::getNextId();
 
-  CEventHandler* handlers = new CEventHandler(entityId);
-  handlers->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
+  CEventHandler* events = new CEventHandler(entityId);
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     [=, &player](const GameEvent& e_) {
 
     auto& e = dynamic_cast<const EChangedZone&>(e_);
@@ -123,7 +134,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
       }
     }
   }});
-  handlers->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
     [this](const GameEvent& e_) {
 
     auto& e = dynamic_cast<const EEntityDestroyed&>(e_);
@@ -131,7 +142,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
       m_eventSystem.fire(pEvent_t(new Event("youveGotMail/larryKilled")));
     }
   }});
-  handlers->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
+  events->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
     [this](const GameEvent& e_) {
 
     auto& e = dynamic_cast<const EEntityDestroyed&>(e_);
@@ -140,7 +151,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     }
   }});
   int serversDestroyed = 0;
-  handlers->broadcastedEventHandlers.push_back(EventHandler{"server_destroyed",
+  events->broadcastedEventHandlers.push_back(EventHandler{"server_destroyed",
     [this, serversDestroyed](const GameEvent& e) mutable {
 
     if (++serversDestroyed == 2) {
@@ -148,7 +159,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     }
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(handlers));
+  eventHandlerSystem.addComponent(pComponent_t(events));
 
   drawExitDoorDigitDisplay();
 

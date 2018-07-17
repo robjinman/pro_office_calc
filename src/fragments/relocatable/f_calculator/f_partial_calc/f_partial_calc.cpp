@@ -46,6 +46,8 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
 
   DBG_PRINT("FPartialCalc::FPartialCalc\n");
 
+  // TODO: Move this making_progress specific stuff out of this class
+
   m_hSetupComplete = commonData.eventSystem.listen("makingProgress/setupComplete",
     [this](const Event& event) {
 

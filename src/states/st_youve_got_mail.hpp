@@ -35,6 +35,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->desktopSpec.serverRoomInitSpec.setEnabled(true);
   mainSpec->appDialogSpec0.setEnabled(true);
   mainSpec->appDialogSpec0.titleText = "Pro Office Calculator";
+  mainSpec->appDialogSpec0.name = "procalc";
   mainSpec->appDialogSpec0.width = 320;
   mainSpec->appDialogSpec0.height = 240;
   mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
