@@ -301,12 +301,15 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
     Point(0, -INVENTORY_H), Size(INVENTORY_W, INVENTORY_H), 1);
   renderSystem.addComponent(pComponent_t(itemsDisplay));
 
+  double hMargin = 0.15;
+
   CTextOverlay* ammoCounter = new CTextOverlay(m_ammoId, "AMMO 0/50",
-    Point(0.15, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::green, 2);
+    Point(hMargin, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::green, 2);
   renderSystem.addComponent(pComponent_t(ammoCounter));
 
   CTextOverlay* healthCounter = new CTextOverlay(m_healthId, "HEALTH 10/10",
-    Point(9.0, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::red, 2);
+    Point(0, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::red, 2);
+  healthCounter->pos.x = viewport.x - renderSystem.textOverlayWidth(*healthCounter) - hMargin;
   renderSystem.addComponent(pComponent_t(healthCounter));
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);

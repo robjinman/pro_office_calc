@@ -99,9 +99,11 @@ RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityMana
 }
 
 //===========================================
-// RenderSystem::centreTextOverlay
+// RenderSystem::textOverlayWidth
+//
+// Returns width in world units
 //===========================================
-void RenderSystem::centreTextOverlay(CTextOverlay& overlay) const {
+double RenderSystem::textOverlayWidth(const CTextOverlay& overlay) const {
   double h = overlay.height * rg.vWorldUnit_px;
 
   QFont font = m_appConfig.monoFont;
@@ -110,9 +112,14 @@ void RenderSystem::centreTextOverlay(CTextOverlay& overlay) const {
   QFontMetrics fm{font};
 
   double textW_px = fm.size(Qt::TextSingleLine, overlay.text.c_str()).width();
-  double textW = textW_px / rg.hWorldUnit_px;
+  return textW_px / rg.hWorldUnit_px;
+}
 
-  double x = 0.5 * (rg.viewport.x - textW);
+//===========================================
+// RenderSystem::centreTextOverlay
+//===========================================
+void RenderSystem::centreTextOverlay(CTextOverlay& overlay) const {
+  double x = 0.5 * (rg.viewport.x - textOverlayWidth(overlay));
   overlay.pos.x = x;
 }
 

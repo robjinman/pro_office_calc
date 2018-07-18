@@ -31,6 +31,7 @@ class RenderSystem : public System {
 
     inline const std::set<entityId_t>& children(entityId_t entityId) const;
 
+    double textOverlayWidth(const CTextOverlay& overlay) const;
     void centreTextOverlay(CTextOverlay& overlay) const;
 
   private:

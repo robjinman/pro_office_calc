@@ -11,8 +11,8 @@ namespace st_test {
 
 FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   FMainSpec* mainSpec = new FMainSpec;
-  mainSpec->width = 640;
-  mainSpec->height = 500;
+  mainSpec->width = 320;
+  mainSpec->height = 260;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
