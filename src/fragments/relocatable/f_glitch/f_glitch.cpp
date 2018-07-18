@@ -54,6 +54,10 @@ void FGlitch::reload(const FragmentSpec& spec_) {
 void FGlitch::tick() {
   auto& parent = parentFrag<QWidget>();
 
+  if (!parent.isVisible()) {
+    return;
+  }
+
   if (!isVisible()) {
     QImage buf(m_glitchBuffer->size(), m_glitchBuffer->format());
 
