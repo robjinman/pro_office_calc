@@ -1,6 +1,5 @@
 #include <cmath>
 #include <cassert>
-#include <thread>
 #include <limits>
 #include <set>
 #include <vector>
@@ -825,6 +824,13 @@ Renderer::Renderer(const AppConfig& appConfig, EntityManager& entityManager, QIm
   for (unsigned int i = 0; i < m_atanMap.size(); ++i) {
     m_atanMap[i] = atan(ATAN_MIN + dx * static_cast<double>(i));
   }
+
+  m_numWorkerThreads = std::thread::hardware_concurrency() - 1;
+  if (m_numWorkerThreads < 0) {
+    m_numWorkerThreads = 0;
+  }
+
+  m_threads = vector<std::thread>(m_numWorkerThreads);
 }
 
 //===========================================
@@ -858,10 +864,8 @@ static vector<CWallDecal*> getWallDecals(const SpatialSystem& spatialSystem, con
 //===========================================
 // Renderer::renderColumns
 //===========================================
-void Renderer::renderColumns(const RenderGraph& rg, const Camera& cam, int from, int to) const {
-  const SpatialSystem& spatialSystem = m_entityManager
-    .system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  const RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+void Renderer::renderColumns(const RenderGraph& rg, const Camera& cam,
+  const SpatialSystem& spatialSystem, const RenderSystem& renderSystem, int from, int to) const {
 
   CastResult prev;
 
@@ -968,35 +972,35 @@ void Renderer::renderColumns(const RenderGraph& rg, const Camera& cam, int from,
 // Renderer::renderScene
 //===========================================
 void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
+  const SpatialSystem& spatialSystem = m_entityManager
+    .system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  const RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+
   const int W = rg.viewport_px.x;
 
 #ifdef SINGLE_THREAD
   renderColumns(rg, cam, 0, W);
 #else
-  int n = std::thread::hardware_concurrency();
-
-  if (n == 0) {
-    renderColumns(rg, cam, 0, W);
+  if (m_numWorkerThreads == 0) {
+    renderColumns(rg, cam, spatialSystem, renderSystem, 0, W);
   }
   else {
-    int perThread = W / n;
-    int remainder = W % n;
+    int perThread = W / (m_numWorkerThreads + 1);
+    int remainder = W % (m_numWorkerThreads + 1);
 
-    std::vector<std::thread> threads;
-    threads.reserve(n);
-
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < m_numWorkerThreads; ++i) {
       int from = i * perThread;
       int to = from + perThread;
-      if (i == n - 1) {
-        to += remainder;
-      }
 
-      std::thread t{&Renderer::renderColumns, this, std::ref(rg), cam, from, to};
-      threads.push_back(std::move(t));
+      m_threads[i] = std::thread{&Renderer::renderColumns, this, std::ref(rg), std::ref(cam),
+        std::ref(spatialSystem), std::ref(renderSystem), from, to};
     }
 
-    for (auto& t : threads) {
+    int from = m_numWorkerThreads * perThread;
+    int to = from + perThread + remainder;
+    renderColumns(rg, cam, spatialSystem, renderSystem, from, to);
+
+    for (auto& t : m_threads) {
       t.join();
     }
   }

@@ -5,6 +5,7 @@
 #include <array>
 #include <list>
 #include <set>
+#include <thread>
 #include <QPainter>
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_graph.hpp"
@@ -113,7 +114,11 @@ class Renderer {
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
 
-    void renderColumns(const RenderGraph& rg, const Camera& cam, int from, int to) const;
+    std::vector<std::thread> m_threads;
+    int m_numWorkerThreads;
+
+    void renderColumns(const RenderGraph& rg, const Camera& cam, const SpatialSystem& spatialSystem,
+      const RenderSystem& renderSystem, int from, int to) const;
 
     void drawImage(const QRect& trgRect, const QImage& tex, const QRect& srcRect,
       double distance = 0) const;
