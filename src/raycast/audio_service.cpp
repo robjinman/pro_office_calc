@@ -35,7 +35,8 @@ static int indexForId(const array<int, CONCURRENT_SOUNDS>& ids, int id) {
 //===========================================
 AudioService::AudioService(EntityManager& entityManager, TimeService& timeService)
   : m_entityManager(entityManager),
-    m_timeService(timeService) {
+    m_timeService(timeService),
+    m_mediaPlayer(nullptr, QMediaPlayer::LowLatency) {
 
   m_initialised = false;
 }

@@ -35,7 +35,7 @@ struct Email {
 };
 
 // Emails in chronological order
-const std::array<Email, 11> EMAILS = {{
+static std::array<Email, 11> EMAILS = {{
   // 0
   {
     "Meeting to discuss y2k issue",
@@ -121,8 +121,7 @@ const std::array<Email, 11> EMAILS = {{
 
     // Message body
     //
-    QString("Good work. The code for the exit door is ") + youve_got_mail::exitDoorCode.c_str() +
-      ".\n\n"
+    "Good work. The code for the exit door is EXIT_DOOR_CODE.\n\n"
     "Rob\n"
   },
   // Servers come back online
@@ -295,6 +294,10 @@ FMailClient::FMailClient(Fragment& parent_, FragmentData& parentData_,
   const CommonFragData& commonData)
   : QWidget(nullptr),
     Fragment("FMailClient", parent_, parentData_, m_data, commonData) {
+
+  for (auto& email : EMAILS) {
+    email.body.replace("EXIT_DOOR_CODE", youve_got_mail::exitDoorCode.c_str());
+  }
 
   DBG_PRINT("FMailClient::FMailClient\n");
 }
