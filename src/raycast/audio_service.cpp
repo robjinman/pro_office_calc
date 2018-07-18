@@ -91,8 +91,6 @@ int AudioService::nextAvailable(const array<SoundInstance, CONCURRENT_SOUNDS>& i
 // AudioService::addSound
 //===========================================
 void AudioService::addSound(const string& name, const string& resourcePath) {
-  checkInitialised();
-
   pSoundEffect_t sound(new SoundEffect);
 
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
@@ -144,8 +142,6 @@ void AudioService::onPlayerMove() {
 // AudioService::addMusicTrack
 //===========================================
 void AudioService::addMusicTrack(const string& name, const string& resourcePath) {
-  checkInitialised();
-
   QString absPath = QFileInfo(resourcePath.c_str()).absoluteFilePath();
   m_musicTracks[name] = QMediaContent(QUrl::fromLocalFile(absPath));
 }
@@ -283,8 +279,6 @@ void AudioService::stopMusic(double fadeDuration) {
 // AudioService::setMusicVolume
 //===========================================
 void AudioService::setMusicVolume(double volume) {
-  checkInitialised();
-
   m_musicVolume = volume;
   m_mediaPlayer.setVolume(m_masterVolume * m_musicVolume * 100);
 }
@@ -293,8 +287,6 @@ void AudioService::setMusicVolume(double volume) {
 // AudioService::setMasterVolume
 //===========================================
 void AudioService::setMasterVolume(double volume) {
-  checkInitialised();
-
   m_masterVolume = volume;
   setMusicVolume(m_musicVolume);
 }
