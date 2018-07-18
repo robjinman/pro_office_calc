@@ -214,6 +214,8 @@ void RaycastWidget::initialise(const string& mapFile) {
   FocusSystem* focusSystem = new FocusSystem(m_appConfig, m_entityManager, m_timeService);
   m_entityManager.addSystem(ComponentKind::C_FOCUS, pSystem_t(focusSystem));
 
+  m_audioService.initialise();
+
   loadMap(mapFile);
 
   m_timer = makeQtObjPtr<QTimer>(this);
