@@ -279,6 +279,11 @@ void AudioService::stopMusic(double fadeDuration) {
 // AudioService::setMusicVolume
 //===========================================
 void AudioService::setMusicVolume(double volume) {
+#ifdef __APPLE__
+  // Boost music volume for OS X
+  volume = smallest(volume * 1.5, 1.0);
+#endif
+
   m_musicVolume = volume;
   m_mediaPlayer.setVolume(m_masterVolume * m_musicVolume * 100);
 }

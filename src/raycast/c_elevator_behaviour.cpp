@@ -47,7 +47,9 @@ void CElevatorBehaviour::playSound() {
   CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
   const Point& pos = zone.edges.front()->lseg.A;
 
-  m_soundId = m_audioService.playSoundAtPos("elevator", pos, true);
+  if (!m_audioService.soundIsPlaying("elevator", m_soundId)) {
+    m_soundId = m_audioService.playSoundAtPos("elevator", pos, true);
+  }
 }
 
 //===========================================
@@ -101,9 +103,11 @@ void CElevatorBehaviour::update() {
 //===========================================
 void CElevatorBehaviour::move(int level) {
   m_target = level;
-  m_state = ST_MOVING;
 
-  playSound();
+  if (m_state == ST_STOPPED) {
+    m_state = ST_MOVING;
+    playSound();
+  }
 }
 
 //===========================================
@@ -129,9 +133,9 @@ void CElevatorBehaviour::handleTargetedEvent(const GameEvent& e) {
   else if (e.name == "player_activate_entity" && this->isPlayerActivated) {
     if (m_state == ST_STOPPED) {
       m_target = (m_target + 1) % m_levels.size();
-    }
 
-    m_state = ST_MOVING;
-    playSound();
+      m_state = ST_MOVING;
+      playSound();
+    }
   }
 }

@@ -44,7 +44,9 @@ void CDoorBehaviour::playSound() {
   CZone& zone = m_entityManager.getComponent<CZone>(entityId(), ComponentKind::C_SPATIAL);
   const Point& pos = zone.edges.front()->lseg.A;
 
-  m_soundId = m_audioService.playSoundAtPos("door", pos, true);
+  if (!m_audioService.soundIsPlaying("door", m_soundId)) {
+    m_soundId = m_audioService.playSoundAtPos("door", pos, true);
+  }
 }
 
 //===========================================
@@ -147,16 +149,16 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
   }
 
   if (EVENT_NAMES.count(e.name)) {
-    playSound();
-
     switch (m_state) {
       case ST_CLOSED:
         m_state = ST_OPENING;
+        playSound();
         m_entityManager.fireEvent(EDoorOpenStart{entityId()}, { entityId() });
         m_entityManager.broadcastEvent(EDoorOpenStart{entityId()});
         break;
       case ST_OPEN:
         m_state = ST_CLOSING;
+        playSound();
         m_entityManager.fireEvent(EDoorCloseStart{entityId()}, { entityId() });
         m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
         break;
