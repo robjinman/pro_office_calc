@@ -1,3 +1,9 @@
+procalc (1.0.0+1SNAPSHOT20180719015812-0ubuntu1) xenial; urgency=medium
+
+  * Fixed data save path.
+
+ -- Rob Jinman <jinmanr@gmail.com>  Thu, 19 Jul 2018 02:58:22 +0100
+
 procalc (1.0.0+1SNAPSHOT20180719000705-0ubuntu1) xenial; urgency=medium
 
   * First public release.
