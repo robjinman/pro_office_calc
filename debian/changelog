@@ -1,8 +1,8 @@
-procalc (0.0.1+2SNAPSHOT20180424211345-0ubuntu1) UNRELEASED; urgency=medium
+procalc (1.0.0+1SNAPSHOT20180719000705-0ubuntu1) xenial; urgency=medium
 
-  * Test build
+  * First public release.
 
- -- Rob Jinman <jinmanr@gmail.com>  Tue, 24 Apr 2018 22:13:49 +0100
+ -- Rob Jinman <jinmanr@gmail.com>  Thu, 19 Jul 2018 01:07:13 +0100
 
 procalc (0.0.1+2SNAPSHOT20180417203932-0ubuntu2) xenial; urgency=medium
 
