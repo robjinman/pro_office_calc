@@ -1,5 +1,6 @@
 #include <tinyxml2.h>
 #include <QStandardPaths>
+#include <QDir>
 #include <QFontDatabase>
 #include <QCoreApplication>
 #include <QApplication>
@@ -106,6 +107,9 @@ void AppConfig::loadState() {
 //===========================================
 void AppConfig::persistState() {
   DBG_PRINT("Persisting state id " << this->stateId << "\n");
+
+  QDir rootDir{"/"};
+  rootDir.mkpath(saveDataPath("").c_str());
 
   string filePath = saveDataPath("procalc.dat");
 
