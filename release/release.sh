@@ -26,11 +26,6 @@ fi
 
 version=$(cat ./VERSION)
 
-if [ ! -z "$(git diff)" ]; then
-  echo "There are uncommitted changes. Aborting"
-  exit 1
-fi
-
 branch=$(git branch --list develop)
 if [ ! "${branch::1}" == "*" ]; then
   echo "Not on develop branch. Aborting"
@@ -47,20 +42,20 @@ fi
 
 changes_file=../*.changes
 
-if [ $snapshots == true ]; then
+if [ $snapshot == true ]; then
   dput ppa:rjinman/snapshots "$changes_file"
 fi
 dput ppa:rjinman/ppa "$changes_file"
 
-git add ./debian/changelog
-git commit -m "changelog updated"
+git add ./debian/changelog ./VERSION
+git commit -m "Updated changelog and VERSION"
 
 git push
 
 git checkout master
 git merge develop
 
-if [ $snapshot == true ]; then
+if [ $snapshot != true ]; then
   git tag -a "v$version" -m "Pro Office Calculator v$version"
 fi
 
