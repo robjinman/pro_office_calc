@@ -68,7 +68,7 @@ void FShuffledCalc::reload(const FragmentSpec& spec_) {
   parentData.box->addWidget(this);
 
   QFont f = font();
-  f.setPointSize(16);
+  f.setPixelSize(18);
   setFont(f);
 
   m_wgtDigitDisplay = makeQtObjPtr<QLineEdit>(this);

@@ -33,7 +33,7 @@ void FCalculator::reload(const FragmentSpec& spec_) {
   parentData.box->addWidget(m_data.wgtCalculator.get());
 
   QFont f = m_data.wgtCalculator->font();
-  f.setPointSize(16);
+  f.setPixelSize(18);
   m_data.wgtCalculator->setFont(f);
 
   auto& spec = dynamic_cast<const FCalculatorSpec&>(spec_);

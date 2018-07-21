@@ -20,7 +20,7 @@ ConfigPage::ConfigPage(QChar symbol, std::vector<int> neighbours)
   setLayout(grid.get());
 
   QFont f = font();
-  f.setPointSize(16);
+  f.setPixelSize(18);
 
   m_label = makeQtObjPtr<QLabel>(symbol);
   m_label->setFont(f);

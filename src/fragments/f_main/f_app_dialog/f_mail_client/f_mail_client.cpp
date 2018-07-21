@@ -318,7 +318,7 @@ void FMailClient::reload(const FragmentSpec& spec_) {
   parentData.box->addWidget(this);
 
   QFont font = commonData.appConfig.normalFont;
-  font.setPointSize(11);
+  font.setPixelSize(12);
   setFont(font);
 
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();

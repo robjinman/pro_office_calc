@@ -67,7 +67,7 @@ AppConfig::AppConfig(int argc, char** argv) {
   this->normalFont = QFont{"DejaVu Sans"};
   this->monoFont = QFont{"DejaVu Sans Mono"};
 
-  this->normalFont.setPointSize(12);
+  this->normalFont.setPixelSize(14);
   QApplication::setFont(this->normalFont);
 }
 

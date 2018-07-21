@@ -13,7 +13,7 @@ CalculatorWidget::CalculatorWidget(EventSystem& eventSystem)
     m_eventSystem(eventSystem) {
 
   QFont f = font();
-  f.setPointSize(16);
+  f.setPixelSize(18);
   setFont(f);
 
   wgtDigitDisplay = makeQtObjPtr<QLineEdit>(this);
