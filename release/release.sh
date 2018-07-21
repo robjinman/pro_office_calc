@@ -39,18 +39,18 @@ fi
 
 if [ $snapshot == true ]; then
   echo "Building snapshot release"
-  ./build_deb.sh -rsx -k $gpg_key
+  ./release/build_deb.sh -rsx -k $gpg_key
 else
   echo "Building stable release"
-  ./build_deb.sh -rs -k $gpg_key
+  ./release/build_deb.sh -rs -k $gpg_key
 fi
 
 changes_file=../*.changes
 
 if [ $snapshots == true ]; then
-  #dput ppa:rjinman/snapshots "$changes_file"
+  dput ppa:rjinman/snapshots "$changes_file"
 fi
-#dput ppa:rjinman/ppa "$changes_file"
+dput ppa:rjinman/ppa "$changes_file"
 
 git add ./debian/changelog
 git commit -m "changelog updated"
@@ -67,8 +67,8 @@ fi
 git push --follow-tags
 git checkout develop
 
-win_artifact=./artifacts/*.msi
-osx_artifact=./artifacts/*.app.zip
+win_artifact="$(find ./artifacts -name *.msi)"
+osx_artifact="$(find ./artifacts -name *.app.zip)"
 
 win_artifact_name="ProOfficeCalculator_${full_version}.msi"
 osx_artifact_name="ProOfficeCalculator_${full_version}.app.zip"
@@ -83,4 +83,4 @@ cat > ./artifacts/manifest << EOL
 </artifacts>
 EOL
 
-aws s3 cp ./artifacts/ s3://proofficecalculator.com/downloads/
+aws s3 cp ./artifacts/ s3://proofficecalculator.com/downloads/ --recursive

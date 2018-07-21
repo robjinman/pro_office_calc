@@ -38,9 +38,9 @@ export DEBFULLNAME="Rob Jinman"
 changelog_path="$(pwd)/debian/changelog"
 
 if [ $snapshot == true ]; then
-  ./create_tarball.sh -s -v "$version"
+  ./release/create_tarball.sh -s -v "$version"
 else
-  ./create_tarball.sh -v "$version"
+  ./release/create_tarball.sh -v "$version"
 fi
 
 tarball_path="$(get_tarball_path ./build)"
