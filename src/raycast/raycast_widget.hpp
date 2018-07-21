@@ -28,7 +28,8 @@ class RaycastWidget : public QWidget {
   Q_OBJECT
 
   public:
-    RaycastWidget(const AppConfig& appConfig, EventSystem& eventSystem);
+    RaycastWidget(const AppConfig& appConfig, EventSystem& eventSystem, int width = 320,
+      int height = 240, int frameRate = 60);
 
     void initialise(const std::string& mapFile);
     void start();
@@ -78,6 +79,9 @@ class RaycastWidget : public QWidget {
     TimeService m_timeService;
     AudioService m_audioService;
     RootFactory m_rootFactory;
+    int m_width;
+    int m_height;
+    int m_frameRate;
     QtObjPtr<QTimer> m_timer;
     QImage m_buffer;
     std::map<int, bool> m_keyStates;
@@ -90,7 +94,7 @@ class RaycastWidget : public QWidget {
 
 #ifdef DEBUG
     std::chrono::high_resolution_clock::time_point m_t = std::chrono::high_resolution_clock::now();
-    double m_frameRate = 0;
+    double m_measuredFrameRate = 0;
     long m_frame = 0;
 #endif
 };

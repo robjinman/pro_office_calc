@@ -34,22 +34,22 @@ using std::string;
 using std::list;
 
 
-const int SCREEN_WIDTH = 320;
-const int SCREEN_HEIGHT = 240;
-const int FRAME_RATE = 60;
-
 const double PLAYER_SPEED = 350.0;
 
 
 //===========================================
 // RaycastWidget::RaycastWidget
 //===========================================
-RaycastWidget::RaycastWidget(const AppConfig& appConfig, EventSystem& eventSystem)
+RaycastWidget::RaycastWidget(const AppConfig& appConfig, EventSystem& eventSystem, int width,
+  int height, int frameRate)
   : QWidget(nullptr),
     m_appConfig(appConfig),
     m_eventSystem(eventSystem),
-    m_timeService(FRAME_RATE),
-    m_audioService(m_entityManager, m_timeService) {}
+    m_timeService(frameRate),
+    m_audioService(m_entityManager, m_timeService),
+    m_width(width),
+    m_height(height),
+    m_frameRate(frameRate) {}
 
 //===========================================
 // RaycastWidget::loadTextures
@@ -180,7 +180,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   m_cursorCaptured = false;
   m_mouseBtnState = false;
 
-  m_buffer = QImage(SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_ARGB32);
+  m_buffer = QImage(m_width, m_height, QImage::Format_ARGB32);
 
   setFocus();
 
@@ -190,10 +190,10 @@ void RaycastWidget::initialise(const string& mapFile) {
   RenderSystem* renderSystem = new RenderSystem(m_appConfig, m_entityManager, m_buffer);
   m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderSystem));
 
-  SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, m_timeService, FRAME_RATE);
+  SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, m_timeService, m_frameRate);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
 
-  AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, FRAME_RATE);
+  AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, m_frameRate);
   m_entityManager.addSystem(ComponentKind::C_ANIMATION, pSystem_t(animationSystem));
 
   InventorySystem* inventorySystem = new InventorySystem(m_entityManager);
@@ -233,7 +233,7 @@ void RaycastWidget::initialise(const string& mapFile) {
 
   painter.setFont(font);
   painter.setPen(Qt::white);
-  painter.drawText((SCREEN_WIDTH - 100) / 2, (SCREEN_HEIGHT - h) / 2, "Loading...");
+  painter.drawText((m_width - 100) / 2, (m_height - h) / 2, "Loading...");
 
   painter.end();
 
@@ -257,7 +257,7 @@ void RaycastWidget::initialise(const string& mapFile) {
 void RaycastWidget::start() {
   m_eventSystem.fire(pEvent_t{new Event{"raycast/start"}});
 
-  m_timer->start(1000 / FRAME_RATE);
+  m_timer->start(1000 / m_frameRate);
 }
 
 //===========================================
@@ -288,7 +288,7 @@ void RaycastWidget::keyPressEvent(QKeyEvent* event) {
   m_entityManager.broadcastEvent(EKeyPressed{event->key()});
 
   if (event->key() == Qt::Key_F) {
-    DBG_PRINT("Frame rate = " << m_frameRate << "\n");
+    DBG_PRINT("Frame rate = " << m_measuredFrameRate << "\n");
   }
   else if (event->key() == Qt::Key_Escape) {
     uncaptureCursor();
@@ -361,7 +361,7 @@ void RaycastWidget::tick() {
   if (m_frame % 10 == 0) {
     chrono::high_resolution_clock::time_point t_ = chrono::high_resolution_clock::now();
     chrono::duration<double> span = chrono::duration_cast<chrono::duration<double>>(t_ - m_t);
-    m_frameRate = 10.0 / span.count();
+    m_measuredFrameRate = 10.0 / span.count();
     m_t = t_;
   }
   ++m_frame;
@@ -401,15 +401,15 @@ void RaycastWidget::tick() {
     }
 
     if (v.x != 0 || v.y != 0) {
-      double ds = PLAYER_SPEED / FRAME_RATE;
+      double ds = PLAYER_SPEED / m_frameRate;
       spatialSystem.movePlayer(normalise(v) * ds);
     }
 
     if (m_keyStates[Qt::Key_Left]) {
-      spatialSystem.hRotateCamera(-(1.2 / FRAME_RATE) * PI);
+      spatialSystem.hRotateCamera(-(1.2 / m_frameRate) * PI);
     }
     if (m_keyStates[Qt::Key_Right]) {
-      spatialSystem.hRotateCamera((1.2 / FRAME_RATE) * PI);
+      spatialSystem.hRotateCamera((1.2 / m_frameRate) * PI);
     }
 
     if (m_cursorCaptured) {

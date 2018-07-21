@@ -24,6 +24,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FMaze3d::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();
+  auto& spec = dynamic_cast<const FMaze3dSpec&>(spec_);
 
   m_origParentState.spacing = parentData.box->spacing();
   m_origParentState.margins = parentData.box->contentsMargins();
@@ -38,7 +39,8 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
 
   setLayout(m_data.vbox.get());
 
-  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
+  m_data.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem,
+    spec.width, spec.height, spec.frameRate);
   m_data.vbox->addWidget(m_data.wgtRaycast.get());
 
 #if PROFILING_ON
@@ -60,7 +62,7 @@ void FMaze3d::reload(const FragmentSpec& spec_) {
   }
 #endif
 
-  m_data.wgtRaycast->initialise(commonData.appConfig.dataPath("youve_got_mail/map.svg"));
+  m_data.wgtRaycast->initialise(spec.mapFile);
   m_data.wgtRaycast->start();
 }
 

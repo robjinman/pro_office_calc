@@ -8,6 +8,11 @@
 struct FMaze3dSpec : public FragmentSpec {
   FMaze3dSpec()
     : FragmentSpec("FMaze3d", {}) {}
+
+  std::string mapFile;
+  int width = 320;
+  int height = 240;
+  int frameRate = 60;
 };
 
 

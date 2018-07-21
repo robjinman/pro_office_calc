@@ -11,8 +11,8 @@ namespace st_test {
 
 FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   FMainSpec* mainSpec = new FMainSpec;
-  mainSpec->width = 320;
-  mainSpec->height = 260;
+  mainSpec->width = 640;
+  mainSpec->height = 500;
   mainSpec->windowTitle = "Pro O҉f̶fic͡e Calc͠u͜l̡ator͏";
   mainSpec->fileLabel = "Fi͝l̨e";
   mainSpec->quitLabel = "Qui͢t";
@@ -27,6 +27,10 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1992 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
   mainSpec->maze3dSpec.setEnabled(true);
+  mainSpec->maze3dSpec.mapFile = appConfig.dataPath("common/maps/test.svg");
+  mainSpec->maze3dSpec.width = 640;
+  mainSpec->maze3dSpec.height = 480;
+  mainSpec->maze3dSpec.frameRate = 200;
 
   return mainSpec;
 }

@@ -979,7 +979,7 @@ void Renderer::renderScene(const RenderGraph& rg, const Camera& cam) {
   const int W = rg.viewport_px.x;
 
 #ifdef SINGLE_THREAD
-  renderColumns(rg, cam, 0, W);
+  renderColumns(rg, cam, spatialSystem, renderSystem, 0, W);
 #else
   if (m_numWorkerThreads == 0) {
     renderColumns(rg, cam, spatialSystem, renderSystem, 0, W);
