@@ -1,9 +1,17 @@
 #!/bin/bash
 
+if [ ! -d src ]; then
+  echo "Please run build_deb.sh from project root. Aborting"
+  exit 1
+fi
+
+source ./release/functions.sh
+
 release=false
 source_only=false
+snapshot=false
 
-while getopts "k:rs" opt
+while getopts "k:rsx" opt
 do
   case $opt in
     r) release=true
@@ -14,6 +22,8 @@ do
        ;;
     k) key_id="$OPTARG"
        ;;
+    x) snapshot=true
+      ;;
   esac
 done
 
@@ -27,19 +37,15 @@ export DEBFULLNAME="Rob Jinman"
 
 changelog_path="$(pwd)/debian/changelog"
 
-./create_tarball.sh -s
-
-tarball_path=$(find build -name "procalc_*.orig.tar.gz")
-tarball_name="${tarball_path##*/}"
-
-regex="^procalc_(.*)\.orig\.tar\.gz$"
-
-if [[ ! $tarball_name =~ $regex ]]; then
-  echo "Tarball has non-conforming file name"
-  exit 1
+if [ $snapshot == true ]; then
+  ./create_tarball.sh -s -v "$version"
+else
+  ./create_tarball.sh -v "$version"
 fi
 
-version="${BASH_REMATCH[1]}"
+tarball_path="$(get_tarball_path ./build)"
+tarball_name="$(get_tarball_name ./build)"
+version="$(get_tarball_version ./build)"
 deb_version="${version}-0ubuntu1"
 
 mv "$tarball_path" ../

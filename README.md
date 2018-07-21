@@ -88,6 +88,7 @@ You will need to install
 
   * git
   * cmake
+  * wix toolset
 
 If compiling Qt, install
 

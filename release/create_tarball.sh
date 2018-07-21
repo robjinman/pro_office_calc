@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Uses git archive to construct archive of the current HEAD and places it into the build directory.
+# The archive name will be of the form procalc_1.0.15+16SNAPSHOT20180719015812.orig.tar.gz for
+# snapshots, or procalc_1.0.15.orig.tar.gz for stable builds.
+
+if [ ! -d src ]; then
+  echo "Please run create_tarball.sh from project root. Aborting"
+  exit 1
+fi
+
 packageName="procalc"
 destination="./build"
 commit="HEAD"

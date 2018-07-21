@@ -1,3 +1,4 @@
 build/
+artifacts/
 /obj-x86_64-linux-gnu
 .DS_Store
