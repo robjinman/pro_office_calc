@@ -1,3 +1,9 @@
+procalc (1.0.3-0ubuntu1) xenial; urgency=medium
+
+  * Reinstated procalc.sh for Linux build
+
+ -- Rob Jinman <jinmanr@gmail.com>  Mon, 23 Jul 2018 00:22:44 +0100
+
 procalc (1.0.2-0ubuntu2) xenial; urgency=medium
 
   * Smaller font sizes on Windows
