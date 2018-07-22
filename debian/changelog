@@ -1,11 +1,11 @@
-procalc (1.0.2-0ubuntu1) xenial; urgency=medium
+procalc (1.0.2-0ubuntu2) xenial; urgency=medium
 
   * Smaller font sizes on Windows
   * Adjusted difficulty of MAKING_PROGRESS level
   * Fixed compiler warnings on Windows
   * Actual app version is displayed in the About dialog
 
- -- Rob Jinman <jinmanr@gmail.com>  Mon, 23 Jul 2018 00:07:10 +0100
+ -- Rob Jinman <jinmanr@gmail.com>  Mon, 23 Jul 2018 00:10:21 +0100
 
 procalc (1.0.0+1SNAPSHOT20180719000705-0ubuntu1) xenial; urgency=medium
 
