@@ -64,7 +64,7 @@ string readString(istream& is) {
 }
 
 void writeString(ostream& os, const string& s) {
-  int nBytes = s.size();
+  size_t nBytes = s.size();
 
   os.write(reinterpret_cast<const char*>(&nBytes), sizeof(nBytes));
   os.write(s.data(), nBytes);

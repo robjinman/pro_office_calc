@@ -37,7 +37,7 @@ void UpdateLoop::finishAll() {
 // UpdateLoop::size
 //===========================================
 int UpdateLoop::size() const {
-  return m_functions.size();
+  return static_cast<int>(m_functions.size());
 }
 
 //===========================================

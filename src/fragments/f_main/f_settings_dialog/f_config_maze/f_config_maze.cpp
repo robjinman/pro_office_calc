@@ -23,7 +23,7 @@ static std::mt19937 randEngine(randomSeed());
 //===========================================
 static string generatePassword() {
   string syms("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
-  std::uniform_int_distribution<int> randIdx(0, syms.length() - 1);
+  std::uniform_int_distribution<int> randIdx(0, static_cast<int>(syms.length()) - 1);
   std::uniform_int_distribution<int> randLen(8, 14);
 
   int len = randLen(randEngine);

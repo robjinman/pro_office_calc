@@ -411,7 +411,7 @@ void FMailClient::enableEmails(int startIdx, int num) {
   auto& inbox = m_data.inboxTab;
 
   if (num == -1) {
-    num = emails.size();
+    num = static_cast<int>(emails.size());
   }
 
   for (int idx = startIdx; idx < startIdx + num; ++idx) {
@@ -523,7 +523,7 @@ void FMailClient::populateInbox() {
   QTableWidget& table = *m_data.inboxTab.wgtTable;
 
   table.clearContents();
-  table.setRowCount(emails.size());
+  table.setRowCount(static_cast<int>(emails.size()));
 
   int i = 0;
   for (auto email : emails) {

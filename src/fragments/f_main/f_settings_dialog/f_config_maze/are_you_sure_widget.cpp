@@ -53,7 +53,7 @@ string AreYouSureWidget::Template::generate_(const TemplateMap& templates, const
     }
 
     result.replace(m.position() + offset, m.length(), expanded);
-    offset += expanded.length() - m.length();
+    offset += static_cast<int>(expanded.length() - m.length());
   }
 
   if (result.back() != ' ') {

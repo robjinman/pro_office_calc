@@ -21,7 +21,7 @@
 class QPaintEvent;
 class AppConfig;
 class EventSystem;
-class RenderGraph;
+struct RenderGraph;
 namespace parser { struct Object; }
 
 class RaycastWidget : public QWidget {

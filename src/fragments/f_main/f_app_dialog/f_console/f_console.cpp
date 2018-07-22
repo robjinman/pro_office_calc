@@ -72,7 +72,7 @@ void FConsole::reload(const FragmentSpec& spec_) {
 // FConsole::addCommands
 //===========================================
 void FConsole::addCommands(const vector<vector<string>>& commands) {
-  int numCommands = commands.size();
+  int numCommands = static_cast<int>(commands.size());
 
   for (int i = 0; i < numCommands; ++i) {
     auto& cmd = commands[i];

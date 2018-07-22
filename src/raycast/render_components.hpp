@@ -127,7 +127,7 @@ class CSprite : public CRender {
 
       Vec2f v = vRect.pos - camPos;
       double a = PI - atan2(v.y, v.x) + vRect.angle;
-      int n = texViews.size();
+      size_t n = texViews.size();
       double da = 2.0 * PI / n;
       int idx = static_cast<int>(round(normaliseAngle(a) / da)) % n;
 

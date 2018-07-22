@@ -159,7 +159,7 @@ void InventorySystem::addToBucket(entityId_t collectorId, const CCollectable& it
           EXCEPTION("Bucket already contains item with name '" << item.name << "'");
         }
 
-        int prevCount = bucket.items.size();
+        int prevCount = static_cast<int>(bucket.items.size());
         bucket.items[item.name] = item.entityId();
 
         m_entityManager.fireEvent(EBucketItemsChange{collectorId, item.collectableType, bucket,
@@ -236,7 +236,7 @@ void InventorySystem::removeFromBucket(entityId_t collectorId, const string& col
 
   ItemBucket& bucket = dynamic_cast<ItemBucket&>(b);
 
-  int prevCount = bucket.items.size();
+  int prevCount = static_cast<int>(bucket.items.size());
   bucket.items.erase(name);
 
   m_entityManager.fireEvent(EBucketItemsChange(collectorId, collectableType, bucket, prevCount),

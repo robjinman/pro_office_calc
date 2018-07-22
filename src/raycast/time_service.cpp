@@ -66,7 +66,7 @@ void TimeService::update() {
   for (auto it = m_tweens.begin(); it != m_tweens.end();) {
     const TweenWrap& tweenWrap = it->second;
     const Tween& tween = tweenWrap.tween;
-    long i = m_frame - tweenWrap.start;
+    long i = static_cast<long>(m_frame - tweenWrap.start);
 
     if (!tween.tick(i, elapsed, frameRate)) {
       tween.finish(i, elapsed, frameRate);
@@ -80,7 +80,7 @@ void TimeService::update() {
   for (auto it = m_timeouts.begin(); it != m_timeouts.end();) {
     const Timeout& timeout = it->second;
 
-    long frames = m_frame - timeout.start;
+    long frames = static_cast<long>(m_frame - timeout.start);
     double elapsed = frames / frameRate;
 
     if (elapsed >= timeout.duration) {
@@ -96,7 +96,7 @@ void TimeService::update() {
   for (auto it = m_intervals.begin(); it != m_intervals.end();) {
     Interval& interval = it->second;
 
-    long frames = m_frame - interval.start;
+    long frames = static_cast<long>(m_frame - interval.start);
     double elapsed = frames / frameRate;
 
     if (elapsed >= interval.duration) {

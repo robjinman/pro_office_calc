@@ -217,7 +217,7 @@ void GameLogic::generateCommands() {
     "&&linkf"
   };
 
-  int partsPerCommand = cmdParts.size() / progs.size();
+  size_t partsPerCommand = cmdParts.size() / progs.size();
 
   std::shuffle(progs.begin(), progs.end(), randEngine);
   std::shuffle(cmdParts.begin(), cmdParts.end(), randEngine);
@@ -263,7 +263,7 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
       Component::getIdFromString("safe_cell_2")
     };
 
-    std::uniform_int_distribution<int> randomSafeCell(0, safeCells.size() - 1);
+    std::uniform_int_distribution<int> randomSafeCell(0, static_cast<int>(safeCells.size()) - 1);
 
     vector<entityId_t> unsafeCells = {
       Component::getIdFromString("unsafe_cell_0"),
@@ -271,7 +271,7 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
       Component::getIdFromString("unsafe_cell_2")
     };
 
-    std::uniform_int_distribution<int> randomUnsafeCell(0, unsafeCells.size() - 1);
+    std::uniform_int_distribution<int> randomUnsafeCell(0, static_cast<int>(unsafeCells.size()) - 1);
 
     // Construct start cell
     //

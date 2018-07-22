@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
-  <?define versionNumber='1.0.0' ?>
+  <?define versionNumber='1.0.1' ?>
   <?define infoURL='http://proofficecalculator.com' ?>
 
   <Product Name='Pro Office Calculator' Manufacturer='Rob Jinman'
@@ -29,6 +29,10 @@
                 WorkingDirectory='INSTALLDIR' Icon="procalc.ico" IconIndex="0" Advertise='yes' />
             </File>
           </Component>
+
+          <Component Id="versionFile" Guid="{3ADF79EF-9704-4B01-9E44-6EAF952C904D}">
+              <File Id="version" KeyPath="yes" Source="VERSION" />
+          </Component>
         </Directory>
       </Directory>
 
@@ -48,6 +52,7 @@
       <ComponentGroupRef Id="dataComponentGroup"/>
       <ComponentGroupRef Id="libsComponentGroup"/>
       <ComponentRef Id='mainExecutable' />
+      <ComponentRef Id='versionFile' />
       <ComponentRef Id='programMenuDir' />
     </Feature>
 

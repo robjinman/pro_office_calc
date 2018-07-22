@@ -426,7 +426,7 @@ const string& getValue(const map<string, string>& m, const string& key) {
   try {
     return m.at(key);
   }
-  catch (std::out_of_range& ex) {
+  catch (std::out_of_range&) {
     EXCEPTION("No '" << key << "' key in map");
   }
 }

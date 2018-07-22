@@ -65,7 +65,7 @@ class FixedSizeList {
     }
 
     int size() const {
-      return m_list.size();
+      return static_cast<int>(m_list.size());
     }
 
   private:

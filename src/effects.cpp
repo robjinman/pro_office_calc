@@ -120,7 +120,7 @@ void garbleImage(const QImage& src, QImage& dest) {
   int w = dest.width();
   int h = dest.height();
 
-  const float prob = 0.03;
+  const double prob = 0.03;
   std::uniform_int_distribution<int> rollDie(0, 1.0 / prob);
   std::normal_distribution<double> randShift(0, 10);
   int shift = randShift(randEngine);

@@ -182,7 +182,7 @@ bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
 
     if (i == 0) {
       if (obj.path.closed) {
-        j = obj.path.points.size() - 1;
+        j = static_cast<int>(obj.path.points.size()) - 1;
       }
       else {
         continue;
@@ -327,7 +327,7 @@ bool GeometryFactory::constructBoundaries(entityId_t entityId, parser::Object& o
 
     if (i == 0) {
       if (obj.path.closed) {
-        j = obj.path.points.size() - 1;
+        j = static_cast<int>(obj.path.points.size()) - 1;
       }
       else {
         continue;
