@@ -32,6 +32,9 @@ if [ ! "${branch::1}" == "*" ]; then
   exit 1
 fi
 
+git add ./VERSION
+git commit -m "Updated VERSION"
+
 if [ $snapshot == true ]; then
   echo "Building snapshot release"
   ./release/build_deb.sh -rsx -k $gpg_key
@@ -47,8 +50,8 @@ if [ $snapshot == true ]; then
 fi
 dput ppa:rjinman/ppa "$changes_file"
 
-git add ./debian/changelog ./VERSION
-git commit -m "Updated changelog and VERSION"
+git add ./debian/changelog
+git commit -m "Updated debian/changelog"
 
 git push
 

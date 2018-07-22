@@ -17,8 +17,9 @@ to ensure each platform's build is up-to-date.
 
 Run `release.sh`, which will do the following:
 
+* Commit the VERSION file.
 * Run the build_deb.sh script.
-* Commit the new changelog and VERSION file.
+* Commit the new changelog.
 * Merge develop into master. If this is a stable build (i.e. non-snapshot), tag the master branch
 with the version number prefixed with the letter v, e.g. v1.0.15. The annotation for the tag should
 have the form `Pro Office Calculator v1.0.15`.
