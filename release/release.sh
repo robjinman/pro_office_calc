@@ -43,7 +43,7 @@ else
   ./release/build_deb.sh -rs -k $gpg_key
 fi
 
-changes_file="$(find .. -name *.changes)"
+changes_file="$(find .. -name procalc*.changes)"
 
 if [ $snapshot == true ]; then
   dput ppa:rjinman/snapshots "$changes_file"
