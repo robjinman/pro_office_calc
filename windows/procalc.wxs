@@ -30,7 +30,7 @@
             </File>
           </Component>
 
-          <Component Id="versionFile" Guid="{3ADF79EF-9704-4B01-9E44-6EAF952C904D}">
+          <Component Id="versionFile" Guid="D8415673-619C-4CBE-9A86-9F795D6E0B25">
               <File Id="version" KeyPath="yes" Source="VERSION" />
           </Component>
         </Directory>
