@@ -37,6 +37,8 @@ class AppConfig {
 
     void persistState();
 
+    std::string version;
+
     int stateId = 0;
     CommandLineArgs args;
 
@@ -55,6 +57,8 @@ class AppConfig {
 
   private:
     void loadState();
+    std::string versionFilePath() const;
+    void readVersionFile();
 
     std::map<std::string, std::string> m_params;
 };

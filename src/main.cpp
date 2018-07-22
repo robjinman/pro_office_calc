@@ -34,9 +34,9 @@ int main(int argc, char** argv) {
 
     AppConfig appConfig{argc, argv};
 
+    DBG_PRINT("App version: " << appConfig.version << "\n");
+    DBG_PRINT("App state: " << appConfig.stateId << "\n");
     DBG_PRINT("Hardware concurrency: " << std::thread::hardware_concurrency() << "\n");
-
-    DBG_PRINT("Loading app state " << appConfig.stateId << "\n");
 
     std::shared_ptr<EventSystem> eventSystem{new EventSystem};
     UpdateLoop updateLoop(50);

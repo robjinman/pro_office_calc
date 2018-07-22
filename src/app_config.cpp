@@ -1,3 +1,4 @@
+#include <fstream>
 #include <tinyxml2.h>
 #include <QStandardPaths>
 #include <QDir>
@@ -8,6 +9,7 @@
 #include "utils.hpp"
 
 
+using std::ifstream;
 using std::string;
 using CommandLineArgs = AppConfig::CommandLineArgs;
 using tinyxml2::XMLDocument;
@@ -55,6 +57,7 @@ AppConfig::AppConfig(int argc, char** argv) {
     this->args.push_back(argv[i]);
   }
 
+  readVersionFile();
   loadState();
 
   if (this->args.size() > 0) {
@@ -171,6 +174,40 @@ int AppConfig::getIntArg( unsigned int idx, int defaultVal) const {
 //===========================================
 string AppConfig::getStringArg(unsigned int idx, const string& defaultVal) const {
   return getArg<string>(this->args, idx, defaultVal);
+}
+
+//===========================================
+// AppConfig::readVersionFile
+//===========================================
+void AppConfig::readVersionFile() {
+  string path = versionFilePath();
+
+  ifstream fin(path);
+  if (fin.good()) {
+    fin >> this->version;
+  }
+
+  fin.close();
+}
+
+//===========================================
+// AppConfig::versionFilePath
+//===========================================
+string AppConfig::versionFilePath() const {
+// Windows
+#ifdef WIN32
+  return QCoreApplication::applicationDirPath().toStdString() + "/VERSION";
+// OS X
+#elif defined(__APPLE__)
+  return QCoreApplication::applicationDirPath().toStdString() + "/../Resources/VERSION";
+// Linux
+#else
+  #ifdef DEBUG
+    return QCoreApplication::applicationDirPath().toStdString() + "/VERSION";
+  #else
+    return string("/usr/share/procalc/VERSION");
+  #endif
+#endif
 }
 
 //===========================================

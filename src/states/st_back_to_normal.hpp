@@ -13,7 +13,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->calculatorSpec.setEnabled(true);
   mainSpec->aboutDialogText = "";
   mainSpec->aboutDialogText += QString("<p align='center'><big>Pro Office Calculator</big>") +
-    "<br>Version 1.0.0</p>"
+    "<br>Version " + appConfig.version.c_str() + "</p>"
     "<p align='center'>Copyright (c) 2018 Rob Jinman. All rights reserved.</p>"
     "<p>With help from " + appConfig.getParam("player-name").c_str() + "</p>";
 
