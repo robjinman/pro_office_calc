@@ -43,7 +43,7 @@ else
   ./release/build_deb.sh -rs -k $gpg_key
 fi
 
-changes_file=../*.changes
+changes_file="$(find .. -name *.changes)"
 
 if [ $snapshot == true ]; then
   dput ppa:rjinman/snapshots "$changes_file"
@@ -67,6 +67,8 @@ git checkout develop
 
 win_artifact="$(find ./artifacts -name *.msi)"
 osx_artifact="$(find ./artifacts -name *.app.zip)"
+
+full_version="$(get_tarball_version ..)"
 
 win_artifact_name="ProOfficeCalculator_${full_version}.msi"
 osx_artifact_name="ProOfficeCalculator_${full_version}.app.zip"
