@@ -11,7 +11,7 @@
 using std::string;
 
 
-const int NUM_QUESTIONS = 1;//8;
+const int NUM_QUESTIONS = 8;
 
 static std::mt19937 randEngine(randomSeed());
 
