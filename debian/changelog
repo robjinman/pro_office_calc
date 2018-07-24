@@ -1,3 +1,9 @@
+procalc (1.0.4-0ubuntu1) xenial; urgency=medium
+
+  * Fixed layout and formatting errors on Windows 
+
+ -- Rob Jinman <jinmanr@gmail.com>  Wed, 25 Jul 2018 00:02:11 +0100
+
 procalc (1.0.3-0ubuntu1) xenial; urgency=medium
 
   * Reinstated procalc.sh for Linux build
