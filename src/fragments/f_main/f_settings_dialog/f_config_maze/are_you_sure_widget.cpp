@@ -175,6 +175,7 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page2.wgtConsole = makeQtObjPtr<QLabel>();
   m_page2.wgtConsole->setMouseTracking(true);
   m_page2.wgtConsole->setPixmap(pixmap);
+  m_page2.wgtConsole->setFixedSize(pixmap.size());
 
   m_page2.wgtPrompt = makeQtObjPtr<QLabel>("The admin console is for advanced users only. "
     "Enter at your own risk.");
