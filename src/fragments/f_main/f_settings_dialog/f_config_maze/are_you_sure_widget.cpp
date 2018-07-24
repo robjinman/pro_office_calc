@@ -11,7 +11,7 @@
 using std::string;
 
 
-const int NUM_QUESTIONS = 8;
+const int NUM_QUESTIONS = 1;//8;
 
 static std::mt19937 randEngine(randomSeed());
 
@@ -175,7 +175,8 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page2.wgtConsole = makeQtObjPtr<QLabel>();
   m_page2.wgtConsole->setMouseTracking(true);
   m_page2.wgtConsole->setPixmap(pixmap);
-  m_page2.wgtConsole->setFixedSize(pixmap.size());
+  m_page2.wgtConsole->setFixedSize(pixmap.size() * 0.8);
+  m_page2.wgtConsole->setScaledContents(true);
 
   m_page2.wgtPrompt = makeQtObjPtr<QLabel>("The admin console is for advanced users only. "
     "Enter at your own risk.");
@@ -183,7 +184,7 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page2.wgtPrompt->setMouseTracking(true);
 
   m_page2.wgtBackToSafety = makeQtObjPtr<QPushButton>("Back to safety");
-  m_page2.wgtBackToSafety->setMaximumWidth(120);
+  m_page2.wgtBackToSafety->setMaximumWidth(140);
 
   m_page2.wgtProceed = makeQtObjPtr<EvasiveButton>("Proceed");
   m_page2.wgtProceed->setMaximumWidth(90);
