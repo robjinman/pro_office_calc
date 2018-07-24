@@ -53,10 +53,9 @@ cd ..
 tar -xf "$tarball_name"
 cd "procalc-${version}"
 
+dch --newversion "$deb_version"
 if $release; then
-  dch --release --append
-else
-  dch -v "$deb_version"
+  dch --release
 fi
 
 # Replace the old changelog with the new one
