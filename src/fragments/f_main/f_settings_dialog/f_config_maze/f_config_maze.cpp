@@ -117,10 +117,11 @@ void FConfigMaze::constructConsolePage() {
     "> ";
 
   m_data.consolePage.widget = makeQtObjPtr<QWidget>();
-  m_data.consolePage.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{
-    "logouut",
-    string("chpwd ") + pwd
-  });
+  m_data.consolePage.wgtConsole = makeQtObjPtr<ConsoleWidget>(commonData.appConfig, initialContent,
+    vector<string>{
+      "logouut",
+      string("chpwd ") + pwd
+    });
   m_data.consolePage.wgtConsole->addCommand("logout", [](const ConsoleWidget::ArgList&) {
     return "An error occurred";
   });

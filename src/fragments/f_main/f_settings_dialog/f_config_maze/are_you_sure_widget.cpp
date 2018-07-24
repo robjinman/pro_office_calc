@@ -168,8 +168,8 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page2.widget = makeQtObjPtr<QWidget>();
   m_page2.widget->setMouseTracking(true);
 
-  m_page2.grid = makeQtObjPtr<QGridLayout>();
-  m_page2.widget->setLayout(m_page2.grid.get());
+  m_page2.vbox = makeQtObjPtr<QVBoxLayout>();
+  m_page2.widget->setLayout(m_page2.vbox.get());
 
   pixmap = QPixmap{appConfig.dataPath("common/images/console.png").c_str()};
   m_page2.wgtConsole = makeQtObjPtr<QLabel>();
@@ -181,18 +181,23 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
   m_page2.wgtPrompt->setWordWrap(true);
   m_page2.wgtPrompt->setMouseTracking(true);
 
-  m_page2.wgtNo = makeQtObjPtr<QPushButton>("Back to safety");
+  m_page2.wgtBackToSafety = makeQtObjPtr<QPushButton>("Back to safety");
+  m_page2.wgtBackToSafety->setMaximumWidth(120);
 
-  m_page2.wgtYes = makeQtObjPtr<EvasiveButton>("Proceed");
-  m_page2.wgtYes->setMaximumWidth(90);
+  m_page2.wgtProceed = makeQtObjPtr<EvasiveButton>("Proceed");
+  m_page2.wgtProceed->setMaximumWidth(90);
 
-  m_page2.grid->addWidget(m_page2.wgtConsole.get(), 0, 1);
-  m_page2.grid->addWidget(m_page2.wgtPrompt.get(), 2, 0, 1, 3);
-  m_page2.grid->addWidget(m_page2.wgtNo.get(), 3, 0);
-  m_page2.grid->addWidget(m_page2.wgtYes.get(), 1, 1, Qt::AlignCenter);
+  m_page2.vbox->addWidget(m_page2.wgtConsole.get());
+  m_page2.vbox->addWidget(m_page2.wgtProceed.get());
+  m_page2.vbox->addItem(new QSpacerItem(100, 20));
+  m_page2.vbox->addWidget(m_page2.wgtPrompt.get());
+  m_page2.vbox->addWidget(m_page2.wgtBackToSafety.get());
 
-  connect(m_page2.wgtYes.get(), SIGNAL(pressed()), this, SLOT(onFinalYesClick()));
-  connect(m_page2.wgtNo.get(), SIGNAL(clicked()), this, SLOT(onFinalNoClick()));
+  m_page2.vbox->setAlignment(m_page2.wgtConsole.get(), Qt::AlignHCenter);
+  m_page2.vbox->setAlignment(m_page2.wgtProceed.get(), Qt::AlignHCenter);
+
+  connect(m_page2.wgtProceed.get(), SIGNAL(pressed()), this, SLOT(onFinalYesClick()));
+  connect(m_page2.wgtBackToSafety.get(), SIGNAL(clicked()), this, SLOT(onFinalNoClick()));
 
   m_pages->addWidget(m_page2.widget.get());
 
@@ -255,7 +260,7 @@ void AreYouSureWidget::nextQuestion() {
   }
   else {
     m_pages->setCurrentIndex(1);
-    m_page2.wgtYes->reset();
+    m_page2.wgtProceed->reset();
   }
 
   ++m_count;
@@ -312,5 +317,5 @@ void AreYouSureWidget::onFinalNoClick() {
 // AreYouSureWidget::mouseMoveEvent
 //===========================================
 void AreYouSureWidget::mouseMoveEvent(QMouseEvent*) {
-  m_page2.wgtYes->onMouseMove();
+  m_page2.wgtProceed->onMouseMove();
 }

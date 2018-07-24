@@ -43,6 +43,9 @@ class FProcalcSetup : public QWidget, public Fragment {
 
     virtual ~FProcalcSetup() override;
 
+  protected:
+     void resizeEvent(QResizeEvent* e) override;
+
   private slots:
     void onNextClick();
 

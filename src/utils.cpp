@@ -5,6 +5,7 @@
 #include <sstream>
 #include <QRect>
 #include <QRectF>
+#include <QSize>
 #include "utils.hpp"
 
 
@@ -49,6 +50,10 @@ ostream& operator<<(ostream& os, const QPoint& p) {
 }
 ostream& operator<<(ostream& os, const QPointF& p) {
   os << p.x() << ", " << p.y();
+  return os;
+}
+std::ostream& operator<<(std::ostream& os, const QSize& sz) {
+  os << "(" << sz.width() << ", " << sz.height() << ")";
   return os;
 }
 #endif

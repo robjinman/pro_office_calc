@@ -14,10 +14,6 @@ struct FProcalcSetupSpec : public FragmentSpec {
       }) {}
 
   FGlitchSpec glitchSpec;
-
-  QString titleText = "Setup";
-  int width = 640;
-  int height = 480;
 };
 
 

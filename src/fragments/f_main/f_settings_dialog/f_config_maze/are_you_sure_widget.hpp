@@ -8,6 +8,7 @@
 #include <QStackedLayout>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include "evasive_button.hpp"
 #include "qt_obj_ptr.hpp"
 
@@ -73,9 +74,9 @@ class AreYouSureWidget : public QWidget {
 
     struct {
       QtObjPtr<QWidget> widget;
-      QtObjPtr<QGridLayout> grid;
-      QtObjPtr<EvasiveButton> wgtYes;
-      QtObjPtr<QPushButton> wgtNo;
+      QtObjPtr<QVBoxLayout> vbox;
+      QtObjPtr<EvasiveButton> wgtProceed;
+      QtObjPtr<QPushButton> wgtBackToSafety;
       QtObjPtr<QLabel> wgtPrompt;
       QtObjPtr<QLabel> wgtConsole;
     } m_page2;

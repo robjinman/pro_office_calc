@@ -121,6 +121,7 @@ std::ostream& operator<<(std::ostream& os, const QRect& rect);
 std::ostream& operator<<(std::ostream& os, const QRectF& rect);
 std::ostream& operator<<(std::ostream& os, const QPoint& p);
 std::ostream& operator<<(std::ostream& os, const QPointF& p);
+std::ostream& operator<<(std::ostream& os, const QSize& sz);
 #endif
 
 

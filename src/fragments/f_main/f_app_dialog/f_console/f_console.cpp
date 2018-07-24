@@ -57,7 +57,8 @@ void FConsole::reload(const FragmentSpec& spec_) {
 
   m_commandsEntered = 0;
 
-  m_data.wgtConsole = makeQtObjPtr<ConsoleWidget>(initialContent, vector<string>{});
+  m_data.wgtConsole = makeQtObjPtr<ConsoleWidget>(commonData.appConfig, initialContent,
+    vector<string>{});
   m_data.vbox->addWidget(m_data.wgtConsole.get());
 
   m_hCommandsGenerated = commonData.eventSystem.listen("doomsweeper/commandsGenerated",

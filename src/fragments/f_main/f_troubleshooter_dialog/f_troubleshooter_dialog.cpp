@@ -50,7 +50,6 @@ void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
   auto& spec = dynamic_cast<const FTroubleshooterDialogSpec&>(spec_);
 
   setWindowTitle(spec.titleText);
-  setFixedSize(spec.width, spec.height);
 }
 
 //===========================================
@@ -131,6 +130,7 @@ void FTroubleshooterDialog::setupTab3() {
   tab.page = makeQtObjPtr<QWidget>();
   tab.vbox = makeQtObjPtr<QVBoxLayout>();
   tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
+  tab.wgtRaycast->setFixedSize(320, 240);
   tab.wgtRaycast->initialise(commonData.appConfig.dataPath("its_raining_tetrominos/map.svg"));
   tab.gameLogic.reset(new GameLogic(commonData.eventSystem, tab.wgtRaycast->entityManager()));
 

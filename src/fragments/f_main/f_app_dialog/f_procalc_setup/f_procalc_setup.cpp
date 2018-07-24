@@ -128,15 +128,23 @@ void FProcalcSetup::populateListWidget() {
 }
 
 //===========================================
+// FProcalcSetup::resizeEvent
+//===========================================
+void FProcalcSetup::resizeEvent(QResizeEvent* e) {
+  auto& parent = parentFrag<QWidget>();
+
+  // Hack to prevent dialog being too long on Windows
+  int h = parent.height();
+  setFixedHeight(h);
+}
+
+//===========================================
 // FProcalcSetup::setupPage1
 //===========================================
 void FProcalcSetup::setupPage1() {
   auto& page = m_data.page1;
 
   page.widget = makeQtObjPtr<QWidget>();
-
-  QVBoxLayout* vbox = new QVBoxLayout;
-  page.widget->setLayout(vbox);
 
   QPixmap icon(commonData.appConfig.dataPath("common/images/warning.png").c_str());
 
@@ -161,9 +169,12 @@ void FProcalcSetup::setupPage1() {
   bottomHBox->addStretch(0);
   bottomHBox->addWidget(page.wgtNext.get());
 
+  QVBoxLayout* vbox = new QVBoxLayout;
   vbox->addLayout(topHBox);
   vbox->addWidget(page.wgtList.get());
   vbox->addLayout(bottomHBox);
+
+  page.widget->setLayout(vbox);
 
   populateListWidget();
 

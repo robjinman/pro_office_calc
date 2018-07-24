@@ -38,13 +38,6 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->appDialogSpec0.height = 240;
   mainSpec->appDialogSpec0.showOnEvent = "procalcLaunch";
   mainSpec->appDialogSpec0.procalcSetupSpec.setEnabled(true);
-  mainSpec->appDialogSpec1.setEnabled(true);
-  mainSpec->appDialogSpec1.titleText = "Pro Office Calculator";
-  mainSpec->appDialogSpec1.width = 400;
-  mainSpec->appDialogSpec1.height = 300;
-  mainSpec->appDialogSpec1.showOnEvent = "makingProgress/setupComplete";
-  mainSpec->appDialogSpec1.calculatorSpec.setEnabled(true);
-  mainSpec->appDialogSpec1.calculatorSpec.partialCalcSpec.setEnabled(true);
 
   return mainSpec;
 }

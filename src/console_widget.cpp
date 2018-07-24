@@ -1,5 +1,6 @@
 #include <sstream>
 #include "console_widget.hpp"
+#include "app_config.hpp"
 
 
 using std::vector;
@@ -11,16 +12,20 @@ using std::istream_iterator;
 //===========================================
 // ConsoleWidget::ConsoleWidget
 //===========================================
-ConsoleWidget::ConsoleWidget(const string& initialContent, vector<string> initialHistory)
+ConsoleWidget::ConsoleWidget(const AppConfig& appConfig, const string& initialContent,
+  vector<string> initialHistory)
   : QPlainTextEdit(nullptr),
     m_commandHistory(initialHistory.begin(), initialHistory.end()) {
+
+  setMinimumWidth(330);
 
   QPalette p = palette();
   p.setColor(QPalette::Base, Qt::black);
   p.setColor(QPalette::Text, Qt::white);
   setPalette(p);
 
-  QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+  QFont font = appConfig.monoFont;
+  font.setPixelSize(12);
   document()->setDefaultFont(font);
 
   insertPlainText(initialContent.c_str());
