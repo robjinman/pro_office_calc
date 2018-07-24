@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
-  <?define versionNumber='1.0.1' ?>
+  <?define versionNumber=VERSION_NUMBER ?>
   <?define infoURL='http://proofficecalculator.com' ?>
 
   <Product Name='Pro Office Calculator' Manufacturer='Rob Jinman'

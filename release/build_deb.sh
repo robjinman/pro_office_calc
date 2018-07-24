@@ -54,7 +54,7 @@ tar -xf "$tarball_name"
 cd "procalc-${version}"
 
 if $release; then
-  dch --release
+  dch --release --append
 else
   dch -v "$deb_version"
 fi
