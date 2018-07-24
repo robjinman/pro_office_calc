@@ -50,8 +50,9 @@ build_deb_source_package() {
 
   if [ $snapshot == true ]; then
     dput ppa:rjinman/snapshots "$changes_file"
+  else
+    dput ppa:rjinman/ppa "$changes_file"
   fi
-  dput ppa:rjinman/ppa "$changes_file"
 
   git add ./debian/changelog
   git commit -m "Updated debian/changelog"
