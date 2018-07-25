@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ ! -d src ]; then
   echo "Please run release.sh from project root. Aborting"
   exit 1
@@ -38,6 +40,13 @@ commit_version() {
 }
 
 build_deb_source_package() {
+  # Remove previous changelog files
+  i=0
+  for path in $(find .. -name procalc*.changes); do
+    mv "$path" "${path}${i}"
+    ((++i))
+  done
+
   if [ $snapshot == true ]; then
     echo "Building snapshot release"
     ./release/build_deb.sh -rsx -k $gpg_key
@@ -55,7 +64,7 @@ build_deb_source_package() {
   fi
 
   git add ./debian/changelog
-  git commit -m "Updated debian/changelog"
+  git commit -m "Updated debian/changelog" || echo "changelog not updated"
 
   git push
 }
