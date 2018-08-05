@@ -13,7 +13,8 @@ the stable version (i.e. no snapshot suffix). Leave unchanged for snapshot relea
 * Build the project and create distributable packages for OS X, Windows, and Linux, making changes
 and pushing new commits if necessary. Every time a new commit is made, may need to rebuild on all
 other systems to ensure each platform's build is up-to-date.
-* Transfer the Windows and Mac artifacts to the `artifacts` directory on the main Linux workstation.
+* Transfer the Windows and Mac artifacts to the `dist/artifacts` directory on the main Linux
+workstation.
 
 Run `release.sh`, which will do the following:
 

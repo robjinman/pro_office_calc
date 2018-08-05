@@ -82,16 +82,16 @@ tag_master() {
 }
 
 upload_artifacts() {
-  win_artifact="$(find ./artifacts -name *.msi)"
-  osx_artifact="$(find ./artifacts -name *.app.zip)"
+  win_artifact="$(find ./dist/artifacts -name *.msi)"
+  osx_artifact="$(find ./dist/artifacts -name *.app.zip)"
 
   full_version="$(get_tarball_version ..)"
 
   win_artifact_name="ProOfficeCalculator_${full_version}.msi"
   osx_artifact_name="ProOfficeCalculator_${full_version}.app.zip"
 
-  mv "$win_artifact" "./artifacts/$win_artifact_name"
-  mv "$osx_artifact" "./artifacts/$osx_artifact_name"
+  mv "$win_artifact" "./dist/artifacts/$win_artifact_name"
+  mv "$osx_artifact" "./dist/artifacts/$osx_artifact_name"
 
   cat > ./artifacts/manifest <<EOF
 <artifacts>
@@ -100,7 +100,7 @@ upload_artifacts() {
 </artifacts>
 EOF
 
-  aws s3 cp ./artifacts/ s3://proofficecalculator.com/downloads/ --recursive
+  aws s3 cp ./dist/artifacts/ s3://proofficecalculator.com/downloads/ --recursive
 }
 
 commit_version

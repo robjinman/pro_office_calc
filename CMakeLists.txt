@@ -12,7 +12,9 @@ project(${PROJECT_SHORT_NAME})
 file(STRINGS "${VERSION_FILE}" VERSION_STRINGS)
 list(GET VERSION_STRINGS 0 PROJECT_VERSION)
 
-message("***** Building ${PROJECT_LONG_NAME} ${PROJECT_VERSION} - ${CMAKE_BUILD_TYPE} build *****")
+message("========================================================")
+message("  Building ${PROJECT_LONG_NAME} ${PROJECT_VERSION} - ${CMAKE_BUILD_TYPE} build")
+message("========================================================")
 
 if (UNIX AND NOT APPLE)
   set(LINUX true)

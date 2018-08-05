@@ -205,7 +205,11 @@ string AppConfig::versionFilePath() const {
   #ifdef DEBUG
     return QCoreApplication::applicationDirPath().toStdString() + "/VERSION";
   #else
-    return string("/usr/share/procalc/VERSION");
+    // Whether the installation is global or relocatable, the usr dir should be one level above
+    // the bin directory
+    string usrDir = QCoreApplication::applicationDirPath().toStdString() + "/..";
+
+    return usrDir + "/share/procalc/VERSION";
   #endif
 #endif
 }
@@ -225,7 +229,11 @@ string AppConfig::dataPath(const string& relPath) const {
   #ifdef DEBUG
     return QCoreApplication::applicationDirPath().toStdString() + "/data/" + relPath;
   #else
-    return string("/usr/share/procalc/data/") + relPath;
+    // Whether the installation is global or relocatable, the usr dir should be one level above
+    // the bin directory
+    string usrDir = QCoreApplication::applicationDirPath().toStdString() + "/..";
+
+    return usrDir + "/share/procalc/data/" + relPath;
   #endif
 #endif
 }

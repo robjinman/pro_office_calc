@@ -49,6 +49,13 @@ Run the app from the build directory
     ./procalc
 ```
 
+To create a standalone release bundle, invoke cmake as follows
+
+```
+    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../../dist/bundles/linux64 -G "Unix Makefiles" ../..
+    make -j4
+```
+
 
 ### OS X
 
@@ -73,6 +80,20 @@ Create the directory build/osx and from there, run
 ```
 
 This will create a redistributable app bundle called procalc.app.
+
+For the release build, do the following
+
+```
+    CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
+      -D CMAKE_BUILD_TYPE=Release \
+      -D CMAKE_INSTALL_PREFIX=../../dist/bundles/ \
+      -G "Unix Makefiles" ../..
+
+    make -j4
+    make install
+```
+
+This will place the app under dist/bundles.
 
 
 ### Windows
@@ -141,7 +162,9 @@ dependencies/build/win64 and from there running
 
 Open the MSVC project and build the Release configuration.
 
-Now create a build/win64 directory under the project root and from there run
+Now create a build/win64 directory under the project root and from there run the following
+
+For the debug build
 
 ```
     cmake -D CMAKE_INSTALL_PREFIX=./dist ^
@@ -149,10 +172,8 @@ Now create a build/win64 directory under the project root and from there run
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 
-Be sure to substitute Release when making the release build.
-
-Open the MSVC project and build solutions ALL_BUILD followed by INSTALL making sure to select the
-Release configuration (even if Debug was given for CMAKE_BUILD_TYPE).
+Open the MSVC project and build the INSTALL solution making sure to select the Release
+configuration (even if Debug was given for CMAKE_BUILD_TYPE).
 
 Run windeployqt to copy dependencies into bin folder.
 
@@ -166,9 +187,23 @@ To run the app, from build/win64/dist
     run
 ```
 
+For the release build, the relevant commands are
+
+```
+    cmake -D CMAKE_INSTALL_PREFIX=../../dist/bundles/win64 ^
+          -D CMAKE_BUILD_TYPE=Release ^
+          -G "Visual Studio 15 2017 Win64" ../..
+```
+```
+    C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe ^
+      --release ..\..\dist\bundles\win64\procalc.exe ^
+      --dir ..\..\dist\bundles\win64\libs
+```
+
+
 ## Creating distributable packages
 
-(Putting it here for my own convenience as maintainer.)
+Putting this here for my own convenience as maintainer.
 
 
 ### Linux (Debian)
@@ -176,7 +211,7 @@ To run the app, from build/win64/dist
 On the branch you want to release, run
 
 ```
-    ./build_deb.sh -rs -k XXXXXX
+    ./build_deb.sh -rsx -k XXXXXX
 ```
 
 ... where the options are as follows
@@ -184,6 +219,7 @@ On the branch you want to release, run
 ```
     -r         Signifies a release build. Only affects the changelog by causing dch to be run with
                --release option
+    -x         Stable release (as opposed to snapshot release)
     -s         Build source package only
     -k XXXXXX  The ID of the PGP key to sign the package with
 ```
@@ -212,6 +248,9 @@ Users can now install Pro Office Calculator by adding the PPA and running apt-ge
     sudo apt-get update
     sudo apt-get install procalc
 ```
+
+Note that the above is performed by the release script, so it may be unnecessary to run build_deb.sh
+directly. See the [releases readme](release/README.md) for more information.
 
 
 ### Windows
@@ -253,6 +292,23 @@ maintained manually.
       -b ..\build\win64\dist\data ^
       -o procalc.msi
 ```
+
+
+## Deployment
+
+Pro Office Calculator is currently deployed to:
+
+* Ubuntu PPAs `ppa:rjinman/ppa` and `ppa:rjinman/snapshots`
+* Official website http://proofficecalculator.com
+* Itch.io https://robjinman.itch.io/pro-office-calculator
+* Game Jolt https://gamejolt.com/games/pro_office_calculator/358406
+* Indie DB https://www.indiedb.com/games/pro-office-calculator
+* Steam https://store.steampowered.com/app/914430/Pro_Office_Calculator
+
+Deployments to the PPAs, the website, and to Steam can be scripted. Refer to the
+[releases readme](release/README.md). Deployments to other destinations involve manually uploading
+the artifacts via the relevant websites.
+
 
 ## To profile (Linux only)
 
