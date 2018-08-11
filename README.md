@@ -211,7 +211,7 @@ Putting this here for my own convenience as maintainer.
 On the branch you want to release, run
 
 ```
-    ./build_deb.sh -rsx -k XXXXXX
+    ./release/build_deb.sh -rsx -k XXXXXX
 ```
 
 ... where the options are as follows

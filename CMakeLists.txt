@@ -149,7 +149,7 @@ if (LINUX)
   install(DIRECTORY "${DATA_DIR}" DESTINATION "share/${PROJECT_SHORT_NAME}")
   install(FILES "${VERSION_FILE}" DESTINATION "share/${PROJECT_SHORT_NAME}")
   install(FILES "${PROJECT_SHORT_NAME}.desktop" DESTINATION "share/applications")
-  install(FILES "${PROJECT_SHORT_NAME}.svg" DESTINATION "share/pixmaps")
+  install(FILES "${PROJECT_SHORT_NAME}.svg" DESTINATION "share/icons/hicolor/scalable")
 
   install(FILES "${PROJECT_SHORT_NAME}.sh" DESTINATION "games" RENAME "${PROJECT_SHORT_NAME}")
 elseif (WIN32)
