@@ -6,7 +6,7 @@ procalc (1.0.5-0ubuntu1) xenial; urgency=medium
 
 procalc (1.0.4-0ubuntu1) xenial; urgency=medium
 
-  * Fixed layout and formatting errors on Windows 
+  * Fixed layout and formatting errors on Windows
 
  -- Rob Jinman <jinmanr@gmail.com>  Wed, 25 Jul 2018 00:02:11 +0100
 
