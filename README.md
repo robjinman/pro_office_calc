@@ -18,6 +18,8 @@ To install development dependencies run
       packaging-dev
 ```
 
+And install linuxdeployqt from https://github.com/probonopd/linuxdeployqt.
+
 If you don't want to install the development dependencies on your system, you can use the supplied
 VagrantFile. From vagrant/xenial run
 
@@ -52,8 +54,19 @@ Run the app from the build directory
 To create a standalone release bundle, invoke cmake as follows
 
 ```
-    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=../../dist/bundles/linux64 -G "Unix Makefiles" ../..
+    cmake -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_INSTALL_PREFIX=../../dist/bundles/linux/procalc \
+          -G "Unix Makefiles" ../..
+
     make -j4
+```
+
+And use [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) to copy the dependencies into
+place.
+
+```
+    linuxdeployqt ../../dist/bundles/linux/procalc/share/applications/procalc.desktop \
+                  -bundle-non-qt-libs
 ```
 
 

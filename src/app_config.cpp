@@ -61,7 +61,9 @@ AppConfig::AppConfig(int argc, char** argv) {
   loadState();
 
   if (this->args.size() > 0) {
+#ifdef DEBUG
     this->stateId = getIntArg(0, 0);
+#endif
   }
 
   QFontDatabase::addApplicationFont(dataPath("common/fonts/DejaVuSans.ttf").c_str());
