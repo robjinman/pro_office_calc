@@ -35,9 +35,10 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e_) {
   if (e_.name == "entity_damaged") {
     auto& e = dynamic_cast<const EEntityDamaged&>(e_);
 
+#ifdef DEBUG
     CDamage& damage = m_entityManager.getComponent<CDamage>(player.body, ComponentKind::C_DAMAGE);
-
     DBG_PRINT("Player health: " << damage.health << "\n");
+#endif
 
     if (e.health < e.prevHealth && player.red == -1) {
       player.red = Component::getNextId();

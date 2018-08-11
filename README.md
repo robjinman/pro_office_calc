@@ -309,6 +309,10 @@ Deployments to the PPAs, the website, and to Steam can be scripted. Refer to the
 [releases readme](release/README.md). Deployments to other destinations involve manually uploading
 the artifacts via the relevant websites.
 
+```
+    run_app_build /opt/steamworks/sdk/tools/ContentBuilder/scripts/app_build_914430.vdf
+```
+
 
 ## To profile (Linux only)
 

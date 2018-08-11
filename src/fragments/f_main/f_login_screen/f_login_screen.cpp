@@ -19,7 +19,7 @@ FLoginScreen::FLoginScreen(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FLoginScreen::reload
 //===========================================
-void FLoginScreen::reload(const FragmentSpec& spec_) {
+void FLoginScreen::reload(const FragmentSpec&) {
   DBG_PRINT("FLoginScreen::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();

@@ -27,7 +27,7 @@ FConsole::FConsole(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FConsole::reload
 //===========================================
-void FConsole::reload(const FragmentSpec& spec_) {
+void FConsole::reload(const FragmentSpec&) {
   DBG_PRINT("FConsole::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();

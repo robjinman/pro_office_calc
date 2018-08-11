@@ -143,7 +143,7 @@ class InventorySystem : public System {
       : m_entityManager(entityManager) {}
 
     void update() override;
-    void handleEvent(const GameEvent& event) override {};
+    void handleEvent(const GameEvent&) override {};
     void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override;
 
     void addComponent(pComponent_t component) override;

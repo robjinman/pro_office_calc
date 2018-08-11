@@ -115,7 +115,7 @@ static void addButton(QPushButton* btn, ButtonGrid& btnGrid, buttonId_t id, cons
 //===========================================
 // FPartialCalc::reload
 //===========================================
-void FPartialCalc::reload(const FragmentSpec& spec_) {
+void FPartialCalc::reload(const FragmentSpec&) {
   DBG_PRINT("FPartialCalc::reload\n");
 
   auto& parentData = parentFragData<FCalculatorData>();

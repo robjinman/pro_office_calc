@@ -21,7 +21,7 @@ FServerRoom::FServerRoom(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FServerRoom::reload
 //===========================================
-void FServerRoom::reload(const FragmentSpec& spec_) {
+void FServerRoom::reload(const FragmentSpec&) {
   DBG_PRINT("FServerRoom::reload\n");
 
   m_hLaunch = commonData.eventSystem.listen("launchServerRoom", [this](const Event&) {

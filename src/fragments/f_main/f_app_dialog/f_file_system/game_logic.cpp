@@ -92,7 +92,7 @@ void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
   }
 
   switchEvents->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-    [=, &spatialSystem, &agentSystem](const GameEvent& e_) {
+    [=, &spatialSystem, &agentSystem](const GameEvent&) {
 
     entityId_t navPointId = Component::getIdFromString("exit_nav_point");
     auto& vRect = dynamic_cast<CVRect&>(spatialSystem.getComponent(navPointId));

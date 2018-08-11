@@ -28,8 +28,8 @@ class CElevatorBehaviour : public CBehaviour {
     bool isPlayerActivated = false;
 
     virtual void update() override;
-    virtual void handleBroadcastedEvent(const GameEvent& e) override {}
-    virtual void handleTargetedEvent(const GameEvent& e) override;
+    virtual void handleBroadcastedEvent(const GameEvent&) override {}
+    virtual void handleTargetedEvent(const GameEvent&) override;
 
     void move(int level);
     void setSpeed(double speed);

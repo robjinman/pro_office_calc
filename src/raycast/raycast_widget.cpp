@@ -193,7 +193,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, m_timeService, m_frameRate);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
 
-  AnimationSystem* animationSystem = new AnimationSystem(m_entityManager, m_frameRate);
+  AnimationSystem* animationSystem = new AnimationSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_ANIMATION, pSystem_t(animationSystem));
 
   InventorySystem* inventorySystem = new InventorySystem(m_entityManager);

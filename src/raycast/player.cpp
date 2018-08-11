@@ -67,7 +67,7 @@ static void makeTween(RenderSystem& renderSystem, TimeService& timeService, cons
     double ds = s / (duration * timeService.frameRate);
 
     Tween tween{
-      [=, &overlay](long frame, double elapsed, double frameRate) -> bool {
+      [=, &overlay](long, double, double) -> bool {
 
       overlay.pos.y += ds;
 
@@ -77,9 +77,9 @@ static void makeTween(RenderSystem& renderSystem, TimeService& timeService, cons
       }
       return true;
     },
-    [](long frame, double elapsed, double frameRate) {}};
+    [](long, double, double) {}};
 
-    timeService.addTween(tween);
+    timeService.addTween(tween, name);
   }
 }
 
@@ -94,7 +94,7 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
   events.broadcastedEventHandlers.push_back(EventHandler{"mouse_captured",
-    [=, &renderSystem, &viewport] (const GameEvent& e_) {
+    [=, &renderSystem, &viewport] (const GameEvent&) {
 
     m_timeService.removeTween("gunSlideOut");
     makeTween(renderSystem, m_timeService, "gunSlideIn", T, this->sprite, -4.0, 0.0);
@@ -120,7 +120,7 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
     }
   }});
   events.broadcastedEventHandlers.push_back(EventHandler{"mouse_uncaptured",
-    [=, &renderSystem, &viewport](const GameEvent& e_) {
+    [=, &renderSystem, &viewport](const GameEvent&) {
 
     m_timeService.removeTween("gunSlideIn");
     makeTween(renderSystem, m_timeService, "gunSlideOut", T, this->sprite, 0.0, -4.0);
@@ -248,7 +248,7 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
 
   CEventHandler* events = new CEventHandler(this->body);
   events->targetedEventHandlers.push_back(EventHandler{"player_move",
-    [=, &animationSystem](const GameEvent& e) {
+    [=, &animationSystem](const GameEvent&) {
 
     if (animationSystem.animationState(this->body, "run") == AnimState::STOPPED) {
       animationSystem.playAnimation(this->body, "run", false);
@@ -400,7 +400,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
     }
   }});
   events.targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-    [=, &damageSystem](const GameEvent& e_) {
+    [=, &damageSystem](const GameEvent&) {
 
     const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(this->body));
 

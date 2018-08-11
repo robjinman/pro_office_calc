@@ -40,7 +40,7 @@ class CSwitchBehaviour : public CBehaviour {
     entityId_t target = -1;
 
     void update() override;
-    void handleBroadcastedEvent(const GameEvent& event) override {}
+    void handleBroadcastedEvent(const GameEvent&) override {}
     void handleTargetedEvent(const GameEvent& event) override;
 
     void setState(SwitchState state);

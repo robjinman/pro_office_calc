@@ -312,7 +312,7 @@ void CAgent::handleEvent(const GameEvent& event, EntityManager& entityManager) {
 //===========================================
 // CAgent::onDamage
 //===========================================
-void CAgent::onDamage(EntityManager& entityManager) {
+void CAgent::onDamage(EntityManager&) {
   // TODO: Chase player?
 }
 

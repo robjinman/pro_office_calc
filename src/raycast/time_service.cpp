@@ -20,19 +20,15 @@ double TimeService::now() const {
 //===========================================
 // TimeService::addTween
 //===========================================
-void TimeService::addTween(const Tween& tween, const char* name) {
-  string s;
-  if (name != nullptr) {
-    s.assign(name);
-  }
-  else {
+void TimeService::addTween(const Tween& tween, string name) {
+  if (name.empty()) {
     stringstream ss;
     ss << "tween" << rand();
-    s = ss.str();
+    name = ss.str();
   }
 
-  if (m_tweens.find(s) == m_tweens.end()) {
-    m_tweens[s] = TweenWrap{tween, m_frame};
+  if (m_tweens.find(name) == m_tweens.end()) {
+    m_tweens[name] = TweenWrap{tween, m_frame};
   }
 }
 

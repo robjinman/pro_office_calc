@@ -440,7 +440,7 @@ void FMinesweeper::constructMainPage() {
 //===========================================
 // FMinesweeper::reload
 //===========================================
-void FMinesweeper::reload(const FragmentSpec& spec_) {
+void FMinesweeper::reload(const FragmentSpec&) {
   DBG_PRINT("FMinesweeper::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();

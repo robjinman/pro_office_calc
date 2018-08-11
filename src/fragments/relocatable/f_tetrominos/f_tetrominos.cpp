@@ -109,7 +109,7 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
       auto kind = static_cast<Tetromino::kind_t>(rand() % 7);
       double da = randAngle(randEngine);
 
-      Tetromino t{kind, (i + 0.5) * tetroSz, winH - j * tetroSz, 0, dy, da};
+      Tetromino t{kind, (i + 0.5) * tetroSz, winH - j * tetroSz, 0, dy, da, {{}}, QColor{}};
 
       switch (kind) {
         case Tetromino::I:
@@ -185,7 +185,7 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
 //===========================================
 // FTetrominos::reload
 //===========================================
-void FTetrominos::reload(const FragmentSpec& spec_) {
+void FTetrominos::reload(const FragmentSpec&) {
   DBG_PRINT("FTetrominos::reload\n");
 
   auto& parent = parentFrag<QWidget>();

@@ -248,7 +248,7 @@ static Vec2f getDelta(const CVRect& body, double height, double radius, const Ve
 //===========================================
 // playerBounce
 //===========================================
-static void playerBounce(SpatialSystem& spatialSystem, TimeService& timeService, double frameRate) {
+static void playerBounce(SpatialSystem& spatialSystem, TimeService& timeService) {
   double y = 5.0;
   double duration = 0.33;
   int nFrames = duration * timeService.frameRate;
@@ -290,7 +290,7 @@ static bool overlapsCircle(const Circle& circle, const LineSegment& wall, const 
 //===========================================
 // overlapsCircle
 //===========================================
-static bool overlapsCircle(const Circle& circle, const CHRect& hRect) {
+static bool overlapsCircle(const Circle&, const CHRect&) {
   // TODO
 
   return false;
@@ -888,7 +888,7 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
 
   moveEntity(player.body, dv, player.feetHeight() - zone.floorHeight);
 
-  playerBounce(*this, m_timeService, m_frameRate);
+  playerBounce(*this, m_timeService);
 
   Point pos = player.pos();
   Vec2i cell(pos.x / GRID_CELL_SIZE, pos.y / GRID_CELL_SIZE);
@@ -931,7 +931,7 @@ vector<Point> SpatialSystem::shortestPath(entityId_t entityA, entityId_t entityB
 //===========================================
 // SpatialSystem::shortestPath
 //===========================================
-vector<Point> SpatialSystem::shortestPath(const Point& A, const Point& B, double radius) const {
+vector<Point> SpatialSystem::shortestPath(const Point&, const Point& B, double) const {
   // TODO: A*
 
   vector<Point> path;

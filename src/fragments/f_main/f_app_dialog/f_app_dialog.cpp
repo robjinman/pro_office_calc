@@ -32,7 +32,7 @@ void FAppDialog::reload(const FragmentSpec& spec_) {
 
   hide();
 
-  m_hShow = commonData.eventSystem.listen(spec.showOnEvent, [this](const Event& event) {
+  m_hShow = commonData.eventSystem.listen(spec.showOnEvent, [this](const Event&) {
     show();
   });
 }

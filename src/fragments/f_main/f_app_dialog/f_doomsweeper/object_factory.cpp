@@ -181,7 +181,7 @@ bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, 
 
     CEventHandler* events = new CEventHandler(entityId);
     events->targetedEventHandlers.push_back(EventHandler{"door_open_start",
-      [this, cellId](const GameEvent& e_) {
+      [this, cellId](const GameEvent&) {
 
       m_entityManager.broadcastEvent(ECellDoorOpened{cellId});
     }});

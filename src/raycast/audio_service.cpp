@@ -237,7 +237,7 @@ int AudioService::playSoundAtPos(const string& name, const Point& pos, bool loop
 //===========================================
 // AudioService::playMusic
 //===========================================
-void AudioService::playMusic(const string& name, bool loop, double fadeDuration) {
+void AudioService::playMusic(const string& name, bool loop, double) {
   checkInitialised();
 
   // TODO: Fade

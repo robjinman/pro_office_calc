@@ -55,7 +55,7 @@ FProcalcSetup::FProcalcSetup(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FProcalcSetup::reload
 //===========================================
-void FProcalcSetup::reload(const FragmentSpec& spec_) {
+void FProcalcSetup::reload(const FragmentSpec&) {
   DBG_PRINT("FProcalcSetup::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();
@@ -130,7 +130,7 @@ void FProcalcSetup::populateListWidget() {
 //===========================================
 // FProcalcSetup::resizeEvent
 //===========================================
-void FProcalcSetup::resizeEvent(QResizeEvent* e) {
+void FProcalcSetup::resizeEvent(QResizeEvent*) {
   auto& parent = parentFrag<QWidget>();
 
   // Hack to prevent dialog being too long on Windows

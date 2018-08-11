@@ -148,12 +148,12 @@ bool ObjectFactory::constructServerRack(entityId_t entityId, parser::Object& obj
 
     CEventHandler* handlers = new CEventHandler(entityId);
     handlers->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem](const GameEvent& e) {
+      [=, &animationSystem](const GameEvent&) {
 
       animationSystem.playAnimation(entityId, "damage", false);
     }});
     handlers->targetedEventHandlers.push_back(EventHandler{"entity_destroyed",
-      [=, &animationSystem](const GameEvent& e) {
+      [=, &animationSystem](const GameEvent&) {
 
       animationSystem.playAnimation(entityId, "explode", false);
       m_electricitySoundId = m_audioService.playSound("electricity");

@@ -98,7 +98,7 @@ class EntityManager;
 
 class AnimationSystem : public System {
   public:
-    AnimationSystem(EntityManager& entityManager, double frameRate)
+    AnimationSystem(EntityManager& entityManager)
       : m_entityManager(entityManager) {}
 
     void playAnimation(entityId_t entityId, const std::string& anim, bool loop);
@@ -107,8 +107,8 @@ class AnimationSystem : public System {
     inline AnimState animationState(entityId_t entityId, const std::string& name) const;
 
     void update() override;
-    void handleEvent(const GameEvent& event) override {}
-    void handleEvent(const GameEvent& event, const std::set<entityId_t>& entities) override {}
+    void handleEvent(const GameEvent&) override {}
+    void handleEvent(const GameEvent&, const std::set<entityId_t>&) override {}
 
     void addComponent(pComponent_t component) override;
     bool hasComponent(entityId_t entityId) const override;

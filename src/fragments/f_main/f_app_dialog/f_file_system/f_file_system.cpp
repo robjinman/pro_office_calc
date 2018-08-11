@@ -22,7 +22,7 @@ FFileSystem::FFileSystem(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FFileSystem::reload
 //===========================================
-void FFileSystem::reload(const FragmentSpec& spec_) {
+void FFileSystem::reload(const FragmentSpec&) {
   DBG_PRINT("FFileSystem::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();

@@ -52,7 +52,11 @@ bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, en
 
   Matrix m = parentTransform * obj.groupTransform * obj.pathTransform;
 
-  CPath* path = new CPath(makeIdForObj(obj), parentId);
+  if (entityId == -1) {
+    entityId = makeIdForObj(obj);
+  }
+
+  CPath* path = new CPath(entityId, parentId);
 
   for (unsigned int i = 0; i < obj.path.points.size(); ++i) {
     path->points.push_back(m * obj.path.points[i]);
@@ -279,8 +283,8 @@ bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
     EXCEPTION("Portal must contain 1 line segment");
   }
 
-  entityId_t entityId = Component::getNextId();
   entityId_t joinId = Component::getIdFromString(getValue(obj.dict, "pair_name"));
+  entityId_t entityId = Component::getNextId();
 
   CSoftEdge* edge = new CSoftEdge(entityId, parentId, joinId);
 

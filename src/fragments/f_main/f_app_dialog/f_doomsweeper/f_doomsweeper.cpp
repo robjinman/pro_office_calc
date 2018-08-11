@@ -31,7 +31,7 @@ FDoomsweeper::FDoomsweeper(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FDoomsweeper::reload
 //===========================================
-void FDoomsweeper::reload(const FragmentSpec& spec_) {
+void FDoomsweeper::reload(const FragmentSpec&) {
   DBG_PRINT("FDoomsweeper::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();

@@ -150,7 +150,7 @@ bool ObjectFactory::constructCog(entityId_t entityId, parser::Object& obj, entit
 
     CEventHandler* events = new CEventHandler(entityId);
     events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
-      [entityId, &animationSystem](const GameEvent& e_) {
+      [entityId, &animationSystem](const GameEvent&) {
 
       animationSystem.stopAnimation(entityId);
     }});

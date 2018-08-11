@@ -136,7 +136,7 @@ int DamageSystem::getMaxHealth(entityId_t entityId) const {
 // DamageSystem::damageWithinRadius
 //===========================================
 void DamageSystem::damageWithinRadius(const CZone& zone, const Point& pos, double radius,
-  int damage, AttenuationCurve attenuation) {
+  int damage, AttenuationCurve) {
 
   // TODO: Attenuation
 

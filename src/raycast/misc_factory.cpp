@@ -355,7 +355,7 @@ bool MiscFactory::constructWater(entityId_t entityId, parser::Object& obj, entit
 // MiscFactory::constructSoundSource
 //===========================================
 bool MiscFactory::constructSoundSource(entityId_t entityId, parser::Object& obj,
-  entityId_t parentId, const Matrix& parentTransform) {
+  entityId_t, const Matrix& parentTransform) {
 
   auto& behaviourSystem = m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
 

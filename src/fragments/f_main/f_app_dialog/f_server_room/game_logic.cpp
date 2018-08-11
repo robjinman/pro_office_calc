@@ -152,7 +152,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   }});
   int serversDestroyed = 0;
   events->broadcastedEventHandlers.push_back(EventHandler{"server_destroyed",
-    [this, serversDestroyed](const GameEvent& e) mutable {
+    [this, serversDestroyed](const GameEvent&) mutable {
 
     if (++serversDestroyed == 2) {
       m_eventSystem.fire(pEvent_t(new Event("youveGotMail/serversDestroyed")));
@@ -187,7 +187,7 @@ void GameLogic::drawExitDoorDigitDisplay() {
 //===========================================
 // GameLogic::onDivByZero
 //===========================================
-void GameLogic::onDivByZero(const Event& event) {
+void GameLogic::onDivByZero(const Event&) {
   m_entityManager.broadcastEvent(GameEvent("div_by_zero"));
 }
 

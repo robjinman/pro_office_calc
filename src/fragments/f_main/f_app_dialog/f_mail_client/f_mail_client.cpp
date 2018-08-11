@@ -84,7 +84,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Alan Shand,\n"
     "Chief QA Officer,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // 2
   {
@@ -103,7 +105,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Alan Shand,\n"
     "Chief QA Officer,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // Outage happens here when you destroy the servers, which erases the last three messages.
   // Mysteriously, an email from Rob Jinman seems to have appeared while the servers were down.
@@ -122,7 +126,9 @@ static std::array<Email, 11> EMAILS = {{
     // Message body
     //
     "Good work. The code for the exit door is EXIT_DOOR_CODE.\n\n"
-    "Rob\n"
+    "Rob\n",
+
+    ""
   },
   // Servers come back online
   //
@@ -144,7 +150,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Richard Nelms,\n"
     "Systems Administator,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // 5
   {
@@ -164,7 +172,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Daniel Bright,\n"
     "Application Development Manager,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // 6
   {
@@ -186,7 +196,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Paul Gresham,\n"
     "Systems Architect,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // 7
   {
@@ -227,7 +239,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Michael Considine,\n"
     "Senior Kernel Developer,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // 9
   {
@@ -246,7 +260,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
   // 10
   {
@@ -266,7 +282,9 @@ static std::array<Email, 11> EMAILS = {{
 
     "Brian Williams,\n"
     "Lead Kernel Developer,\n"
-    "Apex Systems\n"
+    "Apex Systems\n",
+
+    ""
   },
 }};
 
@@ -305,7 +323,7 @@ FMailClient::FMailClient(Fragment& parent_, FragmentData& parentData_,
 //===========================================
 // FMailClient::reload
 //===========================================
-void FMailClient::reload(const FragmentSpec& spec_) {
+void FMailClient::reload(const FragmentSpec&) {
   DBG_PRINT("FMailClient::reload\n");
 
   auto& parentData = parentFragData<WidgetFragData>();

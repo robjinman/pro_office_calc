@@ -101,7 +101,7 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
 
     bool inCircles = false;
     events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-      [=, &focusSystem, &damageSystem](const GameEvent& e) mutable {
+      [=, &focusSystem, &damageSystem](const GameEvent&) mutable {
 
       if (damageSystem.getHealth(entityId) != 0) {
         if (inCircles) {
@@ -201,7 +201,7 @@ bool ObjectFactory::constructDonald(entityId_t entityId, parser::Object& obj, en
     CEventHandler* events = new CEventHandler(entityId);
 
     events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-      [=, &focusSystem](const GameEvent& e) {
+      [=, &focusSystem](const GameEvent&) {
 
       focusSystem.showCaption(entityId);
     }});
