@@ -59,6 +59,7 @@ To create a standalone release bundle, invoke cmake as follows
           -G "Unix Makefiles" ../..
 
     make -j4
+    make install
 ```
 
 And use [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) to copy the dependencies into

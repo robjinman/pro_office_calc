@@ -36,7 +36,7 @@ fi
 
 commit_version() {
   git add ./VERSION
-  git commit -m "Updated VERSION"
+  git commit -m "Updated VERSION" || echo "VERSION file not changed"
 }
 
 build_deb_source_package() {
@@ -81,22 +81,30 @@ tag_master() {
   git checkout develop
 }
 
+tar_linux_bundle() {
+  tar -czf ./dist/artifacts/procalc.tar.gz ./dist/bundles/linux/procalc
+}
+
 upload_artifacts() {
   win_artifact="$(find ./dist/artifacts -name *.msi)"
   osx_artifact="$(find ./dist/artifacts -name *.app.zip)"
+  linux_artifact="$(find ./dist/artifacts -name *.tar.gz)"
 
   full_version="$(get_tarball_version ..)"
 
   win_artifact_name="ProOfficeCalculator_${full_version}.msi"
   osx_artifact_name="ProOfficeCalculator_${full_version}.app.zip"
+  linux_artifact_name="ProOfficeCalculator_${full_version}.tar.gz"
 
   mv "$win_artifact" "./dist/artifacts/$win_artifact_name"
   mv "$osx_artifact" "./dist/artifacts/$osx_artifact_name"
+  mv "$linux_artifact" "./dist/artifacts/$linux_artifact_name"
 
   cat > ./artifacts/manifest <<EOF
 <artifacts>
   <windows>${win_artifact_name}</windows>
   <osx>${osx_artifact_name}</osx>
+  <linux>${linux_artifact_name}</linux>
 </artifacts>
 EOF
 
@@ -106,4 +114,5 @@ EOF
 commit_version
 build_deb_source_package
 tag_master
+tar_linux_bundle
 upload_artifacts

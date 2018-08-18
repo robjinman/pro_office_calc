@@ -2,10 +2,10 @@
 {
 	"appid"	"914430"
 	"desc" "Base installation"
-	"buildoutput" "../output/"
+	"buildoutput" "../build/steam/"
 	"contentroot" "../dist/bundles/"
 	"setlive"	""  											// Branch to set live after successful build, non if empty
-	"preview" "1" 											// To enable preview builds
+	"preview" "0" 											// To enable preview builds
 	"local"	""	  											// Set to flie path of local content server
 
 	"depots"

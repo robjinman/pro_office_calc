@@ -50,23 +50,17 @@ destinations involve manually uploading the artifacts via the relevant websites.
 
 ### Steam
 
-Install the Steam SDK somewhere (e.g. /opt/steamworks), and place a symlink to the executable on the
-PATH, for example:
+Install the Steam SDK somewhere (e.g. /opt/steamworks), then from the project root log into the
+console like so
 
 ```
-    sudo ln -s /opt/steamworks/sdk/tools/ContentBuilder/builder_linux/steamcmd.sh /usr/local/bin/steamcmd
+    rlwrap /opt/steamworks/sdk/tools/ContentBuilder/builder_linux/steamcmd.sh +login account password
 ```
 
-From the steam directory, log into the steam console like so
+And at the prompt, run the following, specifying the full path to the app build file
 
 ```
-    steamcmd +login account password
-```
-
-And at the prompt, run the following
-
-```
-    run_app_build /opt/steamworks/sdk/tools/ContentBuilder/scripts/app_build_APPID.vdf
+    run_app_build /absolute/path/to/steam/app_build_APPID.vdf
 ```
 
 where APPID is the app's ID.
