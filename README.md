@@ -99,14 +99,14 @@ For the release build, do the following
 ```
     CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
       -D CMAKE_BUILD_TYPE=Release \
-      -D CMAKE_INSTALL_PREFIX=../../dist/bundles/ \
+      -D CMAKE_INSTALL_PREFIX=../../dist/bundles/osx \
       -G "Unix Makefiles" ../..
 
     make -j4
     make install
 ```
 
-This will place the app under dist/bundles.
+This will place the app under dist/bundles/osx.
 
 
 ### Windows
@@ -203,14 +203,14 @@ To run the app, from build/win64/dist
 For the release build, the relevant commands are
 
 ```
-    cmake -D CMAKE_INSTALL_PREFIX=../../dist/bundles/win64 ^
+    cmake -D CMAKE_INSTALL_PREFIX=../../dist/bundles/windows/procalc ^
           -D CMAKE_BUILD_TYPE=Release ^
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 ```
     C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe ^
-      --release ..\..\dist\bundles\win64\procalc.exe ^
-      --dir ..\..\dist\bundles\win64\libs
+      --release ..\..\dist\bundles\windows\procalc\procalc.exe ^
+      --dir ..\..\dist\bundles\windows\procalc\libs
 ```
 
 
@@ -271,14 +271,14 @@ directly. See the [releases readme](release/README.md) for more information.
 The data.wxs was initially created by running (from the windows dir)
 
 ```
-    heat dir "..\build\win64\dist\data" ^
+    heat dir "..\dist\bundles\windows\procalc\data" ^
       -cg dataComponentGroup -ke -gg -srd -dr dataFolder -sfrag -o "data.wxs"
 ```
 
 ... and libs.wxs with
 
 ```
-    heat dir "..\build\win64\dist\libs" ^
+    heat dir "..\dist\bundles\windows\procalc\libs" ^
       -cg libsComponentGroup -ke -gg -srd -dr INSTALLDIR -sfrag -o "libs.wxs"
 ```
 
@@ -300,9 +300,9 @@ maintained manually.
     candle procalc.wxs libs.wxs data.wxs -arch x64
 
     light procalc.wixobj data.wixobj libs.wixobj ^
-      -b ..\build\win64\dist ^
-      -b ..\build\win64\dist\libs ^
-      -b ..\build\win64\dist\data ^
+      -b ..\dist\bundles\windows\procalc ^
+      -b ..\dist\bundles\windows\procalc\libs ^
+      -b ..\dist\bundles\windows\procalc\data ^
       -o procalc.msi
 ```
 
