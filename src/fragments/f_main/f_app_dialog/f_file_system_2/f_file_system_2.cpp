@@ -64,7 +64,7 @@ void FFileSystem2::reload(const FragmentSpec&) {
   auto& audioService = m_data.wgtRaycast->audioService();
 
   GameObjectFactory* factory = new t_minus_two_minutes::ObjectFactory(rootFactory, entityManager,
-    timeService, audioService);
+    timeService);
 
   m_data.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
   m_data.wgtRaycast->initialise(commonData.appConfig.dataPath("t_minus_two_minutes/map.svg"));

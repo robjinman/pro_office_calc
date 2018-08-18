@@ -22,7 +22,6 @@ using std::stringstream;
 
 
 const double FOREHEAD_SIZE = 15.0;
-const double COLLISION_RADIUS = 10.0;
 
 const double HUD_H = 1.0;
 const double INVENTORY_H = 1.2;
@@ -314,7 +313,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
   events.targetedEventHandlers.push_back(EventHandler{"bucket_count_change",
-    [=, &damageSystem](const GameEvent& e_) {
+    [=](const GameEvent& e_) {
 
     auto& e = dynamic_cast<const EBucketCountChange&>(e_);
 

@@ -44,25 +44,6 @@ static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const C
 }
 
 //===========================================
-// forEachConstRegion
-//
-// fn can return false to abort the loop
-//===========================================
-static bool forEachConstRegion(const CRegion& region, function<bool(const CRegion&)> fn) {
-  if (fn(region)) {
-    for (auto& child : region.children) {
-      if (!forEachConstRegion(*child, fn)) {
-        break;
-      }
-    }
-
-    return true;
-  }
-
-  return false;
-}
-
-//===========================================
 // forEachRegion
 //
 // fn can return false to abort the loop

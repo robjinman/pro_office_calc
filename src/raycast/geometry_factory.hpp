@@ -9,7 +9,6 @@
 
 
 class EntityManager;
-class AudioService;
 class TimeService;
 class Matrix;
 class RootFactory;
@@ -17,8 +16,7 @@ namespace parser { struct Object; }
 
 class GeometryFactory : public GameObjectFactory {
   public:
-    GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager,
-      AudioService& audioService, TimeService& timeService);
+    GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager);
 
     const std::set<std::string>& types() const override;
 
@@ -28,8 +26,6 @@ class GeometryFactory : public GameObjectFactory {
   private:
     RootFactory& m_rootFactory;
     EntityManager& m_entityManager;
-    AudioService& m_audioService;
-    TimeService& m_timeService;
 
     std::map<Point, bool> m_endpoints;
 

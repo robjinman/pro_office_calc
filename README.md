@@ -85,7 +85,6 @@ Create the directory build/osx and from there, run
 ```
     CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
       -D CMAKE_BUILD_TYPE=Debug \
-      -D CMAKE_INSTALL_PREFIX=./dist \
       -G "Unix Makefiles" ../..
 
     make -j4
@@ -99,14 +98,11 @@ For the release build, do the following
 ```
     CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
       -D CMAKE_BUILD_TYPE=Release \
-      -D CMAKE_INSTALL_PREFIX=../../dist/bundles/osx \
       -G "Unix Makefiles" ../..
 
     make -j4
     make install
 ```
-
-This will place the app under dist/bundles/osx.
 
 
 ### Windows

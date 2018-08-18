@@ -26,11 +26,10 @@ namespace doomsweeper {
 // ObjectFactory::ObjectFactory
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
-  TimeService& timeService, AudioService& audioService)
+  TimeService& timeService)
   : m_rootFactory(rootFactory),
     m_entityManager(entityManager),
-    m_timeService(timeService),
-    m_audioService(audioService) {}
+    m_timeService(timeService) {}
 
 //===========================================
 // ObjectFactory::types

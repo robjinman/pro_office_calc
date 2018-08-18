@@ -74,10 +74,8 @@ void FDoomsweeper::setupRaycastPage() {
   auto& rootFactory = page.wgtRaycast->rootFactory();
   auto& timeService = page.wgtRaycast->timeService();
   auto& entityManager = page.wgtRaycast->entityManager();
-  auto& audioService = page.wgtRaycast->audioService();
 
-  auto factory = new doomsweeper::ObjectFactory(rootFactory, entityManager, timeService,
-    audioService);
+  auto factory = new doomsweeper::ObjectFactory(rootFactory, entityManager, timeService);
 
   page.wgtRaycast->rootFactory().addFactory(pGameObjectFactory_t(factory));
   page.wgtRaycast->initialise(commonData.appConfig.dataPath("doomsweeper/map.svg"));

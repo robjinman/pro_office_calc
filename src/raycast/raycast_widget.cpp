@@ -172,7 +172,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   m_rootFactory.addFactory(pGameObjectFactory_t(new SpriteFactory(m_rootFactory, m_entityManager,
     m_audioService, m_timeService)));
   m_rootFactory.addFactory(pGameObjectFactory_t(new GeometryFactory(m_rootFactory,
-    m_entityManager, m_audioService, m_timeService)));
+    m_entityManager)));
 
   setMouseTracking(true);
 

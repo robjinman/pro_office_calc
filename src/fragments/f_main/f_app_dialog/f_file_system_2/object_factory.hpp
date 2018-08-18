@@ -6,7 +6,6 @@
 
 
 class EntityManager;
-class AudioService;
 class TimeService;
 class Matrix;
 class RootFactory;
@@ -18,8 +17,7 @@ namespace t_minus_two_minutes {
 
 class ObjectFactory : public GameObjectFactory {
   public:
-    ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager, TimeService& timeService,
-      AudioService& audioService);
+    ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager, TimeService& timeService);
 
     const std::set<std::string>& types() const override;
 
@@ -42,7 +40,6 @@ class ObjectFactory : public GameObjectFactory {
     RootFactory& m_rootFactory;
     EntityManager& m_entityManager;
     TimeService& m_timeService;
-    AudioService& m_audioService;
 };
 
 

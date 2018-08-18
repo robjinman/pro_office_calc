@@ -585,12 +585,9 @@ bool GeometryFactory::constructRegion(entityId_t entityId, parser::Object& obj, 
 //===========================================
 // GeometryFactory::GeometryFactory
 //===========================================
-GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager,
-  AudioService& audioService, TimeService& timeService)
+GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager)
   : m_rootFactory(rootFactory),
-    m_entityManager(entityManager),
-    m_audioService(audioService),
-    m_timeService(timeService) {}
+    m_entityManager(entityManager) {}
 
 //===========================================
 // GeometryFactory::types
