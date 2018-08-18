@@ -307,26 +307,6 @@ maintained manually.
 ```
 
 
-## Deployment
-
-Pro Office Calculator is currently deployed to:
-
-* Ubuntu PPAs `ppa:rjinman/ppa` and `ppa:rjinman/snapshots`
-* Official website http://proofficecalculator.com
-* Itch.io https://robjinman.itch.io/pro-office-calculator
-* Game Jolt https://gamejolt.com/games/pro_office_calculator/358406
-* Indie DB https://www.indiedb.com/games/pro-office-calculator
-* Steam https://store.steampowered.com/app/914430/Pro_Office_Calculator
-
-Deployments to the PPAs, the website, and to Steam can be scripted. Refer to the
-[releases readme](release/README.md). Deployments to other destinations involve manually uploading
-the artifacts via the relevant websites.
-
-```
-    run_app_build /opt/steamworks/sdk/tools/ContentBuilder/scripts/app_build_914430.vdf
-```
-
-
 ## To profile (Linux only)
 
 ### Time profile

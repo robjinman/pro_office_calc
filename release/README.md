@@ -31,3 +31,42 @@ ProOfficeCalculator_1.0.15+16SNAPSHOT20180719015812.msi.
 * Upload artifacts to S3.
 * Upload a manifest file to S3 so the website can know the versions stored in the bucket and which
 is the latest, etc.
+
+
+## Deployment
+
+Pro Office Calculator is currently deployed to:
+
+* Ubuntu PPAs `ppa:rjinman/ppa` and `ppa:rjinman/snapshots`
+* Official website http://proofficecalculator.com
+* Itch.io https://robjinman.itch.io/pro-office-calculator
+* Game Jolt https://gamejolt.com/games/pro_office_calculator/358406
+* Indie DB https://www.indiedb.com/games/pro-office-calculator
+* Steam https://store.steampowered.com/app/914430/Pro_Office_Calculator
+
+Deployments to the PPAs and the website are performed by the release script. Deployments to other
+destinations involve manually uploading the artifacts via the relevant websites.
+
+
+### Steam
+
+Install the Steam SDK somewhere (e.g. /opt/steamworks), and place a symlink to the executable on the
+PATH, for example:
+
+```
+    sudo ln -s /opt/steamworks/sdk/tools/ContentBuilder/builder_linux/steamcmd.sh /usr/local/bin/steamcmd
+```
+
+From the steam directory, log into the steam console like so
+
+```
+    steamcmd +login account password
+```
+
+And at the prompt, run the following
+
+```
+    run_app_build /opt/steamworks/sdk/tools/ContentBuilder/scripts/app_build_APPID.vdf
+```
+
+where APPID is the app's ID.

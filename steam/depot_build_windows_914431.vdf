@@ -1,0 +1,11 @@
+"DepotBuildConfig"
+{
+	"DepotID" "914431"
+
+  "FileMapping"
+  {
+    "LocalPath" "windows/procalc/*"
+    "DepotPath" "."
+    "recursive" "1"
+  }
+}

@@ -1,0 +1,11 @@
+"DepotBuildConfig"
+{
+	"DepotID" "914433"
+
+  "FileMapping"
+  {
+    "LocalPath" "osx/procalc.app/*"
+    "DepotPath" "."
+    "recursive" "1"
+  }
+}

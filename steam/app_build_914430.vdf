@@ -1,0 +1,17 @@
+"appbuild"
+{
+	"appid"	"914430"
+	"desc" "Base installation"
+	"buildoutput" "../output/"
+	"contentroot" "../dist/bundles/"
+	"setlive"	""  											// Branch to set live after successful build, non if empty
+	"preview" "1" 											// To enable preview builds
+	"local"	""	  											// Set to flie path of local content server
+
+	"depots"
+	{
+		"914431" "depot_build_windows_914431.vdf"
+		"914432" "depot_build_linux_914432.vdf"
+		"914433" "depot_build_osx_914433.vdf"
+	}
+}
