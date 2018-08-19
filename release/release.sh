@@ -96,11 +96,11 @@ upload_artifacts() {
   osx_artifact_name="ProOfficeCalculator_${full_version}.app.zip"
   linux_artifact_name="ProOfficeCalculator_${full_version}.tar.gz"
 
-  mv "$win_artifact" "./dist/artifacts/$win_artifact_name"
-  mv "$osx_artifact" "./dist/artifacts/$osx_artifact_name"
-  mv "$linux_artifact" "./dist/artifacts/$linux_artifact_name"
+  mv "$win_artifact" "./dist/artifacts/$win_artifact_name" || :
+  mv "$osx_artifact" "./dist/artifacts/$osx_artifact_name" || :
+  mv "$linux_artifact" "./dist/artifacts/$linux_artifact_name" || :
 
-  cat > ./artifacts/manifest <<EOF
+  cat > ./dist/artifacts/manifest <<EOF
 <artifacts>
   <windows>${win_artifact_name}</windows>
   <osx>${osx_artifact_name}</osx>
