@@ -1,10 +1,12 @@
-procalc (1.0.5+6SNAPSHOT20180811202029-0ubuntu1) UNRELEASED; urgency=medium
+procalc (1.0.6-0ubuntu1) xenial; urgency=medium
 
+  * Updated AppConfig to support standalone bundles
   * Added more icons for debian build
   * Removed some unused files from data folder
   * Compiled with -Wextra flag and fixed warnings 
+  * Fixed warnings on OS X
 
- -- Rob Jinman <jinmanr@gmail.com>  Sat, 11 Aug 2018 21:20:39 +0100
+ -- Rob Jinman <jinmanr@gmail.com>  Sun, 19 Aug 2018 00:59:42 +0100
 
 procalc (1.0.5-0ubuntu1) xenial; urgency=medium
 
