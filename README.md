@@ -54,12 +54,18 @@ Run the app from the build directory
 To create a standalone release bundle, invoke cmake as follows
 
 ```
+    # Remove existing bundle
+    rm -r ../../dist/bundles/linux
+
     cmake -D CMAKE_BUILD_TYPE=Release \
           -D CMAKE_INSTALL_PREFIX=../../dist/bundles/linux/procalc \
           -G "Unix Makefiles" ../..
 
     make -j4
     make install
+
+    # So the app will run on systems with older version of libstdc++.so (e.g. SteamOS)
+    cp /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 ../../dist/bundles/linux/procalc/lib/libstdc++.so.6
 ```
 
 And use [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) to copy the dependencies into
