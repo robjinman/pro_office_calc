@@ -17,7 +17,8 @@ using std::vector;
 //===========================================
 FocusSystem::FocusSystem(const AppConfig& appConfig, EntityManager& entityManager,
   TimeService& timeService)
-  : m_appConfig(appConfig),
+  : SystemAccessor(entityManager),
+    m_appConfig(appConfig),
     m_entityManager(entityManager),
     m_timeService(timeService) {}
 
@@ -25,15 +26,12 @@ FocusSystem::FocusSystem(const AppConfig& appConfig, EntityManager& entityManage
 // FocusSystem::initialise
 //===========================================
 void FocusSystem::initialise() {
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   m_toolTipId = Component::getNextId();
   CTextOverlay* toolTip = new CTextOverlay(m_toolTipId, "", Point(7.3, 4.8), 0.5, Qt::white, 1);
 
-  renderSystem.addComponent(pComponent_t(toolTip));
+  renderSys().addComponent(pComponent_t(toolTip));
 
-  m_focusDistance = spatialSystem.sg.player->activationRadius;
+  m_focusDistance = spatialSys().sg.player->activationRadius;
 
   m_initialised = true;
 }
@@ -66,13 +64,12 @@ void FocusSystem::update() {
     initialise();
   }
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  auto& renderSystem = renderSys();
 
   CTextOverlay& toolTip = dynamic_cast<CTextOverlay&>(renderSystem.getComponent(m_toolTipId));
   toolTip.text = "";
 
-  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(Vec2f(1.0, 0), 0,
+  vector<pIntersection_t> intersections = spatialSys().entitiesAlong3dRay(Vec2f(1.0, 0), 0,
     m_focusDistance);
 
   if (intersections.size() > 0) {
@@ -132,7 +129,8 @@ void FocusSystem::showCaption(entityId_t entityId) {
 
   deleteCaption();
 
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  auto& renderSystem = renderSys();
+
   const Size& vp_wld = renderSystem.viewport();
   const Size& vp_px = renderSystem.viewport_px();
 

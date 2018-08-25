@@ -10,6 +10,7 @@
 #include "raycast/component.hpp"
 #include "raycast/geometry.hpp"
 #include "raycast/timing.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class TimeService;
@@ -20,11 +21,11 @@ class AgentSystem;
 class CVRect;
 class EntityManager;
 
-class CAgent : public Component {
+class CAgent : public Component, private SystemAccessor {
   friend class AgentSystem;
 
   public:
-    CAgent(entityId_t entityId);
+    CAgent(entityId_t entityId, EntityManager& entityManager);
 
     bool isHostile = true;
     entityId_t patrolPath = -1;
@@ -41,37 +42,34 @@ class CAgent : public Component {
       ST_SHOOTING
     };
 
+    EntityManager& m_entityManager;
+
     state_t m_state = ST_STATIONARY;
-
     std::unique_ptr<TimePattern> m_gunfireTiming;
-
     entityId_t m_targetObject = -1;
     std::vector<Point> m_path;
     bool m_pathClosed = true;
     int m_waypointIdx = -1;
     std::function<void(CAgent&)> m_onFinish;
 
-    void navigateTo(EntityManager& entityManager, const Point& p,
-      std::function<void(CAgent&)> onFinish);
-    void startPatrol(EntityManager& entityManager);
-    void startChase(EntityManager& entityManager);
+    void navigateTo(const Point& p, std::function<void(CAgent&)> onFinish);
+    void startPatrol();
+    void startChase();
 
-    bool hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f& ray, double& hAngle,
-      double& vAngle, double& height) const;
+    bool hasLineOfSight(Matrix& m, Vec2f& ray, double& hAngle, double& vAngle,
+      double& height) const;
 
-    void followPath(EntityManager& entityManager, TimeService& timeService);
-    void attemptShot(EntityManager& entityManager, TimeService& timeService,
-      AudioService& audioService);
+    void followPath(TimeService& timeService);
+    void attemptShot(TimeService& timeService, AudioService& audioService);
 
-    virtual void update(EntityManager& entityManager, TimeService& timeService,
-      AudioService& audioService);
+    virtual void update(TimeService& timeService, AudioService& audioService);
 
-    void handleEvent(const GameEvent& event, EntityManager& entityManager);
+    void handleEvent(const GameEvent& event);
 
-    void onDamage(EntityManager& entityManager);
+    void onDamage();
 
-    void setAnimation(EntityManager& entityManager);
-    void setState(EntityManager& entityManager, state_t state);
+    void setAnimation();
+    void setState(state_t state);
 };
 
 typedef std::unique_ptr<CAgent> pCAgent_t;

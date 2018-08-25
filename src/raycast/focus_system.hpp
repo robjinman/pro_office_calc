@@ -7,6 +7,7 @@
 #include <map>
 #include "raycast/system.hpp"
 #include "raycast/component.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 struct CFocus : public Component {
@@ -24,7 +25,7 @@ class EntityManager;
 class TimeService;
 class AppConfig;
 
-class FocusSystem : public System {
+class FocusSystem : public System, private SystemAccessor {
   public:
     FocusSystem(const AppConfig& appConfig, EntityManager& entityManager, TimeService& timeService);
 

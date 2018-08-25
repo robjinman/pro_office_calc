@@ -84,10 +84,7 @@ static void fireDestroyedEvents(const EntityManager& entityManager, entityId_t i
 // DamageSystem::damageEntity
 //===========================================
 void DamageSystem::damageEntity(entityId_t entityId, int damage) {
-  const SpatialSystem& spatialSystem =
-    m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  set<entityId_t> entities = spatialSystem.getAncestors(entityId);
+  set<entityId_t> entities = spatialSys().getAncestors(entityId);
   entities.insert(entityId);
 
   for (entityId_t id : entities) {
@@ -140,8 +137,7 @@ void DamageSystem::damageWithinRadius(const CZone& zone, const Point& pos, doubl
 
   // TODO: Attenuation
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  set<entityId_t> entities = spatialSystem.entitiesInRadius(zone, pos, radius);
+  set<entityId_t> entities = spatialSys().entitiesInRadius(zone, pos, radius);
 
   for (auto it = entities.begin(); it != entities.end(); ++it) {
     damageEntity(*it, damage);
@@ -152,10 +148,7 @@ void DamageSystem::damageWithinRadius(const CZone& zone, const Point& pos, doubl
 // DamageSystem::damageAtIntersection_
 //===========================================
 void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
-  const SpatialSystem& spatialSystem =
-    m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  set<entityId_t> entities = spatialSystem.getAncestors(X.entityId);
+  set<entityId_t> entities = spatialSys().getAncestors(X.entityId);
   entities.insert(X.entityId);
 
   for (entityId_t id : entities) {
@@ -187,8 +180,7 @@ void DamageSystem::damageAtIntersection_(const Intersection& X, int damage) {
 // DamageSystem::damageAtIntersection
 //===========================================
 void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle, int damage) {
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(ray, camSpaceVAngle);
+  vector<pIntersection_t> intersections = spatialSys().entitiesAlong3dRay(ray, camSpaceVAngle);
 
   if (intersections.size() > 0) {
     double dist = intersections.front()->distanceFromOrigin;
@@ -210,8 +202,7 @@ void DamageSystem::damageAtIntersection(const Vec2f& ray, double camSpaceVAngle,
 void DamageSystem::damageAtIntersection(const CZone& zone, const Point& pos, double height,
   const Vec2f& dir, double vAngle, const Matrix& matrix, int damage) {
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(zone, pos, height, dir,
+  vector<pIntersection_t> intersections = spatialSys().entitiesAlong3dRay(zone, pos, height, dir,
     vAngle, matrix);
 
   if (intersections.size() > 0) {

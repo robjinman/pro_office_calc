@@ -5,9 +5,7 @@
 #include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/focus_system.hpp"
-#include "raycast/animation_system.hpp"
 #include "raycast/event_handler_system.hpp"
-#include "raycast/damage_system.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/time_service.hpp"
@@ -48,8 +46,6 @@ static void snapEndpoint(map<Point, bool>& endpoints, Point& pt) {
 bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
   Matrix m = parentTransform * obj.groupTransform * obj.pathTransform;
 
   if (entityId == -1) {
@@ -62,7 +58,7 @@ bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, en
     path->points.push_back(m * obj.path.points[i]);
   }
 
-  spatialSystem.addComponent(pComponent_t(path));
+  spatialSys().addComponent(pComponent_t(path));
 
   return true;
 }
@@ -73,13 +69,7 @@ bool GeometryFactory::constructPath(entityId_t entityId, parser::Object& obj, en
 bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& renderSystem = m_entityManager.system<RenderSystem&>(ComponentKind::C_RENDER);
-  auto& focusSystem = m_entityManager.system<FocusSystem&>(ComponentKind::C_FOCUS);
-  auto& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-  const CEdge& edge = dynamic_cast<const CEdge&>(spatialSystem.getComponent(parentId));
+  const CEdge& edge = dynamic_cast<const CEdge&>(spatialSys().getComponent(parentId));
   const LineSegment& wall = edge.lseg;
 
   LineSegment lseg(obj.path.points[0], obj.path.points[1]);
@@ -110,7 +100,7 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
     return false;
   }
 
-  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(edge.parentId));
+  CZone& zone = dynamic_cast<CZone&>(spatialSys().getComponent(edge.parentId));
 
   double r = std::stod(getValue(obj.dict, "aspect_ratio"));
   Size size(w, w / r);
@@ -130,13 +120,13 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
   vRect->pos = pos;
   vRect->zone = &zone;
 
-  spatialSystem.addComponent(pComponent_t(vRect));
+  spatialSys().addComponent(pComponent_t(vRect));
 
   CWallDecal* decal = new CWallDecal(entityId, parentId);
   decal->texture = texture;
   decal->zIndex = zIndex;
 
-  renderSystem.addComponent(pComponent_t(decal));
+  renderSys().addComponent(pComponent_t(decal));
 
   string hoverText = getValue(obj.dict, "hover_text", "");
   string captionText = getValue(obj.dict, "caption_text", "");
@@ -145,21 +135,21 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = hoverText;
     focus->captionText = captionText;
-    focusSystem.addComponent(pComponent_t(focus));
+    focusSys().addComponent(pComponent_t(focus));
 
     CEventHandler* events = new CEventHandler(entityId);
 
     events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-      [=, &focusSystem](const GameEvent& e_) {
+      [=](const GameEvent& e_) {
 
       auto& e = dynamic_cast<const EPlayerActivateEntity&>(e_);
 
       if (e.lookingAt.count(entityId)) {
-        focusSystem.showCaption(entityId);
+        focusSys().showCaption(entityId);
       }
     }});
 
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
   }
 
   return true;
@@ -171,11 +161,8 @@ bool GeometryFactory::constructWallDecal(entityId_t entityId, parser::Object& ob
 bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
-  CRegion& region = dynamic_cast<CRegion&>(renderSystem.getComponent(parentId));
+  CZone& zone = dynamic_cast<CZone&>(spatialSys().getComponent(parentId));
+  CRegion& region = dynamic_cast<CRegion&>(renderSys().getComponent(parentId));
 
   Matrix m = parentTransform * obj.groupTransform * obj.pathTransform;
 
@@ -207,14 +194,14 @@ bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
     snapEndpoint(m_endpoints, edge->lseg.A);
     snapEndpoint(m_endpoints, edge->lseg.B);
 
-    spatialSystem.addComponent(pComponent_t(edge));
+    spatialSys().addComponent(pComponent_t(edge));
 
     CWall* wall = new CWall(entityId, region.entityId());
 
     wall->region = &region;
     wall->texture = getValue(obj.dict, "texture", "default");
 
-    renderSystem.addComponent(pComponent_t(wall));
+    renderSys().addComponent(pComponent_t(wall));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       m_rootFactory.constructObject((*it)->type, -1, **it, entityId,
@@ -234,9 +221,6 @@ bool GeometryFactory::constructWalls(parser::Object& obj, entityId_t parentId,
 //===========================================
 bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
   string texName = getValue(obj.dict, "texture", "default");
 
@@ -260,12 +244,12 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& o
   hRect->size = size;
   hRect->transform = m.inverse();
 
-  spatialSystem.addComponent(pComponent_t(hRect));
+  spatialSys().addComponent(pComponent_t(hRect));
 
   CFloorDecal* decal = new CFloorDecal(entityId, parentId);
   decal->texture = texName;
 
-  renderSystem.addComponent(pComponent_t(decal));
+  renderSys().addComponent(pComponent_t(decal));
 
   return true;
 }
@@ -275,9 +259,6 @@ bool GeometryFactory::constructFloorDecal(entityId_t entityId, parser::Object& o
 //===========================================
 bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
-
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
   if (obj.path.points.size() != 2) {
     EXCEPTION("Portal must contain 1 line segment");
@@ -296,13 +277,13 @@ bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
   snapEndpoint(m_endpoints, edge->lseg.A);
   snapEndpoint(m_endpoints, edge->lseg.B);
 
-  spatialSystem.addComponent(pComponent_t(edge));
+  spatialSys().addComponent(pComponent_t(edge));
 
   CJoin* boundary = new CJoin(entityId, parentId, Component::getNextId());
   boundary->topTexture = getValue(obj.dict, "top_texture", "default");
   boundary->bottomTexture = getValue(obj.dict, "bottom_texture", "default");
 
-  renderSystem.addComponent(pComponent_t(boundary));
+  renderSys().addComponent(pComponent_t(boundary));
 
   return true;
 }
@@ -312,9 +293,6 @@ bool GeometryFactory::constructPortal(parser::Object& obj, entityId_t parentId,
 //===========================================
 bool GeometryFactory::constructBoundaries(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
-
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
   list<CSoftEdge*> edges;
 
@@ -349,13 +327,13 @@ bool GeometryFactory::constructBoundaries(entityId_t entityId, parser::Object& o
 
     edges.push_back(edge);
 
-    spatialSystem.addComponent(pComponent_t(edge));
+    spatialSys().addComponent(pComponent_t(edge));
 
     CJoin* boundary = new CJoin(entityId, parentId, Component::getNextId());
     boundary->topTexture = getValue(obj.dict, "top_texture", "default");
     boundary->bottomTexture = getValue(obj.dict, "bottom_texture", "default");
 
-    renderSystem.addComponent(pComponent_t(boundary));
+    renderSys().addComponent(pComponent_t(boundary));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       m_rootFactory.constructObject((*it)->type, -1, **it, entityId,
@@ -374,15 +352,13 @@ bool GeometryFactory::constructBoundaries(entityId_t entityId, parser::Object& o
 bool GeometryFactory::constructRegion_r(entityId_t entityId, parser::Object& obj,
   entityId_t parentId, const Matrix& parentTransform) {
 
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderGraph& rg = renderSystem.rg;
+  RenderGraph& rg = renderSys().rg;
 
   CZone* parentZone = parentId == -1 ? nullptr
-    : dynamic_cast<CZone*>(&spatialSystem.getComponent(parentId));
+    : dynamic_cast<CZone*>(&spatialSys().getComponent(parentId));
 
   CRegion* parentRegion = parentId == -1 ? nullptr
-    : dynamic_cast<CRegion*>(&renderSystem.getComponent(parentId));
+    : dynamic_cast<CRegion*>(&renderSys().getComponent(parentId));
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
@@ -394,8 +370,8 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, parser::Object& obj
   CRegion* region = new CRegion(entityId, parentId);
 
   try {
-    spatialSystem.addComponent(pComponent_t(zone));
-    renderSystem.addComponent(pComponent_t(region));
+    spatialSys().addComponent(pComponent_t(zone));
+    renderSys().addComponent(pComponent_t(region));
 
     if (obj.path.points.size() > 0) {
       EXCEPTION("Region has unexpected path");
@@ -501,11 +477,8 @@ bool GeometryFactory::constructRegion_r(entityId_t entityId, parser::Object& obj
 // GeometryFactory::constructRootRegion
 //===========================================
 bool GeometryFactory::constructRootRegion(parser::Object& obj) {
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  RenderGraph& rg = renderSystem.rg;
-  SceneGraph& sg = spatialSystem.sg;
+  RenderGraph& rg = renderSys().rg;
+  SceneGraph& sg = spatialSys().sg;
 
   if (obj.type != "region") {
     EXCEPTION("Expected object of type 'region'");
@@ -529,8 +502,8 @@ bool GeometryFactory::constructRootRegion(parser::Object& obj) {
       EXCEPTION("SpatialSystem must contain the player");
     };
 
-    spatialSystem.connectZones();
-    renderSystem.connectRegions();
+    spatialSys().connectZones();
+    renderSys().connectRegions();
 
     return true;
   }
@@ -549,8 +522,7 @@ bool GeometryFactory::constructVRect(entityId_t entityId, parser::Object& obj, e
     entityId = makeIdForObj(obj);
   }
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  CZone& zone = spatialSystem.zone(parentId);
+  CZone& zone = spatialSys().zone(parentId);
 
   double width = std::stod(getValue(obj.dict, "width", "0.0"));
   double height = std::stod(getValue(obj.dict, "height", "0.0"));
@@ -563,7 +535,7 @@ bool GeometryFactory::constructVRect(entityId_t entityId, parser::Object& obj, e
   vRect->size = Size(width, height);
   vRect->y = y;
 
-  spatialSystem.addComponent(pComponent_t(vRect));
+  spatialSys().addComponent(pComponent_t(vRect));
 
   return true;
 }
@@ -586,7 +558,8 @@ bool GeometryFactory::constructRegion(entityId_t entityId, parser::Object& obj, 
 // GeometryFactory::GeometryFactory
 //===========================================
 GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager)
-  : m_rootFactory(rootFactory),
+  : SystemAccessor(entityManager),
+    m_rootFactory(rootFactory),
     m_entityManager(entityManager) {}
 
 //===========================================

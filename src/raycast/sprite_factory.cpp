@@ -29,17 +29,14 @@ using std::set;
 bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  CZone& zone = spatialSystem.zone(parentId);
+  CZone& zone = spatialSys().zone(parentId);
 
   if (entityId == -1) {
     entityId = makeIdForObj(obj);
   }
 
   string texName = getValue(obj.dict, "texture", "default");
-  const Texture& texture = GET_VALUE(renderSystem.rg.textures, texName);
+  const Texture& texture = GET_VALUE(renderSys().rg.textures, texName);
 
   double height = std::stod(getValue(obj.dict, "height", "0.0"));
 
@@ -49,14 +46,14 @@ bool SpriteFactory::constructSprite(entityId_t entityId, parser::Object& obj, en
   vRect->zone = &zone;
   vRect->y = height;
 
-  spatialSystem.addComponent(pComponent_t(vRect));
+  spatialSys().addComponent(pComponent_t(vRect));
 
   CSprite* sprite = new CSprite(entityId, zone.entityId(), texName);
   sprite->texViews = {
     QRectF(0, 0, 1, 1)
   };
 
-  renderSystem.addComponent(pComponent_t(sprite));
+  renderSys().addComponent(pComponent_t(sprite));
 
   return true;
 }
@@ -74,12 +71,9 @@ bool SpriteFactory::constructAmmo(entityId_t entityId, parser::Object& obj, enti
   obj.dict["texture"] = "ammo";
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    InventorySystem& inventorySystem =
-      m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-
     CCollectable* collectable = new CCollectable(entityId, "ammo");
     collectable->value = 5;
-    inventorySystem.addComponent(pComponent_t(collectable));
+    inventorySys().addComponent(pComponent_t(collectable));
 
     return true;
   }
@@ -100,15 +94,12 @@ bool SpriteFactory::constructHealthPack(entityId_t entityId, parser::Object& obj
   obj.dict["texture"] = "health_pack";
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    InventorySystem& inventorySystem =
-      m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-
     // Health packs don't have a bucket, but the Player class listens for their collection and
     // removes them accordingly
 
     CCollectable* collectable = new CCollectable(entityId, "health_pack");
     collectable->value = 1;
-    inventorySystem.addComponent(pComponent_t(collectable));
+    inventorySys().addComponent(pComponent_t(collectable));
 
     return true;
   }
@@ -131,26 +122,15 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
   }
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    AnimationSystem& animationSystem =
-      m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-    DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-    EventHandlerSystem& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-    AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
-    InventorySystem& inventorySystem =
-      m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-    SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    FocusSystem& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-
     CCollector* inventory = new CCollector(entityId);
     inventory->buckets["item"] = pBucket_t(new ItemBucket(1));
-    inventorySystem.addComponent(pComponent_t(inventory));
+    inventorySys().addComponent(pComponent_t(inventory));
 
     string name = getValue(obj.dict, "name", "");
     if (name != "") {
       CFocus* focus = new CFocus(entityId);
       focus->hoverText = name.replace(0, 1, 1, asciiToUpper(name[0]));
-      focusSystem.addComponent(pComponent_t(focus));
+      focusSys().addComponent(pComponent_t(focus));
     }
 
     // Number of frames in sprite sheet
@@ -174,20 +154,20 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
     }};
     anim->addAnimation(pAnimation_t(new Animation("death", m_timeService.frameRate, 0.5, frames)));
 
-    animationSystem.addComponent(pComponent_t(anim));
-    animationSystem.playAnimation(entityId, "idle", true);
+    animationSys().addComponent(pComponent_t(anim));
+    animationSys().playAnimation(entityId, "idle", true);
 
     CDamage* damage = new CDamage(entityId, 2, 2);
-    damageSystem.addComponent(pComponent_t(damage));
+    damageSys().addComponent(pComponent_t(damage));
 
     CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
 
     CEventHandler* events = new CEventHandler(entityId);
     events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &spatialSystem, &agentSystem, &vRect](const GameEvent&) {
+      [=, &vRect](const GameEvent&) {
 
       DBG_PRINT("Civilian health: " << damage->health << "\n");
-      //animationSystem.playAnimation(entityId, "hurt", false);
+      //animationSys().playAnimation(entityId, "hurt", false);
 
       if (damage->health == 0) {
         m_audioService.playSoundAtPos("civilian_death", vRect.pos);
@@ -195,12 +175,12 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
 
         for (auto it = bucket.items.begin(); it != bucket.items.end(); ++it) {
           entityId_t itemId = it->second;
-          const CVRect& body = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId));
-          spatialSystem.relocateEntity(itemId, *body.zone, body.pos);
+          const CVRect& body = dynamic_cast<const CVRect&>(spatialSys().getComponent(entityId));
+          spatialSys().relocateEntity(itemId, *body.zone, body.pos);
         }
 
-        agentSystem.removeEntity(entityId);
-        animationSystem.playAnimation(entityId, "death", false);
+        agentSys().removeEntity(entityId);
+        animationSys().playAnimation(entityId, "death", false);
       }
       else {
         m_audioService.playSoundAtPos("civilian_hurt", vRect.pos);
@@ -215,9 +195,9 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
       }
     }});
 
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
 
-    CAgent* agent = new CAgent(entityId);
+    CAgent* agent = new CAgent(entityId, m_entityManager);
     agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
     agent->isHostile = false;
 
@@ -226,7 +206,7 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
       agent->patrolPath = Component::getIdFromString(s);
     }
 
-    agentSystem.addComponent(pComponent_t(agent));
+    agentSys().addComponent(pComponent_t(agent));
 
     for (auto it = obj.children.begin(); it != obj.children.end(); ++it) {
       parser::Object& ch = **it;
@@ -236,9 +216,9 @@ bool SpriteFactory::constructCivilian(entityId_t entityId, parser::Object& obj, 
         parentTransform * obj.groupTransform)) {
 
         const CCollectable& item =
-          dynamic_cast<const CCollectable&>(inventorySystem.getComponent(invItemId));
+          dynamic_cast<const CCollectable&>(inventorySys().getComponent(invItemId));
 
-        inventorySystem.addToBucket(entityId, item);
+        inventorySys().addToBucket(entityId, item);
       }
     }
 
@@ -261,14 +241,6 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
   obj.dict["texture"] = "bad_guy";
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    AnimationSystem& animationSystem =
-      m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-    DamageSystem& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-    EventHandlerSystem& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-    SpawnSystem& spawnSystem = m_entityManager.system<SpawnSystem>(ComponentKind::C_SPAWN);
-    AgentSystem& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
-
     // Number of frames in sprite sheet
     const int W = 8;
     const int H = 15;
@@ -293,8 +265,8 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
     }};
     anim->addAnimation(pAnimation_t(new Animation("death", m_timeService.frameRate, 0.5, frames)));
 
-    animationSystem.addComponent(pComponent_t(anim));
-    animationSystem.playAnimation(entityId, "idle", true);
+    animationSys().addComponent(pComponent_t(anim));
+    animationSys().playAnimation(entityId, "idle", true);
 
     string s = getValue(obj.dict, "spawn_point", "");
     if (s != "") {
@@ -306,28 +278,28 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
         spawnable->delay = std::stod(delay);
       }
 
-      spawnSystem.addComponent(pComponent_t(spawnable));
+      spawnSys().addComponent(pComponent_t(spawnable));
     }
 
     CDamage* damage = new CDamage(entityId, 2, 2);
-    damageSystem.addComponent(pComponent_t(damage));
+    damageSys().addComponent(pComponent_t(damage));
 
     CVRect& vRect = m_entityManager.getComponent<CVRect>(entityId, ComponentKind::C_SPATIAL);
 
     CEventHandler* events = new CEventHandler(entityId);
     events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &agentSystem, &vRect](const GameEvent& e) {
+      [=, &vRect](const GameEvent& e) {
 
       const EEntityDamaged& event = dynamic_cast<const EEntityDamaged&>(e);
 
       if (event.entityId == entityId) {
         DBG_PRINT("Enemy health: " << damage->health << "\n");
-        //animationSystem.playAnimation(entityId, "hurt", false);
+        //animationSys().playAnimation(entityId, "hurt", false);
 
         if (damage->health == 0) {
           m_audioService.playSoundAtPos("monster_death", vRect.pos);
-          agentSystem.removeEntity(entityId);
-          animationSystem.playAnimation(entityId, "death", false);
+          agentSys().removeEntity(entityId);
+          animationSys().playAnimation(entityId, "death", false);
         }
         else {
           m_audioService.playSoundAtPos("monster_hurt", vRect.pos);
@@ -342,9 +314,9 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
         m_entityManager.deleteEntity(entityId);
       }
     }});
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
 
-    CAgent* agent = new CAgent(entityId);
+    CAgent* agent = new CAgent(entityId, m_entityManager);
 
     agent->isHostile = true;
     agent->stPatrollingTrigger = getValue(obj.dict, "st_patrolling_trigger", "");
@@ -355,7 +327,7 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
       agent->patrolPath = Component::getIdFromString(s);
     }
 
-    agentSystem.addComponent(pComponent_t(agent));
+    agentSys().addComponent(pComponent_t(agent));
 
     return true;
   }
@@ -368,7 +340,8 @@ bool SpriteFactory::constructBadGuy(entityId_t entityId, parser::Object& obj, en
 //===========================================
 SpriteFactory::SpriteFactory(RootFactory& rootFactory, EntityManager& entityManager,
   AudioService& audioService, TimeService& timeService)
-  : m_rootFactory(rootFactory),
+  : SystemAccessor(entityManager),
+    m_rootFactory(rootFactory),
     m_entityManager(entityManager),
     m_audioService(audioService),
     m_timeService(timeService) {}

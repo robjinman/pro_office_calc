@@ -6,6 +6,7 @@
 #include <vector>
 #include "raycast/game_object_factory.hpp"
 #include "raycast/geometry.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EntityManager;
@@ -14,7 +15,7 @@ class Matrix;
 class RootFactory;
 namespace parser { struct Object; }
 
-class GeometryFactory : public GameObjectFactory {
+class GeometryFactory : public GameObjectFactory, private SystemAccessor {
   public:
     GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager);
 

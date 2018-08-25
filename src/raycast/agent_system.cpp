@@ -45,20 +45,17 @@ static int indexOfClosestPoint(const Point& point, const vector<Point>& points) 
 //===========================================
 // CAgent::setAnimation
 //===========================================
-void CAgent::setAnimation(EntityManager& entityManager) {
-  AnimationSystem& animationSystem =
-    entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
+void CAgent::setAnimation() {
   switch (m_state) {
     case ST_STATIONARY:
-      animationSystem.playAnimation(entityId(), "idle", true);
+      animationSys().playAnimation(entityId(), "idle", true);
       break;
     case ST_SHOOTING:
-      animationSystem.playAnimation(entityId(), "shoot", false);
+      animationSys().playAnimation(entityId(), "shoot", false);
       break;
     case ST_CHASING_OBJECT:
     case ST_ON_FIXED_PATH:
-      animationSystem.playAnimation(entityId(), "run", true);
+      animationSys().playAnimation(entityId(), "run", true);
       break;
   }
 }
@@ -66,21 +63,21 @@ void CAgent::setAnimation(EntityManager& entityManager) {
 //===========================================
 // CAgent::setState
 //===========================================
-void CAgent::setState(EntityManager& entityManager, state_t state) {
+void CAgent::setState(state_t state) {
   if (m_state != state) {
     m_state = state;
-    setAnimation(entityManager);
+    setAnimation();
   }
 }
 
 //===========================================
 // CAgent::hasLineOfSight
 //===========================================
-bool CAgent::hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f& ray,
-  double& hAngle, double& vAngle, double& height) const {
+bool CAgent::hasLineOfSight(Matrix& m, Vec2f& ray, double& hAngle, double& vAngle,
+  double& height) const {
 
-  CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
-  const Player& player = *spatialSystem.sg.player;
+  CVRect& body = dynamic_cast<CVRect&>(spatialSys().getComponent(entityId()));
+  const Player& player = *spatialSys().sg.player;
 
   const Point& target_wld = player.pos();
 
@@ -101,7 +98,7 @@ bool CAgent::hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f
     return false;
   }
 
-  vector<pIntersection_t> intersections = spatialSystem.entitiesAlong3dRay(*body.zone, ray * 0.1,
+  vector<pIntersection_t> intersections = spatialSys().entitiesAlong3dRay(*body.zone, ray * 0.1,
     height, ray, vAngle, m);
 
   if (intersections.size() > 0) {
@@ -117,8 +114,10 @@ bool CAgent::hasLineOfSight(const SpatialSystem& spatialSystem, Matrix& m, Vec2f
 //===========================================
 // CAgent::CAgent
 //===========================================
-CAgent::CAgent(entityId_t entityId)
-  : Component(entityId, ComponentKind::C_AGENT) {
+CAgent::CAgent(entityId_t entityId, EntityManager& entityManager)
+  : Component(entityId, ComponentKind::C_AGENT),
+    SystemAccessor(entityManager),
+    m_entityManager(entityManager) {
 
   m_gunfireTiming.reset(new TRandomIntervals(400, 4000));
 }
@@ -126,38 +125,34 @@ CAgent::CAgent(entityId_t entityId)
 //===========================================
 // CAgent::startPatrol
 //===========================================
-void CAgent::startPatrol(EntityManager& entityManager) {
+void CAgent::startPatrol() {
   if (patrolPath != -1) {
-    const CPath& path = entityManager.getComponent<CPath>(patrolPath, ComponentKind::C_SPATIAL);
+    const CPath& path = m_entityManager.getComponent<CPath>(patrolPath, ComponentKind::C_SPATIAL);
 
     m_path = path.points;
     m_pathClosed = true;
-    setState(entityManager, ST_ON_FIXED_PATH);
+    setState(ST_ON_FIXED_PATH);
     m_waypointIdx = -1;
   }
   else {
-    setState(entityManager, ST_STATIONARY);
+    setState(ST_STATIONARY);
   }
 }
 
 //===========================================
 // CAgent::startChase
 //===========================================
-void CAgent::startChase(EntityManager& entityManager) {
-  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
+void CAgent::startChase() {
   m_waypointIdx = -1;
-  setState(entityManager, ST_CHASING_OBJECT);
-  m_targetObject = spatialSystem.sg.player->body;
+  setState(ST_CHASING_OBJECT);
+  m_targetObject = spatialSys().sg.player->body;
 }
 
 //===========================================
 // CAgent::followPath
 //===========================================
-void CAgent::followPath(EntityManager& entityManager, TimeService& timeService) {
-  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
+void CAgent::followPath(TimeService& timeService) {
+  CVRect& body = dynamic_cast<CVRect&>(spatialSys().getComponent(entityId()));
 
   if (m_waypointIdx == -1) {
     m_waypointIdx = indexOfClosestPoint(body.pos, m_path);
@@ -169,14 +164,14 @@ void CAgent::followPath(EntityManager& entityManager, TimeService& timeService) 
   Vec2f v = normalise(target - body.pos) * speed;
   body.angle = atan2(v.y, v.x);
 
-  spatialSystem.moveEntity(entityId(), v);
+  spatialSys().moveEntity(entityId(), v);
 
   if (distance(body.pos, target) < 10) {
     if (m_pathClosed) {
       m_waypointIdx = (m_waypointIdx + 1) % m_path.size();
     }
     else {
-      setState(entityManager, ST_STATIONARY);
+      setState(ST_STATIONARY);
 
       if (m_onFinish) {
         m_onFinish(*this);
@@ -188,14 +183,10 @@ void CAgent::followPath(EntityManager& entityManager, TimeService& timeService) 
 //===========================================
 // CAgent::attemptShot
 //===========================================
-void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
-  AudioService& audioService) {
+void CAgent::attemptShot(TimeService& timeService, AudioService& audioService) {
+  AgentSystem& agentSystem = agentSys();
 
-  AgentSystem& agentSystem = entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
-  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  DamageSystem& damageSystem = entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
-  CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId()));
+  CVRect& body = dynamic_cast<CVRect&>(spatialSys().getComponent(entityId()));
 
   m_gunfireTiming->doIfReady([&]() {
     double hAngle = 0;
@@ -204,16 +195,16 @@ void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
     Vec2f ray;
     double height = 0;
 
-    if (hasLineOfSight(spatialSystem, m, ray, hAngle, vAngle, height)) {
+    if (hasLineOfSight(m, ray, hAngle, vAngle, height)) {
       body.angle = hAngle;
       entityId_t id = entityId();
       state_t prevState = m_state;
-      setState(entityManager, ST_SHOOTING);
+      setState(ST_SHOOTING);
 
-      timeService.onTimeout([&agentSystem, &entityManager, id, prevState, this]() {
+      timeService.onTimeout([id, prevState, this, &agentSystem]() {
         // If the entity still exists, our pointer is still good
         if (agentSystem.hasComponent(id)) {
-          setState(entityManager, prevState);
+          setState(prevState);
         }
       }, 1.0);
 
@@ -228,9 +219,9 @@ void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
       Matrix rot(hDa, Vec2f(0, 0));
       ray = rot * ray;
 
-      timeService.onTimeout([=, &agentSystem, &damageSystem, &audioService, &body]() {
+      timeService.onTimeout([=, &audioService, &body, &agentSystem]() {
         if (agentSystem.hasComponent(id)) {
-          damageSystem.damageAtIntersection(*body.zone, ray * 0.1, height, ray, vAngle + vDa, m, 1);
+          damageSys().damageAtIntersection(*body.zone, ray * 0.1, height, ray, vAngle + vDa, m, 1);
           audioService.playSoundAtPos("shotgun_shoot", body.pos);
         }
       }, REACTION_SPEED);
@@ -241,32 +232,23 @@ void CAgent::attemptShot(EntityManager& entityManager, TimeService& timeService,
 //===========================================
 // CAgent::navigateTo
 //===========================================
-void CAgent::navigateTo(EntityManager& entityManager, const Point& p,
-  function<void(CAgent&)> onFinish) {
+void CAgent::navigateTo(const Point& p, function<void(CAgent&)> onFinish) {
+  const CVRect& body = dynamic_cast<const CVRect&>(spatialSys().getComponent(entityId()));
 
-  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  AnimationSystem& animationSystem =
-    entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
-  const CVRect& body = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId()));
-
-  m_path = spatialSystem.shortestPath(body.pos, p, 10);
+  m_path = spatialSys().shortestPath(body.pos, p, 10);
   m_pathClosed = false;
   m_waypointIdx = -1;
-  setState(entityManager, ST_ON_FIXED_PATH);
+  setState(ST_ON_FIXED_PATH);
   m_onFinish = onFinish;
 
-  animationSystem.playAnimation(entityId(), "run", true);
+  animationSys().playAnimation(entityId(), "run", true);
 }
 
 //===========================================
 // CAgent::update
 //===========================================
-void CAgent::update(EntityManager& entityManager, TimeService& timeService,
-  AudioService& audioService) {
-
-  SpatialSystem& spatialSystem = entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  const Player& player = *spatialSystem.sg.player;
+void CAgent::update(TimeService& timeService, AudioService& audioService) {
+  const Player& player = *spatialSys().sg.player;
 
   switch (m_state) {
     case ST_STATIONARY:
@@ -274,37 +256,37 @@ void CAgent::update(EntityManager& entityManager, TimeService& timeService,
     case ST_CHASING_OBJECT:
       if (player.alive) {
         assert(m_targetObject != -1);
-        m_path = spatialSystem.shortestPath(entityId(), m_targetObject, 10);
+        m_path = spatialSys().shortestPath(entityId(), m_targetObject, 10);
         m_pathClosed = false;
       }
     case ST_ON_FIXED_PATH:
       assert(m_path.size() > 0);
-      followPath(entityManager, timeService);
+      followPath(timeService);
       break;
     case ST_SHOOTING:
       break;
   }
 
   if (isHostile && player.alive) {
-    attemptShot(entityManager, timeService, audioService);
+    attemptShot(timeService, audioService);
   }
 }
 
 //===========================================
 // CAgent::handleEvent
 //===========================================
-void CAgent::handleEvent(const GameEvent& event, EntityManager& entityManager) {
+void CAgent::handleEvent(const GameEvent& event) {
   if (event.name == stPatrollingTrigger) {
-    startPatrol(entityManager);
+    startPatrol();
   }
   else if (event.name == stChasingTrigger && m_state == ST_STATIONARY) {
-    startChase(entityManager);
+    startChase();
   }
   else if (event.name == "entityDamaged") {
     const EEntityDamaged& e = dynamic_cast<const EEntityDamaged&>(event);
 
     if (e.entityId == entityId()) {
-      onDamage(entityManager);
+      onDamage();
     }
   }
 }
@@ -312,7 +294,7 @@ void CAgent::handleEvent(const GameEvent& event, EntityManager& entityManager) {
 //===========================================
 // CAgent::onDamage
 //===========================================
-void CAgent::onDamage(EntityManager&) {
+void CAgent::onDamage() {
   // TODO: Chase player?
 }
 
@@ -321,7 +303,7 @@ void CAgent::onDamage(EntityManager&) {
 //===========================================
 void AgentSystem::update() {
   for (auto& c : m_components) {
-    c.second->update(m_entityManager, m_timeService, m_audioService);
+    c.second->update(m_timeService, m_audioService);
   }
 }
 
@@ -330,7 +312,7 @@ void AgentSystem::update() {
 //===========================================
 void AgentSystem::handleEvent(const GameEvent& event) {
   for (auto& c : m_components) {
-    c.second->handleEvent(event, m_entityManager);
+    c.second->handleEvent(event);
   }
 }
 
@@ -340,8 +322,8 @@ void AgentSystem::handleEvent(const GameEvent& event) {
 void AgentSystem::navigateTo(entityId_t entityId, const Point& point) {
   DBG_PRINT("Entity " << entityId << " navigating to " << point << "\n");
 
-  m_components.at(entityId)->navigateTo(m_entityManager, point, [this](CAgent& agent) {
-    agent.startPatrol(m_entityManager);
+  m_components.at(entityId)->navigateTo(point, [this](CAgent& agent) {
+    agent.startPatrol();
   });
 }
 

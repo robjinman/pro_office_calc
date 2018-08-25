@@ -8,6 +8,7 @@
 #include "raycast/system.hpp"
 #include "raycast/component.hpp"
 #include "raycast/geometry.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 struct EEntityDestroyed : public GameEvent {
@@ -59,10 +60,11 @@ class EntityManager;
 class CZone;
 struct Intersection;
 
-class DamageSystem : public System {
+class DamageSystem : public System, private SystemAccessor {
   public:
     DamageSystem(EntityManager& entityManager)
-      : m_entityManager(entityManager) {}
+      : SystemAccessor(entityManager),
+        m_entityManager(entityManager) {}
 
     void update() override {}
     void handleEvent(const GameEvent&) override {}

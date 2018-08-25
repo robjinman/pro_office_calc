@@ -3,6 +3,7 @@
 
 
 #include "raycast/game_object_factory.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EntityManager;
@@ -12,7 +13,7 @@ class Matrix;
 class RootFactory;
 namespace parser { struct Object; }
 
-class MiscFactory : public GameObjectFactory {
+class MiscFactory : public GameObjectFactory, private SystemAccessor {
   public:
     MiscFactory(RootFactory& rootFactory, EntityManager& entityManager,
       AudioService& audioService, TimeService& timeService);
