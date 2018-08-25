@@ -94,7 +94,7 @@ void GameLogic::fadeToBlack() {
   entityId_t entityId = Component::getNextId();
 
   CColourOverlay* overlay = new CColourOverlay(entityId, QColor{0, 0, 0, 0}, Point{0, 0},
-    renderSystem.rg.viewport, 1);
+    renderSystem.viewport(), 1);
 
   renderSystem.addComponent(pComponent_t(overlay));
 

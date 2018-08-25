@@ -133,8 +133,8 @@ void FocusSystem::showCaption(entityId_t entityId) {
   deleteCaption();
 
   RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  const Size& vp_wld = renderSystem.rg.viewport;
-  const Size& vp_px = renderSystem.rg.viewport_px;
+  const Size& vp_wld = renderSystem.viewport();
+  const Size& vp_px = renderSystem.viewport_px();
 
   double pxH = vp_wld.y / vp_px.y;
   double pxW = vp_wld.x / vp_px.x;

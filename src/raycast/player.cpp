@@ -89,7 +89,7 @@ void Player::setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& ev
   // Transition time
   const double T = 0.3;
 
-  const Size& viewport = renderSystem.rg.viewport;
+  const Size& viewport = renderSystem.viewport();
 
   CEventHandler& events = eventHandlerSystem.getComponent(this->body);
   events.broadcastedEventHandlers.push_back(EventHandler{"mouse_captured",
@@ -171,7 +171,7 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
 
   spatialSystem.addComponent(pCSpatial_t(b));
 
-  m_camera.reset(new Camera(renderSystem.rg.viewport.x, DEG_TO_RAD(60), DEG_TO_RAD(50), *b,
+  m_camera.reset(new Camera(renderSystem.viewport().x, DEG_TO_RAD(60), DEG_TO_RAD(50), *b,
     tallness - FOREHEAD_SIZE + zone.floorHeight));
 
   this->sprite = Component::getNextId();
@@ -208,7 +208,7 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
   CPlayerBehaviour* behaviour = new CPlayerBehaviour(this->body, m_entityManager, m_timeService);
   behaviourSystem.addComponent(pComponent_t(behaviour));
 
-  const Size& viewport = renderSystem.rg.viewport;
+  const Size& viewport = renderSystem.viewport();
 
   Size sz(0.5, 0.5);
   CImageOverlay* crosshair = new CImageOverlay(this->crosshair, "crosshair", Point(10, 10), sz);
@@ -272,7 +272,8 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
   EventHandlerSystem& eventHandlerSystem, DamageSystem& damageSystem) {
 
   const RenderGraph& rg = renderSystem.rg;
-  const Size& viewport = rg.viewport;
+  const Size& viewport = renderSystem.viewport();
+  Size worldUnit_px = renderSystem.worldUnit_px();
 
   CCollector* inventory = new CCollector(this->body);
   inventory->buckets["ammo"] = pBucket_t(new CounterBucket(50));
@@ -281,7 +282,7 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
 
   const double INVENTORY_W = 6.0;
   double itemsDisplayAspectRatio = INVENTORY_W / INVENTORY_H;
-  double itemsDisplayH_px = INVENTORY_H * rg.hWorldUnit_px;
+  double itemsDisplayH_px = INVENTORY_H * worldUnit_px.x;
   double itemsDisplayW_px = itemsDisplayH_px * itemsDisplayAspectRatio;
 
   QImage imgItems(itemsDisplayW_px, itemsDisplayH_px, QImage::Format_ARGB32);
@@ -349,6 +350,8 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
     const EBucketItemsChange& e = dynamic_cast<const EBucketItemsChange&>(e_);
 
     if (e.collectableType == "item") {
+      Size worldUnit_px = renderSystem.worldUnit_px();
+
       QImage& target = renderSystem.rg.textures["items_display"].image;
       target.fill(Qt::GlobalColor::transparent);
 
@@ -368,8 +371,8 @@ void Player::constructInventory(RenderSystem& renderSystem, InventorySystem& inv
           double slotW = itemsDisplayW_px / e.bucket.capacity;
           double slotX = slotW * i;
           double slotY = 0;
-          double vMargin = V_MARGIN * rg.hWorldUnit_px;
-          double hMargin = 0.1 * rg.hWorldUnit_px;
+          double vMargin = V_MARGIN * worldUnit_px.x;
+          double hMargin = 0.1 * worldUnit_px.x;
           double aspectRatio = static_cast<double>(img.width()) / img.height();
           double maxH = slotH - vMargin * 2.0;
           double maxW = slotW - hMargin * 2.0;

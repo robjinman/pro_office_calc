@@ -18,6 +18,10 @@ class RenderSystem : public System {
 
     RenderGraph rg;
 
+    inline const Size& viewport() const;
+    inline const Size& viewport_px() const;
+    inline Size worldUnit_px() const;
+
     inline void setCamera(const Camera* cam);
 
     void connectRegions();
@@ -50,10 +54,37 @@ class RenderSystem : public System {
     void crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t oldZone, entityId_t newZone);
 };
 
+//===========================================
+// RenderSystem::viewport
+//===========================================
+inline const Size& RenderSystem::viewport() const {
+  return m_renderer.viewport();
+}
+
+//===========================================
+// RenderSystem::viewport_px
+//===========================================
+inline const Size& RenderSystem::viewport_px() const {
+  return m_renderer.viewport_px();
+}
+
+//===========================================
+// RenderSystem::worldUnit_px
+//===========================================
+inline Size RenderSystem::worldUnit_px() const {
+  return m_renderer.worldUnit_px();
+}
+
+//===========================================
+// RenderSystem::setCamera
+//===========================================
 inline void RenderSystem::setCamera(const Camera* cam) {
   m_renderer.setCamera(cam);
 }
 
+//===========================================
+// RenderSystem::children
+//===========================================
 inline const std::set<entityId_t>& RenderSystem::children(entityId_t entityId) const {
   static const std::set<entityId_t> emptySet;
 

@@ -45,7 +45,7 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e_) {
 
       double maxAlpha = 80;
       CColourOverlay* overlay = new CColourOverlay(player.red, QColor(200, 0, 0, maxAlpha),
-        Point(0, 0), renderSystem.rg.viewport, 10);
+        Point(0, 0), renderSystem.viewport(), 10);
 
       renderSystem.addComponent(pCRender_t(overlay));
 
@@ -70,7 +70,7 @@ void CPlayerBehaviour::handleTargetedEvent(const GameEvent& e_) {
       entityId_t entityId = Component::getNextId();
 
       CColourOverlay* overlay = new CColourOverlay(entityId, QColor(200, 0, 0, 80), Point(0, 0),
-        renderSystem.rg.viewport);
+        renderSystem.viewport());
 
       renderSystem.addComponent(pCRender_t(overlay));
 

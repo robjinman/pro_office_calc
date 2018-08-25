@@ -14,13 +14,7 @@ struct RenderDefaults {
 struct RenderGraph {
   RenderDefaults defaults;
 
-  Size viewport;
   std::map<std::string, Texture> textures;
-
-  Size viewport_px;
-
-  double hWorldUnit_px;
-  double vWorldUnit_px;
 
   pCRegion_t rootRegion;
   std::list<pCBoundary_t> boundaries;

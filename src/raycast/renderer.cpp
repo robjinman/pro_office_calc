@@ -144,7 +144,7 @@ Renderer::XWrapper* Renderer::constructXWrapper(const SpatialSystem& spatialSyst
 // Renderer::projectionPlane
 //===========================================
 LineSegment Renderer::projectionPlane() const {
-  LineSegment lseg(Point(m_cam->F, -m_rg.viewport.y * 0.5), Point(m_cam->F, m_rg.viewport.y * 0.5));
+  LineSegment lseg(Point(m_cam->F, -m_viewport.y * 0.5), Point(m_cam->F, m_viewport.y * 0.5));
   Matrix m(m_cam->vAngle, Vec2f(0, 0));
 
   return transform(lseg, m);
@@ -211,7 +211,7 @@ void Renderer::castRay(const SpatialSystem& spatialSystem,
   LineSegment projRay0(Point(0, 0), rotProjPlane.A * 9999.9);
   LineSegment projRay1(Point(0, 0), rotProjPlane.B * 9999.9);
   double subview0 = 0;
-  double subview1 = m_rg.viewport.y;
+  double subview1 = m_viewport.y;
 
   const CZone* zone = &m_cam->zone();
   int last = -1;
@@ -405,7 +405,6 @@ void Renderer::drawCeilingSlice(const Intersection& X,
   const CRegion& region, double ceilingHeight, const ScreenSlice& slice, int screenX_px,
   double projX_wd) const {
 
-  double screenH_px = m_rg.viewport.y * m_rg.vWorldUnit_px; // TODO: Pre-compute this
   const Texture& ceilingTex = m_rg.textures.at(region.ceilingTexture);
   Size texSz_tx(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
   const QRectF& frameRect = region.ceilingTexRect;
@@ -417,7 +416,7 @@ void Renderer::drawCeilingSlice(const Intersection& X,
 
   Size tileSz_wd_rp(1.0 / ceilingTex.size_wd.x, 1.0 / ceilingTex.size_wd.y);
 
-  double vWorldUnit_px_rp = 1.0 / m_rg.vWorldUnit_px;
+  double vWorldUnit_px_rp = 1.0 / m_vWorldUnit_px;
   double F_rp = 1.0 / m_cam->F;
   double rayLen = ray.length();
   double rayLen_rp = 1.0 / rayLen;
@@ -426,7 +425,7 @@ void Renderer::drawCeilingSlice(const Intersection& X,
   for (int j = slice.sliceTop_px; j >= slice.viewportTop_px; --j) {
     QRgb* pixels = reinterpret_cast<QRgb*>(m_target.scanLine(j));
 
-    double projY_wd = (screenH_px * 0.5 - j) * vWorldUnit_px_rp;
+    double projY_wd = (m_screenH_px * 0.5 - j) * vWorldUnit_px_rp;
     double vAngle = fastATan(projY_wd * F_rp) + m_cam->vAngle;
     double d_ = (ceilingHeight - m_cam->height) * fastTan_rp(vAngle);
     double d = d_ * cosHAngle_rp;
@@ -470,7 +469,6 @@ void Renderer::drawFloorSlice(
   const SpatialSystem& spatialSystem, const Intersection& X, const CRegion& region,
   double floorHeight, const ScreenSlice& slice, int screenX_px, double projX_wd) const {
 
-  double screenH_px = m_rg.viewport.y * m_rg.vWorldUnit_px;
   const Texture& floorTex = m_rg.textures.at(region.floorTexture);
   Size texSz_tx(floorTex.image.rect().width(), floorTex.image.rect().height());
   const QRectF& frameRect = region.floorTexRect;
@@ -482,7 +480,7 @@ void Renderer::drawFloorSlice(
   double hAngle = fastATan(projX_wd / m_cam->F);
   LineSegment ray(X.viewPoint, X.point_wld);
 
-  double vWorldUnit_px_rp = 1.0 / m_rg.vWorldUnit_px; // TODO: Store in Renderer instance?
+  double vWorldUnit_px_rp = 1.0 / m_vWorldUnit_px; // TODO: Store in Renderer instance?
   double F_rp = 1.0 / m_cam->F;
   double rayLen = ray.length();
   double rayLen_rp = 1.0 / rayLen;
@@ -491,7 +489,7 @@ void Renderer::drawFloorSlice(
   for (int j = slice.sliceBottom_px; j <= slice.viewportBottom_px; ++j) {
     QRgb* pixels = reinterpret_cast<QRgb*>(m_target.scanLine(j));
 
-    double projY_wd = (j - screenH_px * 0.5) * vWorldUnit_px_rp;
+    double projY_wd = (j - m_screenH_px * 0.5) * vWorldUnit_px_rp;
     double vAngle = fastATan(projY_wd * F_rp) - m_cam->vAngle;
     double d_ = (m_cam->height - floorHeight) * fastTan_rp(vAngle);
     double d = d_ * cosHAngle_rp;
@@ -613,19 +611,19 @@ void Renderer::sampleWallTexture(double screenX_px,
     double trgX = screenX_px;
     double trgY = projToScreenY(fnSliceToProjY(y) + projTexH_wd);
     double trgW = 1;
-    double trgH = projTexH_wd * m_rg.vWorldUnit_px;
+    double trgH = projTexH_wd * m_vWorldUnit_px;
 
     // Note that screen y-axis is inverted
     if (j == j0) {
       srcH -= bottomOffset_wd * vWorldUnit_tx;
-      trgH -= bottomOffset_wd * sliceToProjScale * m_rg.vWorldUnit_px;
+      trgH -= bottomOffset_wd * sliceToProjScale * m_vWorldUnit_px;
     }
     if (j + 1 == j1) {
       double srcDy = topOffset_wd * vWorldUnit_tx;
       srcY += srcDy;
       srcH -= srcDy;
 
-      double trgDy = topOffset_wd * sliceToProjScale * m_rg.vWorldUnit_px;
+      double trgDy = topOffset_wd * sliceToProjScale * m_vWorldUnit_px;
       trgY += trgDy;
       trgH -= trgDy;
     }
@@ -648,8 +646,8 @@ Renderer::ScreenSlice Renderer::drawSlice(
   Size texSz_tx(rect.width(), rect.height());
 
   double screenSliceBottom_px =
-    floor(m_rg.viewport_px.y - slice.projSliceBottom_wd * m_rg.vWorldUnit_px);
-  double screenSliceTop_px = ceil(m_rg.viewport_px.y - slice.projSliceTop_wd * m_rg.vWorldUnit_px);
+    floor(m_viewport_px.y - slice.projSliceBottom_wd * m_vWorldUnit_px);
+  double screenSliceTop_px = ceil(m_viewport_px.y - slice.projSliceTop_wd * m_vWorldUnit_px);
 
   if (screenSliceBottom_px - screenSliceTop_px > 0) {
     vector<QRect> srcRects;
@@ -664,8 +662,8 @@ Renderer::ScreenSlice Renderer::drawSlice(
     }
   }
 
-  double viewportBottom_px = ceil((m_rg.viewport.y - slice.viewportBottom_wd) * m_rg.vWorldUnit_px);
-  double viewportTop_px = floor((m_rg.viewport.y - slice.viewportTop_wd) * m_rg.vWorldUnit_px);
+  double viewportBottom_px = ceil((m_viewport.y - slice.viewportBottom_wd) * m_vWorldUnit_px);
+  double viewportTop_px = floor((m_viewport.y - slice.viewportTop_wd) * m_vWorldUnit_px);
 
   return ScreenSlice{
     static_cast<int>(clipNumber(screenSliceBottom_px, Range(0, m_target.height() - 1))),
@@ -690,8 +688,8 @@ void Renderer::drawSprite(const SpriteX& X,
   QRect frame(r.width() * uv.x(), r.height() * uv.y(), r.width() * uv.width(),
     r.height() * uv.height());
 
-  int screenSliceBottom_px = m_rg.viewport_px.y - slice.projSliceBottom_wd * m_rg.vWorldUnit_px;
-  int screenSliceTop_px = m_rg.viewport_px.y - slice.projSliceTop_wd * m_rg.vWorldUnit_px;
+  int screenSliceBottom_px = m_viewport_px.y - slice.projSliceBottom_wd * m_vWorldUnit_px;
+  int screenSliceTop_px = m_viewport_px.y - slice.projSliceTop_wd * m_vWorldUnit_px;
 
   const CZone& zone = *vRect.zone;
 
@@ -753,10 +751,10 @@ void Renderer::drawWallDecal(
 void Renderer::drawColourOverlay(QPainter& painter,
   const CColourOverlay& overlay) const {
 
-  double x = (overlay.pos.x / m_rg.viewport.x) * m_rg.viewport_px.x;
-  double y = (1.0 - overlay.pos.y / m_rg.viewport.y) * m_rg.viewport_px.y;
-  double w = (overlay.size.x / m_rg.viewport.x) * m_rg.viewport_px.x;
-  double h = (overlay.size.y / m_rg.viewport.y) * m_rg.viewport_px.y;
+  double x = (overlay.pos.x / m_viewport.x) * m_viewport_px.x;
+  double y = (1.0 - overlay.pos.y / m_viewport.y) * m_viewport_px.y;
+  double w = (overlay.size.x / m_viewport.x) * m_viewport_px.x;
+  double h = (overlay.size.y / m_viewport.y) * m_viewport_px.y;
 
   painter.setPen(Qt::NoPen);
   painter.setBrush(overlay.colour);
@@ -769,10 +767,10 @@ void Renderer::drawColourOverlay(QPainter& painter,
 void Renderer::drawImageOverlay(QPainter& painter,
   const CImageOverlay& overlay) const {
 
-  double x = (overlay.pos.x / m_rg.viewport.x) * m_rg.viewport_px.x;
-  double y = (1.0 - overlay.pos.y / m_rg.viewport.y) * m_rg.viewport_px.y;
-  double w = (overlay.size.x / m_rg.viewport.x) * m_rg.viewport_px.x;
-  double h = (overlay.size.y / m_rg.viewport.y) * m_rg.viewport_px.y;
+  double x = (overlay.pos.x / m_viewport.x) * m_viewport_px.x;
+  double y = (1.0 - overlay.pos.y / m_viewport.y) * m_viewport_px.y;
+  double w = (overlay.size.x / m_viewport.x) * m_viewport_px.x;
+  double h = (overlay.size.y / m_viewport.y) * m_viewport_px.y;
 
   const Texture& tex = m_rg.textures.at(overlay.texture);
 
@@ -792,9 +790,9 @@ void Renderer::drawImageOverlay(QPainter& painter,
 void Renderer::drawTextOverlay(QPainter& painter,
   const CTextOverlay& overlay) const {
 
-  double x = overlay.pos.x * m_rg.hWorldUnit_px;
-  double y = (m_rg.viewport.y - overlay.pos.y) * m_rg.vWorldUnit_px;
-  double h = overlay.height * m_rg.vWorldUnit_px;
+  double x = overlay.pos.x * m_hWorldUnit_px;
+  double y = (m_viewport.y - overlay.pos.y) * m_vWorldUnit_px;
+  double h = overlay.height * m_vWorldUnit_px;
 
   QFont font = m_appConfig.monoFont;
   font.setPixelSize(h);
@@ -811,11 +809,17 @@ void Renderer::drawTextOverlay(QPainter& painter,
 // Renderer::Renderer
 //===========================================
 Renderer::Renderer(const AppConfig& appConfig, EntityManager& entityManager, QImage& target,
-  const RenderGraph& rg)
+  const RenderGraph& rg, const Size& viewport)
   : m_appConfig(appConfig),
     m_entityManager(entityManager),
     m_target(target),
-    m_rg(rg) {
+    m_rg(rg),
+    m_viewport(viewport) {
+
+  m_viewport_px = Size(m_target.width(), m_target.height());
+  m_hWorldUnit_px = m_viewport_px.x / m_viewport.x;
+  m_vWorldUnit_px = m_viewport_px.y / m_viewport.y;
+  m_screenH_px = m_viewport.y * m_vWorldUnit_px;
 
   for (unsigned int i = 0; i < m_tanMap_rp.size(); ++i) {
     m_tanMap_rp[i] = 1.0 / tan(2.0 * PI * static_cast<double>(i)
@@ -872,7 +876,7 @@ void Renderer::renderColumns(
   CastResult prev;
 
   for (int screenX_px = from; screenX_px < to; ++screenX_px) {
-    double projX_wd = static_cast<double>(screenX_px - m_rg.viewport_px.x / 2) / m_rg.hWorldUnit_px;
+    double projX_wd = static_cast<double>(screenX_px - m_viewport_px.x / 2) / m_hWorldUnit_px;
 
     Vec2f ray(m_cam->F, projX_wd);
 
@@ -1007,7 +1011,7 @@ void Renderer::renderScene() {
   auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
 
-  const int W = m_rg.viewport_px.x;
+  const int W = m_viewport_px.x;
 
 #ifdef SINGLE_THREAD
   renderColumns(spatialSystem, renderSystem, 0, W);

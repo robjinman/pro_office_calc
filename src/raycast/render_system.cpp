@@ -20,6 +20,10 @@ using std::function;
 using std::make_pair;
 
 
+const double VIEWPORT_W = 10.0 * 320.0 / 240.0;
+const double VIEWPORT_H = 10.0;
+
+
 //===========================================
 // operator<<
 //===========================================
@@ -68,16 +72,7 @@ static bool forEachRegion(CRegion& region, function<bool(CRegion&)> fn) {
 RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityManager, QImage& target)
   : m_appConfig(appConfig),
     m_entityManager(entityManager),
-    m_renderer(appConfig, entityManager, target, rg) {
-
-  rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
-  rg.viewport.y = 10.0;
-
-  rg.viewport_px = Size(target.width(), target.height());
-
-  rg.hWorldUnit_px = rg.viewport_px.x / rg.viewport.x;
-  rg.vWorldUnit_px = rg.viewport_px.y / rg.viewport.y;
-}
+    m_renderer(appConfig, entityManager, target, rg, Size{VIEWPORT_W, VIEWPORT_H}) {}
 
 //===========================================
 // RenderSystem::textOverlayWidth
@@ -85,7 +80,7 @@ RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityMana
 // Returns width in world units
 //===========================================
 double RenderSystem::textOverlayWidth(const CTextOverlay& overlay) const {
-  double h = overlay.height * rg.vWorldUnit_px;
+  double h = overlay.height * m_renderer.worldUnit_px().y;
 
   QFont font = m_appConfig.monoFont;
   font.setPixelSize(h);
@@ -93,14 +88,14 @@ double RenderSystem::textOverlayWidth(const CTextOverlay& overlay) const {
   QFontMetrics fm{font};
 
   double textW_px = fm.size(Qt::TextSingleLine, overlay.text.c_str()).width();
-  return textW_px / rg.hWorldUnit_px;
+  return textW_px / m_renderer.worldUnit_px().x;
 }
 
 //===========================================
 // RenderSystem::centreTextOverlay
 //===========================================
 void RenderSystem::centreTextOverlay(CTextOverlay& overlay) const {
-  double x = 0.5 * (rg.viewport.x - textOverlayWidth(overlay));
+  double x = 0.5 * (VIEWPORT_W - textOverlayWidth(overlay));
   overlay.pos.x = x;
 }
 

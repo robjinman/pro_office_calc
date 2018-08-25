@@ -20,9 +20,13 @@ class RenderSystem;
 class Renderer {
   public:
     Renderer(const AppConfig& appConfig, EntityManager& entityManager, QImage& target,
-      const RenderGraph& rg);
+      const RenderGraph& rg, const Size& viewport);
 
     inline void setCamera(const Camera* cam);
+
+    inline const Size& viewport() const;
+    inline const Size& viewport_px() const;
+    inline Size worldUnit_px() const;
 
     void renderScene();
 
@@ -119,6 +123,12 @@ class Renderer {
     tanMap_t m_tanMap_rp;
     atanMap_t m_atanMap;
 
+    Size m_viewport;
+    Size m_viewport_px;
+    double m_screenH_px;
+    double m_vWorldUnit_px;
+    double m_hWorldUnit_px;
+
     std::vector<std::thread> m_threads;
     int m_numWorkerThreads;
 
@@ -193,10 +203,31 @@ inline void Renderer::setCamera(const Camera* cam) {
 }
 
 //===========================================
+// Renderer::viewport
+//===========================================
+inline const Size& Renderer::viewport() const {
+  return m_viewport;
+}
+
+//===========================================
+// Renderer::viewport_px
+//===========================================
+inline const Size& Renderer::viewport_px() const {
+  return m_viewport_px;
+}
+
+//===========================================
+// Renderer::worldUnit_px
+//===========================================
+inline Size Renderer::worldUnit_px() const {
+  return Size{m_hWorldUnit_px, m_vWorldUnit_px};
+}
+
+//===========================================
 // Renderer::projToScreenY
 //===========================================
 inline double Renderer::projToScreenY(double y) const {
-  return m_rg.viewport_px.y - (y * m_rg.vWorldUnit_px);
+  return m_viewport_px.y - (y * m_vWorldUnit_px);
 }
 
 //===========================================
