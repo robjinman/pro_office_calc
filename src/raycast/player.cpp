@@ -21,11 +21,13 @@ using std::string;
 using std::stringstream;
 
 
-const double FOREHEAD_SIZE = 15.0;
+static const double FOREHEAD_SIZE = 15.0;
 
-const double HUD_H = 1.0;
-const double INVENTORY_H = 1.2;
-const double V_MARGIN = 0.15;
+static const double HUD_H = 1.0;
+static const double INVENTORY_H = 1.2;
+static const double V_MARGIN = 0.15;
+
+static const double JUMP_V = 220;
 
 
 //===========================================
@@ -582,6 +584,15 @@ void Player::shoot() {
       animationSystem.playAnimation(sprite, "shoot_no_ammo", false);
       m_audioService.playSound("click");
     }
+  }
+}
+
+//===========================================
+// Player::jump
+//===========================================
+void Player::jump() {
+  if (!aboveGround()) {
+    vVelocity = JUMP_V;
   }
 }
 

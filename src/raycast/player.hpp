@@ -68,6 +68,7 @@ class Player {
     void vRotate(double da);
 
     void shoot();
+    void jump();
 
     const Camera& camera() const;
 

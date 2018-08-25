@@ -119,9 +119,6 @@ class SpatialSystem : public System {
     void hRotateCamera(double da);
     void movePlayer(const Vec2f& v);
 
-    // TODO: Move this
-    void jump();
-
     CZone& zone(entityId_t entity);
     const CZone& constZone(entityId_t entity) const;
 

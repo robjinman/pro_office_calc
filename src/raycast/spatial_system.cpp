@@ -37,7 +37,6 @@ static const double GRID_CELL_SIZE = 25.0;
 static const double SNAP_DISTANCE = 4.0;
 static const int MAX_ANCESTOR_SEARCH = 2;
 static const double ACCELERATION_DUE_TO_GRAVITY = -600.0;
-static const double JUMP_V = 220;
 
 
 ostream& operator<<(ostream& os, CSpatialKind kind) {
@@ -373,18 +372,22 @@ void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
   CSpatial* ptr = child.get();
 
   switch (parent.kind) {
-    case CSpatialKind::ZONE:
+    case CSpatialKind::ZONE: {
       addToZone(DYNAMIC_CAST<CZone&>(parent), std::move(child));
       break;
-    case CSpatialKind::HARD_EDGE:
+    }
+    case CSpatialKind::HARD_EDGE: {
       addToHardEdge(DYNAMIC_CAST<CHardEdge&>(parent), std::move(child));
       break;
-    case CSpatialKind::SOFT_EDGE:
+    }
+    case CSpatialKind::SOFT_EDGE: {
       addToSoftEdge(DYNAMIC_CAST<CSoftEdge&>(parent), std::move(child));
       break;
-    default:
+    }
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
         << parent.kind);
+    }
   };
 
   m_entityChildren[parent.entityId()].insert(ptr);
@@ -933,15 +936,6 @@ vector<Point> SpatialSystem::shortestPath(const Point&, const Point& B, double) 
   path.push_back(B);
 
   return path;
-}
-
-//===========================================
-// SpatialSystem::jump
-//===========================================
-void SpatialSystem::jump() {
-  if (!sg.player->aboveGround()) {
-    sg.player->vVelocity = JUMP_V;
-  }
 }
 
 //===========================================

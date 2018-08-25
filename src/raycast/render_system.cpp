@@ -20,8 +20,8 @@ using std::function;
 using std::make_pair;
 
 
-const double VIEWPORT_W = 10.0 * 320.0 / 240.0;
-const double VIEWPORT_H = 10.0;
+static const double VIEWPORT_W = 10.0 * 320.0 / 240.0;
+static const double VIEWPORT_H = 10.0;
 
 
 //===========================================
@@ -203,8 +203,9 @@ static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
       region.sprites.push_back(std::move(ptr));
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to region");
+    }
   }
 }
 
@@ -218,8 +219,9 @@ static void addToWall(CWall& boundary, pCRender_t child) {
       boundary.decals.push_back(std::move(ptr));
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to Wall");
+    }
   }
 }
 
@@ -233,8 +235,9 @@ static void addToJoin(CJoin& boundary, pCRender_t child) {
       boundary.decals.push_back(std::move(ptr));
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to Join");
+    }
   }
 }
 
@@ -252,9 +255,10 @@ static void addChildToComponent(RenderGraph& rg, CRender& parent, pCRender_t chi
     case CRenderKind::JOIN:
       addToJoin(dynamic_cast<CJoin&>(parent), std::move(child));
       break;
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
         << parent.kind);
+    }
   };
 }
 
@@ -328,8 +332,9 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
       }
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot add component of kind " << child.kind << " to region");
+    }
   }
 
   return found;
@@ -357,8 +362,9 @@ static bool removeFromWall(CWall& boundary, const CRender& child, bool keepAlive
       }
       break;
     }
-    default:
+    default: {
       EXCEPTION("Cannot remove component of kind " << child.kind << " from Wall");
+    }
   }
 
   return found;
@@ -399,15 +405,18 @@ static void removeChildFromComponent(RenderGraph& rg, CRender& parent, const CRe
   bool keepAlive = false) {
 
   switch (parent.kind) {
-    case CRenderKind::REGION:
+    case CRenderKind::REGION: {
       removeFromRegion(rg, dynamic_cast<CRegion&>(parent), child, keepAlive);
       break;
-    case CRenderKind::WALL:
+    }
+    case CRenderKind::WALL: {
       removeFromWall(dynamic_cast<CWall&>(parent), child, keepAlive);
       break;
-    default:
+    }
+    default: {
       EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
         << parent.kind);
+    }
   };
 }
 

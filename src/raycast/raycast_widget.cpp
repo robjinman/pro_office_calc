@@ -370,15 +370,16 @@ void RaycastWidget::tick() {
 #endif
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
 
   m_entityManager.purgeEntities();
   m_entityManager.update();
 
   m_timeService.update();
 
-  if (spatialSystem.sg.player->alive && !m_playerImmobilised) {
+  if (player.alive && !m_playerImmobilised) {
     if (m_keyStates[Qt::Key_E]) {
-      spatialSystem.jump();
+      player.jump();
     }
 
     if (m_keyStates[Qt::Key_Space]) {
@@ -438,7 +439,7 @@ void RaycastWidget::tick() {
       }
 
       if (m_mouseBtnState == true) {
-        spatialSystem.sg.player->shoot();
+        player.shoot();
         m_mouseBtnState = false;
       }
     }
