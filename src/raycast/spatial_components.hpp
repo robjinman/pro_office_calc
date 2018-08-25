@@ -101,7 +101,7 @@ class CZone : public CSpatial {
     double ceilingHeight = 100;
     bool hasCeiling = true;
     std::list<pCZone_t> children;
-    std::list<CEdge*> edges;
+    std::list<pCEdge_t> edges;
     std::list<pCVRect_t> vRects;
     std::list<pCHRect_t> hRects;
     std::list<pCPath_t> paths;

@@ -299,7 +299,7 @@ static bool overlapsCircle(const Circle&, const CHRect&) {
 //===========================================
 // addToZone
 //===========================================
-static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
+static void addToZone(CZone& zone, pCSpatial_t child) {
   switch (child->kind) {
     case CSpatialKind::ZONE: {
       pCZone_t ptr(DYNAMIC_CAST<CZone*>(child.release()));
@@ -310,8 +310,7 @@ static void addToZone(SceneGraph& sg, CZone& zone, pCSpatial_t child) {
     case CSpatialKind::SOFT_EDGE:
     case CSpatialKind::HARD_EDGE: {
       pCEdge_t ptr(DYNAMIC_CAST<CEdge*>(child.release()));
-      zone.edges.push_back(ptr.get());
-      sg.edges.push_back(std::move(ptr));
+      zone.edges.push_back(std::move(ptr));
       break;
     }
     case CSpatialKind::H_RECT: {
@@ -375,7 +374,7 @@ void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
-      addToZone(sg, DYNAMIC_CAST<CZone&>(parent), std::move(child));
+      addToZone(DYNAMIC_CAST<CZone&>(parent), std::move(child));
       break;
     case CSpatialKind::HARD_EDGE:
       addToHardEdge(DYNAMIC_CAST<CHardEdge&>(parent), std::move(child));
@@ -394,7 +393,7 @@ void SpatialSystem::addChildToComponent(CSpatial& parent, pCSpatial_t child) {
 //===========================================
 // removeFromZone
 //===========================================
-static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, bool keepAlive) {
+static bool removeFromZone(CZone& zone, const CSpatial& child, bool keepAlive) {
   bool found = false;
 
   switch (child.kind) {
@@ -413,18 +412,14 @@ static bool removeFromZone(SceneGraph& sg, CZone& zone, const CSpatial& child, b
     }
     case CSpatialKind::SOFT_EDGE:
     case CSpatialKind::HARD_EDGE: {
-      auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const CEdge* e) {
-        return e == DYNAMIC_CAST<const CEdge*>(&child);
-      });
-      erase(zone.edges, it);
-      auto jt = find_if(sg.edges.begin(), sg.edges.end(), [&](const pCEdge_t& e) {
+      auto it = find_if(zone.edges.begin(), zone.edges.end(), [&](const pCEdge_t& e) {
         return e.get() == DYNAMIC_CAST<const CEdge*>(&child);
       });
-      if (jt != sg.edges.end()) {
+      if (it != zone.edges.end()) {
         if (keepAlive) {
-          jt->release();
+          it->release();
         }
-        erase(sg.edges, jt);
+        erase(zone.edges, it);
         found = true;
       }
       break;
@@ -595,7 +590,7 @@ void SpatialSystem::connectSubzones(CZone& zone) {
   forEachZone(zone, [&](CZone& r) {
     for (auto it = r.edges.begin(); it != r.edges.end(); ++it) {
       if ((*it)->kind == CSpatialKind::SOFT_EDGE) {
-        CSoftEdge* se = DYNAMIC_CAST<CSoftEdge*>(*it);
+        CSoftEdge* se = DYNAMIC_CAST<CSoftEdge*>(it->get());
         assert(se != nullptr);
 
         bool hasTwin = false;
@@ -603,7 +598,7 @@ void SpatialSystem::connectSubzones(CZone& zone) {
         forEachZone(zone, [&](CZone& r_) {
           for (auto lt = r_.edges.begin(); lt != r_.edges.end(); ++lt) {
             if ((*lt)->kind == CSpatialKind::SOFT_EDGE) {
-              CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(*lt);
+              CSoftEdge* other = DYNAMIC_CAST<CSoftEdge*>(lt->get());
 
               if (other != se) {
                 if (areTwins(*se, *other)) {
@@ -1481,7 +1476,7 @@ bool SpatialSystem::removeChildFromComponent(CSpatial& parent, const CSpatial& c
 
   switch (parent.kind) {
     case CSpatialKind::ZONE:
-      return removeFromZone(sg, DYNAMIC_CAST<CZone&>(parent), child, keepAlive);
+      return removeFromZone(DYNAMIC_CAST<CZone&>(parent), child, keepAlive);
     case CSpatialKind::HARD_EDGE:
       return removeFromHardEdge(DYNAMIC_CAST<CHardEdge&>(parent), child, keepAlive);
     default:
