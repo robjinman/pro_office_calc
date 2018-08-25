@@ -37,7 +37,8 @@ static const double HUD_TRANSITION_T = 0.3;
 //===========================================
 Player::Player(EntityManager& entityManager, AudioService& audioService, TimeService& timeService,
   const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform)
-  : m_entityManager(entityManager),
+  : SystemAccessor(entityManager),
+    m_entityManager(entityManager),
     m_audioService(audioService),
     m_timeService(timeService),
     m_shootTimer(0.5) {
@@ -53,10 +54,8 @@ Player::Player(EntityManager& entityManager, AudioService& audioService, TimeSer
 void Player::makeTween(const string& name, double duration, entityId_t overlayId, double fromY,
   double toY) {
 
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  if (renderSystem.hasComponent(overlayId)) {
-    auto& overlay = dynamic_cast<COverlay&>(renderSystem.getComponent(overlayId));
+  if (renderSys().hasComponent(overlayId)) {
+    auto& overlay = dynamic_cast<COverlay&>(renderSys().getComponent(overlayId));
 
     double s = toY - fromY;
     double ds = s / (duration * m_timeService.frameRate);
@@ -82,8 +81,7 @@ void Player::makeTween(const string& name, double duration, entityId_t overlayId
 // Player::showHud
 //===========================================
 void Player::showHud() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  const Size& viewport = renderSystem.viewport();
+  const Size& viewport = renderSys().viewport();
 
   m_timeService.removeTween("gunSlideOut");
   makeTween("gunSlideIn", HUD_TRANSITION_T, this->sprite, -4.0, 0.0);
@@ -102,8 +100,8 @@ void Player::showHud() {
   m_timeService.removeTween("hudBgSlideOut");
   makeTween("hudBgSlideIn", HUD_TRANSITION_T, m_hudBgId, viewport.y, viewport.y - HUD_H);
 
-  if (renderSystem.hasComponent(this->crosshair)) {
-    auto& crosshair = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->crosshair));
+  if (renderSys().hasComponent(this->crosshair)) {
+    auto& crosshair = dynamic_cast<CImageOverlay&>(renderSys().getComponent(this->crosshair));
     crosshair.pos = viewport / 2 - Vec2f(0.5, 0.5) / 2;
   }
 }
@@ -112,8 +110,7 @@ void Player::showHud() {
 // Player::hideHud
 //===========================================
 void Player::hideHud() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  const Size& viewport = renderSystem.viewport();
+  const Size& viewport = renderSys().viewport();
 
   m_timeService.removeTween("gunSlideIn");
   makeTween("gunSlideOut", HUD_TRANSITION_T, this->sprite, 0.0, -4.0);
@@ -132,8 +129,8 @@ void Player::hideHud() {
   m_timeService.removeTween("hudBgSlideIn");
   makeTween("hudBgSlideOut", HUD_TRANSITION_T, m_hudBgId, viewport.y - HUD_H, viewport.y);
 
-  if (renderSystem.hasComponent(this->crosshair)) {
-    auto& crosshair = dynamic_cast<CImageOverlay&>(renderSystem.getComponent(this->crosshair));
+  if (renderSys().hasComponent(this->crosshair)) {
+    auto& crosshair = dynamic_cast<CImageOverlay&>(renderSys().getComponent(this->crosshair));
     crosshair.pos = Point(10, 10);
   }
 }
@@ -142,10 +139,7 @@ void Player::hideHud() {
 // Player::setupHudShowHide
 //===========================================
 void Player::setupHudShowHide() {
-  auto& eventHandlerSystem = m_entityManager
-    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-  CEventHandler& events = eventHandlerSystem.getComponent(this->body);
+  CEventHandler& events = eventHandlerSys().getComponent(this->body);
   events.broadcastedEventHandlers.push_back(EventHandler{"mouse_captured",
     [this](const GameEvent&) {
 
@@ -162,8 +156,6 @@ void Player::setupHudShowHide() {
 // Player::setupBodyAnimations
 //===========================================
 void Player::setupBodyAnimations() {
-  auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
   CAnimation* bodyAnims = new CAnimation(this->body);
 
   // Number of frames in sprite sheet
@@ -183,18 +175,14 @@ void Player::setupBodyAnimations() {
   bodyAnims->addAnimation(pAnimation_t(new Animation("idle", m_timeService.frameRate, 1.0,
     idleFrames)));
 
-  animationSystem.addComponent(pComponent_t(bodyAnims));
-  animationSystem.playAnimation(this->body, "idle", true);
+  animationSys().addComponent(pComponent_t(bodyAnims));
+  animationSys().playAnimation(this->body, "idle", true);
 }
 
 //===========================================
 // Player::setupBody
 //===========================================
 void Player::setupBody(CZone& zone, const Matrix& m, double tallness) {
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
   this->body = Component::getIdFromString("player");
 
   CVRect* b = new CVRect(body, zone.entityId(), Size(0, 0));
@@ -203,28 +191,25 @@ void Player::setupBody(CZone& zone, const Matrix& m, double tallness) {
   b->size.x = 60.0;
   b->size.y = tallness + FOREHEAD_SIZE;
 
-  spatialSystem.addComponent(pCSpatial_t(b));
+  spatialSys().addComponent(pCSpatial_t(b));
 
   CSprite* bodySprite = new CSprite(this->body, zone.entityId(), "player");
-  renderSystem.addComponent(pComponent_t(bodySprite));
+  renderSys().addComponent(pComponent_t(bodySprite));
 
   CDamage* damage = new CDamage(this->body, 10, 10);
-  damageSystem.addComponent(pCDamage_t(damage));
+  damageSys().addComponent(pCDamage_t(damage));
 }
 
 //===========================================
 // Player::setupGunSprite
 //===========================================
 void Player::setupGunSprite() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
   this->sprite = Component::getNextId();
 
   CImageOverlay* gunSprite = new CImageOverlay(this->sprite, "gun",
-    Point(renderSystem.viewport().x * 0.5, -4), Size(4, 4));
+    Point(renderSys().viewport().x * 0.5, -4), Size(4, 4));
   gunSprite->texRect = QRectF(0, 0, 0.25, 1);
-  renderSystem.addComponent(pCRender_t(gunSprite));
+  renderSys().addComponent(pCRender_t(gunSprite));
 
   CAnimation* shoot = new CAnimation(this->sprite);
   shoot->addAnimation(pAnimation_t(new Animation("shoot", m_timeService.frameRate, 0.4, {
@@ -250,58 +235,50 @@ void Player::setupGunSprite() {
     }}
   })));
 
-  animationSystem.addComponent(pCAnimation_t(shoot));
+  animationSys().addComponent(pCAnimation_t(shoot));
 }
 
 //===========================================
 // Player::setupCrosshair
 //===========================================
 void Player::setupCrosshair() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   this->crosshair = Component::getNextId();
 
   Size sz(0.5, 0.5);
   CImageOverlay* crosshair = new CImageOverlay(this->crosshair, "crosshair", Point(10, 10), sz);
-  renderSystem.addComponent(pCRender_t(crosshair));
+  renderSys().addComponent(pCRender_t(crosshair));
 }
 
 //===========================================
 // Player::setupPlayerEvents
 //===========================================
 void Player::setupPlayerEvents() {
-  auto& eventHandlerSystem = m_entityManager
-    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
   CEventHandler* events = new CEventHandler(this->body);
   events->targetedEventHandlers.push_back(EventHandler{"player_move",
-    [=, &animationSystem](const GameEvent&) {
+    [=](const GameEvent&) {
 
-    if (animationSystem.animationState(this->body, "run") == AnimState::STOPPED) {
-      animationSystem.playAnimation(this->body, "run", false);
+    if (animationSys().animationState(this->body, "run") == AnimState::STOPPED) {
+      animationSys().playAnimation(this->body, "run", false);
     }
   }});
   events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
-    [=, &animationSystem](const GameEvent& e_) {
+    [=](const GameEvent& e_) {
 
     const EAnimationFinished& e = dynamic_cast<const EAnimationFinished&>(e_);
     if (e.animName == "run") {
-      animationSystem.playAnimation(this->body, "idle", true);
+      animationSys().playAnimation(this->body, "idle", true);
     }
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(events));
+  eventHandlerSys().addComponent(pComponent_t(events));
 }
 
 //===========================================
 // Player::setupPlayerBehaviour
 //===========================================
 void Player::setupPlayerBehaviour() {
-  auto& behaviourSystem = m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
-
   CPlayerBehaviour* behaviour = new CPlayerBehaviour(this->body, m_entityManager, m_timeService);
-  behaviourSystem.addComponent(pComponent_t(behaviour));
+  behaviourSys().addComponent(pComponent_t(behaviour));
 }
 
 //===========================================
@@ -310,19 +287,16 @@ void Player::setupPlayerBehaviour() {
 void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
   const Matrix& parentTransform) {
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   double tallness = std::stod(getValue(obj.dict, "tallness"));
 
   Matrix m = parentTransform * obj.groupTransform * obj.pathTransform
     * transformFromTriangle(obj.path);
 
-  CZone& zone = dynamic_cast<CZone&>(spatialSystem.getComponent(parentId));
+  CZone& zone = dynamic_cast<CZone&>(spatialSys().getComponent(parentId));
 
   setupBody(zone, m, tallness);
 
-  m_camera.reset(new Camera(renderSystem.viewport().x, DEG_TO_RAD(60), DEG_TO_RAD(50), getBody(),
+  m_camera.reset(new Camera(renderSys().viewport().x, DEG_TO_RAD(60), DEG_TO_RAD(50), getBody(),
     tallness - FOREHEAD_SIZE + zone.floorHeight));
 
   setupBodyAnimations();
@@ -336,11 +310,9 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
 // Player::updateItemsDisplay
 //===========================================
 void Player::updateItemsDisplay(double itemsDisplayW_px, const EBucketItemsChange& e) const {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  Size worldUnit_px = renderSys().worldUnit_px();
 
-  Size worldUnit_px = renderSystem.worldUnit_px();
-
-  QImage& target = renderSystem.rg.textures["items_display"].image;
+  QImage& target = renderSys().rg.textures["items_display"].image;
   target.fill(Qt::GlobalColor::transparent);
 
   QPainter painter;
@@ -349,11 +321,11 @@ void Player::updateItemsDisplay(double itemsDisplayW_px, const EBucketItemsChang
   int i = 0;
   for (auto it = e.bucket.items.rbegin(); it != e.bucket.items.rend(); ++it) {
     entityId_t id = it->second;
-    const CRender& c = dynamic_cast<const CRender&>(renderSystem.getComponent(id));
+    const CRender& c = dynamic_cast<const CRender&>(renderSys().getComponent(id));
 
     if (c.kind == CRenderKind::SPRITE) {
       const CSprite& sprite = dynamic_cast<const CSprite&>(c);
-      const QImage& img = renderSystem.rg.textures.at(sprite.texture).image;
+      const QImage& img = renderSys().rg.textures.at(sprite.texture).image;
 
       double slotH = itemsDisplayW_px;
       double slotW = itemsDisplayW_px / e.bucket.capacity;
@@ -393,12 +365,7 @@ void Player::updateItemsDisplay(double itemsDisplayW_px, const EBucketItemsChang
 // Player::setupItemsDisplay
 //===========================================
 void Player::setupItemsDisplay() {
-  auto& eventHandlerSystem = m_entityManager
-    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
-  Size worldUnit_px = renderSystem.worldUnit_px();
+  Size worldUnit_px = renderSys().worldUnit_px();
 
   m_itemsId = Component::getNextId();
 
@@ -410,32 +377,32 @@ void Player::setupItemsDisplay() {
   QImage imgItems(itemsDisplayW_px, itemsDisplayH_px, QImage::Format_ARGB32);
   imgItems.fill(Qt::GlobalColor::transparent);
 
-  renderSystem.rg.textures["items_display"] = Texture{imgItems, Size(0, 0)};
+  renderSys().rg.textures["items_display"] = Texture{imgItems, Size(0, 0)};
 
   CImageOverlay* itemsDisplay = new CImageOverlay(m_itemsId, "items_display",
     Point(0, -INVENTORY_H), Size(INVENTORY_W, INVENTORY_H), 1);
-  renderSystem.addComponent(pComponent_t(itemsDisplay));
+  renderSys().addComponent(pComponent_t(itemsDisplay));
 
-  CEventHandler& events = eventHandlerSystem.getComponent(this->body);
+  CEventHandler& events = eventHandlerSys().getComponent(this->body);
 
   events.targetedEventHandlers.push_back(EventHandler{"collectable_encountered",
-    [this, &damageSystem](const GameEvent& e_) {
+    [this](const GameEvent& e_) {
 
     auto& e = dynamic_cast<const ECollectableEncountered&>(e_);
 
     if (e.item.collectableType == "health_pack") {
-      if (damageSystem.getHealth(this->body) < damageSystem.getMaxHealth(this->body)) {
+      if (damageSys().getHealth(this->body) < damageSys().getMaxHealth(this->body)) {
         DBG_PRINT("Health pack collected\n");
 
         m_audioService.playSound("health_pack_collect");
-        damageSystem.damageEntity(this->body, -e.item.value);
+        damageSys().damageEntity(this->body, -e.item.value);
 
         m_entityManager.deleteEntity(e.item.entityId());
       }
     }
   }});
   events.targetedEventHandlers.push_back(EventHandler{"bucket_items_change",
-    [=, &renderSystem](const GameEvent& e_) {
+    [=](const GameEvent& e_) {
 
     const auto& e = dynamic_cast<const EBucketItemsChange&>(e_);
 
@@ -449,19 +416,15 @@ void Player::setupItemsDisplay() {
 // Player::setupAmmoCounter
 //===========================================
 void Player::setupAmmoCounter() {
-  auto& eventHandlerSystem = m_entityManager
-    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   m_ammoId = Component::getNextId();
 
   double hMargin = 0.15;
 
   CTextOverlay* ammoCounter = new CTextOverlay(m_ammoId, "AMMO 0/50",
-    Point(hMargin, renderSystem.viewport().y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::green, 2);
-  renderSystem.addComponent(pComponent_t(ammoCounter));
+    Point(hMargin, renderSys().viewport().y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::green, 2);
+  renderSys().addComponent(pComponent_t(ammoCounter));
 
-  CEventHandler& events = eventHandlerSystem.getComponent(this->body);
+  CEventHandler& events = eventHandlerSys().getComponent(this->body);
 
   events.targetedEventHandlers.push_back(EventHandler{"bucket_count_change",
     [=](const GameEvent& e_) {
@@ -484,12 +447,7 @@ void Player::setupAmmoCounter() {
 // Player::setupHealthCounter
 //===========================================
 void Player::setupHealthCounter() {
-  auto& eventHandlerSystem = m_entityManager
-    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
-  const Size& viewport = renderSystem.viewport();
+  const Size& viewport = renderSys().viewport();
 
   m_healthId = Component::getNextId();
 
@@ -497,15 +455,15 @@ void Player::setupHealthCounter() {
 
   CTextOverlay* healthCounter = new CTextOverlay(m_healthId, "HEALTH 10/10",
     Point(0, viewport.y + V_MARGIN), HUD_H - 2.0 * V_MARGIN, Qt::red, 2);
-  healthCounter->pos.x = viewport.x - renderSystem.textOverlayWidth(*healthCounter) - hMargin;
-  renderSystem.addComponent(pComponent_t(healthCounter));
+  healthCounter->pos.x = viewport.x - renderSys().textOverlayWidth(*healthCounter) - hMargin;
+  renderSys().addComponent(pComponent_t(healthCounter));
 
-  CEventHandler& events = eventHandlerSystem.getComponent(this->body);
+  CEventHandler& events = eventHandlerSys().getComponent(this->body);
 
   events.targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-    [=, &damageSystem](const GameEvent&) {
+    [=](const GameEvent&) {
 
-    const CDamage& damage = dynamic_cast<const CDamage&>(damageSystem.getComponent(this->body));
+    const CDamage& damage = dynamic_cast<const CDamage&>(damageSys().getComponent(this->body));
 
     stringstream ss;
     ss << "HEALTH " << damage.health << "/" << damage.maxHealth;
@@ -517,27 +475,24 @@ void Player::setupHealthCounter() {
 // Player::setupHudBackground
 //===========================================
 void Player::setupHudBackground() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  const Size& viewport = renderSystem.viewport();
+  const Size& viewport = renderSys().viewport();
 
   m_hudBgId = Component::getNextId();
 
   CColourOverlay* bg = new CColourOverlay(m_hudBgId, QColor(0, 0, 0, 100), Point(0, viewport.y),
     Size(viewport.x, HUD_H), 1);
 
-  renderSystem.addComponent(pComponent_t(bg));
+  renderSys().addComponent(pComponent_t(bg));
 }
 
 //===========================================
 // Player::constructInventory
 //===========================================
 void Player::constructInventory() {
-  auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-
   CCollector* inventory = new CCollector(this->body);
   inventory->buckets["ammo"] = pBucket_t(new CounterBucket(50));
   inventory->buckets["item"] = pBucket_t(new ItemBucket(5));
-  inventorySystem.addComponent(pComponent_t(inventory));
+  inventorySys().addComponent(pComponent_t(inventory));
 
   setupItemsDisplay();
   setupAmmoCounter();
@@ -689,20 +644,15 @@ void Player::vRotate(double da) {
 //===========================================
 void Player::shoot() {
   if (m_shootTimer.ready()) {
-    auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-
-    if (inventorySystem.getBucketValue(body, "ammo") > 0) {
-      auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
-      animationSystem.playAnimation(sprite, "shoot", false);
-      animationSystem.playAnimation(body, "shoot", false);
+    if (inventorySys().getBucketValue(body, "ammo") > 0) {
+      animationSys().playAnimation(sprite, "shoot", false);
+      animationSys().playAnimation(body, "shoot", false);
       m_audioService.playSound("pistol_shoot");
-      inventorySystem.subtractFromBucket(body, "ammo", 1);
-      damageSystem.damageAtIntersection(Vec2f(1, 0), 0, 1);
+      inventorySys().subtractFromBucket(body, "ammo", 1);
+      damageSys().damageAtIntersection(Vec2f(1, 0), 0, 1);
     }
     else {
-      animationSystem.playAnimation(sprite, "shoot_no_ammo", false);
+      animationSys().playAnimation(sprite, "shoot_no_ammo", false);
       m_audioService.playSound("click");
     }
   }

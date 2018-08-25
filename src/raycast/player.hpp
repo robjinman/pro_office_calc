@@ -7,6 +7,7 @@
 #include "raycast/timing.hpp"
 #include "raycast/geometry.hpp"
 #include "raycast/camera.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 const double PLAYER_STEP_HEIGHT = 16.0;
@@ -19,16 +20,9 @@ class EntityManager;
 class AudioService;
 namespace parser { struct Object; }
 class TimeService;
-class SpatialSystem;
-class RenderSystem;
-class AnimationSystem;
-class DamageSystem;
-class BehaviourSystem;
-class InventorySystem;
-class EventHandlerSystem;
 struct EBucketItemsChange;
 
-class Player {
+class Player : private SystemAccessor {
   public:
     Player(EntityManager& entityManager, AudioService& audioService, TimeService& timeService,
       const parser::Object& obj, entityId_t parentId, const Matrix& parentTransform);
