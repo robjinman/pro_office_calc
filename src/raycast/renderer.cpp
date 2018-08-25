@@ -201,8 +201,8 @@ Renderer::Slice Renderer::computeSlice(const LineSegment& rotProjPlane, const Li
 //===========================================
 // Renderer::castRay
 //===========================================
-void Renderer::castRay(const SpatialSystem& spatialSystem,
-  const RenderSystem& renderSystem, const Vec2f& dir, CastResult& result) const {
+void Renderer::castRay(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
+  const Vec2f& dir, CastResult& result) const {
 
   LineSegment rotProjPlane = projectionPlane();
 
@@ -341,9 +341,7 @@ void Renderer::castRay(const SpatialSystem& spatialSystem,
 //===========================================
 // Renderer::drawSkySlice
 //===========================================
-void Renderer::drawSkySlice(const ScreenSlice& slice,
-  int screenX_px) const {
-
+void Renderer::drawSkySlice(const ScreenSlice& slice, int screenX_px) const {
   const Texture& skyTex = m_rg.textures.at("sky");
   Size tileSz_px(skyTex.image.rect().width(), skyTex.image.rect().height());
 
@@ -401,9 +399,8 @@ inline static Point worldPointToFloorTexel(const Point& p, const Size& tileSz_wd
 //===========================================
 // Renderer::drawCeilingSlice
 //===========================================
-void Renderer::drawCeilingSlice(const Intersection& X,
-  const CRegion& region, double ceilingHeight, const ScreenSlice& slice, int screenX_px,
-  double projX_wd) const {
+void Renderer::drawCeilingSlice(const Intersection& X, const CRegion& region, double ceilingHeight,
+  const ScreenSlice& slice, int screenX_px, double projX_wd) const {
 
   const Texture& ceilingTex = m_rg.textures.at(region.ceilingTexture);
   Size texSz_tx(ceilingTex.image.rect().width(), ceilingTex.image.rect().height());
@@ -465,9 +462,9 @@ static const CFloorDecal* getFloorDecal(const SpatialSystem& spatialSystem, cons
 //===========================================
 // Renderer::drawFloorSlice
 //===========================================
-void Renderer::drawFloorSlice(
-  const SpatialSystem& spatialSystem, const Intersection& X, const CRegion& region,
-  double floorHeight, const ScreenSlice& slice, int screenX_px, double projX_wd) const {
+void Renderer::drawFloorSlice(const SpatialSystem& spatialSystem, const Intersection& X,
+  const CRegion& region, double floorHeight, const ScreenSlice& slice, int screenX_px,
+  double projX_wd) const {
 
   const Texture& floorTex = m_rg.textures.at(region.floorTexture);
   Size texSz_tx(floorTex.image.rect().width(), floorTex.image.rect().height());
@@ -531,8 +528,8 @@ void Renderer::drawFloorSlice(
 //===========================================
 // Renderer::sampleSpriteTexture
 //===========================================
-QRect Renderer::sampleSpriteTexture(const QRect& rect, const SpriteX& X,
-  const Size& size_wd, double y_wd) const {
+QRect Renderer::sampleSpriteTexture(const QRect& rect, const SpriteX& X, const Size& size_wd,
+  double y_wd) const {
 
   double H_tx = rect.height();
   double W_tx = rect.width();
@@ -554,10 +551,9 @@ QRect Renderer::sampleSpriteTexture(const QRect& rect, const SpriteX& X,
 //===========================================
 // Renderer::sampleWallTexture
 //===========================================
-void Renderer::sampleWallTexture(double screenX_px,
-  double texAnchor_wd, double distanceAlongTarget, const Slice& slice, const Size& texSz_tx,
-  const QRectF& frameRect, const Size& tileSz_wd, vector<QRect>& trgRects,
-  vector<QRect>& srcRects) const {
+void Renderer::sampleWallTexture(double screenX_px, double texAnchor_wd, double distanceAlongTarget,
+  const Slice& slice, const Size& texSz_tx, const QRectF& frameRect, const Size& tileSz_wd,
+  vector<QRect>& trgRects, vector<QRect>& srcRects) const {
 
   double projSliceH_wd = slice.projSliceTop_wd - slice.projSliceBottom_wd;
   double sliceH_wd = slice.sliceTop_wd - slice.sliceBottom_wd;
@@ -636,9 +632,8 @@ void Renderer::sampleWallTexture(double screenX_px,
 //===========================================
 // Renderer::drawSlice
 //===========================================
-Renderer::ScreenSlice Renderer::drawSlice(
-  const Intersection& X, const Slice& slice, const string& texture, const QRectF& frameRect,
-  double screenX_px, double targetH_wd) const {
+Renderer::ScreenSlice Renderer::drawSlice(const Intersection& X, const Slice& slice,
+  const string& texture, const QRectF& frameRect, double screenX_px, double targetH_wd) const {
 
   const Texture& wallTex = GET_VALUE(m_rg.textures, texture);
 
@@ -675,9 +670,7 @@ Renderer::ScreenSlice Renderer::drawSlice(
 //===========================================
 // Renderer::drawSprite
 //===========================================
-void Renderer::drawSprite(const SpriteX& X,
-  double screenX_px) const {
-
+void Renderer::drawSprite(const SpriteX& X, double screenX_px) const {
   const CSprite& sprite = *X.sprite;
   const CVRect& vRect = *X.vRect;
   const Slice& slice = X.slice;
@@ -703,9 +696,8 @@ void Renderer::drawSprite(const SpriteX& X,
 //===========================================
 // Renderer::drawWallDecal
 //===========================================
-void Renderer::drawWallDecal(
-  const SpatialSystem& spatialSystem, const CWallDecal& decal, const Intersection& X,
-  const Slice& slice, const CZone& zone, int screenX_px) const {
+void Renderer::drawWallDecal(const SpatialSystem& spatialSystem, const CWallDecal& decal,
+  const Intersection& X, const Slice& slice, const CZone& zone, int screenX_px) const {
 
   const CVRect& vRect = getVRect(spatialSystem, decal);
 
@@ -748,9 +740,7 @@ void Renderer::drawWallDecal(
 //===========================================
 // Renderer::drawColourOverlay
 //===========================================
-void Renderer::drawColourOverlay(QPainter& painter,
-  const CColourOverlay& overlay) const {
-
+void Renderer::drawColourOverlay(QPainter& painter, const CColourOverlay& overlay) const {
   double x = (overlay.pos.x / m_viewport.x) * m_viewport_px.x;
   double y = (1.0 - overlay.pos.y / m_viewport.y) * m_viewport_px.y;
   double w = (overlay.size.x / m_viewport.x) * m_viewport_px.x;
@@ -764,9 +754,7 @@ void Renderer::drawColourOverlay(QPainter& painter,
 //===========================================
 // Renderer::drawImageOverlay
 //===========================================
-void Renderer::drawImageOverlay(QPainter& painter,
-  const CImageOverlay& overlay) const {
-
+void Renderer::drawImageOverlay(QPainter& painter, const CImageOverlay& overlay) const {
   double x = (overlay.pos.x / m_viewport.x) * m_viewport_px.x;
   double y = (1.0 - overlay.pos.y / m_viewport.y) * m_viewport_px.y;
   double w = (overlay.size.x / m_viewport.x) * m_viewport_px.x;
@@ -787,9 +775,7 @@ void Renderer::drawImageOverlay(QPainter& painter,
 //===========================================
 // Renderer::drawTextOverlay
 //===========================================
-void Renderer::drawTextOverlay(QPainter& painter,
-  const CTextOverlay& overlay) const {
-
+void Renderer::drawTextOverlay(QPainter& painter, const CTextOverlay& overlay) const {
   double x = overlay.pos.x * m_hWorldUnit_px;
   double y = (m_viewport.y - overlay.pos.y) * m_vWorldUnit_px;
   double h = overlay.height * m_vWorldUnit_px;
@@ -870,8 +856,8 @@ static vector<CWallDecal*> getWallDecals(const SpatialSystem& spatialSystem, con
 //===========================================
 // Renderer::renderColumns
 //===========================================
-void Renderer::renderColumns(
-  const SpatialSystem& spatialSystem, const RenderSystem& renderSystem, int from, int to) const {
+void Renderer::renderColumns(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
+  int from, int to) const {
 
   CastResult prev;
 

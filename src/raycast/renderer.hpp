@@ -132,52 +132,43 @@ class Renderer {
     std::vector<std::thread> m_threads;
     int m_numWorkerThreads;
 
-    void renderColumns(const SpatialSystem& spatialSystem,
-      const RenderSystem& renderSystem, int from, int to) const;
+    void renderColumns(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
+      int from, int to) const;
 
     void drawImage(const QRect& trgRect, const QImage& tex, const QRect& srcRect,
       double distance = 0) const;
 
-    void drawSprite(const SpriteX& X,
-      double screenX_px) const;
+    void drawSprite(const SpriteX& X, double screenX_px) const;
 
-    ScreenSlice drawSlice(const Intersection& X,
-      const Slice& slice, const std::string& texture, const QRectF& texRect, double screenX_px,
-      double targetH_wd = 0) const;
+    ScreenSlice drawSlice(const Intersection& X, const Slice& slice, const std::string& texture,
+      const QRectF& texRect, double screenX_px, double targetH_wd = 0) const;
 
-    void drawFloorSlice(
-      const SpatialSystem& spatialSystem, const Intersection& X, const CRegion& region,
-      double floorHeight, const ScreenSlice& slice, int screenX_px, double projX_wd) const;
-
-    void drawCeilingSlice(const Intersection& X,
-      const CRegion& region, double ceilingHeight, const ScreenSlice& slice, int screenX_px,
+    void drawFloorSlice(const SpatialSystem& spatialSystem, const Intersection& X,
+      const CRegion& region, double floorHeight, const ScreenSlice& slice, int screenX_px,
       double projX_wd) const;
 
-    void drawSkySlice(const ScreenSlice& slice,
-      int screenX_px) const;
+    void drawCeilingSlice(const Intersection& X, const CRegion& region, double ceilingHeight,
+      const ScreenSlice& slice, int screenX_px, double projX_wd) const;
 
-    void drawWallDecal(const SpatialSystem& spatialSystem,
-      const CWallDecal& decal, const Intersection& X, const Slice& slice, const CZone& zone,
-      int screenX_px) const;
+    void drawSkySlice(const ScreenSlice& slice, int screenX_px) const;
+
+    void drawWallDecal(const SpatialSystem& spatialSystem, const CWallDecal& decal,
+      const Intersection& X, const Slice& slice, const CZone& zone, int screenX_px) const;
 
     void drawOverlays() const;
 
-    void drawColourOverlay(QPainter& painter,
-      const CColourOverlay& overlay) const;
+    void drawColourOverlay(QPainter& painter, const CColourOverlay& overlay) const;
 
-    void drawImageOverlay(QPainter& painter,
-      const CImageOverlay& overlay) const;
+    void drawImageOverlay(QPainter& painter, const CImageOverlay& overlay) const;
 
-    void drawTextOverlay(QPainter& painter,
-      const CTextOverlay& overlay) const;
+    void drawTextOverlay(QPainter& painter, const CTextOverlay& overlay) const;
 
-    void sampleWallTexture(double screenX_px,
-      double texAnchor_wd, double distanceAlongTarget, const Slice& slice, const Size& texSz,
-      const QRectF& frameRect, const Size& tileSz_wd, std::vector<QRect>& trgRects,
-      std::vector<QRect>& srcRects) const;
+    void sampleWallTexture(double screenX_px, double texAnchor_wd, double distanceAlongTarget,
+      const Slice& slice, const Size& texSz, const QRectF& frameRect, const Size& tileSz_wd,
+      std::vector<QRect>& trgRects, std::vector<QRect>& srcRects) const;
 
-    QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X,
-      const Size& size_wd, double y_wd) const;
+    QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X, const Size& size_wd,
+      double y_wd) const;
 
     XWrapper* constructXWrapper(const SpatialSystem& spatialSystem,
       const RenderSystem& renderSystem, pIntersection_t X) const;
@@ -186,8 +177,8 @@ class Renderer {
       double subview1, const LineSegment& projRay0, const LineSegment& projRay1, Point& projX0,
       Point& projX1) const;
 
-    void castRay(const SpatialSystem& spatialSystem,
-      const RenderSystem& renderSystem, const Vec2f& dir, CastResult& result) const;
+    void castRay(const SpatialSystem& spatialSystem, const RenderSystem& renderSystem,
+      const Vec2f& dir, CastResult& result) const;
 
     LineSegment projectionPlane() const;
     inline double projToScreenY(double y) const;
