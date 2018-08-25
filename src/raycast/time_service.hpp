@@ -55,6 +55,9 @@ class TimeService {
     std::map<long, Interval> m_intervals;
     std::set<long> m_pendingDeletion;
 
+    void updateTweens();
+    void updateTimeouts();
+    void updateIntervals();
     void deletePending();
 };
 

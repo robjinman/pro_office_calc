@@ -52,11 +52,9 @@ void TimeService::deletePending() {
 }
 
 //===========================================
-// TimeService::update
+// TimeService::updateTweens
 //===========================================
-void TimeService::update() {
-  deletePending();
-
+void TimeService::updateTweens() {
   double elapsed = m_frame / frameRate;
 
   for (auto it = m_tweens.begin(); it != m_tweens.end();) {
@@ -72,7 +70,12 @@ void TimeService::update() {
       ++it;
     }
   }
+}
 
+//===========================================
+// TimeService::updateTimeouts
+//===========================================
+void TimeService::updateTimeouts() {
   for (auto it = m_timeouts.begin(); it != m_timeouts.end();) {
     const Timeout& timeout = it->second;
 
@@ -88,7 +91,12 @@ void TimeService::update() {
       ++it;
     }
   }
+}
 
+//===========================================
+// TimeService::updateIntervals
+//===========================================
+void TimeService::updateIntervals() {
   for (auto it = m_intervals.begin(); it != m_intervals.end();) {
     Interval& interval = it->second;
 
@@ -107,6 +115,17 @@ void TimeService::update() {
       ++it;
     }
   }
+}
+
+//===========================================
+// TimeService::update
+//===========================================
+void TimeService::update() {
+  deletePending();
+
+  updateTweens();
+  updateTimeouts();
+  updateIntervals();
 
   ++m_frame;
 }
