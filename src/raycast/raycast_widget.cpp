@@ -187,11 +187,11 @@ void RaycastWidget::initialise(const string& mapFile) {
   BehaviourSystem* behaviourSystem = new BehaviourSystem;
   m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
 
-  RenderSystem* renderSystem = new RenderSystem(m_appConfig, m_entityManager, m_buffer);
-  m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderSystem));
-
   SpatialSystem* spatialSystem = new SpatialSystem(m_entityManager, m_timeService, m_frameRate);
   m_entityManager.addSystem(ComponentKind::C_SPATIAL, pSystem_t(spatialSystem));
+
+  RenderSystem* renderSystem = new RenderSystem(m_appConfig, m_entityManager, m_buffer);
+  m_entityManager.addSystem(ComponentKind::C_RENDER, pSystem_t(renderSystem));
 
   AnimationSystem* animationSystem = new AnimationSystem(m_entityManager);
   m_entityManager.addSystem(ComponentKind::C_ANIMATION, pSystem_t(animationSystem));
@@ -217,6 +217,8 @@ void RaycastWidget::initialise(const string& mapFile) {
   m_audioService.initialise();
 
   loadMap(mapFile);
+
+  renderSystem->setCamera(&spatialSystem->sg.player->camera());
 
   m_timer = makeQtObjPtr<QTimer>(this);
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));

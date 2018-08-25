@@ -19,9 +19,12 @@ class RenderSystem;
 
 class Renderer {
   public:
-    Renderer(const AppConfig& appConfig, EntityManager& entityManager, QImage& target);
+    Renderer(const AppConfig& appConfig, EntityManager& entityManager, QImage& target,
+      const RenderGraph& rg);
 
-    void renderScene(const RenderGraph& rg, const Camera& cam);
+    inline void setCamera(const Camera* cam);
+
+    void renderScene();
 
   private:
     struct Slice {
@@ -104,6 +107,8 @@ class Renderer {
     AppConfig m_appConfig;
     EntityManager& m_entityManager;
     QImage& m_target;
+    const RenderGraph& m_rg;
+    const Camera* m_cam = nullptr;
 
     const double ATAN_MIN = -10.0;
     const double ATAN_MAX = 10.0;
@@ -117,49 +122,51 @@ class Renderer {
     std::vector<std::thread> m_threads;
     int m_numWorkerThreads;
 
-    void renderColumns(const RenderGraph& rg, const Camera& cam, const SpatialSystem& spatialSystem,
+    void renderColumns(const SpatialSystem& spatialSystem,
       const RenderSystem& renderSystem, int from, int to) const;
 
     void drawImage(const QRect& trgRect, const QImage& tex, const QRect& srcRect,
       double distance = 0) const;
 
-    void drawSprite(const RenderGraph& rg, const Camera& camera, const SpriteX& X,
+    void drawSprite(const SpriteX& X,
       double screenX_px) const;
 
-    ScreenSlice drawSlice(const RenderGraph& rg, const Camera& cam, const Intersection& X,
+    ScreenSlice drawSlice(const Intersection& X,
       const Slice& slice, const std::string& texture, const QRectF& texRect, double screenX_px,
       double targetH_wd = 0) const;
 
-    void drawFloorSlice(const RenderGraph& rg, const Camera& cam,
+    void drawFloorSlice(
       const SpatialSystem& spatialSystem, const Intersection& X, const CRegion& region,
       double floorHeight, const ScreenSlice& slice, int screenX_px, double projX_wd) const;
 
-    void drawCeilingSlice(const RenderGraph& rg, const Camera& cam, const Intersection& X,
+    void drawCeilingSlice(const Intersection& X,
       const CRegion& region, double ceilingHeight, const ScreenSlice& slice, int screenX_px,
       double projX_wd) const;
 
-    void drawSkySlice(const RenderGraph& rg, const Camera& cam, const ScreenSlice& slice,
+    void drawSkySlice(const ScreenSlice& slice,
       int screenX_px) const;
 
-    void drawWallDecal(const RenderGraph& rg, const Camera& cam, const SpatialSystem& spatialSystem,
+    void drawWallDecal(const SpatialSystem& spatialSystem,
       const CWallDecal& decal, const Intersection& X, const Slice& slice, const CZone& zone,
       int screenX_px) const;
 
-    void drawColourOverlay(const RenderGraph& rg, QPainter& painter,
+    void drawOverlays() const;
+
+    void drawColourOverlay(QPainter& painter,
       const CColourOverlay& overlay) const;
 
-    void drawImageOverlay(const RenderGraph& rg, QPainter& painter,
+    void drawImageOverlay(QPainter& painter,
       const CImageOverlay& overlay) const;
 
-    void drawTextOverlay(const RenderGraph& rg, QPainter& painter,
+    void drawTextOverlay(QPainter& painter,
       const CTextOverlay& overlay) const;
 
-    void sampleWallTexture(const RenderGraph& rg, const Camera& cam, double screenX_px,
+    void sampleWallTexture(double screenX_px,
       double texAnchor_wd, double distanceAlongTarget, const Slice& slice, const Size& texSz,
       const QRectF& frameRect, const Size& tileSz_wd, std::vector<QRect>& trgRects,
       std::vector<QRect>& srcRects) const;
 
-    QRect sampleSpriteTexture(const Camera& cam, const QRect& rect, const SpriteX& X,
+    QRect sampleSpriteTexture(const QRect& rect, const SpriteX& X,
       const Size& size_wd, double y_wd) const;
 
     XWrapper* constructXWrapper(const SpatialSystem& spatialSystem,
@@ -169,19 +176,27 @@ class Renderer {
       double subview1, const LineSegment& projRay0, const LineSegment& projRay1, Point& projX0,
       Point& projX1) const;
 
-    void castRay(const RenderGraph& rg, const Camera& cam, const SpatialSystem& spatialSystem,
+    void castRay(const SpatialSystem& spatialSystem,
       const RenderSystem& renderSystem, const Vec2f& dir, CastResult& result) const;
 
-    inline double projToScreenY(const RenderGraph& rg, double y) const;
+    LineSegment projectionPlane() const;
+    inline double projToScreenY(double y) const;
     inline double fastTan_rp(double a) const;
     inline double fastATan(double x) const;
 };
 
 //===========================================
+// Renderer::setCamera
+//===========================================
+inline void Renderer::setCamera(const Camera* cam) {
+  m_cam = cam;
+}
+
+//===========================================
 // Renderer::projToScreenY
 //===========================================
-inline double Renderer::projToScreenY(const RenderGraph& rg, double y) const {
-  return rg.viewport_px.y - (y * rg.vWorldUnit_px);
+inline double Renderer::projToScreenY(double y) const {
+  return m_rg.viewport_px.y - (y * m_rg.vWorldUnit_px);
 }
 
 //===========================================

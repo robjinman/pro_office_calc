@@ -10,12 +10,15 @@ class QImage;
 class EntityManager;
 class Player;
 class AppConfig;
+class Camera;
 
 class RenderSystem : public System {
   public:
     RenderSystem(const AppConfig& appConfig, EntityManager& entityManager, QImage& target);
 
     RenderGraph rg;
+
+    inline void setCamera(const Camera* cam);
 
     void connectRegions();
     void render();
@@ -46,6 +49,10 @@ class RenderSystem : public System {
     void removeEntity_r(entityId_t id);
     void crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t oldZone, entityId_t newZone);
 };
+
+inline void RenderSystem::setCamera(const Camera* cam) {
+  m_renderer.setCamera(cam);
+}
 
 inline const std::set<entityId_t>& RenderSystem::children(entityId_t entityId) const {
   static const std::set<entityId_t> emptySet;

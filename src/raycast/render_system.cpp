@@ -68,7 +68,7 @@ static bool forEachRegion(CRegion& region, function<bool(CRegion&)> fn) {
 RenderSystem::RenderSystem(const AppConfig& appConfig, EntityManager& entityManager, QImage& target)
   : m_appConfig(appConfig),
     m_entityManager(entityManager),
-    m_renderer(appConfig, entityManager, target) {
+    m_renderer(appConfig, entityManager, target, rg) {
 
   rg.viewport.x = 10.0 * 320.0 / 240.0; // TODO: Read from map file
   rg.viewport.y = 10.0;
@@ -178,10 +178,7 @@ void RenderSystem::connectRegions() {
 // RenderSystem::render
 //===========================================
 void RenderSystem::render() {
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  const Camera& cam = spatialSystem.sg.player->camera();
-
-  m_renderer.renderScene(rg, cam);
+  m_renderer.renderScene();
 }
 
 //===========================================
