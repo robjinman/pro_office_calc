@@ -26,6 +26,7 @@ class DamageSystem;
 class BehaviourSystem;
 class InventorySystem;
 class EventHandlerSystem;
+struct EBucketItemsChange;
 
 class Player {
   public:
@@ -74,12 +75,28 @@ class Player {
 
   private:
     void constructPlayer(const parser::Object& obj, entityId_t parentId,
-      const Matrix& parentTransform, SpatialSystem& spatialSystem, RenderSystem& renderSystem,
-      AnimationSystem& animationSystem, DamageSystem& damageSystem,
-      BehaviourSystem& behaviourSystem, EventHandlerSystem& eventHandlerSystem);
-    void constructInventory(RenderSystem& renderSystem, InventorySystem& inventorySystem,
-      EventHandlerSystem& eventHandlerSystem, DamageSystem& damageSystem);
-    void setupHudShowHide(RenderSystem& renderSystem, EventHandlerSystem& eventHandlerSystem);
+      const Matrix& parentTransform);
+
+    void constructInventory();
+
+    void setupHudShowHide();
+    void setupBody(CZone& zone, const Matrix& m, double tallness);
+    void setupBodyAnimations();
+    void setupCrosshair();
+    void setupGunSprite();
+    void setupPlayerEvents();
+    void setupPlayerBehaviour();
+    void setupItemsDisplay();
+    void setupAmmoCounter();
+    void setupHealthCounter();
+    void setupHudBackground();
+
+    void updateItemsDisplay(double itemsDisplayW_px, const EBucketItemsChange& e) const;
+    void showHud();
+    void hideHud();
+
+    void makeTween(const std::string& name, double duration, entityId_t overlayId, double fromY,
+      double toY);
 
     CVRect& getBody() const;
 
