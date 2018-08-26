@@ -42,11 +42,11 @@ const string& Fragment::name() const {
 }
 
 //===========================================
-// Fragment::rebuild
+// Fragment::removeChildren
+//
+// Remove unused child fragments, recursively triggering their cleanUp methods
 //===========================================
-void Fragment::rebuild(const FragmentSpec& spec, bool hardReset) {
-  // Remove unused child fragments, recursively triggering their cleanUp methods
-  //
+void Fragment::removeChildren(const FragmentSpec& spec, bool hardReset) {
   for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
     const string& chName = it->first;
     const FragmentSpec& chSpec = *it->second;
@@ -61,13 +61,14 @@ void Fragment::rebuild(const FragmentSpec& spec, bool hardReset) {
       }
     }
   }
+}
 
-  // Call reload before constructing children
-  //
-  reload(spec);
-
-  // Construct any newly enabled child fragments
-  //
+//===========================================
+// Fragment::constructNewChildren
+//
+// Construct any newly enabled child fragments
+//===========================================
+void Fragment::constructNewChildren(const FragmentSpec& spec) {
   for (auto it = spec.specs().begin(); it != spec.specs().end(); ++it) {
     const string& chName = it->first;
     const FragmentSpec& chSpec = *it->second;
@@ -79,15 +80,28 @@ void Fragment::rebuild(const FragmentSpec& spec, bool hardReset) {
       }
     }
   }
+}
 
-  // Rebuild children
-  //
+//===========================================
+// Fragment::rebuildChildren
+//===========================================
+void Fragment::rebuildChildren(const FragmentSpec& spec, bool hardReset) {
   for (auto it = m_children.begin(); it != m_children.end(); ++it) {
     const string& name = it->first;
     Fragment& frag = *it->second;
 
     frag.rebuild(spec.spec(name), hardReset);
   }
+}
+
+//===========================================
+// Fragment::rebuild
+//===========================================
+void Fragment::rebuild(const FragmentSpec& spec, bool hardReset) {
+  removeChildren(spec, hardReset);
+  reload(spec);
+  constructNewChildren(spec);
+  rebuildChildren(spec, hardReset);
 }
 
 //===========================================

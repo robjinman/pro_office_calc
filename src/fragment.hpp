@@ -77,6 +77,9 @@ class Fragment {
     std::map<std::string, pFragment_t> m_children;
 
     void detach();
+    void removeChildren(const FragmentSpec& spec, bool hardReset);
+    void constructNewChildren(const FragmentSpec& spec);
+    void rebuildChildren(const FragmentSpec& spec, bool hardReset);
 };
 
 

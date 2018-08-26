@@ -14,6 +14,10 @@ using CustomQtObjDeleter = std::function<void(const QObject*)>;
 template <class T>
 using QtObjPtr = std::unique_ptr<T, CustomQtObjDeleter<T>>;
 
+
+//===========================================
+// makeQtObjPtr
+//===========================================
 template <class T, typename... Args>
 auto makeQtObjPtr(Args&&... args) {
   static_assert(std::is_base_of<QObject, T>::value, "Template arg must derive from QObject");
@@ -33,6 +37,9 @@ auto makeQtObjPtr(Args&&... args) {
   return QtObjPtr<T>(tmp.release(), std::move(deleter));
 }
 
+//===========================================
+// makeQtObjPtrFromRawPtr
+//===========================================
 template <class T>
 auto makeQtObjPtrFromRawPtr(T* rawPtr) {
   static_assert(std::is_base_of<QObject, T>::value, "Template arg must derive from QObject");

@@ -16,25 +16,6 @@ using std::ostream;
 using std::vector;
 
 
-#ifdef __APPLE__
-#include <chrono>
-
-using std::chrono::system_clock;
-using std::chrono::milliseconds;
-using std::chrono::duration_cast;
-
-long randomSeed() {
-  return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-}
-#else
-static std::random_device rd;
-
-long randomSeed() {
-  return rd();
-}
-#endif
-
-
 #ifdef DEBUG
 ostream& operator<<(ostream& os, const QRect& rect) {
   os << rect.x() << ", " << rect.y() << ", " << rect.width() << ", " << rect.height();
@@ -58,6 +39,30 @@ std::ostream& operator<<(std::ostream& os, const QSize& sz) {
 }
 #endif
 
+//===========================================
+// randomSeed
+//===========================================
+#ifdef __APPLE__
+#include <chrono>
+
+using std::chrono::system_clock;
+using std::chrono::milliseconds;
+using std::chrono::duration_cast;
+
+long randomSeed() {
+  return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+#else
+static std::random_device rd;
+
+long randomSeed() {
+  return rd();
+}
+#endif
+
+//===========================================
+// readString
+//===========================================
 string readString(istream& is) {
   int nBytes = 0;
   is.read(reinterpret_cast<char*>(&nBytes), sizeof(nBytes));
@@ -68,6 +73,9 @@ string readString(istream& is) {
   return string(buf.data(), nBytes);
 }
 
+//===========================================
+// writeString
+//===========================================
 void writeString(ostream& os, const string& s) {
   size_t nBytes = s.size();
 
@@ -75,6 +83,9 @@ void writeString(ostream& os, const string& s) {
   os.write(s.data(), nBytes);
 }
 
+//===========================================
+// splitString
+//===========================================
 vector<string> splitString(const string& s, char delim) {
   vector<string> v;
   stringstream ss(s);
