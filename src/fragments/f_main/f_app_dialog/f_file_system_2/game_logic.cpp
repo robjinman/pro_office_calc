@@ -31,23 +31,20 @@ namespace t_minus_two_minutes {
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeService& timeService,
   EntityManager& entityManager)
-  : m_eventSystem(eventSystem),
+  : SystemAccessor(entityManager),
+    m_eventSystem(eventSystem),
     m_audioService(audioService),
     m_timeService(timeService),
     m_entityManager(entityManager) {
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  auto& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-
   m_entityId = Component::getNextId();
 
   CFocus* focus = new CFocus(m_entityId);
   focus->captionText = "The covfefe has jammed the machine";
 
-  focusSystem.addComponent(pComponent_t(focus));
+  focusSys().addComponent(pComponent_t(focus));
 
   CEventHandler* events = new CEventHandler(m_entityId);
   events->broadcastedEventHandlers.push_back(EventHandler{"key_pressed",
@@ -59,12 +56,12 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
     }
   }});
   events->broadcastedEventHandlers.push_back(EventHandler{"t_minus_two_minutes/machine_jammed",
-    [this, &focusSystem](const GameEvent&) {
+    [this](const GameEvent&) {
 
     DBG_PRINT("Machine jammed\n");
 
     m_entityManager.deleteEntity(Component::getIdFromString("covfefe"));
-    focusSystem.showCaption(m_entityId);
+    focusSys().showCaption(m_entityId);
 
     m_entityManager.fireEvent(GameEvent{"disable_sound_source"},
       { Component::getIdFromString("machine_sound") });
@@ -80,7 +77,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
     }
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(events));
+  eventHandlerSys().addComponent(pComponent_t(events));
 
   setupTimer();
 }
@@ -89,14 +86,12 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
 // GameLogic::fadeToBlack
 //===========================================
 void GameLogic::fadeToBlack() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   entityId_t entityId = Component::getNextId();
 
   CColourOverlay* overlay = new CColourOverlay(entityId, QColor{0, 0, 0, 0}, Point{0, 0},
-    renderSystem.viewport(), 1);
+    renderSys().viewport(), 1);
 
-  renderSystem.addComponent(pComponent_t(overlay));
+  renderSys().addComponent(pComponent_t(overlay));
 
   double alpha = 0;
   int nFrames = 20;
@@ -155,8 +150,6 @@ void GameLogic::updateTimer() {
 // GameLogic::setupTimer
 //===========================================
 void GameLogic::setupTimer() {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   m_timeRemaining = 120;
 
   m_timerHandle = m_timeService.atIntervals([this]() -> bool {
@@ -176,9 +169,9 @@ void GameLogic::setupTimer() {
 
   CTextOverlay* overlay = new CTextOverlay(m_entityId, "00:00:00", Point{0.0, 7.5}, 1.0, Qt::green,
     2);
-  renderSystem.centreTextOverlay(*overlay);
+  renderSys().centreTextOverlay(*overlay);
 
-  renderSystem.addComponent(pComponent_t(overlay));
+  renderSys().addComponent(pComponent_t(overlay));
 
   updateTimer();
 }
@@ -189,35 +182,32 @@ void GameLogic::setupTimer() {
 void GameLogic::useCovfefe() {
   entityId_t covfefeId = Component::getIdFromString("covfefe");
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
+  const Player& player = *spatialSys().sg.player;
+  auto& playerBody = dynamic_cast<const CVRect&>(spatialSys().getComponent(player.body));
 
-  const Player& player = *spatialSystem.sg.player;
-  auto& playerBody = dynamic_cast<const CVRect&>(spatialSystem.getComponent(player.body));
-
-  const map<string, entityId_t>& items = inventorySystem.getBucketItems(player.body, "item");
+  const map<string, entityId_t>& items = inventorySys().getBucketItems(player.body, "item");
 
   if (contains(items, string{"covfefe"})) {
     DBG_PRINT("Using covfefe\n");
     m_audioService.playSound("covfefe");
 
-    inventorySystem.removeFromBucket(player.body, "item", "covfefe");
+    inventorySys().removeFromBucket(player.body, "item", "covfefe");
 
     double distance = 100.0;
     double margin = 10.0;
     Point pos = playerBody.pos + player.dir() * distance;
 
-    vector<pIntersection_t> intersections = spatialSystem.entitiesAlongRay(Vec2f{1, 0});
+    vector<pIntersection_t> intersections = spatialSys().entitiesAlongRay(Vec2f{1, 0});
 
     if (intersections.front()->distanceFromOrigin - margin < distance) {
       pos = intersections.front()->point_wld - player.dir() * margin;
     }
 
-    spatialSystem.relocateEntity(covfefeId, *playerBody.zone, pos);
+    spatialSys().relocateEntity(covfefeId, *playerBody.zone, pos);
 
     double heightAboveFloor = 50.0;
 
-    set<entityId_t> entities = spatialSystem.entitiesInRadius(*playerBody.zone, pos, 50.0,
+    set<entityId_t> entities = spatialSys().entitiesInRadius(*playerBody.zone, pos, 50.0,
       heightAboveFloor);
     m_entityManager.fireEvent(GameEvent{"t_minus_two_minutes/covfefe_impact"}, entities);
   }

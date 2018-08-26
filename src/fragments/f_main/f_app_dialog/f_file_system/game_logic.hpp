@@ -4,6 +4,7 @@
 
 #include <string>
 #include "raycast/component.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EventSystem;
@@ -19,7 +20,7 @@ class CSwitchBehaviour;
 namespace going_in_circles {
 
 
-class GameLogic {
+class GameLogic : private SystemAccessor {
   public:
     GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeService& timeService,
       EntityManager& entityManager);
@@ -31,7 +32,7 @@ class GameLogic {
     void onEntityDestroyed(const GameEvent& event);
     void onEntityChangeZone(const GameEvent& event);
     void onSwitchActivated(const GameEvent& event);
-    void setupLarry(EventHandlerSystem& eventHandlerSystem);
+    void setupLarry();
     void resetSwitches();
     CSwitchBehaviour& getSwitch(entityId_t) const;
 

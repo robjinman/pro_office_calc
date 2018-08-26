@@ -4,6 +4,7 @@
 
 #include <string>
 #include "raycast/component.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EventSystem;
@@ -18,7 +19,7 @@ class GameEvent;
 namespace t_minus_two_minutes {
 
 
-class GameLogic {
+class GameLogic : private SystemAccessor {
   public:
     GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeService& timeService,
       EntityManager& entityManager);

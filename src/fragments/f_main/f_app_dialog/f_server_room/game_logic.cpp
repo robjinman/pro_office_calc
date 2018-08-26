@@ -28,7 +28,8 @@ extern const std::string exitDoorCode = std::to_string(randInt(randEngine));
 // GameLogic::GameLogic
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
-  : m_eventSystem(eventSystem),
+  : SystemAccessor(entityManager),
+    m_eventSystem(eventSystem),
     m_entityManager(entityManager) {
 
   DBG_PRINT("GameLogic::GameLogic\n");
@@ -47,12 +48,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     }
   });
 
-  EventHandlerSystem& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  const Player& player = *spatialSystem.sg.player;
+  const Player& player = *spatialSys().sg.player;
 
   entityId_t entityId = Component::getNextId();
 
@@ -159,7 +155,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
     }
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(events));
+  eventHandlerSys().addComponent(pComponent_t(events));
 
   drawExitDoorDigitDisplay();
 
@@ -170,8 +166,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
 // GameLogic::drawExitDoorDigitDisplay
 //===========================================
 void GameLogic::drawExitDoorDigitDisplay() {
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  Texture& tex = renderSystem.rg.textures.at("number");
+  Texture& tex = renderSys().rg.textures.at("number");
 
   QFont font;
   font.setPixelSize(14);

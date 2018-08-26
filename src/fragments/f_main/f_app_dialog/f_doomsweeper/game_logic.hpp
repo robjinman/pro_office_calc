@@ -10,6 +10,7 @@
 #include <list>
 #include <set>
 #include "raycast/component.hpp"
+#include "raycast/system_accessor.hpp"
 #include "event_system.hpp"
 #include "fragments/f_main/f_app_dialog/f_minesweeper/events.hpp"
 
@@ -72,7 +73,7 @@ class FixedSizeList {
     std::list<T> m_list;
 };
 
-class GameLogic {
+class GameLogic : private SystemAccessor {
   public:
     GameLogic(EventSystem& eventSystem, EntityManager& entityManager, RootFactory& rootFactory,
       ObjectFactory& objectFactory, TimeService& timeService);

@@ -14,10 +14,7 @@
 #include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/render_system.hpp"
-#include "raycast/damage_system.hpp"
-#include "raycast/inventory_system.hpp"
 #include "raycast/focus_system.hpp"
-#include "raycast/agent_system.hpp"
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/time_service.hpp"
 #include "state_ids.hpp"
@@ -45,7 +42,8 @@ static std::mt19937 randEngine(randomSeed());
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
   RootFactory& rootFactory, ObjectFactory& objectFactory, TimeService& timeService)
-  : m_initialised(false),
+  : SystemAccessor(entityManager),
+    m_initialised(false),
     m_eventSystem(eventSystem),
     m_entityManager(entityManager),
     m_rootFactory(rootFactory),
@@ -69,9 +67,6 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
 
   m_entityId = Component::getNextId();
 
-  auto& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
   CEventHandler* events = new CEventHandler(m_entityId);
   events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
@@ -88,16 +83,14 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager,
     onCellDoorOpened(e.cellId);
   }});
 
-  eventHandlerSystem.addComponent(pComponent_t(events));
+  eventHandlerSys().addComponent(pComponent_t(events));
 }
 
 //===========================================
 // GameLogic::drawMazeMap
 //===========================================
 void GameLogic::drawMazeMap(const std::set<Coord>& clueCells) {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
-  QImage& img = renderSystem.rg.textures.at("maze_map").image;
+  QImage& img = renderSys().rg.textures.at("maze_map").image;
 
   QPainter painter;
   painter.begin(&img);
@@ -151,15 +144,13 @@ static string commandPartToImageName(const string& cmdPart) {
 // GameLogic::drawCommandScreens
 //===========================================
 void GameLogic::drawCommandScreens(const vector<vector<string>>& commands) const {
-  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
   for (unsigned int i = 0; i < commands.size(); ++i) {
     auto& cmd = commands[i];
 
     stringstream ss;
     ss << "command_" << i;
 
-    QImage& whiteboardImg = GET_VALUE(renderSystem.rg.textures, ss.str()).image;
+    QImage& whiteboardImg = GET_VALUE(renderSys().rg.textures, ss.str()).image;
 
     QPainter painter;
     painter.begin(&whiteboardImg);
@@ -169,7 +160,7 @@ void GameLogic::drawCommandScreens(const vector<vector<string>>& commands) const
     ss.str("");
     ss << i + 1 << "_" << commands.size();
     string numImgName = ss.str();
-    const QImage& numImg = GET_VALUE(renderSystem.rg.textures, ss.str()).image;
+    const QImage& numImg = GET_VALUE(renderSys().rg.textures, ss.str()).image;
 
     painter.drawImage(gap, whiteboardImg.height() * 0.2, numImg);
 
@@ -178,7 +169,7 @@ void GameLogic::drawCommandScreens(const vector<vector<string>>& commands) const
 
     for (unsigned int j = 0; j < cmd.size(); ++j) {
       string imgName = commandPartToImageName(cmd[j]);
-      const QImage& cmdPartImg = GET_VALUE(renderSystem.rg.textures, imgName).image;
+      const QImage& cmdPartImg = GET_VALUE(renderSys().rg.textures, imgName).image;
 
       painter.drawImage(x, y, cmdPartImg);
 
@@ -419,21 +410,18 @@ std::future<void> GameLogic::initialise(const set<Coord>& mineCoords) {
     std::cout << "\n";
 #endif
 
-    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-
     DBG_PRINT("Connecting zones...\n");
-    spatialSystem.connectZones();
+    spatialSys().connectZones();
 
     DBG_PRINT("Connecting regions...\n");
-    renderSystem.connectRegions();
+    renderSys().connectRegions();
 
 #ifdef DEBUG
-    entityId_t playerId = spatialSystem.sg.player->body;
+    entityId_t playerId = spatialSys().sg.player->body;
     entityId_t dbgPointId = Component::getIdFromString("dbg_point");
-    if (spatialSystem.hasComponent(dbgPointId)) {
-      auto& dbgPoint = dynamic_cast<const CVRect&>(spatialSystem.getComponent(dbgPointId));
-      spatialSystem.relocateEntity(playerId, *dbgPoint.zone, dbgPoint.pos);
+    if (spatialSys().hasComponent(dbgPointId)) {
+      auto& dbgPoint = dynamic_cast<const CVRect&>(spatialSys().getComponent(dbgPointId));
+      spatialSys().relocateEntity(playerId, *dbgPoint.zone, dbgPoint.pos);
     }
 #endif
 
@@ -474,8 +462,7 @@ void GameLogic::onDoomWindowClose() {
 void GameLogic::onEntityChangeZone(const GameEvent& e_) {
   const EChangedZone& e = dynamic_cast<const EChangedZone&>(e_);
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Player& player = *spatialSystem.sg.player;
+  Player& player = *spatialSys().sg.player;
 
   if (e.entityId == player.body) {
     if (e.newZone == Component::getIdFromString("level_exit")) {
@@ -505,8 +492,7 @@ void GameLogic::sealDoor(entityId_t doorId) {
 
   behaviour.isPlayerActivated = false;
 
-  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-  focusSystem.removeEntity(doorId);
+  focusSys().removeEntity(doorId);
 }
 
 //===========================================

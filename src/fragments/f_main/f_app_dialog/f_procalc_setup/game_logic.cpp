@@ -7,7 +7,6 @@
 #include "raycast/event_handler_system.hpp"
 #include "raycast/c_switch_behaviour.hpp"
 #include "raycast/c_elevator_behaviour.hpp"
-#include "raycast/spatial_system.hpp"
 #include "raycast/render_system.hpp"
 #include "event_system.hpp"
 #include "state_ids.hpp"
@@ -30,7 +29,8 @@ static std::mt19937 randEngine(randomSeed());
 // GameLogic::GameLogic
 //===========================================
 GameLogic::GameLogic(QDialog& dialog, EventSystem& eventSystem, EntityManager& entityManager)
-  : m_dialog(dialog),
+  : SystemAccessor(entityManager),
+    m_dialog(dialog),
     m_eventSystem(eventSystem),
     m_entityManager(entityManager),
     m_entityId(Component::getNextId()),
@@ -38,15 +38,12 @@ GameLogic::GameLogic(QDialog& dialog, EventSystem& eventSystem, EntityManager& e
 
   DBG_PRINT("GameLogic::GameLogic\n");
 
-  EventHandlerSystem& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
   pCEventHandler_t forwardEvent(new CEventHandler(m_entityId));
 
   forwardEvent->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
 
-  eventHandlerSystem.addComponent(std::move(forwardEvent));
+  eventHandlerSys().addComponent(std::move(forwardEvent));
 
   m_hButtonPress = m_eventSystem.listen("makingProgress/buttonPress", [this](const Event& event) {
     onButtonPress(event);
@@ -70,8 +67,7 @@ void GameLogic::generateTargetNumber() {
   std::uniform_int_distribution<int> randInt(100000, 999999);
   m_targetNumber = randInt(randEngine) / 100.0;
 
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  Texture& tex = renderSystem.rg.textures.at("number");
+  Texture& tex = renderSys().rg.textures.at("number");
 
   std::stringstream ss;
   ss << m_targetNumber;
@@ -87,7 +83,7 @@ void GameLogic::generateTargetNumber() {
   tex.image.fill(QColor(20, 20, 50));
   painter.drawText(8, 16, strNumber.c_str());
 
-  Texture& remainingTex = renderSystem.rg.textures.at("keypresses_remaining");
+  Texture& remainingTex = renderSys().rg.textures.at("keypresses_remaining");
   remainingTex.image.fill(QColor(20, 20, 50));
 }
 
@@ -117,8 +113,7 @@ void GameLogic::onButtonPress(const Event& event) {
 
   ++m_numKeysPressed;
 
-  RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-  Texture& tex = renderSystem.rg.textures.at("keypresses_remaining");
+  Texture& tex = renderSys().rg.textures.at("keypresses_remaining");
 
   tex.image.fill(QColor(20, 20, 50));
 
@@ -169,8 +164,7 @@ void GameLogic::customEvent(QEvent* event) {
 void GameLogic::onEntityChangeZone(const GameEvent& event) {
   const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
 
-  entityId_t player =
-    m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL).sg.player->body;
+  entityId_t player = spatialSys().sg.player->body;
 
   if (e.entityId != player) {
     return;

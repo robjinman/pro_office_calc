@@ -3,6 +3,7 @@
 #include "raycast/animation_system.hpp"
 #include "raycast/render_system.hpp"
 #include "raycast/focus_system.hpp"
+#include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
 #include "raycast/root_factory.hpp"
@@ -24,7 +25,8 @@ namespace going_in_circles {
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
   TimeService& timeService, AudioService& audioService)
-  : m_rootFactory(rootFactory),
+  : SystemAccessor(entityManager),
+    m_rootFactory(rootFactory),
     m_entityManager(entityManager),
     m_timeService(timeService),
     m_audioService(audioService) {}
@@ -52,15 +54,7 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
   obj.dict["texture"] = "jeff";
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-    auto& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
-    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-
-    CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
+    CSprite& sprite = dynamic_cast<CSprite&>(renderSys().getComponent(entityId));
 
     double H = 2.0;
     double W = 8.0;
@@ -79,11 +73,11 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
     sprite.texViews = texViews;
 
     CDamage* damage = new CDamage(entityId, 2, 2);
-    damageSystem.addComponent(pComponent_t(damage));
+    damageSys().addComponent(pComponent_t(damage));
 
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = name.replace(0, 1, 1, asciiToUpper(name[0]));
-    focusSystem.addComponent(pComponent_t(focus));
+    focusSys().addComponent(pComponent_t(focus));
 
     CAnimation* anim = new CAnimation(entityId);
 
@@ -95,15 +89,15 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
     }};
     anim->addAnimation(pAnimation_t(new Animation("death", m_timeService.frameRate, 0.5, frames)));
 
-    animationSystem.addComponent(pComponent_t(anim));
+    animationSys().addComponent(pComponent_t(anim));
 
     CEventHandler* events = new CEventHandler(entityId);
 
     bool inCircles = false;
     events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-      [=, &focusSystem, &damageSystem](const GameEvent&) mutable {
+      [=](const GameEvent&) mutable {
 
-      if (damageSystem.getHealth(entityId) != 0) {
+      if (damageSys().getHealth(entityId) != 0) {
         if (inCircles) {
           focus->captionText = "\"Do you ever feel you're going in circles?\"";
         }
@@ -117,39 +111,39 @@ bool ObjectFactory::constructJeff(entityId_t entityId, parser::Object& obj, enti
         focus->captionText = "\"The snacks here are pretty good\"";
       }
 
-      focusSystem.showCaption(entityId);
+      focusSys().showCaption(entityId);
     }});
     events->targetedEventHandlers.push_back(EventHandler{"entity_damaged",
-      [=, &animationSystem, &spatialSystem](const GameEvent&) {
+      [=](const GameEvent&) {
 
-      CVRect& body = dynamic_cast<CVRect&>(spatialSystem.getComponent(entityId));
+      CVRect& body = dynamic_cast<CVRect&>(spatialSys().getComponent(entityId));
 
       DBG_PRINT("Jeff health: " << damage->health << "\n");
-      //animationSystem.playAnimation(entityId, "hurt", false);
+      //animationSys().playAnimation(entityId, "hurt", false);
 
       if (damage->health == 0) {
         m_audioService.playSoundAtPos("civilian_death", body.pos);
-        animationSystem.playAnimation(entityId, "death", false);
+        animationSys().playAnimation(entityId, "death", false);
       }
       else {
         m_audioService.playSoundAtPos("civilian_hurt", body.pos);
       }
     }});
     events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
-      [=, &spatialSystem, &sprite](const GameEvent& e_) {
+      [=, &sprite](const GameEvent& e_) {
 
       auto& e = dynamic_cast<const EAnimationFinished&>(e_);
       if (e.animName == "death") {
         entityId_t spawnPointId = Component::getIdFromString("jeff_spawn_point");
-        CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
+        CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSys().getComponent(spawnPointId));
 
-        spatialSystem.relocateEntity(entityId, *spawnPoint.zone, spawnPoint.pos);
+        spatialSys().relocateEntity(entityId, *spawnPoint.zone, spawnPoint.pos);
 
         sprite.texViews = texViews;
       }
     }});
 
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
 
     return true;
   }
@@ -172,12 +166,7 @@ bool ObjectFactory::constructDonald(entityId_t entityId, parser::Object& obj, en
   obj.dict["texture"] = "donald";
 
   if (m_rootFactory.constructObject("sprite", entityId, obj, parentId, parentTransform)) {
-    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
-    auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-    auto& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
-    CSprite& sprite = dynamic_cast<CSprite&>(renderSystem.getComponent(entityId));
+    CSprite& sprite = dynamic_cast<CSprite&>(renderSys().getComponent(entityId));
 
     double W = 8.0;
     double dW = 1.0 / W;
@@ -196,17 +185,17 @@ bool ObjectFactory::constructDonald(entityId_t entityId, parser::Object& obj, en
     CFocus* focus = new CFocus(entityId);
     focus->hoverText = "Donald";
     focus->captionText = "\"Have you seen my product? It's a great product\"";
-    focusSystem.addComponent(pComponent_t(focus));
+    focusSys().addComponent(pComponent_t(focus));
 
     CEventHandler* events = new CEventHandler(entityId);
 
     events->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-      [=, &focusSystem](const GameEvent&) {
+      [=](const GameEvent&) {
 
-      focusSystem.showCaption(entityId);
+      focusSys().showCaption(entityId);
     }});
 
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
 
     return true;
   }

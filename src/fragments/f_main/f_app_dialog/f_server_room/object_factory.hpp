@@ -3,6 +3,7 @@
 
 
 #include "raycast/game_object_factory.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EntityManager;
@@ -17,7 +18,7 @@ namespace parser { struct Object; }
 namespace youve_got_mail {
 
 
-class ObjectFactory : public GameObjectFactory {
+class ObjectFactory : public GameObjectFactory, private SystemAccessor {
   public:
     ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager, TimeService& timeService,
       AudioService& audioService, CalculatorWidget& wgtCalculator);

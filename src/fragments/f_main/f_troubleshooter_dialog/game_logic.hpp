@@ -3,6 +3,7 @@
 
 
 #include "raycast/component.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EventSystem;
@@ -12,7 +13,7 @@ class GameEvent;
 namespace its_raining_tetrominos {
 
 
-class GameLogic {
+class GameLogic : private SystemAccessor {
   public:
     GameLogic(EventSystem& eventSystem, EntityManager& entityManager);
 

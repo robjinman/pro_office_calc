@@ -2,11 +2,9 @@
 #include "fragments/f_main/f_app_dialog/f_doomsweeper/game_events.hpp"
 #include "raycast/map_parser.hpp"
 #include "raycast/animation_system.hpp"
-#include "raycast/behaviour_system.hpp"
-#include "raycast/render_system.hpp"
-#include "raycast/focus_system.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/damage_system.hpp"
+#include "raycast/spatial_system.hpp"
 #include "raycast/c_door_behaviour.hpp"
 #include "raycast/root_factory.hpp"
 #include "raycast/entity_manager.hpp"
@@ -27,7 +25,8 @@ namespace doomsweeper {
 //===========================================
 ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager,
   TimeService& timeService)
-  : m_rootFactory(rootFactory),
+  : SystemAccessor(entityManager),
+    m_rootFactory(rootFactory),
     m_entityManager(entityManager),
     m_timeService(timeService) {}
 
@@ -79,8 +78,7 @@ bool ObjectFactory::constructCellCorner(entityId_t entityId, parser::Object& obj
   }
 
   if (m_rootFactory.constructObject("v_rect", entityId, obj, parentId, parentTransform)) {
-    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    const CVRect& vRect = dynamic_cast<const CVRect&>(spatialSystem.getComponent(entityId));
+    const CVRect& vRect = dynamic_cast<const CVRect&>(spatialSys().getComponent(entityId));
 
     string cellName = getValue(obj.dict, "cell_name");
     entityId_t cellId = Component::getIdFromString(cellName);
@@ -111,16 +109,13 @@ bool ObjectFactory::constructCellInner(entityId_t entityId, parser::Object& obj,
   }
 
   if (m_rootFactory.constructObject(type, entityId, obj, parentId, parentTransform)) {
-    auto& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
     CEventHandler* events = nullptr;
-    if (eventHandlerSystem.hasComponent(entityId)) {
-      events = &eventHandlerSystem.getComponent(entityId);
+    if (eventHandlerSys().hasComponent(entityId)) {
+      events = &eventHandlerSys().getComponent(entityId);
     }
     else {
       events = new CEventHandler(entityId);
-      eventHandlerSystem.addComponent(pComponent_t(events));
+      eventHandlerSys().addComponent(pComponent_t(events));
     }
 
     events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
@@ -152,9 +147,6 @@ bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, 
   obj.dict["denied_caption"] = "The door is locked";
 
   if (m_rootFactory.constructObject("door", entityId, obj, parentId, parentTransform)) {
-    auto& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-
     auto& behaviour =
       m_entityManager.getComponent<CDoorBehaviour>(entityId, ComponentKind::C_BEHAVIOUR);
 
@@ -185,7 +177,7 @@ bool ObjectFactory::constructCellDoor(entityId_t entityId, parser::Object& obj, 
       m_entityManager.broadcastEvent(ECellDoorOpened{cellId});
     }});
 
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
 
     return true;
   }
@@ -231,38 +223,33 @@ bool ObjectFactory::constructSlime(entityId_t entityId, parser::Object& obj, ent
   obj.dict["floor_texture"] = "slime";
 
   if (m_rootFactory.constructObject("region", entityId, obj, parentId, parentTransform)) {
-    auto& eventHandlerSystem =
-      m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
-    auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-    const Player& player = *spatialSystem.sg.player;
-    auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
-    auto& animationSystem = m_entityManager.system<AnimationSystem>(ComponentKind::C_ANIMATION);
+    const Player& player = *spatialSys().sg.player;
 
     CAnimation* anim = new CAnimation(entityId);
     vector<AnimationFrame> frames = constructFrames(1, 3, { 0, 1, 2 });
     anim->addAnimation(pAnimation_t(new Animation("gurgle", m_timeService.frameRate, 1.0, frames)));
 
-    animationSystem.addComponent(pComponent_t(anim));
+    animationSys().addComponent(pComponent_t(anim));
 
-    animationSystem.playAnimation(entityId, "gurgle", true);
+    animationSys().playAnimation(entityId, "gurgle", true);
 
     CEventHandler* events = new CEventHandler(entityId);
     events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
-      [=, &damageSystem, &player](const GameEvent& e_) mutable {
+      [=, &player](const GameEvent& e_) mutable {
 
       auto& e = dynamic_cast<const EChangedZone&>(e_);
 
       if (e.newZone == entityId) {
-        m_timeService.atIntervals([=, &player, &damageSystem]() {
+        m_timeService.atIntervals([=, &player]() {
           if (player.region() == e.newZone && !player.aboveGround()) {
-            damageSystem.damageEntity(player.body, 1);
+            damageSys().damageEntity(player.body, 1);
           }
           return player.region() == entityId;
         }, 0.5);
       }
     }});
 
-    eventHandlerSystem.addComponent(pComponent_t(events));
+    eventHandlerSys().addComponent(pComponent_t(events));
 
     return true;
   }

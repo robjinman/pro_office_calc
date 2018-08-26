@@ -8,6 +8,7 @@
 #include "button_grid.hpp"
 #include "event_system.hpp"
 #include "raycast/component.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class Event;
@@ -17,7 +18,7 @@ class GameEvent;
 namespace making_progress {
 
 
-class GameLogic : public QObject {
+class GameLogic : public QObject, private SystemAccessor {
   Q_OBJECT
 
   public:

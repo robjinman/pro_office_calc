@@ -19,12 +19,10 @@ namespace its_raining_tetrominos {
 // GameLogic::GameLogic
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
-  : m_eventSystem(eventSystem),
+  : SystemAccessor(entityManager),
+    m_eventSystem(eventSystem),
     m_entityManager(entityManager),
     m_entityId(Component::getNextId()) {
-
-  EventHandlerSystem& eventHandlerSystem =
-    m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   CEventHandler* events = new CEventHandler(m_entityId);
 
@@ -33,7 +31,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, EntityManager& entityManager)
   events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     std::bind(&GameLogic::onChangeZone, this, std::placeholders::_1)});
 
-  eventHandlerSystem.addComponent(pComponent_t(events));
+  eventHandlerSys().addComponent(pComponent_t(events));
 }
 
 //===========================================

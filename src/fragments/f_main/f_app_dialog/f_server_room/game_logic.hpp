@@ -4,6 +4,7 @@
 
 #include <string>
 #include "event_system.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class Event;
@@ -12,7 +13,7 @@ class EntityManager;
 namespace youve_got_mail {
 
 
-class GameLogic {
+class GameLogic : private SystemAccessor {
   public:
     GameLogic(EventSystem& eventSystem, EntityManager& entityManager);
     GameLogic(const GameLogic& cpy) = delete;

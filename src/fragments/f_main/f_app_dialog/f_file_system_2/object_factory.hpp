@@ -3,6 +3,7 @@
 
 
 #include "raycast/game_object_factory.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EntityManager;
@@ -15,7 +16,7 @@ namespace parser { struct Object; }
 namespace t_minus_two_minutes {
 
 
-class ObjectFactory : public GameObjectFactory {
+class ObjectFactory : public GameObjectFactory, private SystemAccessor {
   public:
     ObjectFactory(RootFactory& rootFactory, EntityManager& entityManager, TimeService& timeService);
 

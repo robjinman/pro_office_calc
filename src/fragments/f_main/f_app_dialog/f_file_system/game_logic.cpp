@@ -2,9 +2,9 @@
 #include "raycast/entity_manager.hpp"
 #include "raycast/spatial_system.hpp"
 #include "raycast/event_handler_system.hpp"
-#include "raycast/render_system.hpp"
 #include "raycast/damage_system.hpp"
 #include "raycast/inventory_system.hpp"
+#include "raycast/behaviour_system.hpp"
 #include "raycast/focus_system.hpp"
 #include "raycast/agent_system.hpp"
 #include "raycast/c_switch_behaviour.hpp"
@@ -30,7 +30,8 @@ static const double TIME_LIMIT = 5.2;
 //===========================================
 GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeService& timeService,
   EntityManager& entityManager)
-  : m_eventSystem(eventSystem),
+  : SystemAccessor(entityManager),
+    m_eventSystem(eventSystem),
     m_audioService(audioService),
     m_timeService(timeService),
     m_entityManager(entityManager) {
@@ -39,65 +40,56 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
 
   m_entityId = Component::getNextId();
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-
-  Player& player = *spatialSystem.sg.player;
+  Player& player = *spatialSys().sg.player;
   player.invincible = true;
-
-  EventHandlerSystem& eventHandlerSystem
-    = m_entityManager.system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
 
   CEventHandler* events = new CEventHandler(m_entityId);
   events->broadcastedEventHandlers.push_back(EventHandler{"entity_destroyed",
     std::bind(&GameLogic::onEntityDestroyed, this, std::placeholders::_1)});
   events->broadcastedEventHandlers.push_back(EventHandler{"entity_changed_zone",
     std::bind(&GameLogic::onEntityChangeZone, this, std::placeholders::_1)});
-  eventHandlerSystem.addComponent(pComponent_t(events));
+  eventHandlerSys().addComponent(pComponent_t(events));
   events->broadcastedEventHandlers.push_back(EventHandler{"switch_activated",
     std::bind(&GameLogic::onSwitchActivated, this, std::placeholders::_1)});
 
-  setupLarry(eventHandlerSystem);
+  setupLarry();
   resetSwitches();
 }
 
 //===========================================
 // GameLogic::setupLarry
 //===========================================
-void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
-  auto& focusSystem = m_entityManager.system<FocusSystem>(ComponentKind::C_FOCUS);
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  auto& agentSystem = m_entityManager.system<AgentSystem>(ComponentKind::C_AGENT);
-
+void GameLogic::setupLarry() {
   entityId_t larryId = Component::getIdFromString("larry");
-  CFocus& focus = dynamic_cast<CFocus&>(focusSystem.getComponent(larryId));
+  CFocus& focus = dynamic_cast<CFocus&>(focusSys().getComponent(larryId));
 
   focus.captionText = "\"Life is pleasant here\"";
 
-  auto& larryEvents = dynamic_cast<CEventHandler&>(eventHandlerSystem.getComponent(larryId));
+  auto& larryEvents = dynamic_cast<CEventHandler&>(eventHandlerSys().getComponent(larryId));
   larryEvents.targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-    [=, &focusSystem](const GameEvent&) {
+    [=](const GameEvent&) {
 
-    focusSystem.showCaption(larryId);
+    focusSys().showCaption(larryId);
   }});
 
   entityId_t switchId = Component::getIdFromString("exit_switch");
   CEventHandler* switchEvents = nullptr;
 
-  if (eventHandlerSystem.hasComponent(switchId)) {
-    switchEvents = &dynamic_cast<CEventHandler&>(eventHandlerSystem.getComponent(switchId));
+  if (eventHandlerSys().hasComponent(switchId)) {
+    switchEvents = &dynamic_cast<CEventHandler&>(eventHandlerSys().getComponent(switchId));
   }
   else {
     switchEvents = new CEventHandler(switchId);
-    eventHandlerSystem.addComponent(pComponent_t(switchEvents));
+    eventHandlerSys().addComponent(pComponent_t(switchEvents));
   }
 
   switchEvents->targetedEventHandlers.push_back(EventHandler{"player_activate_entity",
-    [=, &spatialSystem, &agentSystem](const GameEvent&) {
+    [=](const GameEvent&) {
 
     entityId_t navPointId = Component::getIdFromString("exit_nav_point");
-    auto& vRect = dynamic_cast<CVRect&>(spatialSystem.getComponent(navPointId));
+    auto& vRect = dynamic_cast<CVRect&>(spatialSys().getComponent(navPointId));
 
-    agentSystem.navigateTo(larryId, vRect.pos);
+    agentSys().navigateTo(larryId, vRect.pos);
   }});
 }
 
@@ -105,8 +97,7 @@ void GameLogic::setupLarry(EventHandlerSystem& eventHandlerSystem) {
 // GameLogic::getSwitch
 //===========================================
 CSwitchBehaviour& GameLogic::getSwitch(entityId_t id) const {
-  auto& behaviourSystem = m_entityManager.system<BehaviourSystem>(ComponentKind::C_BEHAVIOUR);
-  return dynamic_cast<CSwitchBehaviour&>(behaviourSystem.getComponent(id));
+  return dynamic_cast<CSwitchBehaviour&>(behaviourSys().getComponent(id));
 }
 
 //===========================================
@@ -175,22 +166,18 @@ void GameLogic::onSwitchActivated(const GameEvent& e_) {
 void GameLogic::onEntityDestroyed(const GameEvent& event) {
   auto& e = dynamic_cast<const EEntityDestroyed&>(event);
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Player& player = *spatialSystem.sg.player;
+  Player& player = *spatialSys().sg.player;
 
   if (e.entityId == player.body) {
-    auto& inventorySystem = m_entityManager.system<InventorySystem>(ComponentKind::C_INVENTORY);
-    auto& damageSystem = m_entityManager.system<DamageSystem>(ComponentKind::C_DAMAGE);
+    damageSys().damageEntity(player.body, -10);
 
-    damageSystem.damageEntity(player.body, -10);
-
-    int ammo = inventorySystem.getBucketValue(player.body, "ammo");
-    inventorySystem.subtractFromBucket(player.body, "ammo", ammo);
+    int ammo = inventorySys().getBucketValue(player.body, "ammo");
+    inventorySys().subtractFromBucket(player.body, "ammo", ammo);
 
     entityId_t spawnPointId = Component::getIdFromString("spawn_point");
-    CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSystem.getComponent(spawnPointId));
+    CVRect& spawnPoint = dynamic_cast<CVRect&>(spatialSys().getComponent(spawnPointId));
 
-    spatialSystem.relocateEntity(player.body, *spawnPoint.zone, spawnPoint.pos);
+    spatialSys().relocateEntity(player.body, *spawnPoint.zone, spawnPoint.pos);
     player.setFeetHeight(0);
 
     m_audioService.playMusic("birds", true);
@@ -203,8 +190,7 @@ void GameLogic::onEntityDestroyed(const GameEvent& event) {
 void GameLogic::onEntityChangeZone(const GameEvent& event) {
   const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
 
-  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
-  Player& player = *spatialSystem.sg.player;
+  Player& player = *spatialSys().sg.player;
 
   if (e.entityId == player.body) {
     if (e.newZone == Component::getIdFromString("level_exit")) {
