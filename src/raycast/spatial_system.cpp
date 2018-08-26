@@ -1468,13 +1468,16 @@ bool SpatialSystem::removeChildFromComponent(CSpatial& parent, const CSpatial& c
   GET_VALUE(m_entityChildren, parent.entityId()).erase(const_cast<CSpatial*>(&child));
 
   switch (parent.kind) {
-    case CSpatialKind::ZONE:
+    case CSpatialKind::ZONE: {
       return removeFromZone(DYNAMIC_CAST<CZone&>(parent), child, keepAlive);
-    case CSpatialKind::HARD_EDGE:
+    }
+    case CSpatialKind::HARD_EDGE: {
       return removeFromHardEdge(DYNAMIC_CAST<CHardEdge&>(parent), child, keepAlive);
-    default:
+    }
+    default: {
       EXCEPTION("Cannot remove component of kind " << child.kind << " from component of kind "
         << parent.kind);
+    }
   };
 }
 

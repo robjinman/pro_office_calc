@@ -50,7 +50,6 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
       return st_t_minus_two_minutes::makeFMainSpec(appConfig);
     case ST_BACK_TO_NORMAL:
       return st_back_to_normal::makeFMainSpec(appConfig);
-
     case ST_TEST:
       return st_test::makeFMainSpec(appConfig);
     default:

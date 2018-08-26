@@ -8,7 +8,6 @@
 #include "f_main_spec_factory.hpp"
 #include "event_system.hpp"
 #include "update_loop.hpp"
-#include "platform.hpp"
 #include "utils.hpp"
 #include "fragments/f_main/f_main.hpp"
 #include "fragments/f_main/f_main_spec.hpp"

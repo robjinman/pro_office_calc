@@ -66,8 +66,6 @@ inline const typename T::mapped_type& getValueFromMap(const T& map, const typena
 //===========================================
 
 
-#include "platform.hpp"
-
 #define PI 3.141592653589793
 #define DEG_TO_RAD(x) (x * PI / 180.0)
 #define RAD_TO_DEG(x) (x * 180.0 / PI)
