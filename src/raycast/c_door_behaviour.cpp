@@ -67,9 +67,10 @@ void CDoorBehaviour::update() {
   double dy = this->speed / m_timeService.frameRate;
 
   switch (m_state) {
-    case ST_CLOSED:
+    case ST_CLOSED: {
       return;
-    case ST_OPEN:
+    }
+    case ST_OPEN: {
       if (closeAutomatically && m_timer.ready()) {
         m_state = ST_CLOSING;
         playSound();
@@ -78,7 +79,8 @@ void CDoorBehaviour::update() {
         m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
       }
       return;
-    case ST_OPENING:
+    }
+    case ST_OPENING: {
       zone.ceilingHeight += dy;
 
       if (zone.ceilingHeight + dy >= m_y1) {
@@ -93,7 +95,8 @@ void CDoorBehaviour::update() {
       }
 
       break;
-    case ST_CLOSING:
+    }
+    case ST_CLOSING: {
       zone.ceilingHeight -= dy;
 
       if (player.region() == entityId()) {
@@ -111,6 +114,7 @@ void CDoorBehaviour::update() {
       }
 
       break;
+    }
   }
 }
 
@@ -150,28 +154,32 @@ void CDoorBehaviour::handleTargetedEvent(const GameEvent& e) {
 
   if (EVENT_NAMES.count(e.name)) {
     switch (m_state) {
-      case ST_CLOSED:
+      case ST_CLOSED: {
         m_state = ST_OPENING;
         playSound();
         m_entityManager.fireEvent(EDoorOpenStart{entityId()}, { entityId() });
         m_entityManager.broadcastEvent(EDoorOpenStart{entityId()});
         break;
-      case ST_OPEN:
+      }
+      case ST_OPEN: {
         m_state = ST_CLOSING;
         playSound();
         m_entityManager.fireEvent(EDoorCloseStart{entityId()}, { entityId() });
         m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
         break;
-      case ST_OPENING:
+      }
+      case ST_OPENING: {
         m_state = ST_CLOSING;
         m_entityManager.fireEvent(EDoorCloseStart{entityId()}, { entityId() });
         m_entityManager.broadcastEvent(EDoorCloseStart{entityId()});
         break;
-      case ST_CLOSING:
+      }
+      case ST_CLOSING: {
         m_state = ST_OPENING;
         m_entityManager.fireEvent(EDoorOpenStart{entityId()}, { entityId() });
         m_entityManager.broadcastEvent(EDoorOpenStart{entityId()});
         break;
+      }
     }
   }
 }

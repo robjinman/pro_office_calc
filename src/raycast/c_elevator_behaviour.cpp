@@ -75,8 +75,9 @@ void CElevatorBehaviour::update() {
   double y = zone.floorHeight;
 
   switch (m_state) {
-    case ST_STOPPED:
+    case ST_STOPPED: {
       return;
+    }
     case ST_MOVING: {
       double targetY = m_levels[m_target];
       double dir = targetY > y ? 1.0 : -1.0;

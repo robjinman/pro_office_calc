@@ -112,7 +112,7 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
       Tetromino t{kind, (i + 0.5) * tetroSz, winH - j * tetroSz, 0, dy, da, {{}}, QColor{}};
 
       switch (kind) {
-        case Tetromino::I:
+        case Tetromino::I: {
           t.colour = QColor(230, 50, 50);
           makeTetromino({{
             {{0, 1, 0, 0}},
@@ -121,7 +121,8 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 1, 0, 0}}
           }}, t.blocks);
           break;
-        case Tetromino::J:
+        }
+        case Tetromino::J: {
           t.colour = QColor(250, 40, 200);
           makeTetromino({{
             {{0, 0, 0, 0}},
@@ -130,7 +131,8 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 1, 1, 0}}
           }}, t.blocks);
           break;
-        case Tetromino::L:
+        }
+        case Tetromino::L: {
           t.colour = QColor(250, 250, 0);
           makeTetromino({{
             {{0, 0, 0, 0}},
@@ -139,7 +141,8 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 1, 1, 0}}
           }}, t.blocks);
           break;
-        case Tetromino::O:
+        }
+        case Tetromino::O: {
           t.colour = QColor(100, 220, 250);
           makeTetromino({{
             {{0, 0, 0, 0}},
@@ -148,7 +151,8 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
-        case Tetromino::S:
+        }
+        case Tetromino::S: {
           t.colour = QColor(20, 20, 200);
           makeTetromino({{
             {{0, 0, 0, 0}},
@@ -157,7 +161,8 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
-        case Tetromino::T:
+        }
+        case Tetromino::T: {
           t.colour = QColor(160, 160, 160);
           makeTetromino({{
             {{0, 0, 0, 0}},
@@ -166,7 +171,8 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
-        case Tetromino::Z:
+        }
+        case Tetromino::Z: {
           t.colour = QColor(50, 250, 50);
           makeTetromino({{
             {{0, 0, 0, 0}},
@@ -175,6 +181,7 @@ void FTetrominos::constructTetrominos(double speedMultiplier, double percentageF
             {{0, 0, 0, 0}}
           }}, t.blocks);
           break;
+        }
       }
 
       m_tetrominos.push_back(t);

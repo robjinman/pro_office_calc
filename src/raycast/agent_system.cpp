@@ -47,16 +47,19 @@ static int indexOfClosestPoint(const Point& point, const vector<Point>& points) 
 //===========================================
 void CAgent::setAnimation() {
   switch (m_state) {
-    case ST_STATIONARY:
+    case ST_STATIONARY: {
       animationSys().playAnimation(entityId(), "idle", true);
       break;
-    case ST_SHOOTING:
+    }
+    case ST_SHOOTING: {
       animationSys().playAnimation(entityId(), "shoot", false);
       break;
+    }
     case ST_CHASING_OBJECT:
-    case ST_ON_FIXED_PATH:
+    case ST_ON_FIXED_PATH: {
       animationSys().playAnimation(entityId(), "run", true);
       break;
+    }
   }
 }
 
@@ -251,20 +254,24 @@ void CAgent::update(TimeService& timeService, AudioService& audioService) {
   const Player& player = *spatialSys().sg.player;
 
   switch (m_state) {
-    case ST_STATIONARY:
+    case ST_STATIONARY: {
       break;
-    case ST_CHASING_OBJECT:
+    }
+    case ST_CHASING_OBJECT: {
       if (player.alive) {
         assert(m_targetObject != -1);
         m_path = spatialSys().shortestPath(entityId(), m_targetObject, 10);
         m_pathClosed = false;
       }
-    case ST_ON_FIXED_PATH:
+    }
+    case ST_ON_FIXED_PATH: {
       assert(m_path.size() > 0);
       followPath(timeService);
       break;
-    case ST_SHOOTING:
+    }
+    case ST_SHOOTING: {
       break;
+    }
   }
 
   if (isHostile && player.alive) {

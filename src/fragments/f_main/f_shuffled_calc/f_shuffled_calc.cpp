@@ -179,32 +179,38 @@ void FShuffledCalc::onButtonClick(int id) {
     QString symbol = btn->text();
 
     switch (id) {
-      case BTN_PLUS:
+      case BTN_PLUS: {
         m_calculator.plus();
         m_wgtOpDisplay->setText(symbol);
         break;
-      case BTN_MINUS:
+      }
+      case BTN_MINUS: {
         m_calculator.minus();
         m_wgtOpDisplay->setText(symbol);
         break;
-      case BTN_TIMES:
+      }
+      case BTN_TIMES: {
         m_calculator.times();
         m_wgtOpDisplay->setText(symbol);
         break;
-      case BTN_DIVIDE:
+      }
+      case BTN_DIVIDE: {
         m_calculator.divide();
         m_wgtOpDisplay->setText(symbol);
         break;
-      case BTN_POINT:
+      }
+      case BTN_POINT: {
         m_calculator.point();
         break;
+      }
       case BTN_EQUALS: {
         m_calculator.equals();
         break;
       }
-      case BTN_CLEAR:
+      case BTN_CLEAR: {
         m_calculator.clear();
         break;
+      }
     }
   }
 

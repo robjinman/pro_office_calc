@@ -150,33 +150,39 @@ inline double Matrix::minor(int row, int col) const {
   int r1, r2, c1, c2;
 
   switch (row) {
-    case 0:
+    case 0: {
       r1 = 1;
       r2 = 2;
       break;
-    case 1:
+    }
+    case 1: {
       r1 = 0;
       r2 = 2;
       break;
-    case 2:
+    }
+    case 2: {
       r1 = 0;
       r2 = 1;
       break;
+    }
   }
 
   switch (col) {
-    case 0:
+    case 0: {
       c1 = 1;
       c2 = 2;
       break;
-    case 1:
+    }
+    case 1: {
       c1 = 0;
       c2 = 2;
       break;
-    case 2:
+    }
+    case 2: {
       c1 = 0;
       c2 = 1;
       break;
+    }
   }
 
   return data[r1][c1] * data[r2][c2] - data[r2][c1] * data[r1][c2];

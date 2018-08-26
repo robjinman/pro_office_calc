@@ -55,32 +55,38 @@ void CalculatorWidget::onButtonClick(int id) {
     QString symbol = btn->text();
 
     switch (id) {
-      case BTN_PLUS:
+      case BTN_PLUS: {
         calculator.plus();
         wgtOpDisplay->setText(symbol);
         break;
-      case BTN_MINUS:
+      }
+      case BTN_MINUS: {
         calculator.minus();
         wgtOpDisplay->setText(symbol);
         break;
-      case BTN_TIMES:
+      }
+      case BTN_TIMES: {
         calculator.times();
         wgtOpDisplay->setText(symbol);
         break;
-      case BTN_DIVIDE:
+      }
+      case BTN_DIVIDE: {
         calculator.divide();
         wgtOpDisplay->setText(symbol);
         break;
-      case BTN_POINT:
+      }
+      case BTN_POINT: {
         calculator.point();
         break;
+      }
       case BTN_EQUALS: {
         calculator.equals();
         break;
       }
-      case BTN_CLEAR:
+      case BTN_CLEAR: {
         calculator.clear();
         break;
+      }
     }
   }
 

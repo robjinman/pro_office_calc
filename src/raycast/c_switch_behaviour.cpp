@@ -58,12 +58,14 @@ void CSwitchBehaviour::setDecal() {
   QRectF texRect;
 
   switch (m_state) {
-    case SwitchState::OFF:
+    case SwitchState::OFF: {
       texRect = QRectF(0, 0, 0.5, 1);
       break;
-    case SwitchState::ON:
+    }
+    case SwitchState::ON: {
       texRect = QRectF(0.5, 0, 0.5, 1);
       break;
+    }
   }
 
   CWallDecal* decal = getDecal();
@@ -101,12 +103,14 @@ void CSwitchBehaviour::handleTargetedEvent(const GameEvent& e_) {
         }
 
         switch (m_state) {
-          case SwitchState::OFF:
+          case SwitchState::OFF: {
             m_state = SwitchState::ON;
             break;
-          case SwitchState::ON:
+          }
+          case SwitchState::ON: {
             m_state = SwitchState::OFF;
             break;
+          }
         }
 
         setDecal();

@@ -971,15 +971,18 @@ void Renderer::drawOverlays() const {
     const COverlay& overlay = **it;
 
     switch (overlay.kind) {
-      case COverlayKind::IMAGE:
+      case COverlayKind::IMAGE: {
         drawImageOverlay(painter, DYNAMIC_CAST<const CImageOverlay&>(overlay));
         break;
-      case COverlayKind::TEXT:
+      }
+      case COverlayKind::TEXT: {
         drawTextOverlay(painter, DYNAMIC_CAST<const CTextOverlay&>(overlay));
         break;
-      case COverlayKind::COLOUR:
+      }
+      case COverlayKind::COLOUR: {
         drawColourOverlay(painter, DYNAMIC_CAST<const CColourOverlay&>(overlay));
         break;
+      }
     }
   }
 

@@ -123,18 +123,20 @@ void ConsoleWidget::keyPressEvent(QKeyEvent* event) {
   resetCursorPos();
 
   switch (event->key()) {
-    case Qt::Key_Return:
+    case Qt::Key_Return: {
       applyCommand();
       m_historyIdx = -1;
       break;
-    case Qt::Key_Up:
+    }
+    case Qt::Key_Up: {
       if (m_historyIdx < static_cast<int>(m_commandHistory.size()) - 1) {
         m_buffer.clear();
         m_buffer.insertPlainText(m_commandHistory[++m_historyIdx].c_str());
         syncCommandText();
       }
       break;
-    case Qt::Key_Down:
+    }
+    case Qt::Key_Down: {
       if (m_historyIdx > 0) {
         m_buffer.clear();
         m_buffer.insertPlainText(m_commandHistory[--m_historyIdx].c_str());
@@ -145,6 +147,7 @@ void ConsoleWidget::keyPressEvent(QKeyEvent* event) {
       }
       syncCommandText();
       break;
+    }
     default: {
       m_buffer.keyPressEvent(event);
       m_historyIdx = -1;
