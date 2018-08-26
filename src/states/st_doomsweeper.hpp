@@ -37,7 +37,7 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
   mainSpec->appDialogSpec0.width = 320;
   mainSpec->appDialogSpec0.height = 240;
   mainSpec->appDialogSpec0.showOnEvent = "doomLaunch";
-  mainSpec->appDialogSpec0.kernelSpec.setEnabled(true);
+  mainSpec->appDialogSpec0.doomsweeperSpec.setEnabled(true);
   mainSpec->appDialogSpec1.setEnabled(true);
   mainSpec->appDialogSpec1.titleText = "Minesweeper";
   mainSpec->appDialogSpec1.width = 280;

@@ -30,7 +30,7 @@ struct FAppDialogSpec : public FragmentSpec {
         &fileSystemSpec,
         &fileSystem2Spec,
         &minesweeperSpec,
-        &kernelSpec,
+        &doomsweeperSpec,
         &consoleSpec
       }) {}
 
@@ -43,7 +43,7 @@ struct FAppDialogSpec : public FragmentSpec {
   FFileSystemSpec fileSystemSpec;
   FFileSystem2Spec fileSystem2Spec;
   FMinesweeperSpec minesweeperSpec;
-  FDoomsweeperSpec kernelSpec;
+  FDoomsweeperSpec doomsweeperSpec;
   FConsoleSpec consoleSpec;
 
   std::string name = "dialog";
