@@ -39,6 +39,23 @@ class SpriteFactory : public GameObjectFactory, private SystemAccessor {
       const Matrix& parentTransform);
     bool constructCivilian(entityId_t entityId, parser::Object& obj, entityId_t parentId,
       const Matrix& parentTransform);
+
+    void setupCivilianFocus(entityId_t entityId, const parser::Object& obj);
+    void setupCivilianAnimations(entityId_t entityId);
+    void setupCivilianDamage(entityId_t entityId);
+    void setupCivilianEvents(entityId_t entityId);
+    void setupCivilianAgent(entityId_t entityId, const parser::Object& obj);
+    void setupCivilianInventory(entityId_t entityId, const parser::Object& obj,
+      const Matrix& parentTransform);
+    void onCivilianDamage(entityId_t entityId);
+
+    void setupBadGuyAnimations(entityId_t entityId);
+    void setupBadGuySpawning(entityId_t entityId, const parser::Object& obj, entityId_t parentId,
+      const Matrix& parentTransform);
+    void setupBadGuyDamage(entityId_t entityId);
+    void setupBadGuyEvents(entityId_t entityId);
+    void setupBadGuyAgent(entityId_t entityId, const parser::Object& obj);
+    void onBadGuyDamage(entityId_t entityId);
 };
 
 
