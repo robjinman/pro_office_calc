@@ -250,30 +250,6 @@ void Player::setupCrosshair() {
 }
 
 //===========================================
-// Player::setupPlayerEvents
-//===========================================
-void Player::setupPlayerEvents() {
-  CEventHandler* events = new CEventHandler(this->body);
-  events->targetedEventHandlers.push_back(EventHandler{"player_move",
-    [=](const GameEvent&) {
-
-    if (animationSys().animationState(this->body, "run") == AnimState::STOPPED) {
-      animationSys().playAnimation(this->body, "run", false);
-    }
-  }});
-  events->targetedEventHandlers.push_back(EventHandler{"animation_finished",
-    [=](const GameEvent& e_) {
-
-    const EAnimationFinished& e = dynamic_cast<const EAnimationFinished&>(e_);
-    if (e.animName == "run") {
-      animationSys().playAnimation(this->body, "idle", true);
-    }
-  }});
-
-  eventHandlerSys().addComponent(pComponent_t(events));
-}
-
-//===========================================
 // Player::setupPlayerBehaviour
 //===========================================
 void Player::setupPlayerBehaviour() {
@@ -299,10 +275,11 @@ void Player::constructPlayer(const parser::Object& obj, entityId_t parentId,
   m_camera.reset(new Camera(renderSys().viewport().x, DEG_TO_RAD(60), DEG_TO_RAD(50), getBody(),
     tallness - FOREHEAD_SIZE + zone.floorHeight));
 
+  eventHandlerSys().addComponent(pComponent_t(new CEventHandler(this->body)));
+
   setupBodyAnimations();
   setupCrosshair();
   setupGunSprite();
-  setupPlayerEvents();
   setupPlayerBehaviour();
 }
 

@@ -34,7 +34,9 @@ using std::string;
 using std::list;
 
 
-const double PLAYER_SPEED = 350.0;
+static const double PLAYER_SPEED = 350.0;
+static const double MOUSE_LOOK_SPEED = 0.0006;
+static const double KEY_LOOK_SPEED = 1.2;
 
 
 //===========================================
@@ -164,26 +166,21 @@ void RaycastWidget::loadMap(const string& mapFilePath) {
 }
 
 //===========================================
-// RaycastWidget::initialise
+// RaycastWidget::setupObjectFactories
 //===========================================
-void RaycastWidget::initialise(const string& mapFile) {
+void RaycastWidget::setupObjectFactories() {
   m_rootFactory.addFactory(pGameObjectFactory_t(new MiscFactory(m_rootFactory, m_entityManager,
     m_audioService, m_timeService)));
   m_rootFactory.addFactory(pGameObjectFactory_t(new SpriteFactory(m_rootFactory, m_entityManager,
     m_audioService, m_timeService)));
   m_rootFactory.addFactory(pGameObjectFactory_t(new GeometryFactory(m_rootFactory,
     m_entityManager)));
+}
 
-  setMouseTracking(true);
-
-  m_defaultCursor = cursor().shape();
-  m_cursorCaptured = false;
-  m_mouseBtnState = false;
-
-  m_buffer = QImage(m_width, m_height, QImage::Format_ARGB32);
-
-  setFocus();
-
+//===========================================
+// RaycastWidget::setupSystems
+//===========================================
+void RaycastWidget::setupSystems() {
   BehaviourSystem* behaviourSystem = new BehaviourSystem;
   m_entityManager.addSystem(ComponentKind::C_BEHAVIOUR, pSystem_t(behaviourSystem));
 
@@ -213,16 +210,12 @@ void RaycastWidget::initialise(const string& mapFile) {
 
   FocusSystem* focusSystem = new FocusSystem(m_appConfig, m_entityManager, m_timeService);
   m_entityManager.addSystem(ComponentKind::C_FOCUS, pSystem_t(focusSystem));
+}
 
-  m_audioService.initialise();
-
-  loadMap(mapFile);
-
-  renderSystem->setCamera(&spatialSystem->sg.player->camera());
-
-  m_timer = makeQtObjPtr<QTimer>(this);
-  connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
-
+//===========================================
+// RaycastWidget::drawLoadingText
+//===========================================
+void RaycastWidget::drawLoadingText() {
   QPainter painter;
   painter.begin(&m_buffer);
 
@@ -238,7 +231,20 @@ void RaycastWidget::initialise(const string& mapFile) {
   painter.drawText((m_width - 100) / 2, (m_height - h) / 2, "Loading...");
 
   painter.end();
+}
 
+//===========================================
+// RaycastWidget::setupTimer
+//===========================================
+void RaycastWidget::setupTimer() {
+  m_timer = makeQtObjPtr<QTimer>(this);
+  connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(tick()));
+}
+
+//===========================================
+// RaycastWidget::setupEventHandlers
+//===========================================
+void RaycastWidget::setupEventHandlers() {
   m_playerImmobilised = false;
 
   m_entityId = Component::getNextId();
@@ -250,7 +256,50 @@ void RaycastWidget::initialise(const string& mapFile) {
     uncaptureCursor();
   }});
 
-  eventHandlerSystem->addComponent(pComponent_t(events));
+  auto& eventHandlerSystem = m_entityManager
+    .system<EventHandlerSystem>(ComponentKind::C_EVENT_HANDLER);
+
+  eventHandlerSystem.addComponent(pComponent_t(events));
+}
+
+//===========================================
+// RaycastWidget::setCameraInRenderer
+//===========================================
+void RaycastWidget::setCameraInRenderer() {
+  auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+  auto& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+
+  renderSystem.setCamera(&spatialSystem.sg.player->camera());
+}
+
+//===========================================
+// RaycastWidget::initialise
+//===========================================
+void RaycastWidget::initialise(const string& mapFile) {
+  setupObjectFactories();
+
+  setMouseTracking(true);
+  setFocus();
+
+  m_defaultCursor = cursor().shape();
+  m_cursorCaptured = false;
+  m_mouseBtnState = false;
+
+  m_buffer = QImage(m_width, m_height, QImage::Format_ARGB32);
+
+  setupSystems();
+
+  m_audioService.initialise();
+
+  loadMap(mapFile);
+
+  setCameraInRenderer();
+
+  setupTimer();
+
+  drawLoadingText();
+
+  setupEventHandlers();
 }
 
 //===========================================
@@ -267,7 +316,7 @@ void RaycastWidget::start() {
 //===========================================
 void RaycastWidget::paintEvent(QPaintEvent*) {
   if (m_timer->isActive()) {
-    RenderSystem& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
+    auto& renderSystem = m_entityManager.system<RenderSystem>(ComponentKind::C_RENDER);
     renderSystem.render();
   }
 
@@ -356,10 +405,92 @@ void RaycastWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 //===========================================
-// RaycastWidget::tick
+// RaycastWidget::handleCursorMovement
 //===========================================
-void RaycastWidget::tick() {
+void RaycastWidget::handleCursorMovement() {
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+
+  if (m_cursorCaptured) {
+    setFocus();
+
+    Point centre(width() / 2, height() / 2);
+
+    // Y-axis is top to bottom
+    Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
+
+    if (v.x != 0 || v.y != 0) {
+      QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
+      m_cursor = centre;
+    }
+
+    if (fabs(v.x) > 0) {
+      double da = MOUSE_LOOK_SPEED * PI * v.x;
+      spatialSystem.hRotateCamera(da);
+    }
+
+    if (fabs(v.y) > 0) {
+      double da = MOUSE_LOOK_SPEED * PI * v.y;
+      spatialSystem.vRotateCamera(da);
+    }
+
+    if (m_mouseBtnState == true) {
+      player.shoot();
+      m_mouseBtnState = false;
+    }
+  }
+}
+
+//===========================================
+// RaycastWidget::handleKeyboardState
+//===========================================
+void RaycastWidget::handleKeyboardState() {
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+
+  if (m_keyStates[Qt::Key_E]) {
+    player.jump();
+  }
+
+  if (m_keyStates[Qt::Key_Space]) {
+    GameEvent e("player_activate");
+    spatialSystem.handleEvent(e);
+
+    m_keyStates[Qt::Key_Space] = false;
+  }
+
+  Vec2f v; // The vector is in camera space
+  if (m_keyStates[Qt::Key_A]) {
+    v.y -= 1;
+  }
+  if (m_keyStates[Qt::Key_D]) {
+    v.y += 1;
+  }
+  if (m_keyStates[Qt::Key_W] || m_keyStates[Qt::Key_Up]) {
+    v.x += 1;
+  }
+  if (m_keyStates[Qt::Key_S] || m_keyStates[Qt::Key_Down]) {
+    v.x -= 1;
+  }
+
+  if (v.x != 0 || v.y != 0) {
+    double ds = PLAYER_SPEED / m_frameRate;
+    spatialSystem.movePlayer(normalise(v) * ds);
+  }
+
+  if (m_keyStates[Qt::Key_Left]) {
+    spatialSystem.hRotateCamera(-(KEY_LOOK_SPEED / m_frameRate) * PI);
+  }
+  if (m_keyStates[Qt::Key_Right]) {
+    spatialSystem.hRotateCamera((KEY_LOOK_SPEED / m_frameRate) * PI);
+  }
+}
+
 #ifdef DEBUG
+//===========================================
+// RaycastWidget::measureFrameRate
+//===========================================
+void RaycastWidget::measureFrameRate() {
   if (m_frame % 10 == 0) {
     chrono::high_resolution_clock::time_point t_ = chrono::high_resolution_clock::now();
     chrono::duration<double> span = chrono::duration_cast<chrono::duration<double>>(t_ - m_t);
@@ -367,6 +498,15 @@ void RaycastWidget::tick() {
     m_t = t_;
   }
   ++m_frame;
+}
+#endif
+
+//===========================================
+// RaycastWidget::tick
+//===========================================
+void RaycastWidget::tick() {
+#ifdef DEBUG
+  measureFrameRate();
 #endif
 
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
@@ -378,71 +518,8 @@ void RaycastWidget::tick() {
   m_timeService.update();
 
   if (player.alive && !m_playerImmobilised) {
-    if (m_keyStates[Qt::Key_E]) {
-      player.jump();
-    }
-
-    if (m_keyStates[Qt::Key_Space]) {
-      GameEvent e("player_activate");
-      spatialSystem.handleEvent(e);
-
-      m_keyStates[Qt::Key_Space] = false;
-    }
-
-    Vec2f v; // The vector is in camera space
-    if (m_keyStates[Qt::Key_A]) {
-      v.y -= 1;
-    }
-    if (m_keyStates[Qt::Key_D]) {
-      v.y += 1;
-    }
-    if (m_keyStates[Qt::Key_W] || m_keyStates[Qt::Key_Up]) {
-      v.x += 1;
-    }
-    if (m_keyStates[Qt::Key_S] || m_keyStates[Qt::Key_Down]) {
-      v.x -= 1;
-    }
-
-    if (v.x != 0 || v.y != 0) {
-      double ds = PLAYER_SPEED / m_frameRate;
-      spatialSystem.movePlayer(normalise(v) * ds);
-    }
-
-    if (m_keyStates[Qt::Key_Left]) {
-      spatialSystem.hRotateCamera(-(1.2 / m_frameRate) * PI);
-    }
-    if (m_keyStates[Qt::Key_Right]) {
-      spatialSystem.hRotateCamera((1.2 / m_frameRate) * PI);
-    }
-
-    if (m_cursorCaptured) {
-      setFocus();
-
-      Point centre(width() / 2, height() / 2);
-
-      // Y-axis is top to bottom
-      Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
-
-      if (v.x != 0 || v.y != 0) {
-        QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
-        m_cursor = centre;
-      }
-
-      if (fabs(v.x) > 0) {
-        double da = 0.0006 * PI * v.x;
-        spatialSystem.hRotateCamera(da);
-      }
-
-      if (fabs(v.y) > 0) {
-        double da = 0.0006 * PI * v.y;
-        spatialSystem.vRotateCamera(da);
-      }
-
-      if (m_mouseBtnState == true) {
-        player.shoot();
-        m_mouseBtnState = false;
-      }
-    }
+    handleKeyboardState();
+    handleCursorMovement();
   }
 
   update();

@@ -64,6 +64,12 @@ class RaycastWidget : public QWidget {
     void tick();
 
   private:
+    void setupSystems();
+    void setupObjectFactories();
+    void setupTimer();
+    void setupEventHandlers();
+    void setCameraInRenderer();
+    void drawLoadingText();
     void loadMap(const std::string& mapFilePath);
     void configure(RenderGraph& rg, const parser::Object& config);
     void configureAudioService(const parser::Object& obj);
@@ -71,6 +77,11 @@ class RaycastWidget : public QWidget {
     void loadMusicAssets(const parser::Object& obj);
     void loadTextures(RenderGraph& rg, const parser::Object& obj);
     void uncaptureCursor();
+    void handleCursorMovement();
+    void handleKeyboardState();
+#ifdef DEBUG
+    void measureFrameRate();
+#endif
 
     const AppConfig& m_appConfig;
     EventSystem& m_eventSystem;

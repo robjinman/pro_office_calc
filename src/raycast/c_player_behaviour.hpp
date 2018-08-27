@@ -4,12 +4,13 @@
 
 #include <vector>
 #include "raycast/behaviour_system.hpp"
+#include "raycast/system_accessor.hpp"
 
 
 class EntityManager;
 class TimeService;
 
-class CPlayerBehaviour : public CBehaviour {
+class CPlayerBehaviour : public CBehaviour, private SystemAccessor {
   public:
     CPlayerBehaviour(entityId_t entityId, EntityManager& entityManager, TimeService& timeService);
 
@@ -20,6 +21,11 @@ class CPlayerBehaviour : public CBehaviour {
   private:
     EntityManager& m_entityManager;
     TimeService& m_timeService;
+
+    void onEntityDamaged(const GameEvent& e_);
+    void onEntityDestroyed();
+    void onPlayerMove();
+    void onAnimationFinished(const GameEvent& e_);
 };
 
 

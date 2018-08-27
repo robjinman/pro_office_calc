@@ -78,7 +78,6 @@ class Player : private SystemAccessor {
     void setupBodyAnimations();
     void setupCrosshair();
     void setupGunSprite();
-    void setupPlayerEvents();
     void setupPlayerBehaviour();
     void setupItemsDisplay();
     void setupAmmoCounter();
