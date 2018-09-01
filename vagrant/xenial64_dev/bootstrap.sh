@@ -6,4 +6,8 @@ apt-get install -y \
   cmake \
   qtbase5-dev \
   qtmultimedia5-dev \
-  libqt5multimedia5-plugins
+  libqt5multimedia5-plugins \
+  libtinyxml2-dev \
+  packaging-dev \
+  chrpath \
+  patchelf

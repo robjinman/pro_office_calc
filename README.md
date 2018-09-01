@@ -15,7 +15,9 @@ To install development dependencies run
       qtmultimedia5-dev \
       libqt5multimedia5-plugins \
       libtinyxml2-dev \
-      packaging-dev
+      packaging-dev \
+      chrpath \
+      patchelf
 ```
 
 And install linuxdeployqt from https://github.com/probonopd/linuxdeployqt.
@@ -74,6 +76,14 @@ place.
 ```
     linuxdeployqt ../../dist/bundles/linux/procalc/share/applications/procalc.desktop \
                   -bundle-non-qt-libs
+```
+
+This will set the executable's RUNPATH to `$ORIGIN/../lib`, but for Steam we need this to be the
+RPATH instead. To fix this, run the following
+
+```
+    chrpath -d -r "" ../../dist/bundles/linux/procalc/bin/procalc
+    patchelf --set-rpath '$ORIGIN/../lib' --force-rpath ../../dist/bundles/linux/procalc/bin/procalc
 ```
 
 
