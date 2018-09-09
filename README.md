@@ -177,7 +177,7 @@ Then run `nmake` followed by `nmake install`.
 
 Set the QT_DIR variable in CMakelists.txt to the Qt installation directory.
 
-Open the x64 Native Tools command prompt. Build the dependencies first by creating a the directory
+Open the x64 Native Tools command prompt. Build the dependencies first by creating the directory
 dependencies/build/win64 and from there running
 
 ```
@@ -204,13 +204,13 @@ configuration (even if Debug was given for CMAKE_BUILD_TYPE).
 Run windeployqt to copy dependencies into bin folder.
 
 ```
-    C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe --release dist\procalc.exe --dir dist\libs
+    C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe --release dist\procalc.exe --dir dist
 ```
 
 To run the app, from build/win64/dist
 
 ```
-    run
+    procalc
 ```
 
 For the release build, the relevant commands are
@@ -223,7 +223,7 @@ For the release build, the relevant commands are
 ```
     C:\Qt\5.10.1\msvc2017_64\bin\windeployqt.exe ^
       --release ..\..\dist\bundles\windows\procalc\procalc.exe ^
-      --dir ..\..\dist\bundles\windows\procalc\libs
+      --dir ..\..\dist\bundles\windows\procalc
 ```
 
 

@@ -476,9 +476,6 @@
                 <Component Id="cmp44AD8376E7585697DE653FFCEF30E639" Guid="{70C551D3-27CF-4F32-ACEE-0768801B9998}">
                     <File Id="filE0BAB10F33C50F45D3B56610BA132371" KeyPath="yes" Source="SourceDir\going_in_circles\modem.wav" />
                 </Component>
-                <Component Id="cmp6BD4C84D5CB327025C49461C7F54087C" Guid="{079FB64C-BB14-4532-BE7D-ADA66C53110D}">
-                    <File Id="fil2BD6C348624A3EB19186364493278CFF" KeyPath="yes" Source="SourceDir\going_in_circles\porn_dir.png" />
-                </Component>
                 <Component Id="cmp50C673C6F56181984E57311E0D080E32" Guid="{0290FD95-63C0-47FB-A997-79DFB73B1987}">
                     <File Id="fil4340E55F38CF550F1E9C36846380715D" KeyPath="yes" Source="SourceDir\going_in_circles\vending_machine_front.png" />
                 </Component>
@@ -517,20 +514,11 @@
                 <Component Id="cmp355320845DD716D3B9263A39F02678AD" Guid="{301103E5-D372-437C-9B28-DAC682E4A409}">
                     <File Id="fil2C77D09E3DEC875CEB11E4540D80A08D" KeyPath="yes" Source="SourceDir\doomsweeper\flag.png" />
                 </Component>
-                <Component Id="cmp5A82E71E856DE888EC6D5A72CBF35685" Guid="{E44281EB-A448-4DC9-831D-7891C5095F23}">
-                    <File Id="fil8BD01C6C84E08A02718064A75D29488F" KeyPath="yes" Source="SourceDir\doomsweeper\program_files_dir.png" />
-                </Component>
                 <Component Id="cmpA8745B5440B9DE9ED2798A63247CFF82" Guid="{F23EBE74-5F9E-4823-AD30-B897DFA26E27}">
                     <File Id="fil45501F6303EF1012D234235F74ED7648" KeyPath="yes" Source="SourceDir\doomsweeper\north.png" />
                 </Component>
-                <Component Id="cmp2EF8E545180C8127702F3B70997A0369" Guid="{BF6B44CA-9AD9-4F7A-A164-EC2F741C2088}">
-                    <File Id="fil49ED427D9CB3C307327268D56CF5F909" KeyPath="yes" Source="SourceDir\doomsweeper\rob_dir.png" />
-                </Component>
                 <Component Id="cmpC4250FEEA63C01A4FC9C38F8FF65647F" Guid="{CCA10AA6-B460-4F57-AB39-A49E1ED7BA14}">
                     <File Id="fil791C1A159140C5363A97253FDB7D557C" KeyPath="yes" Source="SourceDir\doomsweeper\plant_pot.png" />
-                </Component>
-                <Component Id="cmp9F4AC5B0FD56995F20B3BEE13738837F" Guid="{DF053391-8797-49E2-9FB4-7D6E1C988E73}">
-                    <File Id="fil4D264EE12E6913824886E779DA5C2D6B" KeyPath="yes" Source="SourceDir\doomsweeper\system_dir.png" />
                 </Component>
                 <Component Id="cmp3FB903494ABC084E454C0FAF70539754" Guid="{974F6B92-485C-492C-B791-8121532D44C0}">
                     <File Id="fil42808EE002D3029088F2F528DD9C60EA" KeyPath="yes" Source="SourceDir\doomsweeper\map.svg" />
@@ -553,20 +541,11 @@
                 <Component Id="cmp5B39D910350472CEEFA280DDCFB60320" Guid="{D7EF077E-2BFB-43B3-90AA-819445ED1A9C}">
                     <File Id="fil403705D36A6216C8311FE7462E62C622" KeyPath="yes" Source="SourceDir\doomsweeper\maze_map.png" />
                 </Component>
-                <Component Id="cmp55C15A2B116192124677DFF4A06CF17F" Guid="{2C3929D2-D8BF-4B06-B0A7-ECEA3934EDA8}">
-                    <File Id="filBC86D129E3CAE209ECBD0ABDCB7EE6C8" KeyPath="yes" Source="SourceDir\doomsweeper\refreshments_dir.png" />
-                </Component>
                 <Component Id="cmpF61B67C985FA75CEE82083E1B807B122" Guid="{B1A9D6D8-C4E9-4AC6-A989-A104B7DF34CC}">
                     <File Id="fil32A628B9DD32F99599CE5AB754F77655" KeyPath="yes" Source="SourceDir\doomsweeper\blank_whiteboard.png" />
                 </Component>
-                <Component Id="cmp19B864593EEF096902488DD5ABD40296" Guid="{58D279D7-5521-44FE-AEA8-E83B99B9CC3B}">
-                    <File Id="fil8126BCBA3A802371D29C253F9475EBC8" KeyPath="yes" Source="SourceDir\doomsweeper\porn_dir.png" />
-                </Component>
                 <Component Id="cmpD009E039A2FBEBD18F580A7A277F3ABB" Guid="{DF60CED9-9F8D-4B33-9E31-8AF23E6E45BE}">
                     <File Id="fil29311973529593242B3F9AD9873A208C" KeyPath="yes" Source="SourceDir\doomsweeper\south.png" />
-                </Component>
-                <Component Id="cmpCB69290E0647F8396DFB4A48140C5C97" Guid="{6A4D011F-D06D-4D35-A847-9EDC012120C0}">
-                    <File Id="fil615E4B6D981A6889C20D738C9A9DB1B2" KeyPath="yes" Source="SourceDir\doomsweeper\recycling_bin_dir.png" />
                 </Component>
                 <Component Id="cmp8F9E5FB1C0247270CDD8986892DE70ED" Guid="{026DFFDF-EB6F-4CEF-9BDF-D5B489DF2B0E}">
                     <File Id="filAF03631FE5DFA4BA4C28F1353A1A1166" KeyPath="yes" Source="SourceDir\doomsweeper\east.png" />
@@ -817,7 +796,6 @@
             <ComponentRef Id="cmp04521857C30E2A6A89FECFF24FBD4EFC" />
             <ComponentRef Id="cmp70D14746918702037F0B8D556E3D069F" />
             <ComponentRef Id="cmp44AD8376E7585697DE653FFCEF30E639" />
-            <ComponentRef Id="cmp6BD4C84D5CB327025C49461C7F54087C" />
             <ComponentRef Id="cmp50C673C6F56181984E57311E0D080E32" />
             <ComponentRef Id="cmp7EEEEF447B48A6C11BA0C962739FE476" />
             <ComponentRef Id="cmpDAB2B341A92F7A1D7C9831BA0C546D76" />
@@ -830,11 +808,8 @@
             <ComponentRef Id="cmpA79532FDDD1556CF69CDAFEB24E8FF19" />
             <ComponentRef Id="cmp72EA085EBA3AA35FB23291106724FE1C" />
             <ComponentRef Id="cmp355320845DD716D3B9263A39F02678AD" />
-            <ComponentRef Id="cmp5A82E71E856DE888EC6D5A72CBF35685" />
             <ComponentRef Id="cmpA8745B5440B9DE9ED2798A63247CFF82" />
-            <ComponentRef Id="cmp2EF8E545180C8127702F3B70997A0369" />
             <ComponentRef Id="cmpC4250FEEA63C01A4FC9C38F8FF65647F" />
-            <ComponentRef Id="cmp9F4AC5B0FD56995F20B3BEE13738837F" />
             <ComponentRef Id="cmp3FB903494ABC084E454C0FAF70539754" />
             <ComponentRef Id="cmp1299330C56B68ABA9D7D18AE889F3F82" />
             <ComponentRef Id="cmpB1943384E0D703D9C3CEBE25FC517652" />
@@ -842,11 +817,8 @@
             <ComponentRef Id="cmp9C46F7F33A3C97B184DB75DA908FECF5" />
             <ComponentRef Id="cmpED12FBB8BB555E27B7F9CCD6290455CB" />
             <ComponentRef Id="cmp5B39D910350472CEEFA280DDCFB60320" />
-            <ComponentRef Id="cmp55C15A2B116192124677DFF4A06CF17F" />
             <ComponentRef Id="cmpF61B67C985FA75CEE82083E1B807B122" />
-            <ComponentRef Id="cmp19B864593EEF096902488DD5ABD40296" />
             <ComponentRef Id="cmpD009E039A2FBEBD18F580A7A277F3ABB" />
-            <ComponentRef Id="cmpCB69290E0647F8396DFB4A48140C5C97" />
             <ComponentRef Id="cmp8F9E5FB1C0247270CDD8986892DE70ED" />
             <ComponentRef Id="cmp3EEE24F98848A30B7355AE4FA4C58C0F" />
             <ComponentRef Id="cmpC7A422C78E3BEB07C2DF19483810380F" />
