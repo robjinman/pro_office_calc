@@ -53,9 +53,8 @@ long randomSeed() {
   return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 #else
-static std::random_device rd;
-
 long randomSeed() {
+  static std::random_device rd;
   return rd();
 }
 #endif
