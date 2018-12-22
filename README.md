@@ -14,7 +14,6 @@ To install development dependencies run
       qtbase5-dev \
       qtmultimedia5-dev \
       libqt5multimedia5-plugins \
-      libtinyxml2-dev \
       packaging-dev \
       chrpath \
       patchelf
@@ -32,8 +31,7 @@ VagrantFile. From vagrant/xenial run
 
 The project directory will be mounted at /vagrant.
 
-gtest can be built from the dependencies directory. Create the directory dependencies/build/linux
-and from there run
+Create the directory dependencies/build/linux and from there run
 
 ```
     cmake -D CMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../..
