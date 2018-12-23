@@ -184,7 +184,7 @@ dependencies/build/win64 and from there running
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 
-Open the MSVC project and build the Release configuration.
+Open the MSVC solution and build the Release configuration.
 
 Now create a build/win64 directory under the project root and from there run the following
 
@@ -196,7 +196,7 @@ For the debug build
           -G "Visual Studio 15 2017 Win64" ../..
 ```
 
-Open the MSVC project and build the INSTALL solution making sure to select the Release
+Open the MSVC solution and build the INSTALL solution making sure to select the Release
 configuration (even if Debug was given for CMAKE_BUILD_TYPE).
 
 Run windeployqt to copy dependencies into bin folder.

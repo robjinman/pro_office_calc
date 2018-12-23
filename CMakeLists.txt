@@ -156,6 +156,13 @@ if (LINUX)
 
   install(FILES "${CMAKE_SOURCE_DIR}/${PROJECT_SHORT_NAME}.sh" DESTINATION "games" RENAME "${PROJECT_SHORT_NAME}")
 elseif (WIN32)
+  set(MANIFEST_PATH "${CMAKE_SOURCE_DIR}/windows/dpi_unaware.manifest")
+
+	ADD_CUSTOM_COMMAND(
+		TARGET procalc
+		POST_BUILD
+    COMMAND "mt.exe" -manifest \"${MANIFEST_PATH}\" -inputresource:\"$<TARGET_FILE:procalc>\"\;\#1 -outputresource:\"$<TARGET_FILE:procalc>\"\;\#1)
+
   set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
 
   install(TARGETS ${PROJECT_SHORT_NAME} DESTINATION ".")
