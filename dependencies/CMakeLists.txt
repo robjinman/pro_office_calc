@@ -6,7 +6,10 @@ endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake")
 
-include(externalTinyXml2)
+# For Apple, install dependency via homebrew
+if (NOT APPLE)
+  include(externalTinyXml2)
+endif()
 
 if (LINUX)
   include(externalGoogleTest)
