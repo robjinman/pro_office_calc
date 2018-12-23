@@ -91,8 +91,17 @@ Install the development dependencies via homebrew
 
 ```
     brew install qt
-    brew install tinyxml2
     brew install llvm
+```
+
+Create the directory dependencies/build/osx and from there run
+
+```
+    CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
+      -D CMAKE_INSTALL_PREFIX=./dist \
+      -G "Unix Makefiles" ../..
+
+    make -j4
 ```
 
 Create the directory build/osx and from there, run
