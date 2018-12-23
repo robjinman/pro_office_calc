@@ -26,7 +26,6 @@ class GeometryFactory : public GameObjectFactory, private SystemAccessor {
 
   private:
     RootFactory& m_rootFactory;
-    EntityManager& m_entityManager;
 
     std::map<Point, bool> m_endpoints;
 

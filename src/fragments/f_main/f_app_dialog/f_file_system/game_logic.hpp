@@ -39,7 +39,6 @@ class GameLogic : private SystemAccessor {
     EventSystem& m_eventSystem;
     AudioService& m_audioService;
     TimeService& m_timeService;
-    EntityManager& m_entityManager;
 
     entityId_t m_entityId = -1;
     int m_switchSoundId = -1;

@@ -329,7 +329,7 @@ void AgentSystem::handleEvent(const GameEvent& event) {
 void AgentSystem::navigateTo(entityId_t entityId, const Point& point) {
   DBG_PRINT("Entity " << entityId << " navigating to " << point << "\n");
 
-  m_components.at(entityId)->navigateTo(point, [this](CAgent& agent) {
+  m_components.at(entityId)->navigateTo(point, [](CAgent& agent) {
     agent.startPatrol();
   });
 }

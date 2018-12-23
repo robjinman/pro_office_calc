@@ -33,8 +33,7 @@ GameLogic::GameLogic(EventSystem& eventSystem, AudioService& audioService, TimeS
   : SystemAccessor(entityManager),
     m_eventSystem(eventSystem),
     m_audioService(audioService),
-    m_timeService(timeService),
-    m_entityManager(entityManager) {
+    m_timeService(timeService) {
 
   DBG_PRINT("GameLogic::GameLogic\n");
 

@@ -559,8 +559,7 @@ bool GeometryFactory::constructRegion(entityId_t entityId, parser::Object& obj, 
 //===========================================
 GeometryFactory::GeometryFactory(RootFactory& rootFactory, EntityManager& entityManager)
   : SystemAccessor(entityManager),
-    m_rootFactory(rootFactory),
-    m_entityManager(entityManager) {}
+    m_rootFactory(rootFactory) {}
 
 //===========================================
 // GeometryFactory::types

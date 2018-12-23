@@ -205,7 +205,7 @@ void RaycastWidget::setupSystems() {
   SpawnSystem* spawnSystem = new SpawnSystem(m_entityManager, m_rootFactory, m_timeService);
   m_entityManager.addSystem(ComponentKind::C_SPAWN, pSystem_t(spawnSystem));
 
-  AgentSystem* agentSystem = new AgentSystem(m_entityManager, m_timeService, m_audioService);
+  AgentSystem* agentSystem = new AgentSystem(m_timeService, m_audioService);
   m_entityManager.addSystem(ComponentKind::C_AGENT, pSystem_t(agentSystem));
 
   FocusSystem* focusSystem = new FocusSystem(m_appConfig, m_entityManager, m_timeService);

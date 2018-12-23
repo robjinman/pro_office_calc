@@ -19,7 +19,6 @@ class DamageSystem;
 class SpatialSystem;
 class AgentSystem;
 class CVRect;
-class EntityManager;
 
 class CAgent : public Component, private SystemAccessor {
   friend class AgentSystem;
@@ -78,9 +77,8 @@ class EntityManager;
 
 class AgentSystem : public System {
   public:
-    AgentSystem(EntityManager& entityManager, TimeService& timeService, AudioService& audioService)
-      : m_entityManager(entityManager),
-        m_timeService(timeService),
+    AgentSystem(TimeService& timeService, AudioService& audioService)
+      : m_timeService(timeService),
         m_audioService(audioService) {}
 
     void update() override;
@@ -95,7 +93,6 @@ class AgentSystem : public System {
     void navigateTo(entityId_t entityId, const Point& point);
 
   private:
-    EntityManager& m_entityManager;
     TimeService& m_timeService;
     AudioService& m_audioService;
     std::map<entityId_t, pCAgent_t> m_components;
