@@ -63,9 +63,6 @@ To create a standalone release bundle, invoke cmake as follows
 
     make -j4
     make install
-
-    # So the app will run on systems with older version of libstdc++.so (e.g. SteamOS)
-    cp /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 ../../dist/bundles/linux/procalc/lib/libstdc++.so.6
 ```
 
 And use [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) to copy the dependencies into
@@ -74,10 +71,13 @@ place.
 ```
     linuxdeployqt ../../dist/bundles/linux/procalc/share/applications/procalc.desktop \
                   -bundle-non-qt-libs
+
+    # So the app will run on systems with older version of libstdc++.so (e.g. SteamOS)
+    cp /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 ../../dist/bundles/linux/procalc/lib/libstdc++.so.6
 ```
 
-This will set the executable's RUNPATH to `$ORIGIN/../lib`, but for Steam we need this to be the
-RPATH instead. To fix this, run the following
+linuxdeployqt will have set the executable's RUNPATH to `$ORIGIN/../lib`, but for Steam we need this
+to be the RPATH instead. To fix this, run the following
 
 ```
     chrpath -d -r "" ../../dist/bundles/linux/procalc/bin/procalc
