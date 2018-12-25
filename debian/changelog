@@ -1,3 +1,13 @@
+procalc (1.0.7-0ubuntu1) xenial; urgency=medium
+
+  * Fix for issue #5: Crash due to order of static object construction
+  * Link tinyxml2 statically
+  * Fix warnings on OS X
+  * Add manifest to windows executable to scale app on high resolution displays
+  * Fix bad alignment of stairs on youve_got_mail map
+
+ -- Rob Jinman <jinmanr@gmail.com>  Tue, 25 Dec 2018 00:04:07 +0000
+
 procalc (1.0.6-0ubuntu1) xenial; urgency=medium
 
   * Updated AppConfig to support standalone bundles
