@@ -13,7 +13,7 @@ override_dh_auto_configure:
 		&& cd ../../..
 	mkdir -p build/linux \
 		&& cd build/linux \
-		&& cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -G "Unix Makefiles" ../..
+		&& cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../../debian/procalc/usr -G "Unix Makefiles" ../..
 
 override_dh_auto_build:
 	cd build/linux \
