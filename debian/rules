@@ -3,5 +3,5 @@
 	dh $@ --sourcedirectory=dependencies
 	dh $@
 
-override_dh_auto_configure -O--sourcedirectory=dependencies
-	dh_auto_configure -DCMAKE_INSTALL_PREFIX=./dist
+override_dh_auto_configure:
+	dh_auto_configure -- -O--sourcedirectory=dependencies -DCMAKE_INSTALL_PREFIX=./dist
