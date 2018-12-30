@@ -10,8 +10,9 @@ source ./release/functions.sh
 release=false
 source_only=false
 snapshot=false
+revision=1
 
-while getopts "k:rsx" opt
+while getopts "k:n:rsx" opt
 do
   case $opt in
     r) release=true
@@ -23,7 +24,9 @@ do
     k) key_id="$OPTARG"
        ;;
     x) snapshot=true
-      ;;
+       ;;
+    n) revision="$OPTARG"
+       ;;
   esac
 done
 
@@ -46,7 +49,7 @@ fi
 tarball_path="$(get_tarball_path ./build)"
 tarball_name="$(get_tarball_name ./build)"
 version="$(get_tarball_version ./build)"
-deb_version="${version}-0ubuntu1"
+deb_version="${version}-0ubuntu$revision"
 
 mv "$tarball_path" ../
 cd ..

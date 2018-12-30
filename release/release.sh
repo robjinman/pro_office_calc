@@ -10,13 +10,16 @@ fi
 source ./release/functions.sh
 
 snapshot=true
+revision=1
 
-while getopts "k:x" opt
+while getopts "k:n:x" opt
 do
   case $opt in
     k) gpg_key="$OPTARG"
        ;;
     x) snapshot=false
+       ;;
+    n) revision="$OPTARG"
        ;;
   esac
 done
@@ -53,10 +56,10 @@ build_deb_source_package() {
 
   if [ $snapshot == true ]; then
     echo "Building snapshot release"
-    ./release/build_deb.sh -rsx -k $gpg_key
+    ./release/build_deb.sh -rsx -k $gpg_key -n $revision
   else
     echo "Building stable release"
-    ./release/build_deb.sh -rs -k $gpg_key
+    ./release/build_deb.sh -rs -k $gpg_key -n $revision
   fi
 
   changes_file="$(find .. -name procalc*.changes)"
@@ -120,6 +123,11 @@ EOF
 
   aws s3 cp ./dist/artifacts/ s3://proofficecalculator.com/downloads/ --recursive
 }
+
+echo "====================================================================="
+echo " Performing release of PRO OFFICE CALCULATOR $version rev $revision"
+echo "====================================================================="
+echo ""
 
 commit_version
 build_deb_source_package
