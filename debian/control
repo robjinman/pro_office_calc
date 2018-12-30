@@ -3,7 +3,7 @@ Maintainer: Rob Jinman <jinmanr@gmail.com>
 Section: math
 Priority: optional
 Standards-Version: 3.9.7
-Build-Depends: debhelper (>= 9), cmake (>= 3.5.1), pkg-config (>= 0.29.1), qtbase5-dev (>= 5.5.1), qtmultimedia5-dev (>= 5.5.1), libqt5multimedia5-plugins (>= 5.5.1)
+Build-Depends: debhelper (>= 9), cmake (>= 3.5.1), git (>= 2.7), pkg-config (>= 0.29.1), qtbase5-dev (>= 5.5.1), qtmultimedia5-dev (>= 5.5.1), libqt5multimedia5-plugins (>= 5.5.1)
 
 Package: procalc
 Architecture: any
