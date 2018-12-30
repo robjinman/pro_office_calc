@@ -5,22 +5,25 @@
 
 override_dh_auto_configure:
 	cd dependencies \
-		&& dh_auto_configure -- -DCMAKE_INSTALL_PREFIX=./dist \
-		&& cd ..
-	dh_auto_configure --
+		&& mkdir -p build/linux \
+		&& cd build/linux \
+		&& cmake -DCMAKE_INSTALL_PREFIX=./dist -G "Unix Makefiles" ../.. \
+		&& cd ../../..
+	mkdir -p build/linux \
+		&& cd build/linux \
+		&& cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -G "Unix Makefiles" ../..
 
 override_dh_auto_build:
-	cd dependencies \
+	cd dependencies/build/linux \
 		&& make \
-		&& make install \
-		&& cd ..
-	make
+		&& cd ../../..
+	cd build/linux \
+		&& make
 
 override_dh_auto_install:
-	make install
+	cd build/linux \
+		&& make install
 
 override_dh_auto_clean:
-	cd dependencies \
-		&& rm -rf build dist \
-		&& cd ..
+	rm -rf dependencies/build dependencies/dist
 	rm -rf build dist
