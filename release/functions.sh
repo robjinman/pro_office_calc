@@ -2,7 +2,7 @@
 
 get_tarball_path() {
   if [ $# -lt 1 ]; then
-    echo "Error getting tarball path. No search path argument given"
+    echo "ERROR: Failed to get tarball path. No search path argument given"
     return 1
   fi
 
@@ -11,7 +11,7 @@ get_tarball_path() {
 
 get_tarball_name() {
   if [ $# -lt 1 ]; then
-    echo "Error getting tarball path. No search path argument given"
+    echo "ERROR: Failed to get tarball path. No search path argument given"
     return 1
   fi
 
@@ -21,7 +21,7 @@ get_tarball_name() {
 
 get_tarball_version() {
   if [ $# -lt 1 ]; then
-    echo "Error getting tarball path. No search path argument given"
+    echo "ERROR: Failed to get tarball path. No search path argument given"
     return 1
   fi
 
@@ -29,7 +29,7 @@ get_tarball_version() {
   regex="^procalc_(.*)\.orig\.tar\.gz$"
 
   if [[ ! "$tarball_name" =~ $regex ]]; then
-    echo "Tarball does not exist or has non-conforming file name"
+    echo "ERROR: Tarball does not exist or has non-conforming file name"
     return 1
   fi
 

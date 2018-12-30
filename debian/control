@@ -9,4 +9,4 @@ Package: procalc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libqt5core5a (>= 5.5.1), libqt5gui5 (>= 5.5.1), libqt5widgets5 (>= 5.5.1), libqt5multimedia5 (>= 5.5.1), libqt5multimedia5-plugins (>= 5.5.1)
 Description: Normal office calculator
- Just a normal office calculator... or is it?
+ A completely normal office calculator.

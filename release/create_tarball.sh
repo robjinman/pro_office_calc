@@ -5,7 +5,7 @@
 # snapshots, or procalc_1.0.15.orig.tar.gz for stable builds.
 
 if [ ! -d src ]; then
-  echo "Please run create_tarball.sh from project root. Aborting"
+  echo "ERROR: Please run create_tarball.sh from project root. Aborting"
   exit 1
 fi
 

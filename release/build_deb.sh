@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -d src ]; then
-  echo "Please run build_deb.sh from project root. Aborting"
+  echo "ERROR: Please run build_deb.sh from project root. Aborting"
   exit 1
 fi
 
@@ -16,10 +16,10 @@ while getopts "k:n:rsx" opt
 do
   case $opt in
     r) release=true
-       echo "Making release package"
+       echo "INFO: Making release package"
        ;;
     s) source_only=true
-       echo "Building source package only"
+       echo "INFO: Building source package only"
        ;;
     k) key_id="$OPTARG"
        ;;
@@ -31,7 +31,7 @@ do
 done
 
 if [ -z $key_id ]; then
-  echo "Missing required option -k key_id"
+  echo "ERROR: Missing required option -k key_id"
   exit 1
 fi
 

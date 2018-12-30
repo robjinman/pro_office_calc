@@ -13,8 +13,33 @@ the stable version (i.e. no snapshot suffix). Leave unchanged for snapshot relea
 * Build the project and create distributable packages for OS X, Windows, and Linux, making changes
 and pushing new commits if necessary. Every time a new commit is made, may need to rebuild on all
 other systems to ensure each platform's build is up-to-date.
-* Transfer the Windows and Mac artifacts to the `dist/artifacts` directory on the main Linux
-workstation.
+* Transfer all compiled artifacts to the `dist/artifacts` directory on the main Linux
+workstation. This includes all installers and zipped standalone bundles.
+
+The `dist` directory should now look something like as follows.
+
+```
+    $ tree -L 3
+
+    .
+    ├── artifacts
+    │   ├── manifest
+    │   ├── procalc_1.0.8-0ubuntu1_amd64.deb
+    │   ├── procalc.zip
+    │   ├── ProOfficeCalculator_1.0.9.app.zip
+    │   ├── ProOfficeCalculator_1.0.9.msi
+    │   └── ProOfficeCalculator_1.0.9.tar.gz
+    └── bundles
+        ├── linux
+        │   ├── AppRun -> procalc/bin/procalc
+        │   ├── procalc
+        │   ├── procalc.desktop
+        │   └── procalc.png
+        ├── osx
+        │   └── procalc.app
+        └── windows
+            └── procalc
+```
 
 Run `release.sh`, which will do the following:
 
