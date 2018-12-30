@@ -1,4 +1,4 @@
-procalc (1.0.9-0ubuntu1) xenial; urgency=medium
+procalc (1.0.9-0ubuntu2) xenial; urgency=medium
 
   * Fix for issue #5: Crash due to order of static object construction
   * Link tinyxml2 statically
