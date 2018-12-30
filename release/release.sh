@@ -35,11 +35,15 @@ if [ ! "${branch::1}" == "*" ]; then
 fi
 
 commit_version() {
+  echo "********************** COMMITTING VERSION FILE **********************"
+
   git add ./VERSION
   git commit -m "Updated VERSION" || echo "VERSION file not changed"
 }
 
 build_deb_source_package() {
+  echo "******************** BUILDING DEB SOURCE PACKAGE  *******************"
+
   # Remove previous changelog files
   i=0
   for path in $(find .. -name procalc*.changes); do
@@ -70,6 +74,8 @@ build_deb_source_package() {
 }
 
 tag_master() {
+  echo "************************** TAGGING MASTER ***************************"
+
   git checkout master
   git merge develop
 
@@ -82,10 +88,14 @@ tag_master() {
 }
 
 tar_linux_bundle() {
+  echo "********************** COMPRESSING LINUX BUNDLE *********************"
+
   tar -czf ./dist/artifacts/procalc.tar.gz ./dist/bundles/linux/procalc
 }
 
 upload_artifacts() {
+  echo "************************ UPLOADING ARTIFACTS ************************"
+
   win_artifact="$(find ./dist/artifacts -name *.msi)"
   osx_artifact="$(find ./dist/artifacts -name *.app.zip)"
   linux_artifact="$(find ./dist/artifacts -name *.tar.gz)"
