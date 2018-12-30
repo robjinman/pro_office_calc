@@ -4,15 +4,15 @@
 	dh $@
 
 override_dh_auto_configure:
-	cd dependencies
-		&& dh_auto_configure -- -DCMAKE_INSTALL_PREFIX=./dist
+	cd dependencies \
+		&& dh_auto_configure -- -DCMAKE_INSTALL_PREFIX=./dist \
 		&& cd ..
 	dh_auto_configure --
 
 override_dh_auto_build:
-	cd dependencies
-		&& make
-		&& make install
+	cd dependencies \
+		&& make \
+		&& make install \
 		&& cd ..
 	make
 
@@ -20,7 +20,7 @@ override_dh_auto_install:
 	make install
 
 override_dh_auto_clean:
-	cd dependencies
-		&& rm -rf build dist
+	cd dependencies \
+		&& rm -rf build dist \
 		&& cd ..
 	rm -rf build dist
