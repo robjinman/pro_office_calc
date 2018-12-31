@@ -59,6 +59,7 @@ class RaycastWidget : public QWidget {
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void leaveEvent(QEvent* event) override;
 
   private slots:
     void tick();
@@ -77,7 +78,7 @@ class RaycastWidget : public QWidget {
     void loadMusicAssets(const parser::Object& obj);
     void loadTextures(RenderGraph& rg, const parser::Object& obj);
     void uncaptureCursor();
-    void handleCursorMovement();
+    void handleCursorMovement(int x, int y);
     void handleKeyboardState();
 #ifdef DEBUG
     void measureFrameRate();
@@ -97,7 +98,6 @@ class RaycastWidget : public QWidget {
     QImage m_buffer;
     std::map<int, bool> m_keyStates;
     bool m_mouseBtnState;
-    Point m_cursor;
     bool m_cursorCaptured;
     Qt::CursorShape m_defaultCursor;
     entityId_t m_entityId;

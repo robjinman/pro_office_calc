@@ -378,7 +378,6 @@ void RaycastWidget::mousePressEvent(QMouseEvent* event) {
   if (m_cursorCaptured == false) {
     Point centre(width() / 2, height() / 2);
     QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
-    m_cursor = centre;
 
     setCursor(Qt::BlankCursor);
 
@@ -400,16 +399,27 @@ void RaycastWidget::mouseReleaseEvent(QMouseEvent* event) {
 // RaycastWidget::mouseMoveEvent
 //===========================================
 void RaycastWidget::mouseMoveEvent(QMouseEvent* event) {
-  m_cursor.x = event->x();
-  m_cursor.y = event->y();
+  handleCursorMovement(event->x(), event->y());
+}
+
+//===========================================
+// RaycastWidget::leaveEvent
+//===========================================
+void RaycastWidget::leaveEvent(QEvent*) {
+  auto p = mapFromGlobal(QCursor::pos());
+  handleCursorMovement(p.x(), p.y());
 }
 
 //===========================================
 // RaycastWidget::handleCursorMovement
 //===========================================
-void RaycastWidget::handleCursorMovement() {
+void RaycastWidget::handleCursorMovement(int x, int y) {
   SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
   Player& player = *spatialSystem.sg.player;
+
+  if (!player.alive || m_playerImmobilised) {
+    return;
+  }
 
   if (m_cursorCaptured) {
     setFocus();
@@ -417,11 +427,10 @@ void RaycastWidget::handleCursorMovement() {
     Point centre(width() / 2, height() / 2);
 
     // Y-axis is top to bottom
-    Point v(m_cursor.x - centre.x, centre.y - m_cursor.y);
+    Point v(x - centre.x, centre.y - y);
 
     if (v.x != 0 || v.y != 0) {
       QCursor::setPos(mapToGlobal(QPoint(centre.x, centre.y)));
-      m_cursor = centre;
     }
 
     if (fabs(v.x) > 0) {
@@ -519,7 +528,7 @@ void RaycastWidget::tick() {
 
   if (player.alive && !m_playerImmobilised) {
     handleKeyboardState();
-    handleCursorMovement();
+    //handleCursorMovement();
   }
 
   update();
