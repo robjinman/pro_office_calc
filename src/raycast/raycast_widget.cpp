@@ -528,7 +528,6 @@ void RaycastWidget::tick() {
 
   if (player.alive && !m_playerImmobilised) {
     handleKeyboardState();
-    //handleCursorMovement();
   }
 
   update();
