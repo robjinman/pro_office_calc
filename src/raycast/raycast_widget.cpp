@@ -442,11 +442,6 @@ void RaycastWidget::handleCursorMovement(int x, int y) {
       double da = MOUSE_LOOK_SPEED * PI * v.y;
       spatialSystem.vRotateCamera(da);
     }
-
-    if (m_mouseBtnState == true) {
-      player.shoot();
-      m_mouseBtnState = false;
-    }
   }
 }
 
@@ -528,6 +523,11 @@ void RaycastWidget::tick() {
 
   if (player.alive && !m_playerImmobilised) {
     handleKeyboardState();
+
+    if (m_mouseBtnState == true) {
+      player.shoot();
+      m_mouseBtnState = false;
+    }
   }
 
   update();
