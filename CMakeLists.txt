@@ -12,9 +12,9 @@ project(${PROJECT_SHORT_NAME})
 file(STRINGS "${VERSION_FILE}" VERSION_STRINGS)
 list(GET VERSION_STRINGS 0 PROJECT_VERSION)
 
-message("========================================================")
-message("  Building ${PROJECT_LONG_NAME} ${PROJECT_VERSION} - ${CMAKE_BUILD_TYPE} build")
-message("========================================================")
+message("============================================================")
+message("  Configuring ${PROJECT_LONG_NAME} ${PROJECT_VERSION} - ${CMAKE_BUILD_TYPE} build")
+message("============================================================")
 
 if (UNIX AND NOT APPLE)
   set(LINUX true)
@@ -49,13 +49,20 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(TINYXML2_INCLUDE_DIRS "${PROCALC_DEPENDENCIES_DIR}/include")
-file(
-  GLOB_RECURSE
-  TINYXML2_LIBRARIES
-  "${PROCALC_DEPENDENCIES_DIR}/lib"
-  "${CMAKE_SHARED_LIBRARY_PREFIX}tinyxml2${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
+if (USE_LOCAL_DEPS)
+  message("Using locally built dependencies")
+
+  set(TINYXML2_INCLUDE_DIRS "${PROCALC_DEPENDENCIES_DIR}/include")
+  file(
+    GLOB_RECURSE
+    TINYXML2_LIBRARIES
+    "${PROCALC_DEPENDENCIES_DIR}/lib"
+    "${CMAKE_SHARED_LIBRARY_PREFIX}tinyxml2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+  )
+else()
+  find_package(TinyXml2 REQUIRED)
+endif()
+
 find_package(Qt5Core CONFIG REQUIRED)
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Gui CONFIG REQUIRED)

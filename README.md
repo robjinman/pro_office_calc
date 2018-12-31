@@ -41,7 +41,7 @@ Create the directory dependencies/build/linux and from there run
 Create the directory build/linux under the project root and from there run
 
 ```
-    cmake -D CMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
+    cmake -D USE_LOCAL_DEPS=1 -D CMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../..
     make -j4
 ```
 
@@ -57,7 +57,8 @@ To create a standalone release bundle, invoke cmake as follows
     # Remove existing bundle
     rm -r ../../dist/bundles/linux
 
-    cmake -D CMAKE_BUILD_TYPE=Release \
+    cmake -D USE_LOCAL_DEPS=1 \
+          -D CMAKE_BUILD_TYPE=Release \
           -D CMAKE_INSTALL_PREFIX=../../dist/bundles/linux/procalc \
           -G "Unix Makefiles" ../..
 
@@ -108,6 +109,7 @@ Create the directory build/osx and from there, run
 
 ```
     CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
+      -D USE_LOCAL_DEPS=1 \
       -D CMAKE_BUILD_TYPE=Debug \
       -G "Unix Makefiles" ../..
 
@@ -121,6 +123,7 @@ For the release build, do the following
 
 ```
     CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++ cmake \
+      -D USE_LOCAL_DEPS=1 \
       -D CMAKE_BUILD_TYPE=Release \
       -G "Unix Makefiles" ../..
 
@@ -200,7 +203,8 @@ Now create a build/win64 directory under the project root and from there run the
 For the debug build
 
 ```
-    cmake -D CMAKE_INSTALL_PREFIX=./dist ^
+    cmake -D USE_LOCAL_DEPS=1 ^
+          -D CMAKE_INSTALL_PREFIX=./dist ^
           -D CMAKE_BUILD_TYPE=Debug ^
           -G "Visual Studio 15 2017 Win64" ../..
 ```
@@ -223,7 +227,8 @@ To run the app, from build/win64/dist
 For the release build, the relevant commands are
 
 ```
-    cmake -D CMAKE_INSTALL_PREFIX=../../dist/bundles/windows/procalc ^
+    cmake -D USE_LOCAL_DEPS=1 ^
+          -D CMAKE_INSTALL_PREFIX=../../dist/bundles/windows/procalc ^
           -D CMAKE_BUILD_TYPE=Release ^
           -G "Visual Studio 15 2017 Win64" ../..
 ```
@@ -332,7 +337,11 @@ maintained manually.
 ### Time profile
 
 ```
-    cmake -D CMAKE_BUILD_TYPE=Debug -D PROFILING_ON=1 -G "Unix Makefiles" ../..
+    cmake -D USE_LOCAL_DEPS=1 \
+          -D CMAKE_BUILD_TYPE=Debug \
+          -D PROFILING_ON=1 \
+          -G "Unix Makefiles" ../..
+
     make -j4
     CPUPROFILE=./prof.out ./procalc
     google-pprof --text ./procalc ./prof.out > ./prof.txt

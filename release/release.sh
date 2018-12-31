@@ -172,6 +172,7 @@ EOF
   aws s3 cp ./dist/artifacts/ s3://proofficecalculator.com/downloads/ --recursive
 }
 
+do_checks
 show_prompt
 commit_version
 build_deb_source_package
