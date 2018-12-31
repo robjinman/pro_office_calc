@@ -118,10 +118,10 @@ build_deb_source_package() {
 
   if [ $snapshot == true ]; then
     echo "INFO: Building snapshot release"
-    ./release/build_deb.sh -rsx -k $gpg_key -n $revision
+    ./release/build_deb.sh -rs -k $gpg_key -n $revision
   else
     echo "INFO: Building stable release"
-    ./release/build_deb.sh -rs -k $gpg_key -n $revision
+    ./release/build_deb.sh -rsx -k $gpg_key -n $revision
   fi
 
   changes_file="$(find .. -name procalc*.changes)"

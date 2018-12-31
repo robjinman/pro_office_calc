@@ -6,7 +6,7 @@ procalc (1.0.9-0ubuntu2) xenial; urgency=medium
   * Add manifest to windows executable to scale app on high resolution displays
   * Fix bad alignment of stairs on youve_got_mail map
 
- -- Rob Jinman <jinmanr@gmail.com>  Sun, 30 Dec 2018 19:42:21 +0000
+ -- Rob Jinman <jinmanr@gmail.com>  Mon, 31 Dec 2018 00:05:46 +0000
 
 procalc (1.0.6-0ubuntu1) xenial; urgency=medium
 

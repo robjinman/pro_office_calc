@@ -9,7 +9,7 @@ source ./release/functions.sh
 
 release=false
 source_only=false
-snapshot=false
+snapshot=true
 revision=1
 
 while getopts "k:n:rsx" opt
@@ -23,7 +23,7 @@ do
        ;;
     k) key_id="$OPTARG"
        ;;
-    x) snapshot=true
+    x) snapshot=false
        ;;
     n) revision="$OPTARG"
        ;;

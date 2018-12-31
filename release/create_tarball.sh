@@ -31,8 +31,8 @@ if [ -z "$version" ]; then
   # number from the VERSION file
 
   if [ "$commit" != "HEAD" ]; then
-    printf "Expects version arg for commits other than HEAD\n"
-    printf "Usage: $0 [-c <commit> -v <version>] [-s]\n"
+    echo "ERROR: Expects version arg for commits other than HEAD"
+    echo "       Usage: $0 [-c <commit> -v <version>] [-s]"
     exit 1
   fi
 
@@ -41,7 +41,7 @@ fi
 
 if [ "$commit" = "HEAD" ]; then
   if [ ! -z "$(git status --porcelain)" ]; then
-    printf "Warning: There are uncommitted changes. Building from HEAD.\n"
+    echo "WARNING: There are uncommitted changes. Building from HEAD."
   fi
 fi
 
@@ -54,7 +54,7 @@ else
   suffix=""
 fi
 
-printf "Building archive... "
+printf "INFO: Building archive... "
 mkdir -p "$destination"
 
 tmpArchiveName="tmp.tar.gz"
@@ -73,5 +73,5 @@ rm "$tmpArchiveName"
 tar -czf  "$archiveName" "$unpackedDir"
 rm -r "$unpackedDir"
 
-cd ..
 printf "Done\n"
+cd ..
