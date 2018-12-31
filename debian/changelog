@@ -1,3 +1,9 @@
+procalc (1.0.12-0ubuntu1) xenial; urgency=medium
+
+  * Fix for issue #6: Mouse escaping window
+
+ -- Rob Jinman <jinmanr@gmail.com>  Mon, 31 Dec 2018 22:18:31 +0000
+
 procalc (1.0.11-0ubuntu1) xenial; urgency=medium
 
   * Changes to debian files and release scripts only 
