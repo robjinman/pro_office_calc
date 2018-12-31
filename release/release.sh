@@ -65,6 +65,14 @@ do_checks() {
   if [ -z $linux_bundle ]; then
     echo "WARNING: Could not find linux bundle in dist/artifacts"
   fi
+
+  num_artifacts=$(ls ./dist/artifacts | wc -l)
+  max_files=6
+
+  if [[ num_artifacts -gt $max_files ]]; then
+    echo "ERROR: Expected only $max_files files in dist/artifacts"
+    exit 1
+  fi
 }
 
 show_prompt() {

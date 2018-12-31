@@ -11,7 +11,7 @@ release=false
 source_only=false
 snapshot=true
 revision=1
-ppa = false
+ppa=false
 
 while getopts "k:n:rsxp" opt
 do
