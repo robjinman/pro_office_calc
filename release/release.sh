@@ -33,7 +33,7 @@ version=$(cat ./VERSION)
 
 # Locate artifacts
 win_installer="$(find ./dist/artifacts -name *.msi)"
-win_bundle="$(find ./dist/artifacts -name *.zip)"
+win_bundle="$(find ./dist/artifacts -name *.zip ! -name *.app.zip)"
 osx_bundle="$(find ./dist/artifacts -name *.app.zip)"
 linux_installer="$(find ./dist/artifacts -name *.deb)"
 linux_bundle="$(find ./dist/artifacts -name *.tar.gz)"
