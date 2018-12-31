@@ -80,6 +80,8 @@ class RaycastWidget : public QWidget {
     void uncaptureCursor();
     void handleCursorMovement(int x, int y);
     void handleKeyboardState();
+    void handleMouseButtonsState();
+    void recaptureLostCursor();
 #ifdef DEBUG
     void measureFrameRate();
 #endif

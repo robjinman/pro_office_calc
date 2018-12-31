@@ -506,6 +506,30 @@ void RaycastWidget::measureFrameRate() {
 #endif
 
 //===========================================
+// RaycastWidget::recaptureLostCursor
+//===========================================
+void RaycastWidget::recaptureLostCursor() {
+  auto p = mapFromGlobal(QCursor::pos());
+
+  if (m_cursorCaptured && !geometry().contains(p)) {
+    handleCursorMovement(p.x(), p.y());
+  }
+}
+
+//===========================================
+// RaycastWidget::handleMouseButtonsState
+//===========================================
+void RaycastWidget::handleMouseButtonsState() {
+  SpatialSystem& spatialSystem = m_entityManager.system<SpatialSystem>(ComponentKind::C_SPATIAL);
+  Player& player = *spatialSystem.sg.player;
+
+  if (m_mouseBtnState == true) {
+    player.shoot();
+    m_mouseBtnState = false;
+  }
+}
+
+//===========================================
 // RaycastWidget::tick
 //===========================================
 void RaycastWidget::tick() {
@@ -523,11 +547,8 @@ void RaycastWidget::tick() {
 
   if (player.alive && !m_playerImmobilised) {
     handleKeyboardState();
-
-    if (m_mouseBtnState == true) {
-      player.shoot();
-      m_mouseBtnState = false;
-    }
+    handleMouseButtonsState();
+    recaptureLostCursor();
   }
 
   update();
