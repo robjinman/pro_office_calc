@@ -91,17 +91,17 @@ commit_version() {
 }
 
 prep_debian_dir_for_ppa() {
-  mv ./debian/control ./debian/control_
-  mv ./debian/rules ./debian/rules_
-  cp ./debian/ppa/control ./debian/control
-  cp ./debian/ppa/rules ./debian/rules
+  mv "../procalc-$version/debian/control" "../procalc-$version/debian/control_"
+  mv "../procalc-$version/debian/rules" "../procalc-$version/debian/rules_"
+  cp "../procalc-$version/debian/ppa/control" "../procalc-$version/debian/control"
+  cp "../procalc-$version/debian/ppa/rules" "../procalc-$version/debian/rules"
 }
 
 revert_prep_debian_dir_for_ppa() {
-  rm ./debian/control
-  rm ./debian/rules
-  mv ./debian/control_ ./debian/control
-  mv ./debian/rules_ ./debian/rules
+  rm "../procalc-$version/debian/control"
+  rm "../procalc-$version/debian/rules"
+  mv "../procalc-$version/debian/control_" "../procalc-$version/debian/control"
+  mv "../procalc-$version/debian/rules_" "../procalc-$version/debian/rules"
 }
 
 build_deb_source_package() {
