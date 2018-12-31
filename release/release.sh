@@ -90,24 +90,8 @@ commit_version() {
   git commit -m "Updated VERSION" || echo "INFO: VERSION file not changed"
 }
 
-prep_debian_dir_for_ppa() {
-  mv "../procalc-$version/debian/control" "../procalc-$version/debian/control_"
-  mv "../procalc-$version/debian/rules" "../procalc-$version/debian/rules_"
-  cp "../procalc-$version/debian/ppa/control" "../procalc-$version/debian/control"
-  cp "../procalc-$version/debian/ppa/rules" "../procalc-$version/debian/rules"
-}
-
-revert_prep_debian_dir_for_ppa() {
-  rm "../procalc-$version/debian/control"
-  rm "../procalc-$version/debian/rules"
-  mv "../procalc-$version/debian/control_" "../procalc-$version/debian/control"
-  mv "../procalc-$version/debian/rules_" "../procalc-$version/debian/rules"
-}
-
 build_deb_source_package() {
   echo "******************** BUILDING DEB SOURCE PACKAGE  *******************"
-
-  prep_debian_dir_for_ppa
 
   # Remove previous changelog files
   i=0
@@ -118,10 +102,10 @@ build_deb_source_package() {
 
   if [ $snapshot == true ]; then
     echo "INFO: Building snapshot release"
-    ./release/build_deb.sh -rs -k $gpg_key -n $revision
+    ./release/build_deb.sh -rsp -k $gpg_key -n $revision
   else
     echo "INFO: Building stable release"
-    ./release/build_deb.sh -rsx -k $gpg_key -n $revision
+    ./release/build_deb.sh -rspx -k $gpg_key -n $revision
   fi
 
   changes_file="$(find .. -name procalc*.changes)"
@@ -131,8 +115,6 @@ build_deb_source_package() {
   else
     dput ppa:rjinman/ppa "$changes_file"
   fi
-
-  revert_prep_debian_dir_for_ppa
 
   git add ./debian/changelog
   git commit -m "Updated debian/changelog" || echo "INFO: changelog not updated"

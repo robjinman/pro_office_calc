@@ -11,8 +11,9 @@ release=false
 source_only=false
 snapshot=true
 revision=1
+ppa = false
 
-while getopts "k:n:rsx" opt
+while getopts "k:n:rsxp" opt
 do
   case $opt in
     r) release=true
@@ -24,8 +25,12 @@ do
     k) key_id="$OPTARG"
        ;;
     x) snapshot=false
+       echo "INFO: Building non-snapshot package"
        ;;
     n) revision="$OPTARG"
+       ;;
+    p) ppa=true
+       echo "INFO: Building package for PPA"
        ;;
   esac
 done
@@ -34,6 +39,20 @@ if [ -z $key_id ]; then
   echo "ERROR: Missing required option -k key_id"
   exit 1
 fi
+
+prep_debian_dir_for_ppa() {
+  mv ./debian/control ./debian/control_
+  mv ./debian/rules ./debian/rules_
+  cp ./debian/ppa/control ./debian/control
+  cp ./debian/ppa/rules ./debian/rules
+}
+
+revert_prep_debian_dir_for_ppa() {
+  rm ./debian/control
+  rm ./debian/rules
+  mv ./debian/control_ ./debian/control
+  mv ./debian/rules_ ./debian/rules
+}
 
 export DEBEMAIL="jinmanr@gmail.com"
 export DEBFULLNAME="Rob Jinman"
@@ -56,6 +75,10 @@ cd ..
 tar -xf "$tarball_name"
 cd "procalc-${version}"
 
+if $ppa; then
+  prep_debian_dir_for_ppa
+fi
+
 dch --newversion "$deb_version"
 if $release; then
   dch --release
@@ -70,4 +93,8 @@ if $source_only; then
   debuild -S -sa -k$key_id
 else
   debuild -k$key_id
+fi
+
+if $ppa; then
+  revert_prep_debian_dir_for_ppa
 fi
