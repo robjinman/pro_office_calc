@@ -16,7 +16,8 @@ other systems to ensure each platform's build is up-to-date.
 * Transfer all compiled artifacts to the `dist/artifacts` directory on the main Linux
 workstation. This includes all installers and zipped standalone bundles.
 
-The `dist` directory should now look something like as follows.
+The `dist` directory should now look something like as follows (the artifact names are unimportant
+as the release script will rename them).
 
 ```
     $ tree -L 3
@@ -24,11 +25,11 @@ The `dist` directory should now look something like as follows.
     .
     ├── artifacts
     │   ├── manifest
-    │   ├── procalc_1.0.8-0ubuntu1_amd64.deb
-    │   ├── procalc.zip
-    │   ├── ProOfficeCalculator_1.0.9.app.zip
-    │   ├── ProOfficeCalculator_1.0.9.msi
-    │   └── ProOfficeCalculator_1.0.9.tar.gz
+    │   ├── ProOfficeCalculator_1.0.12.app.zip
+    │   ├── ProOfficeCalculator_1.0.12.deb
+    │   ├── ProOfficeCalculator_1.0.12.msi
+    │   ├── ProOfficeCalculator_1.0.12.tar.gz
+    │   └── ProOfficeCalculator_1.0.12.zip
     └── bundles
         ├── linux
         │   ├── AppRun -> procalc/bin/procalc
@@ -51,7 +52,7 @@ with the version number prefixed with the letter v, e.g. v1.0.15. The annotation
 have the form `Pro Office Calculator v1.0.15`.
 * Upload the source package to the launchpad PPAs. If the build is a snapshot, upload to the
 snapshot PPA; if it's a stable build, upload to the non-snapshot PPA.
-* Name the Windows and OS X artifacts with the version number, including any snapshot suffix, e.g.
+* Name the artifacts with the version number, including any snapshot suffix, e.g.
 ProOfficeCalculator_1.0.15+16SNAPSHOT20180719015812.msi.
 * Upload artifacts to S3.
 * Upload a manifest file to S3 so the website can know the versions stored in the bucket and which
@@ -85,7 +86,7 @@ console like so
 And at the prompt, run the following, specifying the full path to the app build file
 
 ```
-    run_app_build /absolute/path/to/steam/app_build_APPID.vdf
+    run_app_build /absolute/path/to/steam/app_build_914430.vdf
 ```
 
-where APPID is the app's ID.
+Then log into Steamworks and set the build as the default.
