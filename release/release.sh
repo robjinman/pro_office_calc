@@ -168,12 +168,13 @@ upload_artifacts() {
   mv "$linux_installer" "./dist/artifacts/$linux_installer_name" || :
   mv "$linux_bundle" "./dist/artifacts/$linux_bundle_name" || :
 
-  # TODO: Add all artifacts to manifest
   cat > ./dist/artifacts/manifest <<EOF
 <artifacts>
-  <windows>${win_installer_name}</windows>
-  <osx>${osx_bundle_name}</osx>
-  <linux>${linux_bundle_name}</linux>
+  <windows-installer>${win_installer_name}</windows-installer>
+  <windows-bundle>${win_bundle_name}</windows-bundle>
+  <osx-bundle>${osx_bundle_name}</osx-bundle>
+  <linux-installer>${linux_installer_name}</linux-installer>
+  <linux-bundle>${linux_bundle_name}</linux-bundle>
 </artifacts>
 EOF
 
