@@ -144,12 +144,6 @@ tag_master() {
   git checkout develop
 }
 
-tar_linux_bundle() {
-  echo "********************** COMPRESSING LINUX BUNDLE *********************"
-
-  tar -czf ./dist/artifacts/procalc.tar.gz ./dist/bundles/linux/procalc
-}
-
 upload_artifacts() {
   echo "************************ UPLOADING ARTIFACTS ************************"
 
@@ -186,5 +180,4 @@ show_prompt
 commit_version
 build_deb_source_package
 tag_master
-tar_linux_bundle
 upload_artifacts
