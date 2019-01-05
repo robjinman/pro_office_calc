@@ -51,6 +51,9 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
 
     const SetupCompleteEvent& e = dynamic_cast<const SetupCompleteEvent&>(event);
     toggleFeatures(e.features);
+
+    auto& dialog = parentFrag<FCalculator>().parentFrag<FAppDialog>();
+    dialog.move(100, 100);
   });
 }
 
