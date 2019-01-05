@@ -29,7 +29,6 @@ class ObjectFactory : public GameObjectFactory, private SystemAccessor {
 
   private:
     RootFactory& m_rootFactory;
-    EntityManager& m_entityManager;
     TimeService& m_timeService;
     AudioService& m_audioService;
 

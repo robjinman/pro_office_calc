@@ -27,7 +27,6 @@ ObjectFactory::ObjectFactory(RootFactory& rootFactory, EntityManager& entityMana
   TimeService& timeService, AudioService& audioService)
   : SystemAccessor(entityManager),
     m_rootFactory(rootFactory),
-    m_entityManager(entityManager),
     m_timeService(timeService),
     m_audioService(audioService) {}
 
