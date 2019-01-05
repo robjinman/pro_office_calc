@@ -1,3 +1,12 @@
+procalc (1.0.13-0ubuntu1) xenial; urgency=medium
+
+  * Fix for issue #8: Enlarged game screen from 320x240 to 400x300
+  * Calculator accepts keyboard inputs
+  * Evasive 'proceed' button always appears on top of other widgets
+  * Moved calculator window on making_progress to screen position 100,100
+
+ -- Rob Jinman <jinmanr@gmail.com>  Sat, 05 Jan 2019 23:34:59 +0000
+
 procalc (1.0.12-0ubuntu1) xenial; urgency=medium
 
   * Fix for issue #6: Mouse escaping window
