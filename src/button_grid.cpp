@@ -19,6 +19,7 @@ static QtObjPtr<QPushButton> makeButton(QWidget* parent, const QString& text) {
 
   btn->setMaximumHeight(60);
   btn->setSizePolicy(sp);
+  btn->setFocusPolicy(Qt::NoFocus);
 
   return btn;
 }
