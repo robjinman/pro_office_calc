@@ -85,7 +85,9 @@ if $release; then
 fi
 
 # Replace the old changelog with the new one
-cp ./debian/changelog "$changelog_path"
+if [ "./debian/changelog" -nt "$changelog_path" ]; then
+  cp ./debian/changelog "$changelog_path"
+fi
 
 export CMAKE_BUILD_TYPE=Release
 
