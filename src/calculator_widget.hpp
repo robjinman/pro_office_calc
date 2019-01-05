@@ -37,11 +37,15 @@ class CalculatorWidget : public QWidget {
     QtObjPtr<QLineEdit> wgtDigitDisplay;
     QtObjPtr<QLabel> wgtOpDisplay;
     QtObjPtr<ButtonGrid> wgtButtonGrid;
+    bool handleKeypresses = true;
 
     virtual ~CalculatorWidget() override;
 
   public slots:
     void onButtonClick(int id);
+
+  protected:
+    void keyPressEvent(QKeyEvent* event) override;
 
   private:
     EventSystem& m_eventSystem;

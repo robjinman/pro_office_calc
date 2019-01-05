@@ -1,5 +1,6 @@
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QKeyEvent>
 #include "calculator_widget.hpp"
 #include "event_system.hpp"
 #include "utils.hpp"
@@ -39,6 +40,46 @@ CalculatorWidget::CalculatorWidget(EventSystem& eventSystem)
   setLayout(vbox.get());
 
   connect(wgtButtonGrid.get(), SIGNAL(buttonClicked(int)), this, SLOT(onButtonClick(int)));
+}
+
+//===========================================
+// CalculatorWidget::keyPressEvent
+//===========================================
+void CalculatorWidget::keyPressEvent(QKeyEvent* event) {
+  if (!handleKeypresses) {
+    return;
+  }
+
+  if (ltelte<int>(Qt::Key_0, event->key(), Qt::Key_9)) {
+    onButtonClick(event->key() - Qt::Key_0);
+    return;
+  }
+
+  switch (event->key()) {
+    case Qt::Key_Clear:
+      onButtonClick(BTN_CLEAR);
+      break;
+    case Qt::Key_Enter:
+      onButtonClick(BTN_EQUALS);
+      break;
+    case Qt::Key_Plus:
+      onButtonClick(BTN_PLUS);
+      break;
+    case Qt::Key_Minus:
+      onButtonClick(BTN_MINUS);
+      break;
+    case Qt::Key_Slash:
+      onButtonClick(BTN_DIVIDE);
+      break;
+    case Qt::Key_Asterisk:
+      onButtonClick(BTN_TIMES);
+      break;
+    case Qt::Key_Period:
+      onButtonClick(BTN_POINT);
+      break;
+    default:
+      break;
+  }
 }
 
 //===========================================

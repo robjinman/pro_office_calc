@@ -137,6 +137,8 @@ void FPartialCalc::reload(const FragmentSpec&) {
     SLOT(onButtonClick(int)));
   connect(parentData.wgtCalculator->wgtButtonGrid.get(), SIGNAL(buttonPressed(int)), this,
     SLOT(onButtonPress(int)));
+
+  parentData.wgtCalculator->handleKeypresses = false;
 }
 
 //===========================================
