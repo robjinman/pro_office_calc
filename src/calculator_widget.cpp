@@ -60,6 +60,7 @@ void CalculatorWidget::keyPressEvent(QKeyEvent* event) {
       onButtonClick(BTN_CLEAR);
       break;
     case Qt::Key_Enter:
+    case Qt::Key_Return:
       onButtonClick(BTN_EQUALS);
       break;
     case Qt::Key_Plus:
