@@ -46,23 +46,11 @@ FPartialCalc::FPartialCalc(Fragment& parent_, FragmentData& parentData_,
 
   DBG_PRINT("FPartialCalc::FPartialCalc\n");
 
-  // TODO: Move this making_progress specific stuff out of this class
-
   m_hSetupComplete = commonData.eventSystem.listen("makingProgress/setupComplete",
     [this](const Event& event) {
 
     const SetupCompleteEvent& e = dynamic_cast<const SetupCompleteEvent&>(event);
     toggleFeatures(e.features);
-  });
-
-  m_hDialogClosed = commonData.eventSystem.listen("dialogClosed",
-    [&commonData](const Event& event) {
-
-    const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
-
-    if (e.name == "procalcSetup") {
-      commonData.eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS, true)));
-    }
   });
 }
 

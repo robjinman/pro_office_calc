@@ -3,6 +3,7 @@
 #include <QApplication>
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/game_logic.hpp"
 #include "fragments/f_main/f_app_dialog/f_procalc_setup/events.hpp"
+#include "fragments/f_main/f_app_dialog/f_app_dialog.hpp"
 #include "raycast/entity_manager.hpp"
 #include "raycast/event_handler_system.hpp"
 #include "raycast/c_switch_behaviour.hpp"
@@ -47,6 +48,14 @@ GameLogic::GameLogic(QDialog& dialog, EventSystem& eventSystem, EntityManager& e
 
   m_hButtonPress = m_eventSystem.listen("makingProgress/buttonPress", [this](const Event& event) {
     onButtonPress(event);
+  });
+
+  m_hDialogClosed = m_eventSystem.listen("dialogClosed", [this](const Event& event) {
+    const DialogClosedEvent& e = dynamic_cast<const DialogClosedEvent&>(event);
+
+    if (e.name == "procalcSetup") {
+      m_eventSystem.fire(pEvent_t(new RequestStateChangeEvent(ST_MAKING_PROGRESS, true)));
+    }
   });
 }
 

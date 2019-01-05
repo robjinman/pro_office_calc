@@ -11,8 +11,6 @@
 
 struct FPartialCalcData : public FragmentData {};
 
-class DialogClosedEvent;
-
 class FPartialCalc : public QObject, public Fragment {
   Q_OBJECT
 
@@ -34,7 +32,6 @@ class FPartialCalc : public QObject, public Fragment {
     FPartialCalcData m_data;
 
     EventHandle m_hSetupComplete;
-    EventHandle m_hDialogClosed;
 };
 
 
