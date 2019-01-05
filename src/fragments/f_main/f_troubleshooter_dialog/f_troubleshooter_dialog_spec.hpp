@@ -17,6 +17,8 @@ struct FTroubleshooterDialogSpec : public FragmentSpec {
 
   FGlitchSpec glitchSpec;
   FTetrominosSpec tetrominosSpec;
+  int raycastWidth = 320;
+  int raycastHeight = 240;
 
   QString titleText = "Troubleshooter";
 };

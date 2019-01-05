@@ -30,6 +30,8 @@ FMainSpec* makeFMainSpec(const AppConfig& appConfig) {
     "  <p align='center'>C͞opyri̵g͏ht ̨(c)͟ 1994 ̡A̵pe̡x ̢S͢yst̴e̡ms̀ In͝c̷. All͞ ri̛ghts ̷r͢e͠s̷erved̨.͏</p>"
     "</div>";
   mainSpec->tetrominosSpec.setEnabled(true);
+  mainSpec->troubleshooterDialogSpec.raycastWidth = 400;
+  mainSpec->troubleshooterDialogSpec.raycastHeight = 300;
   mainSpec->troubleshooterDialogSpec.setEnabled(true);
   //mainSpec->troubleshooterDialogSpec.glitchSpec.setEnabled(true);
   mainSpec->troubleshooterDialogSpec.tetrominosSpec.setEnabled(true);

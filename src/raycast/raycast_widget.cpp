@@ -34,6 +34,9 @@ using std::string;
 using std::list;
 
 
+static const int BUFFER_W = 320;
+static const int BUFFER_H = 240;
+
 static const double PLAYER_SPEED = 350.0;
 static const double MOUSE_LOOK_SPEED = 0.0006;
 static const double KEY_LOOK_SPEED = 1.2;
@@ -49,9 +52,10 @@ RaycastWidget::RaycastWidget(const AppConfig& appConfig, EventSystem& eventSyste
     m_eventSystem(eventSystem),
     m_timeService(frameRate),
     m_audioService(m_entityManager, m_timeService),
-    m_width(width),
-    m_height(height),
-    m_frameRate(frameRate) {}
+    m_frameRate(frameRate) {
+
+  setFixedSize(width, height);
+}
 
 //===========================================
 // RaycastWidget::loadTextures
@@ -228,7 +232,7 @@ void RaycastWidget::drawLoadingText() {
 
   painter.setFont(font);
   painter.setPen(Qt::white);
-  painter.drawText((m_width - 100) / 2, (m_height - h) / 2, "Loading...");
+  painter.drawText((BUFFER_W - 100) / 2, (BUFFER_H - h) / 2, "Loading...");
 
   painter.end();
 }
@@ -285,7 +289,7 @@ void RaycastWidget::initialise(const string& mapFile) {
   m_cursorCaptured = false;
   m_mouseBtnState = false;
 
-  m_buffer = QImage(m_width, m_height, QImage::Format_ARGB32);
+  m_buffer = QImage(BUFFER_W, BUFFER_H, QImage::Format_ARGB32);
 
   setupSystems();
 

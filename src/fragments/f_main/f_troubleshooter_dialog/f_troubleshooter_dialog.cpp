@@ -28,6 +28,7 @@ FTroubleshooterDialog::FTroubleshooterDialog(Fragment& parent_, FragmentData& pa
 void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
   DBG_PRINT("FTroubleshooterDialog::reload\n");
 
+  auto& spec = dynamic_cast<const FTroubleshooterDialogSpec&>(spec_);
   auto& parentData = parentFragData<FMainData>();
 
   m_data.vbox = makeQtObjPtr<QVBoxLayout>();
@@ -39,15 +40,13 @@ void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
   m_data.wgtTabs = makeQtObjPtr<QTabWidget>(this);
   m_data.vbox->addWidget(m_data.wgtTabs.get());
 
-  setupTab1();
+  setupTab1(spec.raycastWidth, spec.raycastHeight);
   setupTab2();
-  setupTab3();
+  setupTab3(spec.raycastWidth, spec.raycastHeight);
 
   m_data.wgtTabs->addTab(m_data.tab1.page.get(), "Fix automatically");
 
   connect(m_data.actPreferences.get(), SIGNAL(triggered()), this, SLOT(showTroubleshooterDialog()));
-
-  auto& spec = dynamic_cast<const FTroubleshooterDialogSpec&>(spec_);
 
   setWindowTitle(spec.titleText);
 }
@@ -55,12 +54,17 @@ void FTroubleshooterDialog::reload(const FragmentSpec& spec_) {
 //===========================================
 // FTroubleshooterDialog::setupTab1
 //===========================================
-void FTroubleshooterDialog::setupTab1() {
+void FTroubleshooterDialog::setupTab1(int raycastWidth, int raycastHeight) {
   auto& tab = m_data.tab1;
+
+  auto margins = contentsMargins();
+  int paddingW = margins.left() + margins.right();
+  int paddingH = margins.top() + margins.bottom();
 
   tab.page = makeQtObjPtr<QWidget>();
   tab.vbox = makeQtObjPtr<QVBoxLayout>();
   tab.page->setLayout(tab.vbox.get());
+  tab.page->setFixedSize(raycastWidth - paddingW, raycastHeight - paddingH);
   tab.wgtCaption = makeQtObjPtr<QLabel>("Attempt to fix problem automatically");
   tab.wgtRunTroubleshooter = makeQtObjPtr<QPushButton>("Run troubleshooter");
   tab.wgtProgressBar = makeQtObjPtr<QProgressBar>();
@@ -124,13 +128,16 @@ void FTroubleshooterDialog::setupTab2() {
 //===========================================
 // FTroubleshooterDialog::setupTab3
 //===========================================
-void FTroubleshooterDialog::setupTab3() {
+void FTroubleshooterDialog::setupTab3(int raycastWidth, int raycastHeight) {
   auto& tab = m_data.tab3;
 
   tab.page = makeQtObjPtr<QWidget>();
+  tab.page->setContentsMargins(0, 0, 0, 0);
   tab.vbox = makeQtObjPtr<QVBoxLayout>();
-  tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem);
-  tab.wgtRaycast->setFixedSize(320, 240);
+  tab.vbox->setSpacing(0);
+  tab.vbox->setContentsMargins(0, 0, 0, 0);
+  tab.wgtRaycast = makeQtObjPtr<RaycastWidget>(commonData.appConfig, commonData.eventSystem,
+    raycastWidth, raycastHeight);
   tab.wgtRaycast->initialise(commonData.appConfig.dataPath("its_raining_tetrominos/map.svg"));
   tab.gameLogic.reset(new GameLogic(commonData.eventSystem, tab.wgtRaycast->entityManager()));
 

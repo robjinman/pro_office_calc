@@ -76,9 +76,9 @@ class FTroubleshooterDialog : public QDialog, public Fragment {
   private:
     FTroubleshooterDialogData m_data;
 
-    void setupTab1();
+    void setupTab1(int raycastWidth, int raycastHeight);
     void setupTab2();
-    void setupTab3();
+    void setupTab3(int raycastWidth, int raycastHeight);
 };
 
 

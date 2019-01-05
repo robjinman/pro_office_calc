@@ -46,6 +46,7 @@ class GameLogic : public QObject, private SystemAccessor {
     EntityManager& m_entityManager;
     entityId_t m_entityId;
     EventHandle m_hButtonPress;
+    EventHandle m_hDialogClosed;
     QEvent::Type m_raiseDialogEvent;
     double m_targetNumber = 0;
     int m_numKeysPressed = 0;
