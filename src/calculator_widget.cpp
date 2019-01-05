@@ -56,6 +56,7 @@ void CalculatorWidget::keyPressEvent(QKeyEvent* event) {
   }
 
   switch (event->key()) {
+	case Qt::Key_Escape:
     case Qt::Key_Clear:
       onButtonClick(BTN_CLEAR);
       break;
