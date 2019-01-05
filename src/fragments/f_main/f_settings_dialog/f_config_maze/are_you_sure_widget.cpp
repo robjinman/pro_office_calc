@@ -11,7 +11,7 @@
 using std::string;
 
 
-const int NUM_QUESTIONS = 8;
+const int NUM_QUESTIONS = 0;
 
 static std::mt19937 randEngine(randomSeed());
 
@@ -185,6 +185,7 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
 
   m_page2.wgtBackToSafety = makeQtObjPtr<QPushButton>("Back to safety");
   m_page2.wgtBackToSafety->setMaximumWidth(140);
+  m_page2.wgtBackToSafety->setFocusPolicy(Qt::NoFocus);
 
   m_page2.wgtProceed = makeQtObjPtr<EvasiveButton>("Proceed");
   m_page2.wgtProceed->setMaximumWidth(90);
@@ -197,6 +198,10 @@ AreYouSureWidget::AreYouSureWidget(const AppConfig& appConfig)
 
   m_page2.vbox->setAlignment(m_page2.wgtConsole.get(), Qt::AlignHCenter);
   m_page2.vbox->setAlignment(m_page2.wgtProceed.get(), Qt::AlignHCenter);
+
+  m_page2.wgtConsole->stackUnder(m_page2.wgtProceed.get());
+  m_page2.wgtPrompt->stackUnder(m_page2.wgtProceed.get());
+  m_page2.wgtBackToSafety->stackUnder(m_page2.wgtProceed.get());
 
   connect(m_page2.wgtProceed.get(), SIGNAL(pressed()), this, SLOT(onFinalYesClick()));
   connect(m_page2.wgtBackToSafety.get(), SIGNAL(clicked()), this, SLOT(onFinalNoClick()));
