@@ -42,6 +42,10 @@ struct __attribute__ ((packed)) BmpHeader {
   BmpImgHeader imgHdr;
 };
 
+void setPixelComponent(uint8_t* img, int w, int x, int y, int c, uint8_t val) {
+  img[y * w * 3 + x * 3 + c] = val;
+}
+
 int main(int argc, char** argv) {
   if (argc < 3) {
     cout << "Usage: " << argv[0] << " w h\n";
@@ -50,14 +54,14 @@ int main(int argc, char** argv) {
 
   uint32_t w = stoi(argv[1]);
   uint32_t h = stoi(argv[2]);
+  size_t bytes = w * h * 3;
+  uint8_t* img = new uint8_t[bytes];
 
-  uint8_t img[h][w][3];
-
-  for (uint32_t i = 0; i < w; ++i) {
-    for (uint32_t j = 0; j < h; ++j) {
-      img[j][i][0] = rand() % 256;
-      img[j][i][1] = rand() % 256;
-      img[j][i][2] = rand() % 256;
+  for (uint32_t j = 0; j < h; ++j) {
+    for (uint32_t i = 0; i < w; ++i) {
+      setPixelComponent(img, w, i, j, 0, rand() % 256);
+      setPixelComponent(img, w, i, j, 1, rand() % 256);
+      setPixelComponent(img, w, i, j, 2, rand() % 256);
     }
   }
 
@@ -65,7 +69,7 @@ int main(int argc, char** argv) {
 
   ofstream fout("out.bmp", ofstream::binary);
   fout.write(reinterpret_cast<char*>(&hdr), sizeof(hdr));
-  fout.write(reinterpret_cast<char*>(img), sizeof(img));
+  fout.write(reinterpret_cast<char*>(img), bytes);
 
   return EXIT_SUCCESS;
 }
