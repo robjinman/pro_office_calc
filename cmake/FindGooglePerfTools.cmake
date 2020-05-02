@@ -32,6 +32,8 @@
 #  STACKTRACE_LIBRARIES, where to find the stacktrace library.
 #  PROFILER_LIBRARIES, where to find the profiler library.
 
+FIND_PACKAGE(PkgConfig)
+
 FIND_PATH(GOOGLE_PERFTOOLS_INCLUDE_DIR
   gperftools/heap-profiler.h
   PATHS

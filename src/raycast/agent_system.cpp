@@ -263,6 +263,7 @@ void CAgent::update(TimeService& timeService, AudioService& audioService) {
         m_path = spatialSys().shortestPath(entityId(), m_targetObject, 10);
         m_pathClosed = false;
       }
+      [[fallthrough]];
     }
     case ST_ON_FIXED_PATH: {
       assert(m_path.size() > 0);
