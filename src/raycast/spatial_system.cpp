@@ -514,12 +514,12 @@ static bool similar(const LineSegment& l1, const LineSegment& l2) {
 //===========================================
 set<entityId_t> SpatialSystem::getAncestors(entityId_t entityId) const {
   set<entityId_t> ancestors;
-  const CSpatial* c = &getComponent(entityId);
+  const CSpatial* c = &this->SpatialSystem::getComponent(entityId);
 
   entityId_t parent = c->parentId;
   while (parent != -1) {
     ancestors.insert(parent);
-    c = &getComponent(parent);
+    c = &this->SpatialSystem::getComponent(parent);
     parent = c->parentId;
   }
 
@@ -691,7 +691,7 @@ void SpatialSystem::handleEvent(const GameEvent& event) {
   if (event.name == "player_activate") {
     EPlayerActivateEntity e(*sg.player);
     const CZone& zone = getCurrentZone();
-    const CVRect& body = DYNAMIC_CAST<const CVRect&>(getComponent(sg.player->body));
+    const CVRect& body = DYNAMIC_CAST<const CVRect&>(this->SpatialSystem::getComponent(sg.player->body));
 
     double y = sg.player->feetHeight() - zone.floorHeight + 0.5 * body.size.y;
 
@@ -739,8 +739,8 @@ void SpatialSystem::crossZones(entityId_t entityId, entityId_t oldZoneId, entity
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CSpatial& c = *it->second;
-    CZone& oldZone = DYNAMIC_CAST<CZone&>(getComponent(oldZoneId));
-    CZone& newZone = DYNAMIC_CAST<CZone&>(getComponent(newZoneId));
+    CZone& oldZone = DYNAMIC_CAST<CZone&>(this->SpatialSystem::getComponent(oldZoneId));
+    CZone& newZone = DYNAMIC_CAST<CZone&>(this->SpatialSystem::getComponent(newZoneId));
 
     if (removeChildFromComponent(oldZone, c, true)) {
       addChildToComponent(newZone, pCSpatial_t(&c));
@@ -877,7 +877,7 @@ void SpatialSystem::moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor)
 //===========================================
 void SpatialSystem::movePlayer(const Vec2f& v) {
   Player& player = *sg.player;
-  const CVRect& body = DYNAMIC_CAST<const CVRect&>(getComponent(player.body));
+  const CVRect& body = DYNAMIC_CAST<const CVRect&>(this->SpatialSystem::getComponent(player.body));
   const CZone& zone =  getCurrentZone();
 
   Vec2f dv(cos(body.angle) * v.x - sin(body.angle) * v.y,
@@ -909,12 +909,12 @@ void SpatialSystem::movePlayer(const Vec2f& v) {
 vector<Point> SpatialSystem::shortestPath(entityId_t entityA, entityId_t entityB,
   double radius) const {
 
-  const CSpatial& compA = getComponent(entityA);
+  const CSpatial& compA = this->SpatialSystem::getComponent(entityA);
   if (compA.kind != CSpatialKind::V_RECT) {
     EXCEPTION("Component not of type V_RECT");
   }
 
-  const CSpatial& compB = getComponent(entityB);
+  const CSpatial& compB = this->SpatialSystem::getComponent(entityB);
   if (compB.kind != CSpatialKind::V_RECT) {
     EXCEPTION("Component not of type V_RECT");
   }
@@ -1395,13 +1395,6 @@ void SpatialSystem::update() {
 //===========================================
 bool SpatialSystem::hasComponent(entityId_t entityId) const {
   return m_components.find(entityId) != m_components.end();
-}
-
-//===========================================
-// SpatialSystem::getComponent
-//===========================================
-CSpatial& SpatialSystem::getComponent(entityId_t entityId) const {
-  return *GET_VALUE(m_components, entityId);
 }
 
 //===========================================

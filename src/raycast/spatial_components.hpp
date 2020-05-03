@@ -100,11 +100,11 @@ class CZone : public CSpatial {
     double floorHeight = 0;
     double ceilingHeight = 100;
     bool hasCeiling = true;
-    std::list<pCZone_t> children;
-    std::list<pCEdge_t> edges;
+    std::vector<pCZone_t> children;
+    std::vector<pCEdge_t> edges;
     std::list<pCVRect_t> vRects;
-    std::list<pCHRect_t> hRects;
-    std::list<pCPath_t> paths;
+    std::vector<pCHRect_t> hRects;
+    std::vector<pCPath_t> paths;
     CZone* parent = nullptr;
 };
 

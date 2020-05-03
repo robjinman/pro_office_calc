@@ -185,10 +185,10 @@ class CRegion : public CRender {
     QRectF floorTexRect = QRectF(0, 0, 1, 1);
     std::string ceilingTexture;
     QRectF ceilingTexRect = QRectF(0, 0, 1, 1);
-    std::list<pCRegion_t> children;
-    std::list<CBoundary*> boundaries;
+    std::vector<pCRegion_t> children;
+    std::vector<CBoundary*> boundaries;
     std::list<pCSprite_t> sprites;
-    std::list<pCFloorDecal_t> floorDecals;
+    std::vector<pCFloorDecal_t> floorDecals;
 };
 
 class CWall : public CBoundary {

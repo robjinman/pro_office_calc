@@ -91,7 +91,6 @@ class SpatialSystem : public System {
 
     void addComponent(pComponent_t component) override;
     bool hasComponent(entityId_t entityId) const override;
-    CSpatial& getComponent(entityId_t entityId) const override;
     void removeEntity(entityId_t id) override;
 
     void moveEntity(entityId_t id, Vec2f dv, double heightAboveFloor = 0);
@@ -122,6 +121,10 @@ class SpatialSystem : public System {
     CZone& zone(entityId_t entity);
     const CZone& constZone(entityId_t entity) const;
 
+    inline CSpatial& getComponent(entityId_t entityId) const override {
+      return *GET_VALUE(m_components, entityId);
+    }
+
   private:
     bool isRoot(const CSpatial& c) const;
     void removeEntity_r(entityId_t id);
@@ -136,7 +139,7 @@ class SpatialSystem : public System {
     bool removeChildFromComponent(CSpatial& parent, const CSpatial& child, bool keepAlive = false);
 
     inline CZone& getCurrentZone() const {
-      return dynamic_cast<CZone&>(getComponent(sg.player->region()));
+      return DYNAMIC_CAST<CZone&>(getComponent(sg.player->region()));
     }
 
     void buoyancy();

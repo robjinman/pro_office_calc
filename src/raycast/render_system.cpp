@@ -44,7 +44,7 @@ ostream& operator<<(ostream& os, CRenderKind kind) {
 // getSoftEdge
 //===========================================
 static inline CSoftEdge& getSoftEdge(const SpatialSystem& spatialSystem, const CBoundary& b) {
-  return dynamic_cast<CSoftEdge&>(spatialSystem.getComponent(b.entityId()));
+  return DYNAMIC_CAST<CSoftEdge&>(spatialSystem.getComponent(b.entityId()));
 }
 
 //===========================================
@@ -107,38 +107,37 @@ static void connectSubregions(const SpatialSystem& spatialSystem, CRegion& regio
   forEachRegion(region, [&](CRegion& r) {
     for (auto jt = r.boundaries.begin(); jt != r.boundaries.end(); ++jt) {
       if ((*jt)->kind == CRenderKind::JOIN) {
-        CJoin* je = dynamic_cast<CJoin*>(*jt);
+        CJoin* je = DYNAMIC_CAST<CJoin*>(*jt);
         assert(je != nullptr);
+
+        entityId_t id1 = getSoftEdge(spatialSystem, *je).joinId;
 
         bool hasTwin = false;
         int j = 0;
         forEachRegion(region, [&](CRegion& r_) {
-          if (&r_ != &r) {
-            for (auto lt = r_.boundaries.begin(); lt != r_.boundaries.end(); ++lt) {
-              if ((*lt)->kind == CRenderKind::JOIN) {
-                CJoin* other = dynamic_cast<CJoin*>(*lt);
-
-                entityId_t id1 = getSoftEdge(spatialSystem, *je).joinId;
-                entityId_t id2 = getSoftEdge(spatialSystem, *other).joinId;
-
-                if (id1 == id2) {
-                  hasTwin = true;
-
-                  je->joinId = other->joinId;
-                  je->regionA = other->regionA = &r;
-                  je->regionB = other->regionB = &r_;
-
-                  je->mergeIn(*other);
-                  other->mergeIn(*je);
-
-                  return false;
-                }
-              }
-            }
+          if (j >= i) {
+            return false;
           }
 
-          if (j > i) {
-            return false;
+          for (auto lt = r_.boundaries.begin(); lt != r_.boundaries.end(); ++lt) {
+            if ((*lt)->kind == CRenderKind::JOIN) {
+              CJoin* other = DYNAMIC_CAST<CJoin*>(*lt);
+
+              entityId_t id2 = getSoftEdge(spatialSystem, *other).joinId;
+
+              if (id1 == id2) {
+                hasTwin = true;
+
+                je->joinId = other->joinId;
+                je->regionA = other->regionA = &r;
+                je->regionB = other->regionB = &r_;
+
+                je->mergeIn(*other);
+                other->mergeIn(*je);
+
+                return false;
+              }
+            }
           }
 
           ++j;
@@ -182,24 +181,24 @@ void RenderSystem::render() {
 static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
   switch (child->kind) {
     case CRenderKind::REGION: {
-      pCRegion_t ptr(dynamic_cast<CRegion*>(child.release()));
+      pCRegion_t ptr(DYNAMIC_CAST<CRegion*>(child.release()));
       region.children.push_back(std::move(ptr));
       break;
     }
     case CRenderKind::JOIN:
     case CRenderKind::WALL: {
-      pCBoundary_t ptr(dynamic_cast<CBoundary*>(child.release()));
+      pCBoundary_t ptr(DYNAMIC_CAST<CBoundary*>(child.release()));
       region.boundaries.push_back(ptr.get());
       rg.boundaries.push_back(std::move(ptr));
       break;
     }
     case CRenderKind::FLOOR_DECAL: {
-      pCFloorDecal_t ptr(dynamic_cast<CFloorDecal*>(child.release()));
+      pCFloorDecal_t ptr(DYNAMIC_CAST<CFloorDecal*>(child.release()));
       region.floorDecals.push_back(std::move(ptr));
       break;
     }
     case CRenderKind::SPRITE: {
-      pCSprite_t ptr(dynamic_cast<CSprite*>(child.release()));
+      pCSprite_t ptr(DYNAMIC_CAST<CSprite*>(child.release()));
       region.sprites.push_back(std::move(ptr));
       break;
     }
@@ -215,7 +214,7 @@ static void addToRegion(RenderGraph& rg, CRegion& region, pCRender_t child) {
 static void addToWall(CWall& boundary, pCRender_t child) {
   switch (child->kind) {
     case CRenderKind::WALL_DECAL: {
-      pCWallDecal_t ptr(dynamic_cast<CWallDecal*>(child.release()));
+      pCWallDecal_t ptr(DYNAMIC_CAST<CWallDecal*>(child.release()));
       boundary.decals.push_back(std::move(ptr));
       break;
     }
@@ -231,7 +230,7 @@ static void addToWall(CWall& boundary, pCRender_t child) {
 static void addToJoin(CJoin& boundary, pCRender_t child) {
   switch (child->kind) {
     case CRenderKind::WALL_DECAL: {
-      pCWallDecal_t ptr(dynamic_cast<CWallDecal*>(child.release()));
+      pCWallDecal_t ptr(DYNAMIC_CAST<CWallDecal*>(child.release()));
       boundary.decals.push_back(std::move(ptr));
       break;
     }
@@ -247,13 +246,13 @@ static void addToJoin(CJoin& boundary, pCRender_t child) {
 static void addChildToComponent(RenderGraph& rg, CRender& parent, pCRender_t child) {
   switch (parent.kind) {
     case CRenderKind::REGION:
-      addToRegion(rg, dynamic_cast<CRegion&>(parent), std::move(child));
+      addToRegion(rg, DYNAMIC_CAST<CRegion&>(parent), std::move(child));
       break;
     case CRenderKind::WALL:
-      addToWall(dynamic_cast<CWall&>(parent), std::move(child));
+      addToWall(DYNAMIC_CAST<CWall&>(parent), std::move(child));
       break;
     case CRenderKind::JOIN:
-      addToJoin(dynamic_cast<CJoin&>(parent), std::move(child));
+      addToJoin(DYNAMIC_CAST<CJoin&>(parent), std::move(child));
       break;
     default: {
       EXCEPTION("Cannot add component of kind " << child->kind << " to component of kind "
@@ -273,7 +272,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
   switch (child.kind) {
     case CRenderKind::REGION: {
       auto it = find_if(region.children.begin(), region.children.end(), [&](const pCRegion_t& e) {
-        return e.get() == dynamic_cast<const CRegion*>(&child);
+        return e.get() == DYNAMIC_CAST<const CRegion*>(&child);
       });
       if (it != region.children.end()) {
         if (keepAlive) {
@@ -289,11 +288,11 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
       auto it = find_if(region.boundaries.begin(), region.boundaries.end(),
         [&](const CBoundary* b) {
 
-        return b == dynamic_cast<const CBoundary*>(&child);
+        return b == DYNAMIC_CAST<const CBoundary*>(&child);
       });
       erase(region.boundaries, it);
       auto jt = find_if(rg.boundaries.begin(), rg.boundaries.end(), [&](const pCBoundary_t& b) {
-        return b.get() == dynamic_cast<const CBoundary*>(&child);
+        return b.get() == DYNAMIC_CAST<const CBoundary*>(&child);
       });
       if (jt != rg.boundaries.end()) {
         if (keepAlive) {
@@ -308,7 +307,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
       auto it = find_if(region.floorDecals.begin(), region.floorDecals.end(),
         [&](const pCFloorDecal_t& e) {
 
-        return e.get() == dynamic_cast<const CFloorDecal*>(&child);
+        return e.get() == DYNAMIC_CAST<const CFloorDecal*>(&child);
       });
       if (it != region.floorDecals.end()) {
         if (keepAlive) {
@@ -321,7 +320,7 @@ static bool removeFromRegion(RenderGraph& rg, CRegion& region, const CRender& ch
     }
     case CRenderKind::SPRITE: {
       auto it = find_if(region.sprites.begin(), region.sprites.end(), [&](const pCSprite_t& e) {
-        return e.get() == dynamic_cast<const CSprite*>(&child);
+        return e.get() == DYNAMIC_CAST<const CSprite*>(&child);
       });
       if (it != region.sprites.end()) {
         if (keepAlive) {
@@ -351,7 +350,7 @@ static bool removeFromWall(CWall& boundary, const CRender& child, bool keepAlive
       auto it = find_if(boundary.decals.begin(), boundary.decals.end(),
         [&](const pCWallDecal_t& e) {
 
-        return e.get() == dynamic_cast<const CWallDecal*>(&child);
+        return e.get() == DYNAMIC_CAST<const CWallDecal*>(&child);
       });
       if (it != boundary.decals.end()) {
         if (keepAlive) {
@@ -379,8 +378,8 @@ void RenderSystem::crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t
   auto it = m_components.find(entityId);
   if (it != m_components.end()) {
     CRender& c = *it->second;
-    CRegion& oldRegion = dynamic_cast<CRegion&>(getComponent(oldZone));
-    CRegion& newRegion = dynamic_cast<CRegion&>(getComponent(newZone));
+    CRegion& oldRegion = DYNAMIC_CAST<CRegion&>(getComponent(oldZone));
+    CRegion& newRegion = DYNAMIC_CAST<CRegion&>(getComponent(newZone));
 
     if (removeFromRegion(rg, oldRegion, c, true)) {
       addChildToComponent(rg, newRegion, pCRender_t(&c));
@@ -393,7 +392,7 @@ void RenderSystem::crossRegions(RenderGraph& rg, entityId_t entityId, entityId_t
 //===========================================
 void RenderSystem::handleEvent(const GameEvent& event) {
   if (event.name == "entity_changed_zone") {
-    const EChangedZone& e = dynamic_cast<const EChangedZone&>(event);
+    const EChangedZone& e = DYNAMIC_CAST<const EChangedZone&>(event);
     crossRegions(rg, e.entityId, e.oldZone, e.newZone);
   }
 }
@@ -406,11 +405,11 @@ static void removeChildFromComponent(RenderGraph& rg, CRender& parent, const CRe
 
   switch (parent.kind) {
     case CRenderKind::REGION: {
-      removeFromRegion(rg, dynamic_cast<CRegion&>(parent), child, keepAlive);
+      removeFromRegion(rg, DYNAMIC_CAST<CRegion&>(parent), child, keepAlive);
       break;
     }
     case CRenderKind::WALL: {
-      removeFromWall(dynamic_cast<CWall&>(parent), child, keepAlive);
+      removeFromWall(DYNAMIC_CAST<CWall&>(parent), child, keepAlive);
       break;
     }
     default: {
@@ -442,7 +441,7 @@ void RenderSystem::addComponent(pComponent_t component) {
     EXCEPTION("Component is not of kind C_RENDER");
   }
 
-  CRender* ptr = dynamic_cast<CRender*>(component.release());
+  CRender* ptr = DYNAMIC_CAST<CRender*>(component.release());
   pCRender_t c(ptr);
 
   if (c->parentId == -1) {
@@ -451,13 +450,13 @@ void RenderSystem::addComponent(pComponent_t component) {
         EXCEPTION("Root region already set");
       }
 
-      pCRegion_t z(dynamic_cast<CRegion*>(c.release()));
+      pCRegion_t z(DYNAMIC_CAST<CRegion*>(c.release()));
 
       rg.rootRegion = std::move(z);
       m_components.clear();
     }
     else if (c->kind == CRenderKind::OVERLAY) {
-      pCOverlay_t z(dynamic_cast<COverlay*>(c.release()));
+      pCOverlay_t z(DYNAMIC_CAST<COverlay*>(c.release()));
 
       auto it = find_if(rg.overlays.begin(), rg.overlays.end(), [&](const pCOverlay_t& o) {
         return o->entityId() == z->entityId();
@@ -497,7 +496,7 @@ bool RenderSystem::isRoot(const CRender& c) const {
   if (rg.rootRegion == nullptr) {
     return false;
   }
-  const CRegion* ptr = dynamic_cast<const CRegion*>(&c);
+  const CRegion* ptr = DYNAMIC_CAST<const CRegion*>(&c);
   return ptr == rg.rootRegion.get();
 }
 
